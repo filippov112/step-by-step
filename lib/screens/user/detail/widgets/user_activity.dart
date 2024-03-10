@@ -1,7 +1,4 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:life_game/services/analytics_repository.dart';
-import 'package:life_game/tools/format_date.dart';
 import 'package:life_game/widgets/analysis/custom_activity_table.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
@@ -9,9 +6,29 @@ import 'package:life_game/widgets/common/custom_text.dart';
 
 // Виджет отображения активности пользователя
 class UserActivity extends StatefulWidget {
-  final List<DailyAggregate> data;
+  
+  final Map<DateTime,int> tasks;
+  final Map<DateTime,int> experiences;
+  final Map<DateTime,int> times;
+  final int maxExp;
+  final int maxTime;
+  final int deltaExp;
+  final int deltaTime;
+  final int maxTasksCount;
+  final DateTime firstDay;
+  final DateTime lastDay;
+
   const UserActivity({super.key,  
-    required this.data,
+    required this.tasks,
+    required this.experiences,
+    required this.times,
+    required this.maxExp,
+    required this.maxTime,
+    required this.deltaExp,
+    required this.deltaTime,
+    required this.maxTasksCount,
+    required this.firstDay, 
+    required this.lastDay
   });
 
   @override
@@ -23,46 +40,25 @@ enum UserActivityType { time, exp, tasks }
 class _UserActivityState extends State<UserActivity> {
  
   UserActivityType selectedType = UserActivityType.tasks;
-  
+
+  Map<DateTime,int> _getData() {
+    switch (selectedType) {
+      case UserActivityType.time: return widget.times;
+      case UserActivityType.exp: return widget.experiences;
+      default: return widget.tasks;
+    }
+  }
+
+  int _getMaxValue() {
+    switch (selectedType) {
+      case UserActivityType.time: return widget.maxTime;
+      case UserActivityType.exp: return widget.maxExp;
+      default: return widget.maxTasksCount;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
-    final Map<DateTime,int> tasks = {}, experiences = {}, times = {};
-    int maxExp = 0;
-    int maxTime = 0;
-    int maxTasksCount = 0;
-    DateTime? firstDay, lastDay;
-
-    
-    for (var day in widget.data) {
-      tasks[day.dateTime] = day.taskCount;
-      experiences[day.dateTime] = day.totalExperience;
-      times[day.dateTime] = day.totalTime;
-      maxExp = max(maxExp, day.totalExperience);
-      maxTime = max(maxTime, day.totalTime);
-      maxTasksCount = max(maxTasksCount, day.taskCount);
-    }
-    if (widget.data.isNotEmpty) {
-      firstDay = DateTime.fromMillisecondsSinceEpoch(tasks.keys.map((e) => e.millisecondsSinceEpoch).toList().reduce(min));
-      lastDay = DateTime.fromMillisecondsSinceEpoch(tasks.keys.map((e) => e.millisecondsSinceEpoch).toList().reduce(max));
-    }
-    Map<DateTime,int> _getData() {
-      switch (selectedType) {
-        case UserActivityType.time: return times;
-        case UserActivityType.exp: return experiences;
-        default: return tasks;
-      }
-    }
-
-    int _getMaxValue() {
-      switch (selectedType) {
-        case UserActivityType.time: return maxTime;
-        case UserActivityType.exp: return maxExp;
-        default: return maxTasksCount;
-      }
-    }
       
     return CustomCardBlock(
       child: Column(
@@ -111,55 +107,21 @@ class _UserActivityState extends State<UserActivity> {
           
           const SizedBox(height: 8),
           
-          if (firstDay != null && lastDay != null)
           SizedBox(
             height: 150,
             child: CustomActivityTable(
               activities: _getData(),
               maxValue: _getMaxValue(),
-              startDate: firstDay,
-              endDate: lastDay,
+              startDate: widget.firstDay,
+              endDate: widget.lastDay,
               cellSpacing: 3,
               showMonthLabels: true,
               showWeekLabels: true,
-              onCellTap: (date) {
-                var day = widget.data.firstWhere((d) => d.dateTime == date);
-                _showActivityDetails(context, date, 
-                  day.totalExperience, 
-                  day.totalTime, 
-                  day.taskCount
-                );
-              },
             )
           ),
           
         ],
       )
-    );
-  }
-
-  
-
-  void _showActivityDetails(BuildContext context, DateTime date, int exp, int time, int count) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(formatDate(date)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-          Text('Трудозатраты: $time'),
-          Text('Получено опыта: $exp'),
-          Text('Выполнено задач: $count'),
-        ],),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Закрыть'),
-          ),
-        ],
-      ),
     );
   }
 }

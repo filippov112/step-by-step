@@ -1,6 +1,4 @@
-// ---- Прогресс-бар с иконкой и числом ----
 import 'package:flutter/material.dart';
-import 'package:life_game/tools/get_age_string.dart';
 import 'package:life_game/widgets/analysis/custom_progress_bar.dart';
 import 'package:life_game/widgets/analysis/custom_linear_chart.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
@@ -14,7 +12,6 @@ class UserProgress extends StatefulWidget {
   final DateTime firstDay;
   final DateTime lastDay;
   final List<SnapSpot> data;
-  final DateTime firstDayDelta;
   
   final double deltaValue;
   final String title;
@@ -30,7 +27,6 @@ class UserProgress extends StatefulWidget {
     required this.icon, // Иконка
     required this.deltaValue, // Прирост за текущий период 
     required this.data, // Значения
-    required this.firstDayDelta, // Начало текущего периода
     required this.firstDay, // Начало периода наблюдений
     required this.lastDay, // Окончание периода наблюдений
   });

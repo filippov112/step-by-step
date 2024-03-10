@@ -130,29 +130,17 @@ class CustomActivityTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [ 
                 ...week.map((day) {
-                  final isRealDay = activities.keys.contains(day);
-                  if (!isRealDay) {
-                    return Expanded(child: SizedBox(),);
-                  }
+                  final isRealDay = 
+                    day.millisecondsSinceEpoch >= startDate.millisecondsSinceEpoch && 
+                    day.millisecondsSinceEpoch <= endDate.millisecondsSinceEpoch;
                   final val = isRealDay ? (activities[day] ?? 0) : 0;
                   final color = _getColorForCount(minC, maxC, val);
               
-                  return Expanded(child:
-                    GestureDetector(
-                      onTap: isRealDay && onCellTap != null
-                          ? () => onCellTap!(day)
-                          : null,
-                      child: Container(
-                        margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
-                        decoration: BoxDecoration(
-                          color: isRealDay ? color : Colors.transparent,
-                        ),
-                        child: isRealDay && val > 0
-                            ? Tooltip(
-                                message: '${_formatDate(day)} - $val',
-                                child: Container(),
-                              )
-                            : null,
+                  return Expanded(
+                    child: Container(
+                      margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
+                      decoration: BoxDecoration(
+                        color: isRealDay ? color : minC.withValues(alpha: 0.2),
                       ),
                     )
                   );

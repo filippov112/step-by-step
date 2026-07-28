@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/screens/settings_screen.dart';
 import 'package:life_game/screens/stats_screen.dart';
-import 'package:life_game/screens/tasks_screen.dart';
+import 'package:life_game/screens/tasks/tasks_screen.dart';
 
 class TabsMenu extends StatefulWidget {
   const TabsMenu({super.key});
@@ -35,6 +35,7 @@ class _TabsMenuState extends State<TabsMenu> {
             _currentTab = newIndex;
           });
         },
+        currentIndex: _currentTab,
         items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),

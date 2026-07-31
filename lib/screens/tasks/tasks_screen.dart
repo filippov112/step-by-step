@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/screens/tasks/create/create_task.dart';
 import 'package:life_game/screens/tasks/widgets/task_tile.dart';
 import 'package:life_game/services/tasks_controller.dart';
 
@@ -22,6 +23,11 @@ class _TasksScreenState extends State<TasksScreen> {
     controller.load();
   }
 
+  Future _openFormCreate() async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTask()),);
+    controller.load();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +39,7 @@ class _TasksScreenState extends State<TasksScreen> {
         )
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: controller.addTask,
+        onPressed: _openFormCreate,
         tooltip: "Добавить задачу",
         child: const Icon(Icons.add),
       ),

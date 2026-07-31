@@ -19,8 +19,7 @@ class TasksController extends ChangeNotifier {
     }
     
   }
-  Future addTask() async {
-    TaskModel newTask = TaskModel(title: "Title", dateTime: DateTime.now(), exp: 100);
+  Future addTask(TaskModel newTask) async {
     await provider.insert(newTask);
     await load();
   }

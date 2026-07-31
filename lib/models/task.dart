@@ -23,7 +23,7 @@ class TaskModel {
   DateTime dateTime = DateTime(0,0,0,8);
   int exp = 0;
 
-  TaskModel({this.id, required this.title, this.description, required this.dateTime, required this.exp});
+  TaskModel({this.title = "", this.description, required this.dateTime, this.exp = 0});
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{

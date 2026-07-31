@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chaos Control',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: const Color.fromARGB(255, 235, 149, 21)),
+        colorScheme: .fromSeed(seedColor: const Color.fromARGB(255, 9, 151, 80)),
       ),
       home: const TabsMenu(),
     );

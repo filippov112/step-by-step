@@ -89,6 +89,11 @@ class _CreateTaskState extends State<CreateTask> {
     }
   }
 
+  void _cancel() {
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -150,6 +155,11 @@ class _CreateTaskState extends State<CreateTask> {
 
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Новая задача"), 
+        leading: IconButton(onPressed: _cancel, icon: Icon(Icons.arrow_back)),
+        backgroundColor: Color.fromARGB(255, 0, 114, 28),
+      ),
       body: Column(children: [
         form,
         savebtn

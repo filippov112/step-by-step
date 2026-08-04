@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/data/db.dart';
-import 'package:life_game/screens/tabs_menu.dart';
+import 'package:life_game/screens/home.dart';
+import 'package:life_game/screens/profile/create/create_profile_screen.dart';
+import 'package:life_game/services/state_service.dart';
 
 Future main() async {
   await DB.initDb();
+  await StateService.initState();
+  
   runApp(const MyApp());
 }
 
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: const Color.fromARGB(255, 9, 151, 80)),
       ),
-      home: const TabsMenu(),
+      home: StateService.profile == null ? CreateProfileScreen() : Home(),
     );
   }
 }

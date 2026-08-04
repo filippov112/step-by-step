@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:life_game/models/exp.dart';
 import 'package:life_game/models/task.dart';
+import 'package:life_game/models/user_profile.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -25,7 +27,11 @@ class DB {
     db = await openDatabase(await _getDBPath(), version: 1,
       onCreate: (Database db, int version) async {
       // When creating the db, create the table
+      await db.execute('PRAGMA foreign_keys = ON;');
+
+      await db.execute(UserProfileModel.init);
       await db.execute(TaskModel.init);
+      await db.execute(ExpModel.init);
     });
   }
 

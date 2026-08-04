@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/tasks/create/create_task.dart';
-import 'package:life_game/screens/tasks/widgets/task_tile.dart';
-import 'package:life_game/services/tasks_controller.dart';
+import 'package:life_game/screens/tasks/create/create_task_screen.dart';
+import 'package:life_game/screens/tasks/list/widgets/task_tile.dart';
+import 'package:life_game/screens/tasks/list/task_list_vm.dart';
 
-class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
+class TaskListScreen extends StatefulWidget {
+  const TaskListScreen({super.key});
 
   // Тут входящие параметры виджета - final string title; Объявление полей всегда с final.
 
   @override
-  State<TasksScreen> createState() => _TasksScreenState();
+  State<TaskListScreen> createState() => _TaskListScreenState();
 }
 
-class _TasksScreenState extends State<TasksScreen> {
+class _TaskListScreenState extends State<TaskListScreen> {
   // ViewModel - команды, свойства
 
-  TasksController controller = TasksController();
+  TaskListVM controller = TaskListVM();
 
   @override
   void initState() {
@@ -24,8 +24,10 @@ class _TasksScreenState extends State<TasksScreen> {
   }
 
   Future _openFormCreate() async {
-    await Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTask()),);
-    controller.load();
+    bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTaskScreen()));
+    if (added) {
+      controller.load();
+    }
   }
 
   @override

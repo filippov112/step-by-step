@@ -1,19 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:life_game/screens/settings_screen.dart';
 import 'package:life_game/screens/stats_screen.dart';
-import 'package:life_game/screens/tasks/tasks_screen.dart';
+import 'package:life_game/screens/tasks/list/task_list_screen.dart';
+import 'package:life_game/services/state_service.dart';
 
-class TabsMenu extends StatefulWidget {
-  const TabsMenu({super.key});
-
-  // Тут входящие параметры виджета - final string title; Объявление полей всегда с final.
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<TabsMenu> createState() => _TabsMenuState();
+  State<Home> createState() => _HomeState();
 }
 
-class _TabsMenuState extends State<TabsMenu> {
-  // ViewModel - команды, свойства
+class _HomeState extends State<Home> {
+  String? get iconPath => StateService.profile?.icon;
   int _currentTab = 1;
 
   @override
@@ -24,7 +25,7 @@ class _TabsMenuState extends State<TabsMenu> {
         index: _currentTab,  // 0, 1, 2
         children: [
           StatsScreen(),  // индекс 0
-          TasksScreen(),  // индекс 1
+          TaskListScreen(),  // индекс 1
           SettingsScreen(),  // индекс 2
         ],
       ),    
@@ -36,9 +37,12 @@ class _TabsMenuState extends State<TabsMenu> {
           });
         },
         currentIndex: _currentTab,
-        items: const <BottomNavigationBarItem> [
+        items: <BottomNavigationBarItem> [
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
+            icon: CircleAvatar(
+              backgroundImage: StateService.profile?.icon != null ? FileImage(File(StateService.profile?.icon ?? "")) : null,
+              child: StateService.profile?.icon == null ? const Icon(Icons.add_photo_alternate) : null,
+            ),
             label: 'Статистика',
           ),
           BottomNavigationBarItem(

@@ -1,48 +1,69 @@
 import 'package:life_game/data/db.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:uuid/uuid.dart';
 
 class TaskModel {
   static const tn = "tasks";
   static const cId = "_id";
-  static const cTitle = "title";
-  static const cDesc = "description";
-  static const cDate = "dtime";
-  static const cExp = "exp";
+  static const cTitle = "_title";
+  static const cDesc = "_description";
+  static const cDate = "_dtime";
+  static const cExp = "_exp";
 
   static const init = '''CREATE TABLE $tn (
-          $cId INTEGER PRIMARY KEY AUTOINCREMENT, 
+          $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cDesc TEXT, 
           $cExp INTEGER, 
           $cDate DATETIME
         )''';
 
-  int? id;
+  String id = "";
   String title = "";
-  String? description;
-  DateTime dateTime = DateTime(0,0,0,8);
+  String description = "";
+  DateTime? dateTime;
   int exp = 0;
 
-  TaskModel({this.title = "", this.description, required this.dateTime, this.exp = 0});
+  TaskModel({
+    required this.id, 
+    required this.title, 
+    required this.description, 
+    this.dateTime, 
+    required this.exp
+  });
+  factory TaskModel.create({
+    required String title,
+    String description = "",
+    DateTime? dateTime,
+    int exp = 0,
+  }) {
+    final guid = const Uuid().v4(); // Генерируем GUID
+    final dateKey = ((dateTime ?? DateTime.now) as DateTime).toIso8601String().substring(0, 10);
+    final id = '$dateKey|$guid'; // Составной ID
+    return TaskModel(
+      id: id,
+      title: title,
+      description: description,
+      dateTime: dateTime,
+      exp: exp
+    );
+  }
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
+      cId: id,
       cTitle: title,
-      cDesc: description ?? "",
-      cDate: dateTime.millisecondsSinceEpoch,
+      cDesc: description,
+      cDate: ((dateTime ?? DateTime.now) as DateTime).millisecondsSinceEpoch,
       cExp: exp
     };
-    if (id != null) {
-      map[cId] = id;
-    }
     return map;
   }
-
   TaskModel.fromMap(Map map) {
     id = map[cId];
     title = map[cTitle];
     description = map[cDesc];
-    dateTime = DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    dateTime = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
     exp = map[cExp];
   }
 }
@@ -51,8 +72,7 @@ class TaskModel {
 class TaskProvider {
   Database db = DB.db!;
   
-
-  Future<List<TaskModel>> getAllTasks() async {
+  Future<List<TaskModel>> getAll() async {
     List<Map<String, Object?>> maps = await db.query(TaskModel.tn,
         columns: [
           TaskModel.cId, 
@@ -70,7 +90,7 @@ class TaskProvider {
   }
 
   Future<TaskModel> insert(TaskModel tsk) async {
-    tsk.id = await db.insert(TaskModel.tn, tsk.toMap());
+    await db.insert(TaskModel.tn, tsk.toMap());
     return tsk;
   }
 
@@ -86,7 +106,7 @@ class TaskProvider {
     return res;
   }
 
-  Future<TaskModel?> getTask(int id) async {
+  Future<TaskModel?> get(String id) async {
     List<Map> maps = await db.query(TaskModel.tn,
         columns: [
           TaskModel.cId, 
@@ -103,7 +123,7 @@ class TaskProvider {
     return null;
   }
 
-  Future<int?> delete(int id) async {
+  Future<int?> delete(String id) async {
     return await db.delete(TaskModel.tn, where: '${TaskModel.cId} = ?', whereArgs: [id]);
   }
 

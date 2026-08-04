@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/services/tasks_controller.dart';
+import 'package:life_game/screens/tasks/create/create_task_vm.dart';
 
-class CreateTask extends StatefulWidget {
-  const CreateTask({super.key});
-
+class CreateTaskScreen extends StatefulWidget {
+  const CreateTaskScreen({super.key});
   @override
-  State<CreateTask> createState() => _CreateTaskState();
+  State<CreateTaskScreen> createState() => _CreateTaskScreenState();
 }
 
-class _CreateTaskState extends State<CreateTask> {
-  // ViewModel - команды, свойства
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+class _CreateTaskScreenState extends State<CreateTaskScreen> {
+
   final formKey = GlobalKey<FormState>();
   bool _saving = false;
 
   String _title = "";
-  String? _description;
+  String _description = "";
   DateTime _selectedDateTime = DateTime.now();
   int _exp = 0;
 
-  TasksController? _controller;
-  _CreateTaskState() {
-    _controller = TasksController();
+  CreateTaskVM? vm;
+  _CreateTaskScreenState() {
+    vm = CreateTaskVM();
   }
 
   Future<DateTime?> _selectDate() async {
@@ -66,14 +64,15 @@ class _CreateTaskState extends State<CreateTask> {
     if (form != null && form.validate()) {
       setState(() {
         form.save();
-        var record = TaskModel(title: _title, description: _description, dateTime: _selectedDateTime, exp: _exp);   
+        var record = TaskModel.create(title: _title, description: _description, dateTime: _selectedDateTime, exp: _exp);   
+
         try {
-          _controller!.addTask(record);
+          vm!.addTask(record);
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Сохранено')),
           );
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         } catch (e) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +90,7 @@ class _CreateTaskState extends State<CreateTask> {
 
   void _cancel() {
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, false);
   }
 
   @override
@@ -124,7 +123,7 @@ class _CreateTaskState extends State<CreateTask> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
-                  onSaved: (val) => _description = val,
+                  onSaved: (val) => _description = val ?? "",
                   decoration: InputDecoration(labelText: "Описание"),
                 ),
               ),

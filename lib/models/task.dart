@@ -1,51 +1,103 @@
 import 'package:life_game/data/db.dart';
+import 'package:life_game/models/task/task_difficulty.dart';
+import 'package:life_game/models/task/task_priority.dart';
+import 'package:life_game/models/task/task_status.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
 class TaskModel {
   static const tn = "tasks";
+  static const tnChild = "taskschild";
   static const cId = "_id";
+
   static const cTitle = "_title";
   static const cDesc = "_description";
-  static const cDate = "_dtime";
-  static const cExp = "_exp";
+
+  static const cDateStart = "_start";
+  static const cDateDeadline = "_deadline";
+  static const cDateEnd = "_end";
+
+  static const cStatus = "_status";
+  static const cPriority = "_priority";
+  static const cDifficulty = "_difficulty";
+
+  static const cParent = "_parent";
+  static const cChild = "_child";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cDesc TEXT, 
-          $cExp INTEGER, 
-          $cDate DATETIME
-        )''';
+          $cDateStart DATETIME,
+          $cDateDeadline DATETIME,
+          $cDateEnd DATETIME,
+          $cStatus INTEGER,
+          $cPriority INTEGER,
+          $cDifficulty INTEGER
+        );
+
+        CREATE TABLE $tnChild (
+          $cChild TEXT NOT NULL,
+          $cParent TEXT NOT NULL,
+          PRIMARY KEY ($cParent, $cChild)
+          FOREIGN KEY ($cChild) REFERENCES $tn($cId) ON DELETE CASCADE
+          FOREIGN KEY ($cParent) REFERENCES $tn($cId) ON DELETE CASCADE
+        );
+        ''';
 
   String id = "";
+
   String title = "";
   String description = "";
-  DateTime? dateTime;
-  int exp = 0;
+
+  DateTime? dateStart;
+  DateTime? dateDead;
+  DateTime? dateEnd;
+  
+  TaskStatus status = TaskStatus.wait;
+  TaskPriority priority = TaskPriority.medium;
+  TaskDifficulty difficulty = TaskDifficulty.medium;
+
+  // TaskModel? parent;
+
 
   TaskModel({
     required this.id, 
     required this.title, 
     required this.description, 
-    this.dateTime, 
-    required this.exp
+    this.dateStart, 
+    this.dateDead,
+    this.dateEnd,
+    required this.status,
+    required this.priority,
+    required this.difficulty,
+    // this.parent
   });
   factory TaskModel.create({
     required String title,
     String description = "",
-    DateTime? dateTime,
-    int exp = 0,
+    DateTime? dateStart,
+    DateTime? dateDead,
+    DateTime? dateEnd,
+    TaskStatus status = TaskStatus.wait,
+    TaskPriority priority = TaskPriority.medium,
+    TaskDifficulty difficulty = TaskDifficulty.medium,
+    // TaskModel? parent
   }) {
     final guid = const Uuid().v4(); // Генерируем GUID
-    final dateKey = ((dateTime ?? DateTime.now) as DateTime).toIso8601String().substring(0, 10);
+    final dateKey = (dateStart ?? DateTime.now()).toIso8601String().substring(0, 10);
     final id = '$dateKey|$guid'; // Составной ID
     return TaskModel(
       id: id,
       title: title,
       description: description,
-      dateTime: dateTime,
-      exp: exp
+      dateStart: dateStart,
+      dateDead: dateDead,
+      dateEnd: dateEnd,
+      status: status,
+      priority: priority,
+      difficulty: difficulty,
+      // parent: parent
     );
   }
 
@@ -54,17 +106,30 @@ class TaskModel {
       cId: id,
       cTitle: title,
       cDesc: description,
-      cDate: ((dateTime ?? DateTime.now) as DateTime).millisecondsSinceEpoch,
-      cExp: exp
+      cDateStart: dateStart == null ? DateTime.now().millisecondsSinceEpoch : dateStart!.microsecondsSinceEpoch,
+      cDateDeadline: dateDead == null ? DateTime.now().millisecondsSinceEpoch : dateDead!.microsecondsSinceEpoch,
+      cDateEnd: dateEnd == null ? DateTime.now().millisecondsSinceEpoch : dateEnd!.microsecondsSinceEpoch,
+      cStatus: status.index,
+      cPriority: priority.index,
+      cDifficulty: difficulty.index,
+      // cParent: parent?.id
     };
     return map;
   }
-  TaskModel.fromMap(Map map) {
+  TaskModel.fromMap(
+    Map map, 
+    TaskModel? parent
+    ) {
     id = map[cId];
     title = map[cTitle];
     description = map[cDesc];
-    dateTime = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
-    exp = map[cExp];
+    dateStart = map[cDateStart] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDateStart]);
+    dateStart = map[cDateStart] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDateStart]);
+    dateStart = map[cDateStart] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDateStart]);
+    description = map[cDesc];
+    description = map[cDesc];
+    description = map[cDesc];
+    // parent = parent;
   }
 }
 
@@ -73,18 +138,15 @@ class TaskProvider {
   Database db = DB.db!;
   
   Future<List<TaskModel>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(TaskModel.tn,
-        columns: [
-          TaskModel.cId, 
-          TaskModel.cTitle, 
-          TaskModel.cDesc, 
-          TaskModel.cDate, 
-          TaskModel.cExp
-          ]
-        );
+    List<Map<String, Object?>> maps = await db.query(TaskModel.tn);
     List<TaskModel> res = [];
     for (Map m in maps) {
-      res.add(TaskModel.fromMap(m));
+      TaskModel? parentTask;
+      // if (m[TaskModel.cParent] != null)
+      // {
+      //   parentTask = maps.where((task) => task[TaskModel.cId] == m[TaskModel.cParent]).first as TaskModel?;
+      // }
+      res.add(TaskModel.fromMap(m, parentTask));
     }
     return res;
   }
@@ -100,25 +162,20 @@ class TaskProvider {
       for (TaskModel m in models) {
         res.add(
           await txn.insert(TaskModel.tn, m.toMap()));
-      }
-      
+      }   
     });
     return res;
   }
 
   Future<TaskModel?> get(String id) async {
-    List<Map> maps = await db.query(TaskModel.tn,
-        columns: [
-          TaskModel.cId, 
-          TaskModel.cTitle, 
-          TaskModel.cDesc, 
-          TaskModel.cDate, 
-          TaskModel.cExp
-          ],
-        where: '${TaskModel.cId} = ?',
-        whereArgs: [id]);
+    List<Map> maps = await db.query(TaskModel.tn, where: '${TaskModel.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
-      return TaskModel.fromMap(maps.first as Map<String,Object?>);
+      TaskModel? parentTask;
+      // if (maps.first[TaskModel.cParent] != null)
+      // {
+      //   parentTask = await get(maps.first[TaskModel.cParent]);
+      // }
+      return TaskModel.fromMap(maps.first as Map<String,Object?>, parentTask);
     }
     return null;
   }

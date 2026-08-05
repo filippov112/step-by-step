@@ -83,7 +83,7 @@ class ExpModel {
       cExp: exp,
       cTime: time,
       cKarma: karma,
-      cDate: ((date ?? DateTime.now) as DateTime).millisecondsSinceEpoch
+      cDate: (date ?? DateTime.now()).millisecondsSinceEpoch
     };
     return map;
   }

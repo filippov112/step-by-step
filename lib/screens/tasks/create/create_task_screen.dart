@@ -17,7 +17,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   String _title = "";
   String _description = "";
   DateTime _selectedDateTime = DateTime.now();
-  int _exp = 0;
 
   CreateTaskVM? vm;
   _CreateTaskScreenState() {
@@ -64,7 +63,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     if (form != null && form.validate()) {
       setState(() {
         form.save();
-        var record = TaskModel.create(title: _title, description: _description, dateTime: _selectedDateTime, exp: _exp);   
+        var record = TaskModel.create(title: _title, description: _description, dateStart: _selectedDateTime);   
 
         try {
           vm!.addTask(record);
@@ -139,14 +138,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 )
               ),
 
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  keyboardType: TextInputType.numberWithOptions(),
-                  onSaved: (val) => _exp = int.tryParse(val ?? "0") ?? 0,
-                  decoration: InputDecoration(labelText: "Опыт"),
-                ),
-              ),
+              
 
             ],
           ),

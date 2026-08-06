@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:life_game/screens/profile/view/profile_screen.dart';
 import 'package:life_game/screens/settings_screen.dart';
-import 'package:life_game/screens/stats_screen.dart';
 import 'package:life_game/screens/tasks/list/task_list_screen.dart';
 import 'package:life_game/services/state_service.dart';
 
@@ -24,7 +23,7 @@ class _HomeState extends State<Home> {
       body: IndexedStack(
         index: _currentTab,  // 0, 1, 2
         children: [
-          StatsScreen(),  // индекс 0
+          ProfileScreen(character: StateService.profile!),  // индекс 0
           TaskListScreen(),  // индекс 1
           SettingsScreen(),  // индекс 2
         ],

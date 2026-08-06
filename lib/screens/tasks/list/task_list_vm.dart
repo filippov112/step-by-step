@@ -3,7 +3,7 @@ import 'package:life_game/models/task.dart';
 
 class TaskListVM extends ChangeNotifier {
   final ValueNotifier<List<TaskModel>> tasks = ValueNotifier([]);
-  late TaskProvider provider = TaskProvider();
+  late TaskRepository provider = TaskRepository();
 
   TaskListVM();
 
@@ -11,7 +11,15 @@ class TaskListVM extends ChangeNotifier {
     try {
       List<TaskModel> tskList = await provider.getAll();
       tasks.value = tskList;
-      // notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future update(TaskModel task) async {
+    try {
+      await provider.update(task);
+      await load();
     } catch (e) {
       print(e);
     }

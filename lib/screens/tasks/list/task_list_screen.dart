@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/create/create_task_screen.dart';
 import 'package:life_game/screens/tasks/list/widgets/task_tile.dart';
 import 'package:life_game/screens/tasks/list/task_list_vm.dart';
@@ -15,29 +16,34 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   // ViewModel - команды, свойства
 
-  TaskListVM controller = TaskListVM();
+  TaskListVM vm = TaskListVM();
 
   @override
   void initState() {
     super.initState();
-    controller.load();
+    vm.load();
   }
 
   Future _openFormCreate() async {
     bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTaskScreen()));
     if (added) {
-      controller.load();
+      vm.load();
     }
+  }
+
+  Future _completeTask(TaskModel task, bool? val) async {
+    task.done = val ?? false;
+    await vm.update(task);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body:ListenableBuilder(
-        listenable: controller.tasks,
+        listenable: vm.tasks,
         builder: (context, child) => ListView.builder(
-          itemCount: controller.tasks.value.length,
-          itemBuilder: (context, i) => TaskTile(task: controller.tasks.value[i],)
+          itemCount: vm.tasks.value.length,
+          itemBuilder: (context, i) => TaskTile(task: vm.tasks.value[i], completeTask: _completeTask,)
         )
       ),
       floatingActionButton: FloatingActionButton(

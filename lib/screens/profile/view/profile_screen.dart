@@ -181,14 +181,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Icon(Icons.cake, size: 16, color: Colors.white70),
                   const SizedBox(width: 6),
                   Text(
-                    '${widget.character.age} лет',
+                    widget.character.age,
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
                   )
                 ],
               ),
             ],
           ),
-        
       ],
     );
   }

@@ -78,7 +78,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
         await vm!.saveProfile(profile);
         StateService.initState();
         if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Home()));
+        await Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const Home()));
       } 
       catch (e) {
         if (!mounted) return;

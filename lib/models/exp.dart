@@ -25,7 +25,7 @@ class ExpModel {
           $cExp INTEGER,
           $cTime INTEGER,
           $cKarma INTEGER, 
-          $cDate DATE
+          $cDate INTEGER
         )''';
 
   String id = "";
@@ -83,7 +83,7 @@ class ExpModel {
       cExp: exp,
       cTime: time,
       cKarma: karma,
-      cDate: (date ?? DateTime.now()).millisecondsSinceEpoch
+      cDate: (date ?? DateTime.now()).millisecondsSinceEpoch ~/ 60000
     };
     return map;
   }
@@ -95,7 +95,7 @@ class ExpModel {
     exp = map[cExp];
     time = map[cTime];
     karma = map[cKarma];
-    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate] * 60000);
   }
 }
 
@@ -104,18 +104,7 @@ class ExpProvider {
   Database db = DB.db!;
   
   Future<List<ExpModel>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(ExpModel.tn,
-        columns: [
-          ExpModel.cId, 
-          ExpModel.cGroup, 
-          ExpModel.cProject,
-          ExpModel.cTask, 
-          ExpModel.cExp,
-          ExpModel.cTime,
-          ExpModel.cKarma,
-          ExpModel.cDate
-          ]
-        );
+    List<Map<String, Object?>> maps = await db.query(ExpModel.tn);
     List<ExpModel> res = [];
     for (Map m in maps) {
       res.add(ExpModel.fromMap(m));
@@ -135,25 +124,12 @@ class ExpProvider {
         res.add(
           await txn.insert(ExpModel.tn, m.toMap()));
       }
-      
     });
     return res;
   }
 
   Future<ExpModel?> get(String id) async {
-    List<Map> maps = await db.query(ExpModel.tn,
-        columns: [
-          ExpModel.cId, 
-          ExpModel.cGroup, 
-          ExpModel.cProject,
-          ExpModel.cTask, 
-          ExpModel.cExp,
-          ExpModel.cTime,
-          ExpModel.cKarma,
-          ExpModel.cDate
-          ],
-        where: '${ExpModel.cId} = ?',
-        whereArgs: [id]);
+    List<Map> maps = await db.query(ExpModel.tn, where: '${ExpModel.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
       return ExpModel.fromMap(maps.first as Map<String,Object?>);
     }

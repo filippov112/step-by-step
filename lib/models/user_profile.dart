@@ -25,7 +25,7 @@ class UserProfileModel {
           $cId INTEGER PRIMARY KEY AUTOINCREMENT, 
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
-          $cBirthDate DATETIME,
+          $cBirthDate INTEGER,
 
           $cMana INTEGER,
           $cMaxMana INTEGER,
@@ -78,7 +78,7 @@ class UserProfileModel {
     var map = <String, Object?>{
       cName: name,
       cIcon: icon ?? "",
-      cBirthDate: dateBirth.millisecondsSinceEpoch,
+      cBirthDate: dateBirth.millisecondsSinceEpoch ~/ 60000,
 
       cMana: mana,
       cMaxMana: maxMana,
@@ -100,7 +100,7 @@ class UserProfileModel {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon];
-    dateBirth = DateTime.fromMillisecondsSinceEpoch(map[cBirthDate]);
+    dateBirth = DateTime.fromMillisecondsSinceEpoch(map[cBirthDate] * 60000);
 
     mana = map[cMana];
     maxMana = map[cMaxMana];
@@ -112,7 +112,6 @@ class UserProfileModel {
     health = map[cHealth];
     endurance = map[cEndurance];
   }
-
 }
 
 

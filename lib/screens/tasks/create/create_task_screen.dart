@@ -63,7 +63,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     if (form != null && form.validate()) {
       setState(() {
         form.save();
-        var record = TaskModel.create(title: _title, description: _description, dateStart: _selectedDateTime);   
+        var record = TaskModel.create(title: _title, description: _description, datetime: _selectedDateTime);   
 
         try {
           vm!.addTask(record);

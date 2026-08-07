@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user_profile.dart';
+import 'package:life_game/models/user.dart';
 
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.character});
   
-  final UserProfileModel character;
+  final User character;
   // Тут входящие параметры виджета - final string title; Объявление полей всегда с final.
 
   @override
@@ -31,16 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // Шапка: аватар, имя, возраст
             _buildHeader(context),
             const SizedBox(height: 20),
-            // Мана
-            _buildStatBar(
-              label: 'Мана',
-              value: widget.character.mana.toDouble(),
-              maxValue: widget.character.maxMana.toDouble(),
-              icon: Icons.bolt,
-              color: Colors.blueAccent,
-              backgroundColor: Colors.blue.withValues(alpha: 0.2),
-            ),
-            const SizedBox(height: 16),
             // Опыт
             _buildStatBar(
               label: 'Опыт',
@@ -50,57 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Colors.amber,
               backgroundColor: Colors.amber.withValues(alpha: 0.2),
               showAsPercent: false, // показываем X / Y
-            ),
-
-            const SizedBox(height: 40),
-    
-            
-            // Статистика (6 параметров)
-            const Text(
-              '📊 СТАТИСТИКА',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildStatRow(
-              label: 'Восст. маны',
-              value: widget.character.manaRegeneration,
-              icon: Icons.timeline,
-              color: Colors.tealAccent,
-            ),
-            _buildStatRow(
-              label: 'Интеллект',
-              value: widget.character.intelligence,
-              icon: Icons.psychology,
-              color: Colors.purpleAccent,
-            ),
-            _buildStatRow(
-              label: 'Сила',
-              value: widget.character.strength,
-              icon: Icons.fitness_center,
-              color: Colors.redAccent,
-            ),
-            _buildStatRow(
-              label: 'Здоровье',
-              value: widget.character.health,
-              icon: Icons.favorite,
-              color: Colors.greenAccent,
-            ),
-            _buildStatRow(
-              label: 'Выносливость',
-              value: widget.character.endurance,
-              icon: Icons.directions_run,
-              color: Colors.orangeAccent,
-            ),
-            _buildStatRow(
-              label: 'Макс. мана',
-              value: widget.character.maxMana.toInt(),
-              icon: Icons.auto_awesome,
-              color: Colors.cyanAccent,
             ),
           ],
         ),
@@ -242,43 +181,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ---- Строка статистики (иконка + название + значение) ----
-  Widget _buildStatRow({
-    required String label,
-    required int value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(color: Colors.white60, fontSize: 14),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: color.withValues(alpha: 0.3)),
-            ),
-            child: Text(
-              value.toString(),
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -1,7 +1,13 @@
 import 'dart:io';
-import 'package:life_game/models/exp.dart';
+import 'package:life_game/models/achievement.dart';
+import 'package:life_game/models/reward.dart';
+import 'package:life_game/models/script.dart';
+import 'package:life_game/models/skill.dart';
+import 'package:life_game/models/skill_condition.dart';
+import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/models/user_profile.dart';
+import 'package:life_game/models/task_hierarchy.dart';
+import 'package:life_game/models/user.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -29,9 +35,19 @@ class DB {
       // When creating the db, create the table
       await db.execute('PRAGMA foreign_keys = ON;');
 
-      await db.execute(UserProfileModel.init);
-      await db.execute(TaskModel.init);
-      await db.execute(ExpModel.init);
+      await db.execute(User.init);
+      await db.execute(Task.init);
+      await db.execute(TaskHierarchy.init);
+      await db.execute(Skill.init);
+      await db.execute(Achievement.init);
+      await db.execute(Tag.init);
+      await db.execute(Script.init);
+      await db.execute(Reward.init);        // зависит от Task, Skill
+      await db.execute(ScriptTask.init);    // зависит от Script, Task
+      await db.execute(SkillCondition.init); // зависит от Skill
+      await db.execute(TagSkill.init);      // зависит от Tag, Skill
+      await db.execute(TagAchievement.init); // зависит от Tag, Achievement
+      await db.execute(TagTask.init);       // зависит от Tag, Task
     });
   }
 

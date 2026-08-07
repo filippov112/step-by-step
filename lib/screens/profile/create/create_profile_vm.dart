@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user_profile.dart';
+import 'package:life_game/models/user.dart';
 
 class CreateProfileVM extends ChangeNotifier {
-  late UserProfileProvider provider = UserProfileProvider();
+  late UserRepository provider = UserRepository();
 
   CreateProfileVM();
 
-  Future saveProfile(UserProfileModel newProfile) async {
+  Future saveProfile(User newProfile) async {
     await provider.insert(newProfile);
   }
 }

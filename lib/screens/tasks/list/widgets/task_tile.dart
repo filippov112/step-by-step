@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task/task_priority.dart';
-import 'package:life_game/models/task/task_difficulty.dart';
+import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/enums/task_difficulty.dart';
 
 class TaskTile extends StatelessWidget {
-  final TaskModel task;
+  final Task task;
   final VoidCallback? onTap;
-  final Function(TaskModel task, bool?) completeTask;
+  final Function(Task task, bool?) completeTask;
 
   const TaskTile({
     super.key,
@@ -112,21 +112,6 @@ class TaskTile extends StatelessWidget {
                           style: const TextStyle(fontSize: 13, color: Colors.grey),
                         ),
                         const SizedBox(width: 16),
-                      ],
-                      Icon(Icons.timer, size: 16, color: Colors.grey.shade600),
-                      const SizedBox(width: 4),
-                      Text(
-                        'План: ${task.durationPlan} мин',
-                        style: const TextStyle(fontSize: 13, color: Colors.grey),
-                      ),
-                      if (task.durationFact > 0) ...[
-                        const SizedBox(width: 12),
-                        Icon(Icons.check_circle_outline, size: 16, color: Colors.grey.shade600),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Факт: ${task.durationFact} мин',
-                          style: const TextStyle(fontSize: 13, color: Colors.grey),
-                        ),
                       ],
                     ],
                   ),

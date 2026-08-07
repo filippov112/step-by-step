@@ -31,7 +31,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     }
   }
 
-  Future _completeTask(TaskModel task, bool? val) async {
+  Future _completeTask(Task task, bool? val) async {
     task.done = val ?? false;
     await vm.update(task);
   }

@@ -6,7 +6,7 @@ class CreateTaskVM extends ChangeNotifier {
 
   CreateTaskVM();
 
-  Future addTask(TaskModel newTask) async {
+  Future addTask(Task newTask) async {
     await provider.insert(newTask);
   }
 }

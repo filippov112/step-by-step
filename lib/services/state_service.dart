@@ -1,9 +1,9 @@
-import 'package:life_game/models/user_profile.dart';
+import 'package:life_game/models/user.dart';
 
 class StateService {
-  static UserProfileModel? profile;
+  static User? profile;
 
-  static final UserProfileProvider _userProvider = UserProfileProvider();
+  static final UserRepository _userProvider = UserRepository();
   
   static Future initState() async {
     profile = await _userProvider.get(); 

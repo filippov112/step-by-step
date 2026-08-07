@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:life_game/models/user_profile.dart';
+import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/home.dart';
 import 'package:life_game/screens/profile/create/create_profile_vm.dart';
 import 'dart:io';
@@ -70,7 +70,7 @@ class _CreateProfileScreenState extends State<CreateProfileScreen> {
           finalAvatarPath = _savedAvatarPath;
         }
         
-        final profile = UserProfileModel(
+        final profile = User(
           name: _name,
           icon: finalAvatarPath,
           dateBirth: _dateBirth

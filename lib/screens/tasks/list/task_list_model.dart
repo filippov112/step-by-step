@@ -1,19 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:life_game/models/task.dart';
 
-class TaskListVM extends ChangeNotifier {
-  final ValueNotifier<List<Task>> tasks = ValueNotifier([]);
+class TaskListModel extends ChangeNotifier {
+  List<Task> tasks = [];
   late TaskRepository provider = TaskRepository();
-
-  TaskListVM();
 
   Future load() async {
     try {
       List<Task> tskList = await provider.getAll();
-      tasks.value = tskList;
+      tasks = tskList;
+      notifyListeners();
     } catch (e) {
       print(e);
     }
+  }
+
+  Future completeTask(Task task, bool? val) async {
+    task.done = val ?? false;
+    await update(task);
   }
 
   Future update(Task task) async {

@@ -1,56 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/create/create_task_screen.dart';
-import 'package:life_game/screens/tasks/list/widgets/task_tile.dart';
-import 'package:life_game/screens/tasks/list/task_list_vm.dart';
+import 'package:life_game/widgets/bottom_menu.dart';
+import 'package:provider/provider.dart';
+import '../create/task_create_screen.dart';
+import 'widgets/task_tile.dart';
+import 'task_list_model.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
-
-  // Тут входящие параметры виджета - final string title; Объявление полей всегда с final.
-
   @override
   State<TaskListScreen> createState() => _TaskListScreenState();
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
-  // ViewModel - команды, свойства
-
-  TaskListVM vm = TaskListVM();
-
-  @override
-  void initState() {
-    super.initState();
-    vm.load();
-  }
-
-  Future _openFormCreate() async {
-    bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => CreateTaskScreen()));
-    if (added) {
-      vm.load();
-    }
-  }
-
-  Future _completeTask(Task task, bool? val) async {
-    task.done = val ?? false;
-    await vm.update(task);
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:ListenableBuilder(
-        listenable: vm.tasks,
-        builder: (context, child) => ListView.builder(
-          itemCount: vm.tasks.value.length,
-          itemBuilder: (context, i) => TaskTile(task: vm.tasks.value[i], completeTask: _completeTask,)
-        )
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openFormCreate,
-        tooltip: "Добавить задачу",
-        child: const Icon(Icons.add),
-      ),
+    
+    var tasks = context.select<TaskListModel,List<Task>>((taskList) => taskList.tasks);
+    var completeTask = context.select<TaskListModel,Function(Task,bool?)>((taskList) => taskList.completeTask);
+
+    Future openFormCreate() async {
+      var vm = context.read<TaskListModel>();
+      bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskCreateScreen()));
+      if (added) {
+        vm.load();
+      }
+    }
+
+    return FutureBuilder(
+      future: context.read<TaskListModel>().load(), // Ваша асинхронная функция
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+       
+        return Scaffold(
+          body:ListView.builder(
+              itemCount: tasks.length,
+              itemBuilder: (context, i) => TaskTile(task: tasks[i], completeTask: completeTask,)
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: openFormCreate,
+            tooltip: "Добавить задачу",
+            child: const Icon(Icons.add),
+          ),
+          bottomNavigationBar: BottomMenu(),
+        );
+
+      },
     );
+        
+    
+     
   }
 }

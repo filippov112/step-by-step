@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
@@ -19,7 +17,6 @@ class TaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: task.done ? Colors.grey.shade100 : Colors.white,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0,14,14,14),
         child: Row(
@@ -49,7 +46,6 @@ class TaskTile extends StatelessWidget {
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             decoration: task.done ? TextDecoration.lineThrough : null,
-                            color: task.done ? Colors.grey : Colors.black87,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -62,10 +58,9 @@ class TaskTile extends StatelessWidget {
                             // height: 12,
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
-                              color: task.priority.color.withAlpha(120),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.priority_high, color: task.priority.color),
+                            child: Icon(Icons.priority_high),
                           ),
                           SizedBox(width: 5),
                           // Сложность
@@ -74,10 +69,9 @@ class TaskTile extends StatelessWidget {
                             // height: 12,
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
-                              color: task.difficulty.color.withAlpha(120),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.hardware, color: task.difficulty.color)
+                            child: Icon(Icons.hardware)
                           ),
                         ]
                       ),
@@ -91,7 +85,6 @@ class TaskTile extends StatelessWidget {
                     Text(
                       task.description,
                       style: TextStyle(
-                        color: task.done ? Colors.grey : Colors.black54,
                         fontSize: 14,
                         decoration: task.done ? TextDecoration.lineThrough : null,
                       ),
@@ -105,11 +98,11 @@ class TaskTile extends StatelessWidget {
                   Row(
                     children: [
                       if (task.datetime != null) ...[
-                        Icon(Icons.calendar_today, size: 16, color: Colors.grey.shade600),
+                        Icon(Icons.calendar_today, size: 16),
                         const SizedBox(width: 4),
                         Text(
                           '${task.datetime!.day}.${task.datetime!.month}.${task.datetime!.year} ${task.datetime!.hour.toString().padLeft(2, '0')}:${task.datetime!.minute.toString().padLeft(2, '0')}',
-                          style: const TextStyle(fontSize: 13, color: Colors.grey),
+                          style: const TextStyle(fontSize: 13),
                         ),
                         const SizedBox(width: 16),
                       ],

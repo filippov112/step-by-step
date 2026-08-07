@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/create/create_task_vm.dart';
+import 'task_create_model.dart';
 
-class CreateTaskScreen extends StatefulWidget {
-  const CreateTaskScreen({super.key});
+class TaskCreateScreen extends StatefulWidget {
+  const TaskCreateScreen({super.key});
   @override
-  State<CreateTaskScreen> createState() => _CreateTaskScreenState();
+  State<TaskCreateScreen> createState() => _TaskCreateScreenState();
 }
 
-class _CreateTaskScreenState extends State<CreateTaskScreen> {
+class _TaskCreateScreenState extends State<TaskCreateScreen> {
 
+  
   final formKey = GlobalKey<FormState>();
   bool _saving = false;
 
@@ -18,9 +19,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   String _description = "";
   DateTime _selectedDateTime = DateTime.now();
 
-  CreateTaskVM? vm;
-  _CreateTaskScreenState() {
-    vm = CreateTaskVM();
+  TaskCreateModel? vm;
+  _TaskCreateScreenState() {
+    vm = TaskCreateModel();
   }
 
   Future<DateTime?> _selectDate() async {
@@ -77,7 +78,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Ошибка: $e'),
-              backgroundColor: Colors.red,
             ),
           );
         } finally {
@@ -149,7 +149,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       appBar: AppBar(
         title: Text("Новая задача"), 
         leading: IconButton(onPressed: _cancel, icon: Icon(Icons.arrow_back)),
-        backgroundColor: Color.fromARGB(255, 0, 114, 28),
       ),
       body: Column(children: [
         form,

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:life_game/data/db.dart';
-import 'package:life_game/services/get_age_string.dart';
+import 'package:life_game/tools/get_age_string.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Пользователь

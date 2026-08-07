@@ -6,13 +6,8 @@ import '../create/task_create_screen.dart';
 import 'widgets/task_tile.dart';
 import 'task_list_model.dart';
 
-class TaskListScreen extends StatefulWidget {
+class TaskListScreen extends StatelessWidget {
   const TaskListScreen({super.key});
-  @override
-  State<TaskListScreen> createState() => _TaskListScreenState();
-}
-
-class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +16,10 @@ class _TaskListScreenState extends State<TaskListScreen> {
     var completeTask = context.select<TaskListModel,Function(Task,bool?)>((taskList) => taskList.completeTask);
 
     Future openFormCreate() async {
-      var vm = context.read<TaskListModel>();
+      var model = context.read<TaskListModel>();
       bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskCreateScreen()));
       if (added) {
-        vm.load();
+        model.load();
       }
     }
 

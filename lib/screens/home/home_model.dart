@@ -3,7 +3,7 @@ import 'package:life_game/models/user.dart';
 
 class HomeModel extends ChangeNotifier {
   User? user;
-  int currentTab = 0;
+  int currentTab = 1;
   bool get userIsExist => user != null;
 
   final UserRepository _userProvider = UserRepository();

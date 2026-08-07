@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:life_game/models/task.dart';
+import 'package:life_game/widgets/select_date_time.dart';
+import 'package:provider/provider.dart';
 import 'task_create_model.dart';
 
 class TaskCreateScreen extends StatefulWidget {
@@ -11,144 +12,90 @@ class TaskCreateScreen extends StatefulWidget {
 
 class _TaskCreateScreenState extends State<TaskCreateScreen> {
 
-  
-  final formKey = GlobalKey<FormState>();
-  bool _saving = false;
-
-  String _title = "";
-  String _description = "";
-  DateTime _selectedDateTime = DateTime.now();
-
-  TaskCreateModel? vm;
-  _TaskCreateScreenState() {
-    vm = TaskCreateModel();
-  }
-
-  Future<DateTime?> _selectDate() async {
-    // 1. Выбор даты
-    final date = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateTime,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (date == null || !mounted) return _selectedDateTime;
-
-    // 2. Выбор времени
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_selectedDateTime),
-    );
-    if (time == null) {
-      setState(() {
-        _selectedDateTime = DateTime(date.year, date.month, date.day);
-      });
-      return _selectedDateTime;
-    }
-
-    // 3. Объединение
-    setState(() {
-      _selectedDateTime = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
-    });
-    return _selectedDateTime;
-  }
-  
-  void _submit() {
-    final form = formKey.currentState;
-    if (form != null && form.validate()) {
-      setState(() {
-        form.save();
-        var record = Task.create(title: _title, description: _description, datetime: _selectedDateTime);   
-
-        try {
-          vm!.addTask(record);
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Сохранено')),
-          );
-          Navigator.pop(context, true);
-        } catch (e) {
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Ошибка: $e'),
-            ),
-          );
-        } finally {
-          if (mounted) setState(() => _saving = false);
-        }
-      });
+  Future _selectDateTime(BuildContext context) async {
+    var model = context.read<TaskCreateModel>();
+    var selectedDateTime = await selectDateTime(context, model.newTask.datetime ?? DateTime.now());
+    if (selectedDateTime != null) {
+      model.selectDateTime(selectedDateTime);
     }
   }
 
-  void _cancel() {
-    if (!mounted) return;
-    Navigator.pop(context, false);
+  Future _saveTask(BuildContext context) async {
+    var error = await context.read<TaskCreateModel>().saveTask();
+    if (error != null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ошибка: $error'),
+        ));
+      }
+      return;
+    }
+    if (context.mounted) Navigator.pop(context, true);
   }
+
 
   @override
   Widget build(BuildContext context) {
 
+    var formKey = context.select<TaskCreateModel,GlobalKey<FormState>>((model) => model.formKey);
+    var dateTime = context.select<TaskCreateModel,DateTime?>((model) => model.newTask.datetime);
+
     var savebtn = ElevatedButton (
-      onPressed: _saving ? null : _submit, // null → кнопка неактивна
-      child: _saving 
-        ? const SizedBox(
-            width: 20, 
-            height: 20, 
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-        : const Text('Добавить задачу'),
+      onPressed: () => _saveTask(context),
+      child: const Text('Добавить задачу'),
+    );
+
+    var titleWidget = TextFormField(
+      onSaved: (val) => context.read<TaskCreateModel>().selectTitle(val ?? ""),
+      decoration: InputDecoration(labelText: "Название"),
+    );
+
+    var descWidget = TextFormField(
+      onSaved: (val) => context.read<TaskCreateModel>().selectDesc(val ?? ""),
+      decoration: InputDecoration(labelText: "Описание"),
+    );
+
+    var dateTimeWidget = InkWell(
+      onTap: () => _selectDateTime(context),
+      child: InputDecorator(
+        decoration: InputDecoration(labelText: 'Дедлайн'),
+        child: dateTime == null ? Text('') : Text(DateFormat("dd.MM.yyyy HH:mm").format(dateTime)),
+      ),
     );
 
     var form = Form(
-          key: formKey,
-          child: Column(
-            children: <Widget>[
-              
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  onSaved: (val) => _title = val ?? "",
-                  decoration: InputDecoration(labelText: "Название"),
-                ),
-              ),
-              
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  onSaved: (val) => _description = val ?? "",
-                  decoration: InputDecoration(labelText: "Описание"),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: InkWell(
-                  onTap: _selectDate,
-                  child: InputDecorator(
-                    decoration: InputDecoration(labelText: 'Дедлайн'),
-                    child: Text(DateFormat("dd.MM.yyyy HH:mm").format(_selectedDateTime)),
-                  ),
-                )
-              ),
-
-              
-
-            ],
+      key: formKey,
+      child: Column(
+        children: <Widget>[
+          
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: titleWidget,
           ),
-        );
+          
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: descWidget,
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: dateTimeWidget,
+          ),
+
+        ],
+      ),
+    );
 
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Новая задача"), 
-        leading: IconButton(onPressed: _cancel, icon: Icon(Icons.arrow_back)),
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context, false), 
+          icon: Icon(Icons.arrow_back)
+        ),
       ),
       body: Column(children: [
         form,

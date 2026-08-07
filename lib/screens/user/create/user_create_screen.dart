@@ -2,21 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/screens/home/home_screen.dart';
 import 'package:life_game/widgets/select_date.dart';
 import 'package:provider/provider.dart';
 import 'user_create_model.dart';
 import 'dart:io';
 
 
-class UserCreateScreen extends StatefulWidget {
+class UserCreateScreen extends StatelessWidget {
   const UserCreateScreen({super.key});
-  @override
-  State<UserCreateScreen> createState() => _UserCreateScreenState();
-}
 
-class _UserCreateScreenState extends State<UserCreateScreen> {
-  
   Future selectImage(BuildContext context) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
@@ -26,7 +20,7 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
       imageQuality: 85,
     );
     
-    if (pickedFile != null) {
+    if (pickedFile != null && context.mounted) {
       await context.read<UserCreateModel>().selectAvatar(pickedFile.path);
     }
   }
@@ -34,18 +28,15 @@ class _UserCreateScreenState extends State<UserCreateScreen> {
 
   Future saveUser(BuildContext context) async {
     String? error = await context.read<UserCreateModel>().saveProfile();
-    
-    if (!mounted) return;
-
-    if (error != null) {
-       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Ошибка: $error'),
-          ),
-        );
+    if (error != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ошибка: $error'),
+        ),
+      );
     }
     else {
-      await context.read<HomeModel>().loadUser();
+      if (context.mounted) await context.read<HomeModel>().loadUser();
     }
   }
   

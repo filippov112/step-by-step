@@ -16,6 +16,11 @@ class BottomMenu extends StatelessWidget {
         
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.portrait_outlined),
+            activeIcon: Icon(Icons.portrait),
+            label: 'Профиль',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.checklist_outlined),
             activeIcon: Icon(Icons.checklist),
             label: 'Задачи',

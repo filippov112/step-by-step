@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
+import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:provider/provider.dart';
 import '../create/task_create_screen.dart';
@@ -28,6 +29,16 @@ class TaskListScreen extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
        
         return Scaffold(
+          drawer: AppDrawer(),
+          appBar: AppBar(
+            title: const Text('Задачи'),
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
           body:ListView.builder(
               itemCount: tasks.length,
               itemBuilder: (context, i) => TaskTile(task: tasks[i], completeTask: completeTask,)

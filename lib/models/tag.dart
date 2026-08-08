@@ -61,6 +61,20 @@ class Tag {
   }
 }
 
+extension TagCopyWith on Tag {
+  Tag copyWith({
+    String? id,
+    String? title,
+    TagType? type,
+  }) {
+    return Tag(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      type: type ?? this.type,
+    );
+  }
+}
+
 class TagRepository {
   Database db = DB.db!;
   

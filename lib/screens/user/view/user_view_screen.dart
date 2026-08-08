@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/view/user_view_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_progress_bar.dart';
 import 'package:provider/provider.dart';
@@ -30,7 +31,7 @@ class UserViewScreen extends StatelessWidget {
       ),
       child: CircleAvatar(
         radius: 40,
-        backgroundImage: FileImage(File(user?.icon ?? "")),
+        backgroundImage: FileImage(File(user.icon ?? "")),
         onBackgroundImageError: (_, _) => const Icon(Icons.person, size: 40),
         child: user.icon == null
             ? const Icon(Icons.person, size: 40)
@@ -95,6 +96,16 @@ class UserViewScreen extends StatelessWidget {
 
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
+          drawer: AppDrawer(),
+          appBar: AppBar(
+            title: const Text('Профиль'),
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
           body: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

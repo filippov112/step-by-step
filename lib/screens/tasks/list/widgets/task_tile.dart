@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/task_difficulty.dart';
+import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/task.dart';
 
 class TaskTile extends StatelessWidget {
@@ -59,8 +61,9 @@ class TaskTile extends StatelessWidget {
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
+                              color: task.priority.color.withAlpha(60)
                             ),
-                            child: Icon(Icons.priority_high),
+                            child: Icon(Icons.priority_high, color: task.priority.color),
                           ),
                           SizedBox(width: 5),
                           // Сложность
@@ -70,8 +73,9 @@ class TaskTile extends StatelessWidget {
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
+                              color: task.difficulty.color.withAlpha(60)
                             ),
-                            child: Icon(Icons.hardware)
+                            child: Icon(Icons.hardware, color: task.difficulty.color)
                           ),
                         ]
                       ),

@@ -1,0 +1,113 @@
+import 'package:flutter/material.dart';
+import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/enums/tag_type.dart';
+
+class TagEditDialog extends StatefulWidget {
+  final Tag? tag;
+  
+  const TagEditDialog({super.key, this.tag});
+
+  @override
+  State<TagEditDialog> createState() => _TagEditDialogState();
+}
+
+class _TagEditDialogState extends State<TagEditDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _titleController;
+  late TagType _selectedType;
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isEditing = widget.tag != null;
+    _titleController = TextEditingController(text: widget.tag?.title ?? '');
+    _selectedType = widget.tag?.type ?? TagType.common;
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    Widget tagTitle = TextFormField(
+      controller: _titleController,
+      decoration: const InputDecoration(
+        labelText: 'Название тега',
+        border: OutlineInputBorder(),
+        hintText: 'Введите название',
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Введите название тега';
+        }
+        return null;
+      },
+      autofocus: true,
+    );
+
+    Widget tagType = DropdownButtonFormField<TagType>(
+      initialValue: _selectedType,
+      decoration: const InputDecoration(
+        labelText: 'Тип тега',
+        border: OutlineInputBorder(),
+      ),
+      items: TagType.values.map((type) {
+        return DropdownMenuItem(
+          value: type,
+          child: Text(type.displayName),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() {
+            _selectedType = value;
+          });
+        }
+      },
+    );
+
+    return AlertDialog(
+      title: Text(_isEditing ? 'Редактирование тега' : 'Новый тег'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            tagTitle,
+            const SizedBox(height: 16),
+            tagType,
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Отмена'),
+        ),
+        ElevatedButton(
+          onPressed: _saveTag,
+          child: Text(_isEditing ? 'Сохранить' : 'Создать'),
+        ),
+      ],
+    );
+  }
+
+  void _saveTag() {
+    if (_formKey.currentState!.validate()) {
+      final tag = widget.tag?.copyWith(
+        title: _titleController.text.trim(),
+        type: _selectedType,
+      ) ?? Tag.create(
+        title: _titleController.text.trim(),
+        type: _selectedType,
+      );
+      Navigator.pop(context, tag);
+    }
+  }
+
+}

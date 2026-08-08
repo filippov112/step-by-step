@@ -20,10 +20,10 @@ class SoloLevelingTheme {
       scaffoldBackgroundColor: darkBlue,
       canvasColor: navyBlue,
       cardColor: navyBlue,
-      dividerColor: steelBlue.withOpacity(0.5),
+      dividerColor: steelBlue.withValues(alpha: 0.5),
       focusColor: glowBlue,
-      highlightColor: glowBlue.withOpacity(0.2),
-      splashColor: glowBlue.withOpacity(0.1),
+      highlightColor: glowBlue.withValues(alpha: 0.2),
+      splashColor: glowBlue.withValues(alpha: 0.1),
 
       // ---- Цветовая схема (ColorScheme) ----
       colorScheme: const ColorScheme.dark(
@@ -118,7 +118,7 @@ class SoloLevelingTheme {
           backgroundColor: glowBlue,
           foregroundColor: darkBlue,
           elevation: 4,
-          shadowColor: glowBlue.withOpacity(0.4),
+          shadowColor: glowBlue.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -174,9 +174,9 @@ class SoloLevelingTheme {
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: steelBlue.withOpacity(0.3)),
+          side: BorderSide(color: steelBlue.withValues(alpha: 0.3)),
         ),
-        shadowColor: glowBlue.withOpacity(0.1),
+        shadowColor: glowBlue.withValues(alpha: 0.1),
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       ),
 
@@ -200,21 +200,22 @@ class SoloLevelingTheme {
 
       // ---- Чекбоксы, Switch (в стиле системы) ----
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) return glowBlue;
+        fillColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return glowBlue;
           return steelBlue;
         }),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) return glowBlue;
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return glowBlue;
           return steelBlue;
         }),
-        trackColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected))
-            return glowBlue.withOpacity(0.4);
-          return steelBlue.withOpacity(0.3);
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return glowBlue.withValues(alpha: 0.4);
+          }
+          return steelBlue.withValues(alpha: 0.3);
         }),
       ),
 
@@ -223,7 +224,7 @@ class SoloLevelingTheme {
         activeTrackColor: glowBlue,
         inactiveTrackColor: steelBlue,
         thumbColor: glowBlue,
-        overlayColor: glowBlue.withOpacity(0.2),
+        overlayColor: glowBlue.withValues(alpha: 0.2),
         trackHeight: 4,
         thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
       ),

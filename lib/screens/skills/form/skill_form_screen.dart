@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
+import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
+import 'package:life_game/screens/skills/form/widgets/tags_selector_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -18,27 +19,18 @@ class SkillFormScreen extends StatefulWidget {
 class _SkillFormScreenState extends State<SkillFormScreen> {
   late SkillFormModel _viewModel;
 
-  // final TextEditingController _title_Controller = TextEditingController();
-  // final TextEditingController _level_Controller = TextEditingController();
-  // final TextEditingController _exp_Controller = TextEditingController();
-
-  // final TextEditingController _rang_ex_Controller = TextEditingController();
-  // final TextEditingController _rang_sss_Controller = TextEditingController();
-  // final TextEditingController _rang_ss_Controller = TextEditingController();
-  // final TextEditingController _rang_s_Controller = TextEditingController();
-  // final TextEditingController _rang_a_Controller = TextEditingController();
-  // final TextEditingController _rang_b_Controller = TextEditingController();
-  // final TextEditingController _rang_c_Controller = TextEditingController();
-  // final TextEditingController _rang_d_Controller = TextEditingController();
-  // final TextEditingController _rang_e_Controller = TextEditingController();
-  // final TextEditingController _rang_f_Controller = TextEditingController();
-
   @override
   void initState() {
     super.initState();
     _viewModel = SkillFormModel();
+    _initializeForm();
+  }
+
+  Future<void> _initializeForm() async {
     if (widget.skill != null) {
-      _viewModel.loadSkillForEditing(widget.skill!);
+      await _viewModel.loadSkillForEditing(widget.skill!);
+    } else {
+      await _viewModel.loadTags();
     }
   }
 
@@ -98,7 +90,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.arrow_upward),
                     ),
-                    value: viewModel.rang,
+                    initialValue: viewModel.rang,
                     items: SkillRang.values.map((rang) {
                       return DropdownMenuItem(
                         value: rang,
@@ -111,7 +103,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                  // Уровень
+                  // Уровень и опыт
                   Row(
                     children: [
                       Expanded(
@@ -149,7 +141,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                   ),
                   const SizedBox(height: 24),
                   
-                  // Описания для каждого ранга
+                  // Описания для рангов
                   const Text(
                     'Описания для рангов',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -158,6 +150,25 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                   ...SkillRang.values.map((rang) {
                     return _buildDescriptionField(viewModel, rang);
                   }),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Теги
+                  TagsSelectorWidget(
+                    allTags: viewModel.allTags,
+                    selectedTags: viewModel.selectedTags,
+                    onToggleTag: viewModel.toggleTag,
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Условия
+                  ConditionsListWidget(
+                    conditions: viewModel.conditions,
+                    onAdd: viewModel.addCondition,
+                    onEdit: viewModel.updateCondition,
+                    onDelete: viewModel.removeCondition,
+                  ),
                   
                   if (viewModel.error != null)
                     Padding(
@@ -175,15 +186,21 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () => Navigator.pop(context, false),
+                          onPressed: viewModel.isSaving ? null : () => Navigator.pop(context, false),
                           child: const Text('Отмена'),
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () => _saveSkill(context),
-                          child: Text(widget.skill == null ? 'Создать' : 'Сохранить'),
+                          onPressed: viewModel.isSaving ? null : () => _saveSkill(context),
+                          child: viewModel.isSaving
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Text(widget.skill == null ? 'Создать' : 'Сохранить'),
                         ),
                       ),
                     ],
@@ -222,24 +239,43 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.file(
-                  File(viewModel.iconPath),
-                  width: double.infinity,
-                  height: 120,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.broken_image, size: 48, color: Colors.grey.shade400),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Ошибка загрузки',
-                          style: TextStyle(color: Colors.grey.shade600),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.file(
+                      File(viewModel.iconPath),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.broken_image, size: 48, color: Colors.grey.shade400),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Ошибка загрузки',
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ],
-                    );
-                  },
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
       ),
@@ -254,12 +290,60 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
         decoration: InputDecoration(
           labelText: 'Описание для ранга ${rang.name}',
           border: const OutlineInputBorder(),
+          prefixIcon: Container(
+            width: 40,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: _getRangColor(rang).withValues(alpha: 0.2),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(4),
+                bottomLeft: Radius.circular(4),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                rang.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: _getRangColor(rang),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
         ),
         maxLines: 2,
         initialValue: description ?? '',
-        onChanged: (value) => viewModel.setDescription(rang, value),
+        onChanged: (val) {
+          viewModel.setDescription(rang, val);
+        },
       ),
     );
+  }
+
+  Color _getRangColor(SkillRang rang) {
+    switch (rang) {
+      case SkillRang.F:
+        return Colors.grey;
+      case SkillRang.E:
+        return Colors.blueGrey;
+      case SkillRang.D:
+        return Colors.blue;
+      case SkillRang.C:
+        return Colors.green;
+      case SkillRang.B:
+        return Colors.lime;
+      case SkillRang.A:
+        return Colors.orange;
+      case SkillRang.S:
+        return Colors.red;
+      case SkillRang.SS:
+        return Colors.purple;
+      case SkillRang.SSS:
+        return Colors.deepPurple;
+      case SkillRang.EX:
+        return Colors.amber;
+    }
   }
 
   Future<void> _pickIcon(SkillFormModel viewModel) async {
@@ -273,7 +357,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
 
   Future<void> _saveSkill(BuildContext context) async {
     final success = await _viewModel.saveSkill();
-    if (!mounted) return;
+    if (!context.mounted) return;
     
     if (success) {
       Navigator.pop(context, true);
@@ -301,7 +385,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context, true); // Возвращаем true для обновления списка
+              Navigator.pop(context, true);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Удалить'),

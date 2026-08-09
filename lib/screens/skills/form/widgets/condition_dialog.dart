@@ -1,0 +1,192 @@
+// lib/screens/skills/widgets/conditions_list_widget.dart
+import 'package:flutter/material.dart';
+import 'package:life_game/models/skill_condition.dart';
+import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:life_game/screens/skills/form/widgets/skill_condition_dialog.dart';
+
+class ConditionsListWidget extends StatelessWidget {
+  final List<SkillCondition> conditions;
+  final Function(SkillCondition) onAdd;
+  final Function(int, SkillCondition) onEdit;
+  final Function(int) onDelete;
+  
+  const ConditionsListWidget({
+    super.key,
+    required this.conditions,
+    required this.onAdd,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Условия прокачки',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => _showAddConditionDialog(context),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Добавить'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (conditions.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: const Center(
+              child: Text(
+                'Нет добавленных условий',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: conditions.length,
+            itemBuilder: (context, index) {
+              final condition = conditions[index];
+              return _buildConditionTile(context, condition, index);
+            },
+          ),
+      ],
+    );
+  }
+
+  Widget _buildConditionTile(BuildContext context, SkillCondition condition, int index) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: _getRangColor(condition.rang).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(
+              condition.rang.name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: _getRangColor(condition.rang),
+              ),
+            ),
+          ),
+        ),
+        title: Text(condition.description.isNotEmpty ? condition.description : 'Без описания'),
+        subtitle: condition.date != null
+            ? Text('Дата: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}')
+            : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+              onPressed: () => _showEditConditionDialog(context, index, condition),
+              tooltip: 'Редактировать',
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+              onPressed: () => _confirmDelete(context, index),
+              tooltip: 'Удалить',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getRangColor(SkillRang rang) {
+    switch (rang) {
+      case SkillRang.F:
+        return Colors.grey;
+      case SkillRang.E:
+        return Colors.blueGrey;
+      case SkillRang.D:
+        return Colors.blue;
+      case SkillRang.C:
+        return Colors.green;
+      case SkillRang.B:
+        return Colors.lime;
+      case SkillRang.A:
+        return Colors.orange;
+      case SkillRang.S:
+        return Colors.red;
+      case SkillRang.SS:
+        return Colors.purple;
+      case SkillRang.SSS:
+        return Colors.deepPurple;
+      case SkillRang.EX:
+        return Colors.amber;
+    }
+  }
+
+  void _showAddConditionDialog(BuildContext context) async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => const ConditionDialog(),
+    );
+    
+    if (result != null && result['condition'] != null) {
+      onAdd(result['condition']);
+    }
+  }
+
+  void _showEditConditionDialog(BuildContext context, int index, SkillCondition condition) async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => ConditionDialog(
+        existingCondition: condition,
+        editIndex: index,
+      ),
+    );
+    
+    if (result != null && result['condition'] != null) {
+      final editIndex = result['editIndex'] as int;
+      onEdit(editIndex, result['condition']);
+    }
+  }
+
+  void _confirmDelete(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Удаление условия'),
+        content: const Text('Вы уверены, что хотите удалить это условие?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onDelete(index);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+  }
+}

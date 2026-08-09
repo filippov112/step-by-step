@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
 
-class TaskCreateModel extends ChangeNotifier {
+class TaskFormModel extends ChangeNotifier {
   late TaskRepository provider = TaskRepository();
 
-  TaskCreateModel();
+  TaskFormModel();
 
   final formKey = GlobalKey<FormState>();
   final newTask = Task.create(title: "Новая задача");

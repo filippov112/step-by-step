@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/widgets/select_date.dart';
 import 'package:provider/provider.dart';
-import 'user_create_model.dart';
+import 'user_form_model.dart';
 import 'dart:io';
 
 
-class UserCreateScreen extends StatelessWidget {
-  const UserCreateScreen({super.key});
+class UserFormScreen extends StatelessWidget {
+  const UserFormScreen({super.key});
 
   Future selectImage(BuildContext context) async {
     final picker = ImagePicker();
@@ -21,13 +21,13 @@ class UserCreateScreen extends StatelessWidget {
     );
     
     if (pickedFile != null && context.mounted) {
-      await context.read<UserCreateModel>().selectAvatar(pickedFile.path);
+      await context.read<UserFormModel>().selectAvatar(pickedFile.path);
     }
   }
   
 
   Future saveUser(BuildContext context) async {
-    String? error = await context.read<UserCreateModel>().saveProfile();
+    String? error = await context.read<UserFormModel>().saveProfile();
     if (error != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -42,7 +42,7 @@ class UserCreateScreen extends StatelessWidget {
   
 
   Future _selectDateBirth(BuildContext context) async {
-    var model = context.read<UserCreateModel>();
+    var model = context.read<UserFormModel>();
     var selectedDate = await selectDateBirth(context, model.newUser.dateBirth);
     model.selectDateBirth(selectedDate);
   }
@@ -50,9 +50,9 @@ class UserCreateScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var formKey = context.select<UserCreateModel,GlobalKey<FormState>>((model) => model.formKey);
-    var iconPath = context.select<UserCreateModel,String?>((model) => model.newUser.icon);
-    var dateBirth = context.select<UserCreateModel,DateTime>((model) => model.newUser.dateBirth);
+    var formKey = context.select<UserFormModel,GlobalKey<FormState>>((model) => model.formKey);
+    var iconPath = context.select<UserFormModel,String?>((model) => model.newUser.icon);
+    var dateBirth = context.select<UserFormModel,DateTime>((model) => model.newUser.dateBirth);
  
     var avatarWidget = GestureDetector(
       onTap: () => selectImage(context),
@@ -64,7 +64,7 @@ class UserCreateScreen extends StatelessWidget {
     );
 
     var nameWidget = TextFormField(
-      onSaved: (val) => context.read<UserCreateModel>().selectName(val ?? ""),
+      onSaved: (val) => context.read<UserFormModel>().selectName(val ?? ""),
       decoration: InputDecoration(labelText: "Имя"),
       validator: (value) {
         if (value == null || value.isEmpty) return 'Обязательное поле';

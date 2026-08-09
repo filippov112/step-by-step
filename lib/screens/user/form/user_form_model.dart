@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/services/file_storage_service.dart';
 
-class UserCreateModel extends ChangeNotifier {
+class UserFormModel extends ChangeNotifier {
   late UserRepository provider = UserRepository();
   final fileStorage = FileStorageService();
-  UserCreateModel();
+  UserFormModel();
 
   final formKey = GlobalKey<FormState>();
   final User newUser = User(dateBirth: DateTime(2000));
@@ -15,7 +15,7 @@ class UserCreateModel extends ChangeNotifier {
   Future selectAvatar(String selectedImagePath) async {
     var file = File(selectedImagePath);
     if (newUser.icon != null) {
-      await fileStorage.deleteOldAvatar(newUser.icon);
+      await fileStorage.deleteOldFile(newUser.icon);
     }
     newUser.icon = await fileStorage.saveAvatar(file);
     notifyListeners();

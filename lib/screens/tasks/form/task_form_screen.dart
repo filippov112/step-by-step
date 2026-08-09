@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/widgets/select_date_time.dart';
 import 'package:provider/provider.dart';
-import 'task_create_model.dart';
+import 'task_form_model.dart';
 
-class TaskCreateScreen extends StatefulWidget {
-  const TaskCreateScreen({super.key});
+class TaskFormScreen extends StatefulWidget {
+  const TaskFormScreen({super.key});
   @override
-  State<TaskCreateScreen> createState() => _TaskCreateScreenState();
+  State<TaskFormScreen> createState() => _TaskFormScreenState();
 }
 
-class _TaskCreateScreenState extends State<TaskCreateScreen> {
+class _TaskFormScreenState extends State<TaskFormScreen> {
 
   Future _selectDateTime(BuildContext context) async {
-    var model = context.read<TaskCreateModel>();
+    var model = context.read<TaskFormModel>();
     var selectedDateTime = await selectDateTime(context, model.newTask.datetime ?? DateTime.now());
     if (selectedDateTime != null) {
       model.selectDateTime(selectedDateTime);
@@ -21,7 +21,7 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   }
 
   Future _saveTask(BuildContext context) async {
-    var error = await context.read<TaskCreateModel>().saveTask();
+    var error = await context.read<TaskFormModel>().saveTask();
     if (error != null) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -38,8 +38,8 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
   @override
   Widget build(BuildContext context) {
 
-    var formKey = context.select<TaskCreateModel,GlobalKey<FormState>>((model) => model.formKey);
-    var dateTime = context.select<TaskCreateModel,DateTime?>((model) => model.newTask.datetime);
+    var formKey = context.select<TaskFormModel,GlobalKey<FormState>>((model) => model.formKey);
+    var dateTime = context.select<TaskFormModel,DateTime?>((model) => model.newTask.datetime);
 
     var savebtn = ElevatedButton (
       onPressed: () => _saveTask(context),
@@ -47,12 +47,12 @@ class _TaskCreateScreenState extends State<TaskCreateScreen> {
     );
 
     var titleWidget = TextFormField(
-      onSaved: (val) => context.read<TaskCreateModel>().selectTitle(val ?? ""),
+      onSaved: (val) => context.read<TaskFormModel>().selectTitle(val ?? ""),
       decoration: InputDecoration(labelText: "Название"),
     );
 
     var descWidget = TextFormField(
-      onSaved: (val) => context.read<TaskCreateModel>().selectDesc(val ?? ""),
+      onSaved: (val) => context.read<TaskFormModel>().selectDesc(val ?? ""),
       decoration: InputDecoration(labelText: "Описание"),
     );
 

@@ -4,9 +4,9 @@ import 'package:life_game/screens/achievements/achievement_list_screen.dart';
 import 'package:life_game/screens/analysis/analysis_screen.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/skills/list/skill_list_screen.dart';
-import 'package:life_game/screens/user/create/user_create_screen.dart';
+import 'package:life_game/screens/user/form/user_form_screen.dart';
 import 'package:life_game/screens/tasks/list/task_list_screen.dart';
-import 'package:life_game/screens/user/view/user_view_screen.dart';
+import 'package:life_game/screens/user/detail/user_detail_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
     var tabs = IndexedStack(
         index: tabId,
         children: [
-          UserViewScreen(),
+          UserDetailScreen(),
           TaskListScreen(),
           SkillListScreen(),
           AchievementListScreen(),
@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
     return FutureBuilder(
       future: context.read<HomeModel>().loadUser(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return user == null ? UserCreateScreen() : tabs;
+        return user == null ? UserFormScreen() : tabs;
       }
     );
   }

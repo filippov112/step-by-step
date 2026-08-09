@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class TaskViewModel extends ChangeNotifier {
+class TaskDetailModel extends ChangeNotifier {
   // late UserRepository provider = UserRepository();
 
-  TaskViewModel();
+  TaskDetailModel();
 
   // Future saveProfile(User newProfile) async {
   //   await provider.insert(newProfile);

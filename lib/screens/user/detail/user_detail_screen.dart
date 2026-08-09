@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
-import 'package:life_game/screens/user/view/user_view_model.dart';
+import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
@@ -9,13 +9,13 @@ import 'package:life_game/widgets/custom_progress_bar.dart';
 import 'package:provider/provider.dart';
 
 
-class UserViewScreen extends StatelessWidget {
-  const UserViewScreen({super.key});
+class UserDetailScreen extends StatelessWidget {
+  const UserDetailScreen({super.key});
   
   @override
   Widget build(BuildContext context) {
 
-    User user = context.select<UserViewModel,User?>((model) => model.user) ?? User(dateBirth: DateTime(2000));
+    User user = context.select<UserDetailModel,User?>((model) => model.user) ?? User(dateBirth: DateTime(2000));
 
     var avaterWidget = Container(
       decoration: BoxDecoration(
@@ -92,7 +92,7 @@ class UserViewScreen extends StatelessWidget {
     );
 
     return FutureBuilder(
-      future: context.read<UserViewModel>().loadUser(),
+      future: context.read<UserDetailModel>().loadUser(),
 
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(

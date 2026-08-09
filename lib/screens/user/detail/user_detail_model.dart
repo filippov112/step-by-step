@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
 
-class UserViewModel extends ChangeNotifier {
+class UserDetailModel extends ChangeNotifier {
   final UserRepository userRepository = UserRepository();
 
   User? user;

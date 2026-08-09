@@ -5,15 +5,15 @@ import 'package:life_game/screens/analysis/analysis_model.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/home/home_screen.dart';
 import 'package:life_game/screens/settings/setting_list_model.dart';
-import 'package:life_game/screens/skills/create/skill_create_model.dart';
+import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
-import 'package:life_game/screens/skills/view/skill_view_model.dart';
+import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/screens/tasks/view/task_view_model.dart';
-import 'package:life_game/screens/user/create/user_create_model.dart';
-import 'package:life_game/screens/tasks/create/task_create_model.dart';
+import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
+import 'package:life_game/screens/user/form/user_form_model.dart';
+import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/screens/user/view/user_view_model.dart';
+import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -30,19 +30,19 @@ Future main() async {
 
         // Tasks
         ChangeNotifierProvider<TaskListModel>(create: (_) { return TaskListModel(); }),
-        ChangeNotifierProvider<TaskCreateModel>(create: (_) { return TaskCreateModel(); }),
-        ChangeNotifierProvider<TaskViewModel>(create: (_) { return TaskViewModel(); }),
+        ChangeNotifierProvider<TaskFormModel>(create: (_) { return TaskFormModel(); }),
+        ChangeNotifierProvider<TaskDetailModel>(create: (_) { return TaskDetailModel(); }),
         
         // User
-        ChangeNotifierProvider<UserCreateModel>(create: (_) { return UserCreateModel(); }),
-        ChangeNotifierProvider<UserViewModel>(create: (_) { return UserViewModel(); }),
+        ChangeNotifierProvider<UserFormModel>(create: (_) { return UserFormModel(); }),
+        ChangeNotifierProvider<UserDetailModel>(create: (_) { return UserDetailModel(); }),
         
         // Tags
         ChangeNotifierProvider<TagListModel>(create: (_) { return TagListModel(); }),
 
         // Skills
-        ChangeNotifierProvider<SkillCreateModel>(create: (_) { return SkillCreateModel(); }),
-        ChangeNotifierProvider<SkillViewModel>(create: (_) { return SkillViewModel(); }),
+        ChangeNotifierProvider<SkillFormModel>(create: (_) { return SkillFormModel(); }),
+        ChangeNotifierProvider<SkillDetailModel>(create: (_) { return SkillDetailModel(); }),
         ChangeNotifierProvider<SkillListModel>(create: (_) { return SkillListModel(); }),
         
         // Settings

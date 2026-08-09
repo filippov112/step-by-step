@@ -3,7 +3,7 @@ import 'package:life_game/models/task.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:provider/provider.dart';
-import '../create/task_create_screen.dart';
+import '../form/task_form_screen.dart';
 import 'widgets/task_tile.dart';
 import 'task_list_model.dart';
 
@@ -18,7 +18,7 @@ class TaskListScreen extends StatelessWidget {
 
     Future openFormCreate() async {
       var model = context.read<TaskListModel>();
-      bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskCreateScreen()));
+      bool added = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskFormScreen()));
       if (added) {
         model.load();
       }

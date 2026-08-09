@@ -1,15 +1,16 @@
 // lib/screens/skills/skill_list_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/enums/skill_rang.dart';
 
 class SkillListScreen extends StatefulWidget {
   const SkillListScreen({super.key});
@@ -21,7 +22,7 @@ class SkillListScreen extends StatefulWidget {
 class _SkillListScreenState extends State<SkillListScreen> {
   late SkillListModel _viewModel;
   String _searchQuery = '';
-  Tag? _selectedTag;
+  List<Tag> _selectedFilters = [];
 
   @override
   void initState() {
@@ -45,6 +46,40 @@ class _SkillListScreenState extends State<SkillListScreen> {
         appBar: AppBar(
           title: const Text('Навыки'),
           actions: [
+            // Кнопка фильтрации по тегам
+            Consumer<SkillListModel>(
+              builder: (context, viewModel, child) {
+                return Stack(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      onPressed: () => _showTagsFilterModal(context),
+                      tooltip: 'Фильтр по тегам',
+                    ),
+                    if (_selectedFilters.isNotEmpty)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            _selectedFilters.length.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () => _navigateToForm(context),
@@ -64,6 +99,16 @@ class _SkillListScreenState extends State<SkillListScreen> {
                 decoration: InputDecoration(
                   hintText: 'Поиск навыков...',
                   prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            setState(() {
+                              _searchQuery = '';
+                            });
+                          },
+                        )
+                      : null,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -84,44 +129,52 @@ class _SkillListScreenState extends State<SkillListScreen> {
         drawer: const AppDrawer(currentRoute: '/skills'),
         body: Column(
           children: [
-            // Фильтр по тегам
-            Consumer<SkillListModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.allTags.isEmpty) return const SizedBox();
-                
-                return Container(
-                  height: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: viewModel.allTags.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return _buildFilterChip(
-                          label: 'Все',
-                          isSelected: _selectedTag == null,
-                          onSelected: () {
-                            setState(() {
-                              _selectedTag = null;
-                            });
-                          },
-                        );
-                      }
-                      final tag = viewModel.allTags[index - 1];
-                      return _buildFilterChip(
-                        label: tag.title,
-                        isSelected: _selectedTag == tag,
-                        onSelected: () {
-                          setState(() {
-                            _selectedTag = _selectedTag == tag ? null : tag;
-                          });
-                        },
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+            // Отображение выбранных фильтров
+            if (_selectedFilters.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                height: 40,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _selectedFilters.length,
+                  itemBuilder: (context, index) {
+                    final tag = _selectedFilters[index];
+                    return Container(
+                      margin: const EdgeInsets.only(right: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tag.title,
+                            style: TextStyle(
+                              color: Colors.blue.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedFilters.remove(tag);
+                              });
+                            },
+                            child: Icon(
+                              Icons.close,
+                              size: 14,
+                              color: Colors.blue.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
             
             // Список навыков
             Expanded(
@@ -164,9 +217,10 @@ class _SkillListScreenState extends State<SkillListScreen> {
                   }
                   
                   // Фильтр по тегам
-                  if (_selectedTag != null) {
+                  if (_selectedFilters.isNotEmpty) {
                     filteredSkills = filteredSkills.where((skill) {
-                      return viewModel.getSkillTags(skill.id).contains(_selectedTag);
+                      final skillTags = viewModel.getSkillTags(skill.id);
+                      return _selectedFilters.every((filter) => skillTags.contains(filter));
                     }).toList();
                   }
                   
@@ -183,12 +237,12 @@ class _SkillListScreenState extends State<SkillListScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _searchQuery.isNotEmpty || _selectedTag != null
+                            _searchQuery.isNotEmpty || _selectedFilters.isNotEmpty
                                 ? 'Попробуйте изменить параметры поиска'
                                 : 'Создайте свой первый навык',
                             style: TextStyle(color: Colors.grey.shade600),
                           ),
-                          if (_searchQuery.isEmpty && _selectedTag == null) ...[
+                          if (_searchQuery.isEmpty && _selectedFilters.isEmpty) ...[
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
                               onPressed: () => _navigateToForm(context),
@@ -310,22 +364,18 @@ class _SkillListScreenState extends State<SkillListScreen> {
     );
   }
 
-  Widget _buildFilterChip({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onSelected,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: FilterChip(
-        label: Text(label),
-        selected: isSelected,
-        onSelected: (_) => onSelected(),
-        backgroundColor: Colors.grey.shade200,
-        selectedColor: Colors.blue.shade100,
-        showCheckmark: false,
-      ),
+  Future<void> _showTagsFilterModal(BuildContext context) async {
+    final result = await showTagsModal(
+      context,
+      allTags: _viewModel.allTags,
+      selectedTags: _selectedFilters,
     );
+    
+    if (result != null) {
+      setState(() {
+        _selectedFilters = result;
+      });
+    }
   }
 
   Widget _buildSkillIcon(String iconPath) {

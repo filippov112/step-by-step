@@ -1,9 +1,10 @@
+// lib/screens/skills/skill_form_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
-import 'package:life_game/screens/skills/form/widgets/tags_selector_widget.dart';
+import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -153,12 +154,8 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                   
                   const SizedBox(height: 24),
                   
-                  // Теги
-                  TagsSelectorWidget(
-                    allTags: viewModel.allTags,
-                    selectedTags: viewModel.selectedTags,
-                    onToggleTag: viewModel.toggleTag,
-                  ),
+                  // Теги с кнопкой выбора
+                  _buildTagsSelector(viewModel),
                   
                   const SizedBox(height: 24),
                   
@@ -214,6 +211,131 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
     );
   }
 
+  Widget _buildTagsSelector(SkillFormModel viewModel) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Теги',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => _showTagsModal(context),
+              icon: const Icon(Icons.edit, size: 18),
+              label: Text(
+                viewModel.selectedTags.isEmpty ? 'Выбрать теги' : 'Изменить теги',
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (viewModel.selectedTags.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: const Center(
+              child: Text(
+                'Теги не выбраны',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          )
+        else
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: viewModel.selectedTags.map((tag) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.blue.shade300),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      tag.title,
+                      style: TextStyle(
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: () => viewModel.toggleTag(tag),
+                      child: Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Colors.blue.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        if (viewModel.selectedTags.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, size: 16, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Выбрано тегов: ${viewModel.selectedTags.length}',
+                    style: TextStyle(
+                      color: Colors.blue.shade700,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _showTagsModal(BuildContext context) async {
+    final result = await showTagsModal(
+      context,
+      allTags: _viewModel.allTags,
+      selectedTags: _viewModel.selectedTags,
+    );
+    
+    if (result != null) {
+      // Очищаем текущие теги
+      for (var tag in _viewModel.selectedTags.toList()) {
+        _viewModel.toggleTag(tag);
+      }
+      // Добавляем новые теги
+      for (var tag in result) {
+        _viewModel.toggleTag(tag);
+      }
+    }
+  }
+
   Widget _buildIconPicker(SkillFormModel viewModel) {
     return GestureDetector(
       onTap: () => _pickIcon(viewModel),
@@ -265,7 +387,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.6),
+                          color: Colors.black.withOpacity(0.6),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
@@ -294,7 +416,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
             width: 40,
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
-              color: _getRangColor(rang).withValues(alpha: 0.2),
+              color: _getRangColor(rang).withOpacity(0.2),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(4),
                 bottomLeft: Radius.circular(4),
@@ -357,7 +479,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
 
   Future<void> _saveSkill(BuildContext context) async {
     final success = await _viewModel.saveSkill();
-    if (!context.mounted) return;
+    if (!mounted) return;
     
     if (success) {
       Navigator.pop(context, true);

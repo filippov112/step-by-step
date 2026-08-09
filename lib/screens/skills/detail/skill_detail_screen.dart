@@ -1,13 +1,13 @@
+// lib/screens/skills/skill_detail_screen.dart
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
 class SkillDetailScreen extends StatefulWidget {
-
   final String skillId;
   
   const SkillDetailScreen({super.key, required this.skillId});
@@ -131,6 +131,10 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   _buildProgressCard(viewModel),
                   const SizedBox(height: 24),
                   
+                  // Кнопка повышения ранга
+                  if (viewModel.canUpgradeRank())
+                    _buildUpgradeButton(viewModel),
+                  
                   // Описания для рангов
                   const Text(
                     'Описания',
@@ -148,51 +152,11 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                     ),
                     const SizedBox(height: 8),
                     ...viewModel.conditions.map((condition) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: ListTile(
-                          leading: Icon(
-                            _getConditionIcon(condition.rang),
-                            color: _getRangColor(condition.rang),
-                          ),
-                          title: Text('Ранг ${condition.rang.name}'),
-                          subtitle: condition.description.isNotEmpty
-                              ? Text(condition.description)
-                              : null,
-                          trailing: Text(
-                            condition.date != null
-                                ? '${condition.date!.day}.${condition.date!.month}.${condition.date!.year}'
-                                : '',
-                          ),
-                        ),
-                      );
+                      return _buildConditionTile(viewModel, condition);
                     }),
                   ],
                   
-                  // Кнопки действий
                   const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _navigateToEdit(context),
-                          icon: const Icon(Icons.edit),
-                          label: const Text('Редактировать'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _showAddConditionDialog(context),
-                          icon: const Icon(Icons.add),
-                          label: const Text('Добавить условие'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             );
@@ -307,7 +271,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             LinearProgressIndicator(
               value: progress,
               backgroundColor: Colors.grey.shade200,
-              color: Colors.green,
+              color: progress >= 1.0 ? Colors.green : Colors.blue,
               minHeight: 8,
             ),
           ],
@@ -316,10 +280,29 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     );
   }
 
-  bool _checkDescriptionTile(SkillDetailModel viewModel, SkillRang rang) {
-    final description = viewModel.getDescriptionForRang(rang);
-
-    return description != null && description.isNotEmpty;
+  Widget _buildUpgradeButton(SkillDetailModel viewModel) {
+    final nextRang = viewModel.getNextRangForUpgrade();
+    
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ElevatedButton.icon(
+        onPressed: () => _confirmUpgrade(context, viewModel),
+        icon: const Icon(Icons.arrow_upward),
+        label: Text(
+          'Повысить ранг до ${nextRang?.name ?? ''}',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.amber,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildDescriptionTile(SkillDetailModel viewModel, SkillRang rang) {
@@ -339,6 +322,60 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       ),
     );
   }
+
+  Widget _buildConditionTile(SkillDetailModel viewModel, SkillCondition condition) {
+    final isCompleted = viewModel.completedConditions[condition.id] ?? false;
+    
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: _getRangColor(condition.rang).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(
+              condition.rang.name,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: _getRangColor(condition.rang),
+              ),
+            ),
+          ),
+        ),
+        title: Text(
+          condition.description.isNotEmpty ? condition.description : 'Без описания',
+          style: TextStyle(
+            decoration: isCompleted ? TextDecoration.lineThrough : null,
+            color: isCompleted ? Colors.grey : Colors.black,
+          ),
+        ),
+        subtitle: condition.date != null
+            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}')
+            : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isCompleted)
+              const Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Icon(Icons.check_circle, color: Colors.green),
+              ),
+            Checkbox(
+              value: isCompleted,
+              onChanged: (_) => viewModel.toggleConditionCompletion(condition.id),
+              activeColor: Colors.green,
+            ),
+          ],
+        ),
+        onTap: () => viewModel.toggleConditionCompletion(condition.id),
+      ),
+    );
+  }
+
 
   Color _getRangColor(SkillRang rang) {
     switch (rang) {
@@ -365,29 +402,67 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     }
   }
 
-  IconData _getConditionIcon(SkillRang rang) {
-    switch (rang) {
-      case SkillRang.F:
-        return Icons.fiber_manual_record;
-      case SkillRang.E:
-        return Icons.fiber_manual_record;
-      case SkillRang.D:
-        return Icons.fiber_manual_record;
-      case SkillRang.C:
-        return Icons.fiber_manual_record;
-      case SkillRang.B:
-        return Icons.fiber_manual_record;
-      case SkillRang.A:
-        return Icons.fiber_manual_record;
-      case SkillRang.S:
-        return Icons.fiber_manual_record;
-      case SkillRang.SS:
-        return Icons.fiber_manual_record;
-      case SkillRang.SSS:
-        return Icons.fiber_manual_record;
-      case SkillRang.EX:
-        return Icons.fiber_manual_record;
-    }
+  bool _checkDescriptionTile(SkillDetailModel viewModel, SkillRang rang) {
+    final description = viewModel.getDescriptionForRang(rang);
+    return description != null && description.isNotEmpty;
+  }
+
+  void _confirmUpgrade(BuildContext context, SkillDetailModel viewModel) {
+    final nextRang = viewModel.getNextRangForUpgrade();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Повышение ранга'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Вы хотите повысить ранг навыка до "${nextRang?.name}"?',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Это действие нельзя отменить.',
+              style: TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final success = await viewModel.upgradeRank();
+              if (success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Ранг успешно повышен!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } else if (!success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(viewModel.error ?? 'Ошибка повышения ранга'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber,
+              foregroundColor: Colors.black,
+            ),
+            child: const Text('Повысить'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _navigateToEdit(BuildContext context) {
@@ -402,23 +477,5 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         _viewModel.loadSkill(widget.skillId);
       }
     });
-  }
-
-  void _showAddConditionDialog(BuildContext context) {
-    // Здесь можно реализовать диалог добавления условия
-    // Пока просто показываем заглушку
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Добавление условия'),
-        content: const Text('Функция добавления условий будет реализована позже'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Закрыть'),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/screens/skills/form/widgets/skill_condition_dialog.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 
 class ConditionsListWidget extends StatelessWidget {
   final List<SkillCondition> conditions;
@@ -35,7 +36,6 @@ class ConditionsListWidget extends StatelessWidget {
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Добавить'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
             ),
@@ -46,14 +46,14 @@ class ConditionsListWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              // color: Colors.grey.shade50,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: SoloLevelingTheme.steelBlue),
             ),
             child: const Center(
               child: Text(
                 'Нет добавленных условий',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: SoloLevelingTheme.steelBlue),
               ),
             ),
           )
@@ -75,11 +75,12 @@ class ConditionsListWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
+        minTileHeight: 72,
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: _getRangColor(condition.rang).withOpacity(0.2),
+            color: _getRangColor(condition.rang).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -92,20 +93,22 @@ class ConditionsListWidget extends StatelessWidget {
             ),
           ),
         ),
-        title: Text(condition.description.isNotEmpty ? condition.description : 'Без описания'),
+        title: Text(condition.description.isNotEmpty ? condition.description : 'Без описания',
+          style: TextStyle(color: SoloLevelingTheme.paleBlue)),
         subtitle: condition.date != null
-            ? Text('Дата: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}')
+            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}', 
+              style: TextStyle(color: SoloLevelingTheme.glowBlue))
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+              icon: const Icon(Icons.edit, color: SoloLevelingTheme.steelBlue, size: 20),
               onPressed: () => _showEditConditionDialog(context, index, condition),
               tooltip: 'Редактировать',
             ),
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+              icon: const Icon(Icons.delete, color: SoloLevelingTheme.steelBlue, size: 20),
               onPressed: () => _confirmDelete(context, index),
               tooltip: 'Удалить',
             ),

@@ -3,6 +3,7 @@ import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tags/widgets/tag_type_chip.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 
 class TagTile extends StatelessWidget {
@@ -36,21 +37,21 @@ class TagTile extends StatelessWidget {
         tag.title,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: SoloLevelingTheme.paleBlue,
         ),
       ),
-      subtitle: Text('Тип: ${tag.type.displayName}'),
       trailing: isSelectionMode
           ? null
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  icon: const Icon(Icons.edit, color: SoloLevelingTheme.steelBlue,),
                   onPressed: () => showEditDialog(tag),
                   tooltip: 'Редактировать',
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color: SoloLevelingTheme.steelBlue,),
                   onPressed: () => deleteTag(tag.id),
                   tooltip: 'Удалить',
                 ),

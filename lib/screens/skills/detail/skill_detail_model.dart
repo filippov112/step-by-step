@@ -220,41 +220,5 @@ class SkillDetailModel extends ChangeNotifier {
   String getRangDisplay(SkillRang rang) {
     return rang.name;
   }
-  
-  // Прогресс до следующего ранга
-  double getProgressToNextRang() {
-    if (_skill == null) return 0.0;
-    
-    final currentRangIndex = _skill!.rang.index;
-    if (currentRangIndex >= SkillRang.values.length - 1) return 1.0;
-    
-    // Вычисляем прогресс на основе выполненных условий
-    final completedRangs = _conditions
-        .where((c) => _completedConditions[c.id] == true)
-        .map((c) => c.rang.index)
-        .toList();
-    
-    if (completedRangs.isEmpty) return 0.0;
-    
-    final maxCompletedRang = completedRangs.reduce((a, b) => a > b ? a : b);
-    final nextRangIndex = currentRangIndex + 1;
-    
-    if (maxCompletedRang >= nextRangIndex) {
-      return 1.0;
-    } else {
-      // Частичный прогресс на основе опыта и уровня
-      const maxLevel = 100;
-      return (_skill!.level / maxLevel).clamp(0.0, 1.0);
-    }
-  }
-  
-  // Следующий ранг
-  SkillRang? getNextRang() {
-    if (_skill == null) return null;
-    final currentIndex = _skill!.rang.index;
-    if (currentIndex < SkillRang.values.length - 1) {
-      return SkillRang.values[currentIndex + 1];
-    }
-    return null;
-  }
+
 }

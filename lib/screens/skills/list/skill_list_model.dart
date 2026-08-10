@@ -14,7 +14,7 @@ class SkillListModel extends ChangeNotifier {
   
   List<Skill> _skills = [];
   List<Tag> _allTags = [];
-  Map<String, List<Tag>> _skillTags = {};
+  final Map<String, List<Tag>> _skillTags = {};
   bool _isLoading = false;
   String? _error;
   

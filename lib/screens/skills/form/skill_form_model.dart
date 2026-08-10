@@ -258,6 +258,11 @@ class SkillFormModel extends ChangeNotifier {
       Skill skill;
       
       if (isEditing) {
+        Skill? existingSkill = await _skillRepo.get(_editingSkill!.id);
+        if (existingSkill != null && existingSkill.icon != _iconPath && existingSkill.icon.isNotEmpty) {
+          await _fileStorage.deleteOldFile(_iconPath);        
+        }
+
         // Обновляем существующий навык
         skill = Skill(
           id: _editingSkill!.id,
@@ -365,9 +370,6 @@ class SkillFormModel extends ChangeNotifier {
       
       final savedPath = await _fileStorage.saveSkillIcon(file);
       if (savedPath != null) {
-        if (_iconPath.isNotEmpty) {
-          await _fileStorage.deleteOldFile(_iconPath);
-        }
         _iconPath = savedPath;
         notifyListeners();
         return true;
@@ -379,28 +381,18 @@ class SkillFormModel extends ChangeNotifier {
       return false;
     }
   }
-  
-  // Сброс формы
-  void resetForm() {
-    _editingSkill = null;
-    _title = '';
-    _rang = SkillRang.F;
-    _level = 1;
-    _experience = 0;
-    _iconPath = '';
-    _f = null;
-    _e = null;
-    _d = null;
-    _c = null;
-    _b = null;
-    _a = null;
-    _s = null;
-    _ss = null;
-    _sss = null;
-    _ex = null;
-    _conditions = [];
-    _selectedTags = [];
-    _error = null;
-    notifyListeners();
+
+  // Удаление иконки
+  Future<bool> deleteIcon() async {
+    try {
+      _iconPath = '';
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = 'Ошибка удаления иконки: $e';
+      notifyListeners();
+      return false;
+    }
   }
+  
 }

@@ -1,4 +1,3 @@
-// lib/screens/skills/skill_list_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
@@ -6,6 +5,7 @@ import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
@@ -114,7 +114,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
                     borderSide: BorderSide.none,
                   ),
                   filled: true,
-                  fillColor: Colors.grey.shade100,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
                 onChanged: (value) {
@@ -143,7 +142,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       margin: const EdgeInsets.only(right: 4),
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
+                        color: SoloLevelingTheme.navyBlue,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -152,7 +151,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
                           Text(
                             tag.title,
                             style: TextStyle(
-                              color: Colors.blue.shade700,
                               fontSize: 12,
                             ),
                           ),
@@ -166,7 +164,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
                             child: Icon(
                               Icons.close,
                               size: 14,
-                              color: Colors.blue.shade700,
                             ),
                           ),
                         ],
@@ -229,7 +226,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.star_border, size: 64, color: Colors.grey.shade400),
+                          Icon(Icons.star_border, size: 64),
                           const SizedBox(height: 16),
                           const Text(
                             'Навыки не найдены',
@@ -240,7 +237,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                             _searchQuery.isNotEmpty || _selectedFilters.isNotEmpty
                                 ? 'Попробуйте изменить параметры поиска'
                                 : 'Создайте свой первый навык',
-                            style: TextStyle(color: Colors.grey.shade600),
+                            style: TextStyle(color: SoloLevelingTheme.steelBlue),
                           ),
                           if (_searchQuery.isEmpty && _selectedFilters.isEmpty) ...[
                             const SizedBox(height: 24),
@@ -263,30 +260,32 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       final tags = viewModel.getSkillTags(skill.id);
                       
                       return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           leading: _buildSkillIcon(skill.icon),
-                          title: Text(
-                            skill.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          title: Padding(
+                            padding:EdgeInsetsGeometry.only(bottom: 10), 
+                            child: Text(
+                              skill.title,
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: SoloLevelingTheme.paleBlue),
+                            )
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 4),
                               Row(
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: _getRangColor(skill.rang).withValues(alpha: 0.2),
+                                      color: skill.rang.color.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
-                                      'Ранг ${skill.rang.name}',
+                                      skill.rang.name,
                                       style: TextStyle(
                                         fontSize: 12,
-                                        color: _getRangColor(skill.rang),
+                                        color: skill.rang.color,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -295,14 +294,14 @@ class _SkillListScreenState extends State<SkillListScreen> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Colors.blue.withValues(alpha: 0.2),
+                                      color: SoloLevelingTheme.steelBlue.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
-                                      'Ур. ${skill.level}',
+                                      '${skill.level} LVL',
                                       style: const TextStyle(
                                         fontSize: 12,
-                                        color: Colors.blue,
+                                        color: SoloLevelingTheme.paleBlue,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -310,7 +309,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                                 ],
                               ),
                               if (tags.isNotEmpty) ...[
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 8),
                                 Wrap(
                                   spacing: 4,
                                   runSpacing: 2,
@@ -318,32 +317,33 @@ class _SkillListScreenState extends State<SkillListScreen> {
                                     return Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                                       decoration: BoxDecoration(
-                                        color: Colors.grey.shade200,
+                                        color: SoloLevelingTheme.steelBlue,
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
                                         tag.title,
                                         style: TextStyle(
                                           fontSize: 10,
-                                          color: Colors.grey.shade700,
+                                          color: SoloLevelingTheme.glowBlue,
                                         ),
                                       ),
                                     );
                                   }).toList(),
                                 ),
                               ],
+                              const SizedBox(height: 8),
                             ],
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
+                                icon: const Icon(Icons.edit, color: SoloLevelingTheme.steelBlue,),
                                 onPressed: () => _navigateToForm(context, skill: skill),
                                 tooltip: 'Редактировать',
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(Icons.delete, color: SoloLevelingTheme.steelBlue,),
                                 onPressed: () => _confirmDelete(context, skill.id),
                                 tooltip: 'Удалить',
                               ),
@@ -384,10 +384,10 @@ class _SkillListScreenState extends State<SkillListScreen> {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(8),
+          color: SoloLevelingTheme.steelBlue.withAlpha(80),
         ),
-        child: const Icon(Icons.star_border, color: Colors.grey),
+        child: const Icon(Icons.star_border, color: SoloLevelingTheme.steelBlue),
       );
     }
     
@@ -404,10 +404,10 @@ class _SkillListScreenState extends State<SkillListScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: SoloLevelingTheme.steelBlue.withAlpha(80),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.broken_image, color: Colors.grey),
+              child: const Icon(Icons.broken_image, color: SoloLevelingTheme.steelBlue,),
             );
           },
         ),
@@ -417,36 +417,11 @@ class _SkillListScreenState extends State<SkillListScreen> {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: SoloLevelingTheme.steelBlue.withAlpha(80),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+        child: const Icon(Icons.image_not_supported, color: SoloLevelingTheme.steelBlue),
       );
-    }
-  }
-
-  Color _getRangColor(SkillRang rang) {
-    switch (rang) {
-      case SkillRang.F:
-        return Colors.grey;
-      case SkillRang.E:
-        return Colors.blueGrey;
-      case SkillRang.D:
-        return Colors.blue;
-      case SkillRang.C:
-        return Colors.green;
-      case SkillRang.B:
-        return Colors.lime;
-      case SkillRang.A:
-        return Colors.orange;
-      case SkillRang.S:
-        return Colors.red;
-      case SkillRang.SS:
-        return Colors.purple;
-      case SkillRang.SSS:
-        return Colors.deepPurple;
-      case SkillRang.EX:
-        return Colors.amber;
     }
   }
 

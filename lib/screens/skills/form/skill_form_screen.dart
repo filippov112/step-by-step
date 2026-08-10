@@ -5,6 +5,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -72,6 +73,17 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                   _buildIconPicker(viewModel),
                   const SizedBox(height: 16),
                   
+                  if (viewModel.iconPath.isNotEmpty) ...{
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _deleteIcon(viewModel), 
+                        child: Text('Удалить иконку')
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  },
+
                   // Название
                   TextFormField(
                     decoration: const InputDecoration(
@@ -226,10 +238,9 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
               onPressed: () => _showTagsModal(context),
               icon: const Icon(Icons.edit, size: 18),
               label: Text(
-                viewModel.selectedTags.isEmpty ? 'Выбрать теги' : 'Изменить теги',
+                viewModel.selectedTags.isEmpty ? 'Выбрать' : 'Изменить',
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
             ),
@@ -240,14 +251,13 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: SoloLevelingTheme.steelBlue),
             ),
             child: const Center(
               child: Text(
                 'Теги не выбраны',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: SoloLevelingTheme.steelBlue),
               ),
             ),
           )
@@ -259,9 +269,8 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.blue.shade300),
+                  border: Border.all(color: SoloLevelingTheme.glowBlue),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -269,7 +278,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                     Text(
                       tag.title,
                       style: TextStyle(
-                        color: Colors.blue.shade700,
+                        color: SoloLevelingTheme.glowBlue,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -279,7 +288,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       child: Icon(
                         Icons.close,
                         size: 16,
-                        color: Colors.blue.shade700,
+                        color: SoloLevelingTheme.glowBlue,
                       ),
                     ),
                   ],
@@ -291,20 +300,14 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, size: 16, color: Colors.blue.shade700),
+                Icon(Icons.info_outline, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Выбрано тегов: ${viewModel.selectedTags.length}',
                     style: TextStyle(
-                      color: Colors.blue.shade700,
                       fontSize: 12,
                     ),
                   ),
@@ -343,19 +346,23 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
         width: double.infinity,
         height: 120,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          // border: Border.all(
+          //   color: Colors.grey.shade300
+          //   ),
           borderRadius: BorderRadius.circular(12),
-          color: Colors.grey.shade50,
+          color: SoloLevelingTheme.steelBlue.withAlpha(80),
         ),
         child: viewModel.iconPath.isEmpty
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo, size: 48, color: Colors.grey.shade400),
+                  Icon(Icons.add_a_photo, size: 48, 
+                    color: SoloLevelingTheme.paleBlue
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Нажмите для выбора иконки',
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(color: SoloLevelingTheme.paleBlue),
                   ),
                 ],
               )
@@ -371,23 +378,24 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.broken_image, size: 48, color: Colors.grey.shade400),
+                            Icon(Icons.broken_image, size: 48, color: SoloLevelingTheme.paleBlue),
                             const SizedBox(height: 8),
                             Text(
                               'Ошибка загрузки',
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: SoloLevelingTheme.paleBlue),
                             ),
                           ],
                         );
                       },
                     ),
+
                     Positioned(
                       top: 8,
                       right: 8,
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
@@ -397,6 +405,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ),
@@ -414,20 +423,17 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
           border: const OutlineInputBorder(),
           prefixIcon: Container(
             width: 40,
-            margin: const EdgeInsets.only(right: 8),
+            margin: const EdgeInsets.fromLTRB(12,0,8,0),
             decoration: BoxDecoration(
-              color: _getRangColor(rang).withOpacity(0.2),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(4),
-                bottomLeft: Radius.circular(4),
-              ),
+              color: rang.color.withValues(alpha: 0.2),
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             child: Center(
               child: Text(
                 rang.name,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: _getRangColor(rang),
+                  color: rang.color,
                   fontSize: 12,
                 ),
               ),
@@ -443,53 +449,29 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
     );
   }
 
-  Color _getRangColor(SkillRang rang) {
-    switch (rang) {
-      case SkillRang.F:
-        return Colors.grey;
-      case SkillRang.E:
-        return Colors.blueGrey;
-      case SkillRang.D:
-        return Colors.blue;
-      case SkillRang.C:
-        return Colors.green;
-      case SkillRang.B:
-        return Colors.lime;
-      case SkillRang.A:
-        return Colors.orange;
-      case SkillRang.S:
-        return Colors.red;
-      case SkillRang.SS:
-        return Colors.purple;
-      case SkillRang.SSS:
-        return Colors.deepPurple;
-      case SkillRang.EX:
-        return Colors.amber;
-    }
+  Future<void> _pickIcon(SkillFormModel viewModel) async {
+    await viewModel.pickIcon();
   }
 
-  Future<void> _pickIcon(SkillFormModel viewModel) async {
-    final success = await viewModel.pickIcon();
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Иконка выбрана')),
-      );
-    }
+  Future<void> _deleteIcon(SkillFormModel viewModel) async {
+    await viewModel.deleteIcon();
   }
 
   Future<void> _saveSkill(BuildContext context) async {
     final success = await _viewModel.saveSkill();
     if (!mounted) return;
     
-    if (success) {
+    if (success && context.mounted) {
       Navigator.pop(context, true);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_viewModel.error ?? 'Ошибка сохранения'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_viewModel.error ?? 'Ошибка сохранения'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

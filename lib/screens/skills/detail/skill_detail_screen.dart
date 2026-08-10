@@ -1,9 +1,12 @@
 // lib/screens/skills/skill_detail_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
+import 'package:life_game/services/exp_calculator.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -85,6 +88,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             }
             
             final skill = viewModel.skill!;
+
+            var descriptionsCard = _buildDescriptionsCard(viewModel);
             
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -107,56 +112,44 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Ранг: ${skill.rang.name}',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: _getRangColor(skill.rang),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                            
                           ],
                         ),
                       ),
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: skill.rang.color.withAlpha(40),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [BoxShadow(color: skill.rang.color.withAlpha(100), blurRadius: 10)],
+                        ),
+                        child: Center(child:Text(skill.rang.name, style: TextStyle(fontSize: 32, color: skill.rang.color),),),
+                      )
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  
-                  // Статистика
-                  _buildStatCard(viewModel),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                   
                   // Прогресс
                   _buildProgressCard(viewModel),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                   
                   // Кнопка повышения ранга
-                  if (viewModel.canUpgradeRank())
+                  if (viewModel.canUpgradeRank()) ...{
                     _buildUpgradeButton(viewModel),
-                  
+                    const SizedBox(height: 12),
+                  },
+                    
                   // Описания для рангов
-                  const Text(
-                    'Описания',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  ...SkillRang.values.where((rang) => _checkDescriptionTile(viewModel, rang)).map((rang) => _buildDescriptionTile(viewModel, rang)),
-                  
+                  if (descriptionsCard != null) ...{
+                    descriptionsCard,
+                    const SizedBox(height: 12),
+                  },
+
                   // Условия
-                  if (viewModel.conditions.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Условия прокачки',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    ...viewModel.conditions.map((condition) {
-                      return _buildConditionTile(viewModel, condition);
-                    }),
-                  ],
-                  
-                  const SizedBox(height: 24),
+                  if (viewModel.conditions.isNotEmpty) ...{
+                    _buildConditionsCard(viewModel)
+                  },
                 ],
               ),
             );
@@ -172,10 +165,10 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: SoloLevelingTheme.steelBlue,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.star_border, size: 32, color: Colors.grey),
+        child: const Icon(Icons.star_border, size: 32, color: SoloLevelingTheme.paleBlue),
       );
     }
     
@@ -192,10 +185,10 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: SoloLevelingTheme.steelBlue,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.broken_image, color: Colors.grey),
+              child: const Icon(Icons.broken_image, color: SoloLevelingTheme.paleBlue),
             );
           },
         ),
@@ -205,53 +198,23 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         width: 64,
         height: 64,
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: SoloLevelingTheme.steelBlue,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.image_not_supported, color: Colors.grey),
+        child: const Icon(Icons.image_not_supported, color: SoloLevelingTheme.paleBlue),
       );
     }
   }
 
-  Widget _buildStatCard(SkillDetailModel viewModel) {
-    final skill = viewModel.skill!;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _statItem('Уровень', skill.level.toString(), Icons.numbers),
-            _statItem('Опыт', skill.experience.toString(), Icons.star),
-            _statItem('Ранг', skill.rang.name, Icons.arrow_upward),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _statItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, size: 24, color: Colors.grey.shade600),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          label,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-        ),
-      ],
-    );
-  }
-
   Widget _buildProgressCard(SkillDetailModel viewModel) {
-    final nextRang = viewModel.getNextRang();
-    final progress = viewModel.getProgressToNextRang();
+    final int exp = viewModel.skill?.experience ?? 0;
+    final int level = viewModel.skill?.level ?? 1;
+    final int nextLevelExp = ExpCalculator.calcNextLevelExp(level);
+
+    final progress = (exp / nextLevelExp).clamp(0.0, 1.0);
     
     return Card(
+      margin: EdgeInsetsGeometry.all(0),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -260,19 +223,38 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text('Накоплено:'),
+                Text('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Осталось:'),
+                Text('${NumberFormat('#,##0', 'en_US').format(nextLevelExp - exp)} EXP', 
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text(
-                  'Прогресс до ранга ${nextRang?.name ?? 'MAX'}',
+                  '${NumberFormat('#,##0', 'en_US').format(level)} LVL',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('${(progress * 100).toInt()}%'),
+                Text('${NumberFormat("#0.00").format(progress * 100)}%'),
               ],
             ),
             const SizedBox(height: 8),
             LinearProgressIndicator(
-              value: progress,
+              // value: progress,
+              value: 0.3,
               backgroundColor: Colors.grey.shade200,
-              color: progress >= 1.0 ? Colors.green : Colors.blue,
               minHeight: 8,
+              borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
           ],
         ),
@@ -280,12 +262,58 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     );
   }
 
+  Widget? _buildDescriptionsCard(SkillDetailModel viewModel) {
+    var descs = SkillRang.values.where((rang) => _checkDescriptionTile(viewModel, rang)).map((rang) => _buildDescriptionTile(viewModel, rang));
+    List<Widget> descList = [];
+    for(var desc in descs) {
+      descList.add(desc);
+      descList.add(Divider());
+    }
+    if (descs.isEmpty) {
+      return null;
+    } 
+    descList.removeLast();   
+
+    return Card(
+      margin: EdgeInsetsGeometry.all(0),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...descList,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConditionsCard(SkillDetailModel viewModel) {
+    var conditions = viewModel.conditions.map((condition) {
+                      return _buildConditionTile(viewModel, condition);
+                    });
+
+    return Card(
+      margin: EdgeInsetsGeometry.all(0),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...conditions
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildUpgradeButton(SkillDetailModel viewModel) {
     final nextRang = viewModel.getNextRangForUpgrade();
     
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
       child: ElevatedButton.icon(
         onPressed: () => _confirmUpgrade(context, viewModel),
         icon: const Icon(Icons.arrow_upward),
@@ -310,15 +338,13 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Card(
-        child: ListTile(
-          leading: Icon(
-            Icons.description,
-            color: _getRangColor(rang),
-          ),
-          title: Text('Ранг ${rang.name}'),
-          subtitle: Text(description),
-        ),
+      child: ListTile(
+        titleTextStyle: TextStyle(fontWeight: FontWeight.normal),
+        titleAlignment: ListTileTitleAlignment.top,
+        leading: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
+          Text(rang.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: rang.color)),
+        ]),
+        title: Text(description, style: TextStyle(color: SoloLevelingTheme.paleBlue)),
       ),
     );
   }
@@ -327,13 +353,14 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     final isCompleted = viewModel.completedConditions[condition.id] ?? false;
     
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
+        contentPadding: EdgeInsetsGeometry.all(10),
         leading: Container(
           width: 40,
           height: 40,
+          margin: EdgeInsetsGeometry.fromLTRB(8,0,0,0),
           decoration: BoxDecoration(
-            color: _getRangColor(condition.rang).withOpacity(0.2),
+            color: condition.rang.color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -341,7 +368,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
               condition.rang.name,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: _getRangColor(condition.rang),
+                color: condition.rang.color,
               ),
             ),
           ),
@@ -350,24 +377,20 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           condition.description.isNotEmpty ? condition.description : 'Без описания',
           style: TextStyle(
             decoration: isCompleted ? TextDecoration.lineThrough : null,
-            color: isCompleted ? Colors.grey : Colors.black,
+            color: isCompleted ? SoloLevelingTheme.steelBlue : SoloLevelingTheme.paleBlue,
           ),
         ),
         subtitle: condition.date != null
-            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}')
+            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}',
+              style: TextStyle(color: SoloLevelingTheme.steelBlue)
+            )
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isCompleted)
-              const Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Icon(Icons.check_circle, color: Colors.green),
-              ),
             Checkbox(
               value: isCompleted,
               onChanged: (_) => viewModel.toggleConditionCompletion(condition.id),
-              activeColor: Colors.green,
             ),
           ],
         ),
@@ -376,31 +399,6 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     );
   }
 
-
-  Color _getRangColor(SkillRang rang) {
-    switch (rang) {
-      case SkillRang.F:
-        return Colors.grey;
-      case SkillRang.E:
-        return Colors.blueGrey;
-      case SkillRang.D:
-        return Colors.blue;
-      case SkillRang.C:
-        return Colors.green;
-      case SkillRang.B:
-        return Colors.lime;
-      case SkillRang.A:
-        return Colors.orange;
-      case SkillRang.S:
-        return Colors.red;
-      case SkillRang.SS:
-        return Colors.purple;
-      case SkillRang.SSS:
-        return Colors.deepPurple;
-      case SkillRang.EX:
-        return Colors.amber;
-    }
-  }
 
   bool _checkDescriptionTile(SkillDetailModel viewModel, SkillRang rang) {
     final description = viewModel.getDescriptionForRang(rang);
@@ -425,7 +423,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             const SizedBox(height: 8),
             const Text(
               'Это действие нельзя отменить.',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              style: TextStyle(color: SoloLevelingTheme.steelBlue, fontSize: 14),
             ),
           ],
         ),

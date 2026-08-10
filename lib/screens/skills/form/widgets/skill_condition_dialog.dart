@@ -55,7 +55,7 @@ class _ConditionDialogState extends State<ConditionDialog> {
                 labelText: 'Ранг',
                 border: OutlineInputBorder(),
               ),
-              value: _selectedRang,
+              initialValue: _selectedRang,
               items: SkillRang.values.map((rang) {
                 return DropdownMenuItem(
                   value: rang,
@@ -82,70 +82,90 @@ class _ConditionDialogState extends State<ConditionDialog> {
               ),
               maxLines: 3,
             ),
-            const SizedBox(height: 16),
-            
+ 
             // Дата
-            ListTile(
-              title: Text(
-                _selectedDate != null
-                    ? 'Дата: ${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year}'
-                    : 'Дата не выбрана',
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.calendar_today),
-                onPressed: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime.now(),
-                  );
-                  if (date != null) {
-                    setState(() {
-                      _selectedDate = date;
-                    });
-                  }
-                },
+            Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child:Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate != null
+                      ? 'Дата: ${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year}'
+                      : 'Дата не выбрана',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (date != null) {
+                        setState(() {
+                          _selectedDate = date;
+                        });
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
             
             // Кнопка очистки даты
-            if (_selectedDate != null)
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = null;
-                    });
-                  },
-                  child: const Text('Очистить дату'),
-                ),
+            if (_selectedDate != null) SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedDate = null;
+                  });
+                },
+                child: const Text('Очистить дату'),
               ),
+            ),
           ],
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Отмена'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final condition = SkillCondition(
-              id: widget.existingCondition?.id ?? '',
-              rang: _selectedRang,
-              skillId: widget.existingCondition?.skillId ?? '',
-              description: _descriptionController.text.trim(),
-              date: _selectedDate,
-            );
-            Navigator.pop(context, {
-              'condition': condition,
-              'editIndex': widget.editIndex,
-            });
-          },
-          child: const Text('Сохранить'),
-        ),
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                flex: 1,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Отмена'),
+                ),
+              ),
+              SizedBox(width: 8,),
+              Expanded(
+                flex: 1, 
+                child: ElevatedButton(
+                  onPressed: () {
+                    final condition = SkillCondition(
+                      id: widget.existingCondition?.id ?? '',
+                      rang: _selectedRang,
+                      skillId: widget.existingCondition?.skillId ?? '',
+                      description: _descriptionController.text.trim(),
+                      date: _selectedDate,
+                    );
+                    Navigator.pop(context, {
+                      'condition': condition,
+                      'editIndex': widget.editIndex,
+                    });
+                  },
+                  child: const Text('Сохранить'),
+                ),
+              ),
+            ],
+          ),
+        )
+        
       ],
     );
   }

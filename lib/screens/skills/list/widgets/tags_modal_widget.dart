@@ -1,6 +1,7 @@
 // lib/screens/skills/widgets/tags_modal_widget.dart
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
 
 class TagsModalWidget extends StatefulWidget {
   final List<Tag> allTags;
@@ -52,7 +53,6 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
                     Text(
                       'Выбрано: ${_tempSelectedTags.length}',
                       style: TextStyle(
-                        color: Colors.grey.shade600,
                         fontSize: 14,
                       ),
                     ),
@@ -90,8 +90,7 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
               child: filteredTags.isEmpty
                   ? Center(
                       child: Text(
-                        'Теги не найдены',
-                        style: TextStyle(color: Colors.grey.shade500),
+                        'Теги не найдены'
                       ),
                     )
                   : ListView.builder(
@@ -116,7 +115,7 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
                             width: 4,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: isSelected ? Colors.blue : Colors.grey.shade300,
+                              color: isSelected ? SoloLevelingTheme.glowBlue : SoloLevelingTheme.steelBlue,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -126,23 +125,24 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
                       },
                     ),
             ),
-            
+
             // Кнопки
+            SizedBox(
+              width: double.infinity,
+              child:OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _tempSelectedTags.clear();
+                  });
+                },
+                child: const Text('Очистить всё'),
+              ),
+            ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        _tempSelectedTags.clear();
-                      });
-                    },
-                    child: const Text('Очистить всё'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
+                  flex: 1,
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Text('Отмена'),
@@ -150,7 +150,7 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop(_tempSelectedTags);

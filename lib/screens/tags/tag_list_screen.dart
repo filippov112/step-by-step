@@ -159,12 +159,6 @@ class _TagListScreenState extends State<TagListScreen> {
         );
 
         PreferredSizeWidget appBar = AppBar(
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
           title: isSelectionMode 
               ? Text('Выбрано: ${selectedIds.length}') 
               : const Text('Теги'),

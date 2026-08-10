@@ -4,6 +4,7 @@ import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_details.dart';
+import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
 import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
 import 'package:life_game/widgets/app_drawer.dart';
@@ -32,9 +33,20 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    var viewModel = context.read<AchievementListModel>();
     return Scaffold(
       appBar: _buildAppBar(),
       drawer: const AppDrawer(),
+      endDrawer: AchievementFilters(
+        selectedTags: viewModel.selectedTags,
+        onConfirm: (tags) {
+          viewModel.clearTagFilters();
+          for (var tag in tags) {
+            viewModel.toggleTagFilter(tag);
+          }
+        },
+      ),
       body: Consumer<AchievementListModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading && viewModel.filteredAchievements.isEmpty) {
@@ -86,55 +98,13 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     return AppBar(
       title: const Text('Достижения'),
       actions: [
-        // Фильтр по статусу
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.filter_list),
-          tooltip: 'Фильтр',
-          onSelected: (value) {
-            final viewModel = context.read<AchievementListModel>();
-            switch (value) {
-              case 'all':
-                viewModel.toggleUnlockedFilter();
-                if (viewModel.showUnlockedOnly) {
-                  viewModel.toggleUnlockedFilter();
-                }
-                break;
-              case 'unlocked':
-                viewModel.toggleUnlockedFilter();
-                break;
-              case 'locked':
-                viewModel.toggleLockedFilter();
-                break;
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'all',
-              child: Text('Все'),
-            ),
-            const PopupMenuItem(
-              value: 'unlocked',
-              child: Text('Только полученные'),
-            ),
-            const PopupMenuItem(
-              value: 'locked',
-              child: Text('Только не полученные'),
-            ),
-          ],
-        ),
-        // Фильтр по тегам
-        IconButton(
-          icon: Consumer<AchievementListModel>(
-            builder: (context, viewModel, child) {
-              return Badge(
-                isLabelVisible: viewModel.selectedTags.isNotEmpty,
-                label: Text(viewModel.selectedTags.length.toString()),
-                child: const Icon(Icons.local_offer),
-              );
-            },
-          ),
-          tooltip: 'Фильтр по тегам',
-          onPressed: _showTagFilter,
+        // Фильтры
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.filter_list),
+            tooltip: 'Фильтры',
+            onPressed: Scaffold.of(context).openEndDrawer,
+          ) 
         ),
         // Поиск
         IconButton(
@@ -287,22 +257,6 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     if (result == true) {
       context.read<AchievementListModel>().loadData();
     }
-  }
-
-  void _showTagFilter() async {
-    final viewModel = context.read<AchievementListModel>();
-    await showDialog(
-      context: context,
-      builder: (context) => TagSelectorModal(
-        selectedTags: viewModel.selectedTags,
-        onConfirm: (tags) {
-          viewModel.clearTagFilters();
-          for (var tag in tags) {
-            viewModel.toggleTagFilter(tag);
-          }
-        },
-      ),
-    );
   }
 
   void _showSearch() {

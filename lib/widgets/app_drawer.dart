@@ -25,13 +25,11 @@ class AppDrawer extends StatelessWidget {
       tileColor: isSelected ? SoloLevelingTheme.steelBlue : SoloLevelingTheme.navyBlue,
       leading: Icon(
         icon,
-        // color: isSelected ? Colors.blue.shade700 : Colors.grey.shade700,
       ),
       title: Text(
         title,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          // color: isSelected ? Colors.blue.shade700 : Colors.black87,
         ),
       ),
       onTap: () {
@@ -49,22 +47,12 @@ class AppDrawer extends StatelessWidget {
     late Widget tags = TagListScreen();
     late Widget settings = SettingListScreen();
 
-    Widget header = UserAccountsDrawerHeader(
-      accountName: const Text(''),
-      accountEmail: const Text(''),
-      margin:null,
-      arrowColor: SoloLevelingTheme.navyBlue,
-    );
-
     return Drawer(
       child: Column(
         children: [
-          // Хедер с аватаром
-          header,
           // Список пунктов меню
           Expanded(
             child: ListView(
-              // padding: const EdgeInsets.symmetric(vertical: 3),
               children: [
                 _buildMenuItem(
                   context: context,

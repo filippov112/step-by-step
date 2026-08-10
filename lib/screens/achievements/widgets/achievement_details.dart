@@ -6,6 +6,8 @@ import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class AchievementDetails extends StatefulWidget {
@@ -83,7 +85,7 @@ class _AchievementDetailsState extends State<AchievementDetails> {
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Заголовок с иконкой
             Row(
@@ -119,17 +121,19 @@ class _AchievementDetailsState extends State<AchievementDetails> {
                     ),
                   ),
                 const SizedBox(width: 16),
+                
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
                         ach.title,
                         style: Theme.of(context).textTheme.titleLarge,
-                        overflow: TextOverflow.ellipsis,
+                        overflow: TextOverflow.fade,
                       ),
-                      const SizedBox(height: 4),
-                      Row(
+                      const SizedBox(height: 8),
+                      
+                      Wrap(
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -149,45 +153,6 @@ class _AchievementDetailsState extends State<AchievementDetails> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          if (isUnlocked)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Получено',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          else
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'Не получено',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
                         ],
                       ),
                     ],
@@ -201,15 +166,7 @@ class _AchievementDetailsState extends State<AchievementDetails> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Описание',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    ach.description,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  Text(ach.description),
                 ],
               ),
             const SizedBox(height: 12),
@@ -218,71 +175,68 @@ class _AchievementDetailsState extends State<AchievementDetails> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Теги',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 4),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _tags.map((tag) => Chip(
-                      label: Text(tag.title),
-                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                      side: BorderSide.none,
-                    )).toList(),
+                    children: _tags.map((tag) =>TagChip(title: tag.title)).toList(),
                   ),
                 ],
               ),
             // Дата получения
-            if (isUnlocked)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 16,
-                      color: Theme.of(context).hintColor,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Получено: ${_formatDate(ach.date!)}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+            if (isUnlocked) ...{
+              const SizedBox(height: 12),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _formatDate(ach.date!),
+                  ),
+                ],
               ),
+            },
+              
             const SizedBox(height: 20),
             // Кнопки действий
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
               children: [
                 if (!isUnlocked)
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      ach.date = DateTime.now();
-                      viewModel.updateAchievement(ach);
-                    },
-                    icon: const Icon(Icons.check, size: 18),
-                    label: const Text('Получить'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                  Expanded(
+                    flex: 1, 
+                    child: IconButton(
+                      onPressed: () {
+                        ach.date = DateTime.now();
+                        viewModel.updateAchievement(ach);
+                      },
+                      icon: const Icon(Icons.check),
                     ),
                   ),
+                  
                 const SizedBox(width: 8),
-                TextButton.icon(
-                  onPressed: _editAchievement,
-                  icon: const Icon(Icons.edit, size: 18),
-                  label: const Text('Изменить'),
+                Expanded(
+                  flex: 1, 
+                  child: IconButton(
+                    onPressed: _editAchievement,
+                    icon: const Icon(Icons.edit),
+                  ),
                 ),
+                
                 const SizedBox(width: 4),
-                IconButton(
-                  onPressed: _deleteAchievement,
-                  icon: const Icon(Icons.delete),
-                  color: Colors.red,
-                  tooltip: 'Удалить',
+                Expanded(
+                  flex: 1, 
+                  child: IconButton(
+                    onPressed: _deleteAchievement,
+                    icon: const Icon(Icons.delete),
+                    color: Colors.red,
+                    tooltip: 'Удалить',
+                  ),
                 ),
+                
               ],
             ),
           ],

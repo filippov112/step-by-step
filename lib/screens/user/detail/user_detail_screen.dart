@@ -99,12 +99,6 @@ class UserDetailScreen extends StatelessWidget {
           drawer: AppDrawer(),
           appBar: AppBar(
             title: const Text('Профиль'),
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
           ),
           body: Padding(
             padding: const EdgeInsets.all(20),

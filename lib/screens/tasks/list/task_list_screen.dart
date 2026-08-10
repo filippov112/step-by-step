@@ -34,12 +34,6 @@ class TaskListScreen extends StatelessWidget {
           drawer: AppDrawer(),
           appBar: AppBar(
             title: const Text('Задачи'),
-            leading: Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            ),
           ),
           body: tasks.isEmpty ? EmptyListScreen(
               title: "Задачи не найдены", 

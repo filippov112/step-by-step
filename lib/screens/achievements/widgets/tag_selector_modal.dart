@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/widgets/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class TagSelectorModal extends StatefulWidget {
@@ -9,10 +10,10 @@ class TagSelectorModal extends StatefulWidget {
   final Function(List<Tag>) onConfirm;
 
   const TagSelectorModal({
-    Key? key,
+    super.key,
     required this.selectedTags,
     required this.onConfirm,
-  }) : super(key: key);
+  });
 
   @override
   State<TagSelectorModal> createState() => _TagSelectorModalState();
@@ -59,107 +60,100 @@ class _TagSelectorModalState extends State<TagSelectorModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
-        width: double.maxFinite,
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.8,
-        ),
-        child: Column(
-          children: [
-            // Заголовок
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Выбор тегов',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Row(
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedTags.clear();
-                          });
-                        },
-                        child: Text('Очистить'),
-                      ),
-                      const SizedBox(width: 8),
-                      TextButton(
-                        onPressed: () {
-                          widget.onConfirm(_selectedTags);
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Готово'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Поиск
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Поиск тегов...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+    return Container(
+      width: double.maxFinite,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.8,
+      ),
+      child: Column(
+        children: [
+          // Поиск
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Поиск тегов...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                onChanged: (value) {
-                  _searchQuery = value;
-                  _applyFilter();
-                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              onChanged: (value) {
+                _searchQuery = value;
+                _applyFilter();
+              },
+            ),
+          ),
+          // Выбранные теги
+          if (_selectedTags.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16,0,16,8),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _selectedTags.map((tag) => TagChip(title: tag.title)).toList(),
               ),
             ),
-            // Выбранные теги
-            if (_selectedTags.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _selectedTags.map((tag) => Chip(
-                    label: Text(tag.title),
-                    onDeleted: () => _toggleTag(tag),
-                    backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                  )).toList(),
+          Divider(color: Theme.of(context).dividerColor,),
+          // Список тегов
+          Expanded(
+            child: _filteredTags.isEmpty
+                ? const Center(child: Text('Теги не найдены'))
+                : ListView.builder(
+                    itemCount: _filteredTags.length,
+                    itemBuilder: (context, index) {
+                      final tag = _filteredTags[index];
+                      final isSelected = _selectedTags.contains(tag);
+                      return CheckboxListTile(
+                        value: isSelected,
+                        onChanged: (_) => _toggleTag(tag),
+                        title: Text(tag.title),
+                        secondary: Icon(
+                          Icons.tag,
+                          color: isSelected 
+                              ? Theme.of(context).focusColor 
+                              : Theme.of(context).dividerColor,
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                      );
+                    },
+                  ),
+          ),
+        
+          Padding(padding:EdgeInsetsGeometry.all(16), child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                flex:1,
+                child: OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedTags.clear();
+                    });
+                  },
+                  child: Text('Очистить'),
                 ),
               ),
-            const Divider(),
-            // Список тегов
-            Expanded(
-              child: _filteredTags.isEmpty
-                  ? const Center(child: Text('Теги не найдены'))
-                  : ListView.builder(
-                      itemCount: _filteredTags.length,
-                      itemBuilder: (context, index) {
-                        final tag = _filteredTags[index];
-                        final isSelected = _selectedTags.contains(tag);
-                        return CheckboxListTile(
-                          value: isSelected,
-                          onChanged: (_) => _toggleTag(tag),
-                          title: Text(tag.title),
-                          secondary: Icon(
-                            Icons.tag,
-                            color: isSelected 
-                                ? Theme.of(context).primaryColor 
-                                : Colors.grey,
-                          ),
-                          controlAffinity: ListTileControlAffinity.leading,
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+              
+              const SizedBox(width: 8),
+              
+              Expanded(
+                flex:1,
+                child: ElevatedButton(
+                  onPressed: () {
+                    widget.onConfirm(_selectedTags);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Готово'),
+                ),
+              ),
+            ],
+          ),
+          ),
+        ],
       ),
     );
+    
   }
 }

@@ -19,6 +19,7 @@ class AchievementListModel extends ChangeNotifier {
   List<Tag> _allTags = [];
   List<Tag> _selectedTags = [];
   String _searchQuery = '';
+  String? statusFilterValue;
   bool _showUnlockedOnly = false;
   bool _showLockedOnly = false;
   bool _isLoading = false;
@@ -109,13 +110,31 @@ class AchievementListModel extends ChangeNotifier {
     _applyFilters();
   }
 
-  void toggleUnlockedFilter() {
+  void toggleStatusFilter() {
+    switch (statusFilterValue) {
+      case null:
+      case 'all':
+        _toggleUnlockedFilter();
+        if (_showUnlockedOnly) {
+          _toggleUnlockedFilter();
+        }
+        break;
+      case 'unlocked':
+        _toggleUnlockedFilter();
+        break;
+      case 'locked':
+        _toggleLockedFilter();
+        break;
+    }
+  }
+
+  void _toggleUnlockedFilter() {
     _showUnlockedOnly = !_showUnlockedOnly;
     if (_showUnlockedOnly) _showLockedOnly = false;
     _applyFilters();
   }
 
-  void toggleLockedFilter() {
+  void _toggleLockedFilter() {
     _showLockedOnly = !_showLockedOnly;
     if (_showLockedOnly) _showUnlockedOnly = false;
     _applyFilters();

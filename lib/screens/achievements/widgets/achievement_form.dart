@@ -6,6 +6,7 @@ import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
+import 'package:life_game/widgets/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class AchievementForm extends StatefulWidget {
@@ -104,16 +105,18 @@ class _AchievementFormState extends State<AchievementForm> {
   }
 
   void _showTagSelector() async {
-    final result = await showDialog<List<Tag>>(
+    await showDialog<List<Tag>>(
       context: context,
-      builder: (context) => TagSelectorModal(
-        selectedTags: _selectedTags,
-        onConfirm: (tags) {
-          setState(() {
-            _selectedTags = tags;
-          });
-        },
-      ),
+      builder: (context) => Dialog(
+        child: TagSelectorModal(
+          selectedTags: _selectedTags,
+          onConfirm: (tags) {
+            setState(() {
+              _selectedTags = tags;
+            });
+          },
+        ),
+      ) 
     );
   }
 
@@ -121,7 +124,6 @@ class _AchievementFormState extends State<AchievementForm> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        width: 500,
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
@@ -238,37 +240,44 @@ class _AchievementFormState extends State<AchievementForm> {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      'Теги: ${_selectedTags.map((t) => t.title).join(', ')}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      overflow: TextOverflow.ellipsis,
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [ ..._selectedTags.map((t) => TagChip(title: t.title))],
                     ),
                   ),
                   TextButton(
                     onPressed: _showTagSelector,
-                    child: Text(_selectedTags.isEmpty ? 'Выбрать' : 'Изменить'),
+                    child: Text('Выбрать теги'),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               // Кнопки
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  TextButton(
-                    onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                    child: const Text('Отмена'),
+                  Expanded(
+                    flex: 1, 
+                    child: OutlinedButton(
+                      onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+                      child: const Text('Отмена'),
+                    ),
                   ),
+                  
                   const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _submit,
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Сохранить'),
+                  Expanded(
+                    flex: 1, 
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _submit,
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Сохранить'),
+                    ),
                   ),
                 ],
               ),

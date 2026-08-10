@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/services/file_storage_service.dart';
 
 class SkillListModel extends ChangeNotifier {
 
@@ -10,7 +9,6 @@ class SkillListModel extends ChangeNotifier {
   final SkillConditionRepository _conditionRepo = SkillConditionRepository();
   final TagRepository _tagRepo = TagRepository();
   final TagSkillRepository _tagSkillRepo = TagSkillRepository();
-  final FileStorageService _fileStorage = FileStorageService();
   
   List<Skill> _skills = [];
   List<Tag> _allTags = [];

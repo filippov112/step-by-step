@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tags/widgets/tag_type_chip.dart';

@@ -80,7 +80,7 @@ class ConditionsListWidget extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: _getRangColor(condition.rang).withValues(alpha: 0.2),
+            color: condition.rang.color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Center(
@@ -88,7 +88,7 @@ class ConditionsListWidget extends StatelessWidget {
               condition.rang.name,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: _getRangColor(condition.rang),
+                color: condition.rang.color,
               ),
             ),
           ),
@@ -116,31 +116,6 @@ class ConditionsListWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getRangColor(SkillRang rang) {
-    switch (rang) {
-      case SkillRang.F:
-        return Colors.grey;
-      case SkillRang.E:
-        return Colors.blueGrey;
-      case SkillRang.D:
-        return Colors.blue;
-      case SkillRang.C:
-        return Colors.green;
-      case SkillRang.B:
-        return Colors.lime;
-      case SkillRang.A:
-        return Colors.orange;
-      case SkillRang.S:
-        return Colors.red;
-      case SkillRang.SS:
-        return Colors.purple;
-      case SkillRang.SSS:
-        return Colors.deepPurple;
-      case SkillRang.EX:
-        return Colors.amber;
-    }
   }
 
   void _showAddConditionDialog(BuildContext context) async {

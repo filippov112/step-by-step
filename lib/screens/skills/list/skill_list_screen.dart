@@ -7,6 +7,7 @@ import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
+import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
@@ -218,33 +219,12 @@ class _SkillListScreenState extends State<SkillListScreen> {
                   }
                   
                   if (filteredSkills.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.star_border, size: 64),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Навыки не найдены',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _searchQuery.isNotEmpty || _selectedFilters.isNotEmpty
-                                ? 'Попробуйте изменить параметры поиска'
-                                : 'Создайте свой первый навык',
-                            style: TextStyle(color: SoloLevelingTheme.steelBlue),
-                          ),
-                          if (_searchQuery.isEmpty && _selectedFilters.isEmpty) ...[
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              onPressed: () => _navigateToForm(context),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Создать навык'),
-                            ),
-                          ],
-                        ],
-                      ),
+                    return EmptyListScreen(
+                      subtitle: _searchQuery.isNotEmpty || _selectedFilters.isNotEmpty
+                        ? 'Попробуйте изменить параметры поиска'
+                        : 'Создайте свой первый навык',
+                      title: 'Навыки не найдены',
+                      icon: Icons.star_border,
                     );
                   }
                   

@@ -21,8 +21,8 @@ class BottomMenu extends StatelessWidget {
             label: 'Профиль',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.checklist_outlined),
-            activeIcon: Icon(Icons.checklist),
+            icon: Icon(Icons.task_alt_outlined),
+            activeIcon: Icon(Icons.task_alt),
             label: 'Задачи',
           ),
           BottomNavigationBarItem(

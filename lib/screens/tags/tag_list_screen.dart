@@ -8,6 +8,7 @@ import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
+import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
 
@@ -218,76 +219,32 @@ class _TagListScreenState extends State<TagListScreen> {
           ),
         );
 
-        Widget emptyTagListWidget = Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.label_off, size: 80, color: Colors.grey.shade400),
-              const SizedBox(height: 16),
-              Text(
-                'Нет тегов',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Нажмите "+" чтобы добавить первый тег',
-                style: TextStyle(color: Colors.grey.shade500),
-              ),
-            ],
-          ),
-        );
-
-        Widget emptyFilteredTagListWidget = Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.filter_alt_off, size: 80, color: Colors.grey.shade400),
-              const SizedBox(height: 16),
-              Text(
-                'Ничего не найдено',
-                style: TextStyle(fontSize: 20, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Попробуйте изменить фильтры или поиск',
-                style: TextStyle(color: Colors.grey.shade500),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: clearFilters,
-                child: const Text('Сбросить фильтры'),
-              ),
-            ],
-          ),
-        );
-
-        Widget listViewWidget = ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemCount: filteredTags.length,
-          itemBuilder: (context, index) {
-            final tag = filteredTags[index];
-            final isSelected = selectedIds.contains(tag.id);
-            
-            return Card(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              child: TagTile(
-                isSelected: isSelected, 
-                tag: tag, 
-                deleteTag: _deleteTag, 
-                showEditDialog: _showEditDialog,
-              )
-            );
-          },
-        );
-
         Widget buildBody() {
-          if (allTags.isEmpty) {
-            return emptyTagListWidget;
+          if (allTags.isEmpty || filteredTags.isEmpty) {
+            return EmptyListScreen(
+              title: "Теги не найдены", 
+              subtitle: allTags.isEmpty ? "Создайте свой первый тэг" : "Попробуйте изменить параметры поиска", 
+              icon: Icons.tag
+            );
           }
-          else if (filteredTags.isEmpty) {
-            return emptyFilteredTagListWidget;
-          }
-          return listViewWidget;
+          return ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: filteredTags.length,
+            itemBuilder: (context, index) {
+              final tag = filteredTags[index];
+              final isSelected = selectedIds.contains(tag.id);
+              
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: TagTile(
+                  isSelected: isSelected, 
+                  tag: tag, 
+                  deleteTag: _deleteTag, 
+                  showEditDialog: _showEditDialog,
+                )
+              );
+            },
+          );
         }
 
         return Scaffold(

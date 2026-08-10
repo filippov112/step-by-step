@@ -59,9 +59,14 @@ class SoloLevelingTheme {
           fontWeight: FontWeight.w600,
         ),
         titleMedium: TextStyle(
-          color: textSecondary,
+          color: steelBlue,
           fontSize: 16,
           fontWeight: FontWeight.w500,
+        ),
+        titleSmall: TextStyle(
+          color: steelBlue,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
         ),
         bodyLarge: TextStyle(color: textPrimary, fontSize: 16),
         bodyMedium: TextStyle(color: textSecondary, fontSize: 14),

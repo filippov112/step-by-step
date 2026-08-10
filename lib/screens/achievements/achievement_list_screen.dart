@@ -9,6 +9,7 @@ import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
+import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
 
@@ -41,36 +42,11 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
           }
 
           if (viewModel.filteredAchievements.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.emoji_events_outlined,
-                    size: 80,
-                    color: Theme.of(context).hintColor,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Нет достижений',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Создайте своё первое достижение',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).hintColor,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: _showCreateForm,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Создать достижение'),
-                  ),
-                ],
-              ),
-            );
+            return EmptyListScreen(
+              title: "Достижения не найдены", 
+              subtitle: "Создайте своё первое достижение", 
+              icon: Icons.emoji_events_outlined
+              );
           }
 
           // Группируем достижения

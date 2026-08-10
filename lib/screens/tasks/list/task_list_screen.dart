@@ -3,6 +3,7 @@ import 'package:life_game/models/task.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
+import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 import '../form/task_form_screen.dart';
 import 'widgets/task_tile.dart';
@@ -40,10 +41,15 @@ class TaskListScreen extends StatelessWidget {
               ),
             ),
           ),
-          body:ListView.builder(
-              itemCount: tasks.length,
-              itemBuilder: (context, i) => TaskTile(task: tasks[i], completeTask: completeTask,)
-          ),
+          body: tasks.isEmpty ? EmptyListScreen(
+              title: "Задачи не найдены", 
+              subtitle: "Создайте свою первую задачу или измените параметры поиска", 
+              icon: Icons.task_alt
+            )
+            : ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (context, i) => TaskTile(task: tasks[i], completeTask: completeTask,)
+            ),
           floatingActionButton: CustomFloatingActionButton(openFormCreate: openFormCreate, tooltip: "Добавить задачу"),
           
           // FloatingActionButton(

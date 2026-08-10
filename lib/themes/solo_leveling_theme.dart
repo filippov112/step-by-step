@@ -145,6 +145,9 @@ class SoloLevelingTheme {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         ),
       ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: steelBlue,
+      ),
 
       // ---- Поля ввода (как интерфейс системы) ----
       inputDecorationTheme: InputDecorationTheme(

@@ -6,6 +6,7 @@ import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
@@ -79,11 +80,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
                   ],
                 );
               },
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => _navigateToForm(context),
-              tooltip: 'Создать навык',
             ),
             IconButton(
               icon: const Icon(Icons.refresh),
@@ -360,6 +356,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
           ],
         ),
         bottomNavigationBar: const BottomMenu(),
+        floatingActionButton: CustomFloatingActionButton(openFormCreate: () => _navigateToForm(context), tooltip: "Добавить навык"),
       ),
     );
   }

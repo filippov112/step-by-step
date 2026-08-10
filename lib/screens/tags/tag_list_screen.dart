@@ -7,6 +7,7 @@ import 'package:life_game/screens/tags/widgets/tag_search.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
 import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:provider/provider.dart';
 
 
@@ -207,12 +208,6 @@ class _TagListScreenState extends State<TagListScreen> {
                 onPressed: clearFilters,
                 tooltip: 'Сбросить фильтры',
               ),
-            // Добавление
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: _showAddDialog,
-              tooltip: 'Добавить тег',
-            ),
           ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(60),
@@ -298,7 +293,8 @@ class _TagListScreenState extends State<TagListScreen> {
         return Scaffold(
           drawer: AppDrawer(currentRoute: '/tags'),
           appBar: appBar,
-          body: buildBody()
+          body: buildBody(),
+          floatingActionButton: CustomFloatingActionButton(openFormCreate: _showAddDialog, tooltip: "Добавить тег"),
         );
       }
     );

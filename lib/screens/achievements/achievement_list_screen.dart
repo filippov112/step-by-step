@@ -8,6 +8,7 @@ import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
 import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
+import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:provider/provider.dart';
 
 
@@ -101,12 +102,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
         },
       ),
       bottomNavigationBar: BottomMenu(),
-      floatingActionButton: FloatingActionButton(
-        heroTag: UniqueKey(),
-        onPressed: _showCreateForm,
-        tooltip: 'Создать достижение',
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: CustomFloatingActionButton(openFormCreate: _showCreateForm, tooltip: "Добавить достижение")
     );
   }
 

@@ -43,6 +43,26 @@ class FileStorageService {
       return null;
     }
   }
+
+  // Сохраняет иконку достижения
+  Future<String?> saveAchievementIcon(File imageFile) async {
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final iconDir = Directory('${appDir.path}/achievement_icons');
+      if (!await iconDir.exists()) {
+        await iconDir.create(recursive: true);
+      }
+      
+      final fileName = 'achievement_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final newPath = '${iconDir.path}/$fileName';
+      final newFile = await imageFile.copy(newPath);
+      
+      return newFile.path;
+    } catch (e) {
+      print('Ошибка сохранения иконки достижения: $e');
+      return null;
+    }
+  }
   
   // Удаляет старый файл
   Future<void> deleteOldFile(String? oldPath) async {

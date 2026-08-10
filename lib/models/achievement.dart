@@ -1,4 +1,5 @@
 import 'package:life_game/data/db.dart';
+import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
@@ -9,6 +10,7 @@ class Achievement {
   static const cId = "_id";
   static const cTitle = "_title";
   static const cDescription = "_description";
+  static const cRarity = "_rarity";
   static const cDate = "_date";
   static const cIcon = "_icon";
 
@@ -16,6 +18,7 @@ class Achievement {
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cDescription TEXT, 
+          $cRarity INTEGER,
           $cDate INTEGER,
           $cIcon TEXT
         );
@@ -25,6 +28,7 @@ class Achievement {
   String id = "";
   String title = "";
   String description = "";
+  AchievRar rarity = AchievRar.common;
   DateTime? date;
   String? icon;
 
@@ -33,6 +37,7 @@ class Achievement {
     required this.id,
     required this.title,
     required this.description,
+    required this.rarity,
     this.date,
     this.icon,
   });
@@ -40,6 +45,7 @@ class Achievement {
   factory Achievement.create({
     required String title,
     String description = "",
+    AchievRar rarity = AchievRar.common,
     DateTime? date,
     String? icon,
   }) {
@@ -48,6 +54,7 @@ class Achievement {
       id: guid,
       title: title,
       description: description,
+      rarity: rarity,
       date: date,
       icon: icon,
     );
@@ -59,6 +66,7 @@ class Achievement {
       cId: id,
       cTitle: title,
       cDescription: description,
+      cRarity: rarity.index,
       cDate: date?.millisecondsSinceEpoch,
       cIcon: icon,
     };
@@ -68,6 +76,7 @@ class Achievement {
     id = map[cId];
     title = map[cTitle];
     description = map[cDescription] ?? "";
+    rarity = allAchievRar[map[cRarity] ?? 0];
     date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
     icon = map[cIcon];
   }

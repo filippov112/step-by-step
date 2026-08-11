@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
+import 'package:life_game/widgets/tag_selector_modal.dart';
 import 'package:provider/provider.dart';
 
 class AchievementFilters extends StatefulWidget {

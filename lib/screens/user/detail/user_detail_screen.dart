@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
-import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/menu_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
-import 'package:life_game/widgets/custom_progress_bar.dart';
+import 'package:life_game/screens/user/detail/widgets/custom_progress_bar.dart';
 import 'package:provider/provider.dart';
 
 
@@ -96,7 +96,7 @@ class UserDetailScreen extends StatelessWidget {
 
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
-          drawer: AppDrawer(),
+          drawer: MenuDrawer(),
           appBar: AppBar(
             title: const Text('Профиль'),
           ),

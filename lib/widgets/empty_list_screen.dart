@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Что отображать вместо пустого списка элементов
+// Заглушка пустого списка элементов
 class EmptyListScreen extends StatelessWidget {
   const EmptyListScreen({super.key, 
     required this.title, required this.subtitle, required this.icon});

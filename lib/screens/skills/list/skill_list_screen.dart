@@ -10,7 +10,7 @@ import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:life_game/widgets/search_string.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/menu_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
@@ -101,7 +101,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
             }
           ),
         ),
-        drawer: const AppDrawer(currentRoute: '/skills'),
+        drawer: const MenuDrawer(currentRoute: '/skills'),
         body: Column(
           children: [
             // Отображение выбранных фильтров

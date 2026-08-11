@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/screens/tags/widgets/tag_filter.dart';
+import 'package:life_game/widgets/filters_drawer.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
 import 'package:life_game/widgets/app_bar.dart';
-import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/menu_drawer.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
 import 'package:life_game/widgets/search_string.dart';
@@ -100,31 +101,12 @@ class _TagListScreenState extends State<TagListScreen> {
     var model = context.read<TagListModel>();
     int count = model.selectedIds.length;
     var deleteSelected = model.deleteSelected;
-    // final confirm = await showDialog<bool>(
-    //   context: context,
-    //   builder: (context) => AlertDialog(
-    //     title: Text('Удаление $itemCount тегов'),
-    //     content: Text('Вы уверены, что хотите удалить выбранные теги ($itemCount шт.)?'),
-    //     actions: [
-    //       TextButton(
-    //         onPressed: () => Navigator.pop(context, false),
-    //         child: const Text('Отмена'),
-    //       ),
-    //       TextButton(
-    //         onPressed: () => Navigator.pop(context, true),
-    //         child: const Text('Удалить все'),
-    //       ),
-    //     ],
-    //   ),
-    // );
-    // if (confirm == true) {
-      await deleteSelected.call();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Удалено $count тегов')),
-        );
-      }
-    // }
+    await deleteSelected.call();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Удалено $count тегов')),
+      );
+    }
   }
 
   @override
@@ -171,6 +153,40 @@ class _TagListScreenState extends State<TagListScreen> {
           isRootWidgetTree:false
         );
         
+        var statusFilterValue = context.select<TagListModel,List<TagType>?>((model) => model.selectedTypeFilter);
+        var setTypeFilter = context.read<TagListModel>().setTypeFilter;
+
+        var tagTypeFilter = Padding(
+          padding: EdgeInsetsGeometry.fromLTRB(16,0,16,0), 
+          child: DropdownButtonFormField<List<TagType>>(
+            items: [
+              const DropdownMenuItem(
+                value: [TagType.common, TagType.skill, TagType.achievement, TagType.task],
+                child: Text('Все типы'),
+              ),
+              const DropdownMenuItem(
+                value: [TagType.common],
+                child: Text('Общие'),
+              ),
+              const DropdownMenuItem(
+                value: [TagType.skill],
+                child: Text('Навыки'),
+              ),
+              const DropdownMenuItem(
+                value: [TagType.achievement],
+                child: Text('Достижения'),
+              ),
+              const DropdownMenuItem(
+                value: [TagType.task],
+                child: Text('Задачи'),
+              ),
+            ], 
+            initialValue: statusFilterValue, 
+            onChanged: setTypeFilter,
+          ),
+        );
+
+        List<Widget> filters = [tagTypeFilter, ];
 
         Widget buildBody() {
           if (allTags.isEmpty || filteredTags.isEmpty) {
@@ -201,9 +217,9 @@ class _TagListScreenState extends State<TagListScreen> {
         }
 
         return Scaffold(
-          drawer: AppDrawer(currentRoute: '/tags'),
+          drawer: MenuDrawer(currentRoute: '/tags'),
           appBar: appBar,
-          endDrawer: TagFilter(),
+          endDrawer: FiltersDrawer(filters: filters,),
           body: buildBody(),
           floatingActionButton: CustomFloatingActionButton(openFormCreate: _showAddDialog, tooltip: "Добавить тег"),
         );

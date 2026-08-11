@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Кнопка добавления записей для экранов-списков
 class CustomFloatingActionButton extends StatelessWidget {
   
   final VoidCallback openFormCreate;

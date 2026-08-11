@@ -1,6 +1,8 @@
 // ---- Прогресс-бар с иконкой и числом ----
 import 'package:flutter/material.dart';
 
+
+// Прогресс бар с иконками для статистики
 class CustomProgressBar extends StatelessWidget {
   
   const CustomProgressBar({super.key,   

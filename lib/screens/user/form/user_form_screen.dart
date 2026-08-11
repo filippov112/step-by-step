@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/widgets/select_date.dart';
+import 'package:life_game/widgets/select_date_only.dart';
 import 'package:provider/provider.dart';
 import 'user_form_model.dart';
 import 'dart:io';
@@ -43,7 +43,7 @@ class UserFormScreen extends StatelessWidget {
 
   Future _selectDateBirth(BuildContext context) async {
     var model = context.read<UserFormModel>();
-    var selectedDate = await selectDateBirth(context, model.newUser.dateBirth);
+    var selectedDate = await selectDateOnly(context, model.newUser.dateBirth);
     model.selectDateBirth(selectedDate);
   }
 

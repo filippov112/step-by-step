@@ -3,10 +3,11 @@ import 'package:life_game/screens/settings/setting_list_screen.dart';
 import 'package:life_game/screens/tags/tag_list_screen.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 
-class AppDrawer extends StatelessWidget {
+// Боковое меню для главных экранов модулей приложения
+class MenuDrawer extends StatelessWidget {
   final String? currentRoute;
   
-  const AppDrawer({
+  const MenuDrawer({
     super.key,
     this.currentRoute,
   });

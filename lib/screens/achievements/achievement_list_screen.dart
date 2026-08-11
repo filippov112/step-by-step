@@ -6,7 +6,7 @@ import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_details.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
-import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/menu_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
@@ -40,7 +40,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     var viewModel = context.read<AchievementListModel>();
     return Scaffold(
       appBar: _buildAppBar(),
-      drawer: const AppDrawer(),
+      drawer: const MenuDrawer(),
       endDrawer: AchievementFilters(
         selectedTags: viewModel.selectedTags,
         onConfirm: (tags) {

@@ -5,6 +5,7 @@ import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/widgets/tag_chip.dart';
 import 'package:provider/provider.dart';
 
+// Форма поиска и выбора тегов для фильтров и форм связанных с тегами сущностей (достижения, навыки, задачи)
 class TagSelectorModal extends StatefulWidget {
   final List<Tag> selectedTags;
   final Function(List<Tag>) onConfirm;

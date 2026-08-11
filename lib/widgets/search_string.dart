@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Поисковая строка для AppBar.bottom в экранах-списках
 PreferredSize buildSearchString({
   required String placeholder,
   required TextEditingController controller,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<DateTime> selectDateBirth(BuildContext context, DateTime initDate) async {
+// Диалог выбора даты
+Future<DateTime> selectDateOnly(BuildContext context, DateTime initDate) async {
   // 1. Выбор даты
   final date = await showDatePicker(
     context: context,

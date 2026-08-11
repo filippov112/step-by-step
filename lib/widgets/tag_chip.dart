@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Стилизация отображения тегов в сущностях связанных с тегами (достижения, навыки, задачи)
 class TagChip extends StatelessWidget {
 
   final String title;
@@ -15,7 +16,7 @@ class TagChip extends StatelessWidget {
       label: Text('#$title', style: TextStyle(fontWeight: FontWeight.normal)),
       side: BorderSide.none,
       onDeleted: callback,
-      deleteIcon: Icon( Icons.close, size: 16, ),
+      deleteIcon: callback != null ? Icon( Icons.close, size: 16, ) : null,
     );
   }
   

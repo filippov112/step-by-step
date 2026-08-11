@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tags/widgets/tag_filter.dart';
-import 'package:life_game/widgets/app_drawer.dart';
+import 'package:life_game/widgets/filters_drawer.dart';
+import 'package:life_game/widgets/menu_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
@@ -45,7 +45,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         
         return Scaffold(
-          drawer: AppDrawer(),
+          drawer: MenuDrawer(),
           appBar: AppBar(
             title: const Text('Задачи'),
             bottom: buildSearchString(

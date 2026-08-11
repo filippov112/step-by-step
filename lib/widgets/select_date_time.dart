@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Диалог выбора даты-времени
 Future<DateTime?> selectDateTime(BuildContext context, DateTime dateTime) async {
   // 1. Выбор даты
   final date = await showDatePicker(
@@ -8,7 +9,7 @@ Future<DateTime?> selectDateTime(BuildContext context, DateTime dateTime) async 
     firstDate: DateTime(1900),
     lastDate: DateTime(2100),
   );
-  if (date == null) return dateTime;
+  if (date == null || !context.mounted) return dateTime;
   final time = await showTimePicker(
     context: context,
     initialTime: TimeOfDay.fromDateTime(dateTime),

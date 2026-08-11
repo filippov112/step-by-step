@@ -152,3 +152,35 @@ class TaskRepository {
   }
 }
 
+extension TaskCopyWith on Task {
+  Task copyWith({
+    String? id,
+    String? title,
+    String? description,
+    DateTime? datetime,
+    bool? done,
+    TaskPriority? priority,
+    TaskDifficulty? difficulty,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      datetime: datetime ?? this.datetime,
+      done: done ?? this.done,
+      priority: priority ?? this.priority,
+      difficulty: difficulty ?? this.difficulty,
+    );
+  }
+}
+
+extension TaskHelpers on Task {
+  bool get isOverdue {
+    if (datetime == null || done) return false;
+    return datetime!.isBefore(DateTime.now());
+  }
+  
+  String get priorityLabel => priority.displayName;
+  
+  String get difficultyLabel => difficulty.displayName;
+}

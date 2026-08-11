@@ -288,17 +288,34 @@ class TagTask {
 
 class TagTaskRepository {
   Database db = DB.db!;
+  List<TagTask>? _cache;
+  bool _cacheDirty = true;
   
   Future<List<TagTask>> getAll() async {
+    if (_cache != null && !_cacheDirty) {
+      return _cache!;
+    }
     List<Map<String, Object?>> maps = await db.query(TagTask.tn);
-    return maps.map((m) => TagTask.fromMap(m)).toList();
+    _cache = maps.map((m) => TagTask.fromMap(m)).toList();
+    _cacheDirty = false;
+    return _cache!;
   }
-
+  
+  // Синхронный метод для быстрого доступа к кешу
+  List<TagTask> getAllSync() {
+    if (_cache == null) {
+      // Если кеша нет, загружаем синхронно (только для чтения из кеша)
+      throw Exception('Cache not initialized. Call getAll() first.');
+    }
+    return _cache!;
+  }
+  
   Future<TagTask> insert(TagTask tt) async {
     await db.insert(TagTask.tn, tt.toMap());
+    _cacheDirty = true;
     return tt;
   }
-
+  
   Future<TagTask?> get(String taskId, String tagId) async {
     List<Map> maps = await db.query(
       TagTask.tn, 
@@ -312,10 +329,21 @@ class TagTaskRepository {
   }
 
   Future<int?> delete(String taskId, String tagId) async {
+    _cacheDirty = true;
     return await db.delete(
       TagTask.tn, 
       where: '${TagTask.cTaskId} = ? AND ${TagTask.cTagId} = ?', 
       whereArgs: [taskId, tagId]
+    );
+  }
+  
+  // Метод для удаления всех тегов задачи
+  Future<int?> deleteByTaskId(String taskId) async {
+    _cacheDirty = true;
+    return await db.delete(
+      TagTask.tn, 
+      where: '${TagTask.cTaskId} = ?', 
+      whereArgs: [taskId]
     );
   }
 }

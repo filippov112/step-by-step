@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
@@ -175,12 +178,22 @@ extension TaskCopyWith on Task {
 }
 
 extension TaskHelpers on Task {
-  bool get isOverdue {
-    if (datetime == null || done) return false;
-    return datetime!.isBefore(DateTime.now());
-  }
-  
   String get priorityLabel => priority.displayName;
   
   String get difficultyLabel => difficulty.displayName;
+}
+
+extension TaskStatus on Task {
+  bool get isCompleted => done;
+  bool get isOverdue => !done && datetime != null && datetime!.isBefore(DateTime.now());
+  String get statusText {
+    if (done) return '✅ Выполнена';
+    if (isOverdue) return '⏰ Просрочена';
+    return '⏳ В процессе';
+  }
+  Color get statusColor {
+    if (done) return Colors.green;
+    if (isOverdue) return Colors.red;
+    return Colors.orange;
+  }
 }

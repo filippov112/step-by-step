@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/widgets/app_bar.dart';
-import 'package:life_game/widgets/custom_floating_action_button.dart';
-import 'package:life_game/widgets/empty_list_screen.dart';
-import 'package:life_game/widgets/filters_drawer.dart';
-import 'package:life_game/widgets/menu_drawer.dart';
-import 'package:life_game/widgets/search_string.dart';
-import 'package:life_game/widgets/tag_chip.dart';
-import 'package:life_game/widgets/tag_selector_modal.dart';
+import 'package:life_game/screens/tasks/task_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:life_game/models/task.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -25,476 +16,313 @@ class TaskListScreen extends StatefulWidget {
 
 class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _searchController = TextEditingController();
-
+  String _selectedFilter = 'all';
+  String _selectedSort = 'datetime';
+  
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskListModel>().loadTasks();
+    _searchController.addListener(() {
+      context.read<TaskProvider>().setSearchQuery(_searchController.text);
     });
   }
-
+  
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskListModel>(
-      builder: (context, model, child) {
-        return Scaffold(
-          endDrawer: _buildFiltersDrawer(context, model),
-          drawer: const MenuDrawer(currentRoute: '/tasks'),
-          appBar: buildAppBar<Task>(
-            context,
-            title: 'Задачи',
-            isRootWidgetTree: false,
-            isSelectionMode: model.isSelectionMode,
-            selectAll: model.toggleSelectAll,
-            selectedIds: model.selectedIds,
-            filteredList: model.tasks,
-            searchWidget: _buildSearchWidget(context, model),
-            deleteSelected: model.deleteSelectedTasks,
-            clearSelection: model.clearSelection,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Мои задачи'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              context.read<TaskProvider>().loadTasks();
+            },
           ),
-          body: _buildBody(context, model),
-          floatingActionButton: model.isSelectionMode
-              ? null
-              : CustomFloatingActionButton(
-                  openFormCreate: _openCreateForm,
-                  tooltip: 'Создать задачу',
-                ),
-        );
-      },
-    );
-  }
-
-  PreferredSizeWidget _buildSearchWidget(
-    BuildContext context,
-    TaskListModel model,
-  ) {
-    return buildSearchString(
-      placeholder: 'Поиск задач...',
-      controller: _searchController,
-      value: model.searchQuery,
-      clearCallback: model.clearSearch,
-      changeCallback: model.setSearchQuery,
-    );
-  }
-
-  Widget _buildBody(BuildContext context, TaskListModel model) {
-    if (model.tasks.isEmpty) {
-      return EmptyListScreen(
-        title: 'Нет задач',
-        subtitle: 'Создайте свою первую задачу, нажав на кнопку +',
-        icon: Icons.task_alt_outlined,
-      );
-    }
-
-    if (model.hasActiveFilters && model.tasks.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
-            const SizedBox(height: 16),
-            Text(
-              'Нет задач по заданным фильтрам',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: model.clearAllFilters,
-              child: const Text('Сбросить фильтры'),
-            ),
-          ],
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(120),
+          child: _buildSearchAndFilters(),
         ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: model.tasks.length,
-      itemBuilder: (context, index) {
-        final task = model.tasks[index];
-        return _buildTaskCard(context, model, task);
-      },
-    );
-  }
-
-  Widget _buildTaskCard(BuildContext context, TaskListModel model, Task task) {
-    final isSelected = model.selectedIds.contains(task.id);
-    final isOverdue = task.isOverdue;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      color: task.done
-          ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-          : null,
-      child: InkWell(
-        onTap: () {
-          if (model.isSelectionMode) {
-            model.toggleSelectTask(task.id);
-          } else {
-            _openDetails(task);
+      ),
+      body: Consumer<TaskProvider>(
+        builder: (context, taskProvider, child) {
+          if (!taskProvider.isInitialized && taskProvider.tasks.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
           }
-        },
-        onLongPress: () {
-          if (!model.isSelectionMode) {
-            model.toggleSelectionMode();
-            model.toggleSelectTask(task.id);
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Чекбокс для выделения или статуса
-              if (model.isSelectionMode)
-                Checkbox(
-                  value: isSelected,
-                  onChanged: (_) => model.toggleSelectTask(task.id),
-                )
-              else
-                Checkbox(
-                  value: task.done,
-                  onChanged: (_) => model.toggleTaskDone(task.id),
-                ),
-              
-              // Информация о задаче
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      task.title,
-                      style: TextStyle(
-                        decoration: task.done ? TextDecoration.lineThrough : null,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    if (task.description.isNotEmpty)
-                      Text(
-                        task.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      children: [
-                        _buildPriorityChip(context, task.priority),
-                        _buildDifficultyChip(context, task.difficulty),
-                        if (task.datetime != null)
-                          _buildDateTimeChip(context, task.datetime!, isOverdue),
-                      ],
-                    ),
-                  ],
-                ),
+          
+          if (taskProvider.tasks.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.task_alt, size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Нет задач',
+                    style: TextStyle(fontSize: 20, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Создайте свою первую задачу!',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ],
               ),
-              
-              // Индикатор просрочки
-              if (isOverdue && !task.done)
-                Icon(
-                  Icons.warning_amber_rounded,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              
-              // Стрелка перехода
-              if (!model.isSelectionMode)
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: () => _openDetails(task),
-                ),
-            ],
-          ),
-        ),
+            );
+          }
+          
+          return ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: taskProvider.tasks.length,
+            itemBuilder: (context, index) {
+              final task = taskProvider.tasks[index];
+              return _buildTaskCard(context, task);
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TaskFormScreen(),
+            ),
+          ).then((_) {
+            // Обновляем список при возврате
+            context.read<TaskProvider>().loadTasks();
+          });
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.deepPurple,
       ),
     );
   }
-
-  Widget _buildPriorityChip(BuildContext context, TaskPriority priority) {
-
-    return Chip(
-      label: Text(priority.displayName),
-      backgroundColor: priority.color.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: priority.color,
-        fontSize: 10,
-      ),
-      padding: EdgeInsets.zero,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-    );
-  }
-
-  Widget _buildDifficultyChip(BuildContext context, TaskDifficulty difficulty) {
-
-    return Chip(
-      label: Text(difficulty.displayName),
-      backgroundColor: difficulty.color.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: difficulty.color,
-        fontSize: 10,
-      ),
-      padding: EdgeInsets.zero,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-    );
-  }
-
-  Widget _buildDateTimeChip(BuildContext context, DateTime datetime, bool isOverdue) {
-    return Chip(
-      label: Text(
-        '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
-      ),
-      backgroundColor: isOverdue
-          ? Theme.of(context).colorScheme.error.withValues(alpha: 0.2)
-          : null,
-      labelStyle: TextStyle(
-        fontSize: 10,
-        color: isOverdue ? Theme.of(context).colorScheme.error : null,
-      ),
-      padding: EdgeInsets.zero,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-    );
-  }
-
-  Widget _buildFiltersDrawer(BuildContext context, TaskListModel model) {
-    return FiltersDrawer(
-      filters: [
-        // Приоритет
-        _buildFilterSection(
-          title: 'Приоритет',
-          children: TaskPriority.values.map((priority) =>
-            FilterChip(
-              label: Text(priority.displayName),
-              selected: model.filterPriority == priority,
-              onSelected: (_) => model.setPriorityFilter(priority),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-          ).toList(),
-        ),
-        
-        // Сложность
-        _buildFilterSection(
-          title: 'Сложность',
-          children: TaskDifficulty.values.map((difficulty) =>
-            FilterChip(
-              label: Text(difficulty.displayName),
-              selected: model.filterDifficulty == difficulty,
-              onSelected: (_) => model.setDifficultyFilter(difficulty),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-          ).toList(),
-        ),
-        
-        // Статус
-        _buildFilterSection(
-          title: 'Статус',
-          children: [
-            FilterChip(
-              label: const Text('Выполненные'),
-              selected: model.filterDone,
-              onSelected: (_) => model.toggleDoneFilter(),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Colors.green.withValues(alpha: 0.2),
-            ),
-            FilterChip(
-              label: const Text('Невыполненные'),
-              selected: model.filterUndone,
-              onSelected: (_) => model.toggleUndoneFilter(),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Colors.orange.withValues(alpha: 0.2),
-            ),
-          ],
-        ),
-        
-        // Теги
-        _buildFilterSection(
-          title: 'Теги',
-          children: [
-            Wrap(
-              spacing: 4,
-              children: [
-                ...model.selectedTags.map((tag) =>
-                  TagChip(
-                    title: tag.title,
-                    callback: () {
-                      final updated = List<Tag>.from(model.selectedTags);
-                      updated.remove(tag);
-                      model.setTagsFilter(updated);
-                    },
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: _openTagSelector,
-                  icon: const Icon(Icons.add, size: 16),
-                  label: const Text('Добавить тег'),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        
-        // Сортировка
-        _buildFilterSection(
-          title: 'Сортировка',
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSortButton(
-                    context,
-                    model,
-                    SortField.title,
-                    'По названию',
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildSortButton(
-                    context,
-                    model,
-                    SortField.datetime,
-                    'По дате',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildSortButton(
-                    context,
-                    model,
-                    SortField.priority,
-                    'По приоритету',
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildSortButton(
-                    context,
-                    model,
-                    SortField.difficulty,
-                    'По сложности',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        
-        // Сброс
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: TextButton(
-            onPressed: model.hasActiveFilters ? model.clearAllFilters : null,
-            child: const Text('Сбросить все фильтры'),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFilterSection({
-    required String title,
-    required List<Widget> children,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+  
+  Widget _buildSearchAndFilters() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: Colors.deepPurple,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: Theme.of(context).hintColor,
+          // Поиск
+          TextField(
+            controller: _searchController,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: 'Поиск задач...',
+              hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+              prefixIcon: const Icon(Icons.search, color: Colors.white),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.2),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
             ),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: children,
+          // Фильтры и сортировка
+          Row(
+            children: [
+              // Фильтры
+              _buildFilterChip('Все', 'all'),
+              _buildFilterChip('Активные', 'active'),
+              _buildFilterChip('Выполненные', 'completed'),
+              _buildFilterChip('Просроченные', 'overdue'),
+              const Spacer(),
+              // Сортировка
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.sort, color: Colors.white),
+                onSelected: (value) {
+                  setState(() {
+                    _selectedSort = value;
+                  });
+                  context.read<TaskProvider>().setSortBy(value);
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'datetime',
+                    child: Text('По дате'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'priority',
+                    child: Text('По приоритету'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'difficulty',
+                    child: Text('По сложности'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'title',
+                    child: Text('По названию'),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-
-  Widget _buildSortButton(
-    BuildContext context,
-    TaskListModel model,
-    SortField field,
-    String label,
-  ) {
-    final isActive = model.sortField == field;
-    return OutlinedButton(
-      onPressed: () => model.setSortField(field),
-      style: OutlinedButton.styleFrom(
-        backgroundColor: isActive
-            ? Theme.of(context).colorScheme.primaryContainer
-            : null,
-        side: isActive
-            ? BorderSide(color: Theme.of(context).colorScheme.primary)
-            : null,
+  
+  Widget _buildFilterChip(String label, String value) {
+    final isSelected = _selectedFilter == value;
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: FilterChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (selected) {
+          setState(() {
+            _selectedFilter = selected ? value : 'all';
+          });
+          context.read<TaskProvider>().setFilter(_selectedFilter);
+        },
+        backgroundColor: Colors.white.withOpacity(0.1),
+        selectedColor: Colors.white.withOpacity(0.3),
+        labelStyle: TextStyle(
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: isSelected ? Colors.white : Colors.white.withOpacity(0.3),
+          ),
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(label),
-          if (isActive)
-            Icon(
-              model.sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
-              size: 16,
+    );
+  }
+  
+  Widget _buildTaskCard(BuildContext context, Task task) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      elevation: 2,
+      child: ListTile(
+        leading: Checkbox(
+          value: task.done,
+          onChanged: (_) {
+            context.read<TaskProvider>().toggleTaskStatus(task.id);
+          },
+          activeColor: Colors.deepPurple,
+        ),
+        title: Text(
+          task.title,
+          style: TextStyle(
+            decoration: task.done ? TextDecoration.lineThrough : null,
+            color: task.done ? Colors.grey : Colors.black87,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (task.description.isNotEmpty)
+              Text(
+                task.description,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            Row(
+              children: [
+                _buildStatusChip(task),
+                const SizedBox(width: 4),
+                _buildPriorityChip(task),
+                const SizedBox(width: 4),
+                _buildDifficultyChip(task),
+              ],
             ),
-        ],
+          ],
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.arrow_forward_ios, size: 16),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TaskDetailScreen(taskId: task.id),
+              ),
+            );
+          },
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TaskDetailScreen(taskId: task.id),
+            ),
+          );
+        },
       ),
     );
   }
-
-  void _openTagSelector() {
-    final model = context.read<TaskListModel>();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => TagSelectorModal(
-        selectedTags: model.selectedTags,
-        onConfirm: model.setTagsFilter,
+  
+  Widget _buildStatusChip(Task task) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: task.statusColor.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: task.statusColor.withOpacity(0.3)),
+      ),
+      child: Text(
+        task.statusText,
+        style: TextStyle(
+          fontSize: 10,
+          color: task.statusColor,
+        ),
       ),
     );
   }
-
-  void _openCreateForm() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TaskFormScreen(),
+  
+  Widget _buildPriorityChip(Task task) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: task.priority.color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: task.priority.color.withOpacity(0.3)),
       ),
-    ).then((_) => context.read<TaskListModel>().loadTasks());
+      child: Text(
+        task.priority.displayName,
+        style: TextStyle(
+          fontSize: 10,
+          color: task.priority.color,
+        ),
+      ),
+    );
   }
-
-  void _openDetails(Task task) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskDetailsScreen(task: task),
+  
+  Widget _buildDifficultyChip(Task task) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: task.difficulty.color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: task.difficulty.color.withOpacity(0.3)),
       ),
-    ).then((_) => context.read<TaskListModel>().loadTasks());
+      child: Text(
+        task.difficulty.displayName,
+        style: TextStyle(
+          fontSize: 10,
+          color: task.difficulty.color,
+        ),
+      ),
+    );
   }
 }

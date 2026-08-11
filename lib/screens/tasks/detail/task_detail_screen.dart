@@ -1,362 +1,387 @@
-// lib/screens/tasks/task_details_screen.dart
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task_hierarchy.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
+import 'package:life_game/screens/tasks/task_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:life_game/models/task.dart';
 
-class TaskDetailsScreen extends StatefulWidget {
-  final Task task;
+class TaskDetailScreen extends StatefulWidget {
+  final String taskId;
   
-  const TaskDetailsScreen({super.key, required this.task});
+  const TaskDetailScreen({super.key, required this.taskId});
 
   @override
-  State<TaskDetailsScreen> createState() => _TaskDetailsScreenState();
+  State<TaskDetailScreen> createState() => _TaskDetailScreenState();
 }
 
-class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
-  final TaskHierarchyRepository _hierarchyRepo = TaskHierarchyRepository();
-  final TaskRepository _taskRepo = TaskRepository();
-  
+class _TaskDetailScreenState extends State<TaskDetailScreen> {
+  Task? _task;
   List<Task> _subtasks = [];
   bool _isLoading = true;
   
   @override
   void initState() {
     super.initState();
-    _loadSubtasks();
+    _loadData();
   }
   
-  Future<void> _loadSubtasks() async {
+  Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    _subtasks = await _hierarchyRepo.getByParent(widget.task.id);
+    
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    _task = taskProvider.allTasks.firstWhere(
+      (t) => t.id == widget.taskId,
+    );
+    
+    if (_task != null) {
+      _subtasks = await taskProvider.getSubtasks(widget.taskId);
+    }
+    
     setState(() => _isLoading = false);
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Детали задачи'),
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    
+    if (_task == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Детали задачи'),
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(child: Text('Задача не найдена')),
+      );
+    }
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task.title),
+        title: const Text('Детали задачи'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () => _editTask(),
-            tooltip: 'Редактировать',
+            onPressed: _editTask,
           ),
         ],
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Информация о задаче
-          _buildTaskInfo(context),
-          
-          // Разделитель
-          const Divider(),
-          
-          // Заголовок подзадач
-          _buildSubtasksHeader(),
-          
-          // Список подзадач
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _subtasks.isEmpty
-                    ? _buildEmptySubtasks()
-                    : ListView.builder(
-                        itemCount: _subtasks.length,
-                        itemBuilder: (context, index) {
-                          return _buildSubtaskCard(_subtasks[index]);
-                        },
-                      ),
+            flex: 2,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: _buildTaskDetails(),
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            flex: 3,
+            child: _buildSubtasksSection(),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _createSubtask,
-        tooltip: 'Добавить подзадачу',
-        child: const Icon(Icons.add),
-      ),
     );
   }
-
-  Widget _buildTaskInfo(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Заголовок и статус
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  widget.task.title,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: widget.task.done
-                      ? Colors.green.withValues(alpha: 0.2)
-                      : Colors.orange.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  widget.task.done ? 'Выполнено' : 'В процессе',
-                  style: TextStyle(
-                    color: widget.task.done ? Colors.green : Colors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          
-          // Описание
-          if (widget.task.description.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+  
+  Widget _buildTaskDetails() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Заголовок и статус
+        Row(
+          children: [
+            Expanded(
               child: Text(
-                widget.task.description,
-                style: Theme.of(context).textTheme.bodyLarge,
+                _task!.title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          
-          // Детали
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              _buildInfoChip(
-                icon: Icons.priority_high,
-                label: widget.task.priority.displayName,
-                color: widget.task.priority.color,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: _task!.statusColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: _task!.statusColor.withOpacity(0.3)),
               ),
-              _buildInfoChip(
-                icon: Icons.speed,
-                label: widget.task.difficulty.displayName,
-                color: widget.task.difficulty.color,
-              ),
-              if (widget.task.datetime != null)
-                _buildInfoChip(
-                  icon: Icons.event,
-                  label: '${widget.task.datetime!.day}.${widget.task.datetime!.month}.${widget.task.datetime!.year} ${widget.task.datetime!.hour}:${widget.task.datetime!.minute.toString().padLeft(2, '0')}',
-                  color: widget.task.isOverdue && !widget.task.done
-                      ? Colors.red
-                      : null,
+              child: Text(
+                _task!.statusText,
+                style: TextStyle(
+                  color: _task!.statusColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        
+        // Описание
+        if (_task!.description.isNotEmpty) ...[
+          const Text(
+            'Описание:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(_task!.description),
+          const SizedBox(height: 16),
+        ],
+        
+        // Дата
+        if (_task!.datetime != null) ...[
+          const Text(
+            'Запланировано:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(_task!.datetime!.toString()),
+          const SizedBox(height: 16),
+        ],
+        
+        // Приоритет и сложность
+        Row(
+          children: [
+            _buildInfoChip(
+              'Приоритет: ${_task!.priority.displayName}',
+              _task!.priority.color,
+            ),
+            const SizedBox(width: 8),
+            _buildInfoChip(
+              'Сложность: ${_task!.difficulty.displayName}',
+              _task!.difficulty.color,
+            ),
+          ],
+        ),
+        
+        // Теги (упрощённо)
+        const SizedBox(height: 16),
+        const Text(
+          'Теги:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Consumer<TaskProvider>(
+          builder: (context, provider, child) {
+            final tags = provider.getTaskTags(widget.taskId);
+            if (tags.isEmpty) {
+              return const Text('Нет тегов');
+            }
+            return Wrap(
+              spacing: 8,
+              children: tags.map((tag) {
+                return Chip(
+                  label: Text(tag.title),
+                  backgroundColor: tag.type.color.withOpacity(0.2),
+                  labelStyle: TextStyle(color: tag.type.color),
+                );
+              }).toList(),
+            );
+          },
+        ),
+        
+        // Награды
+        const SizedBox(height: 16),
+        const Text(
+          'Награды:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Consumer<TaskProvider>(
+          builder: (context, provider, child) {
+            final rewards = provider.getTaskRewards(widget.taskId);
+            if (rewards.isEmpty) {
+              return const Text('Нет наград');
+            }
+            return Column(
+              children: rewards.map((reward) {
+                return ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.star, color: Colors.amber),
+                  title: Text('Опыт: ${reward.experience}'),
+                  subtitle: Text('Время: ${reward.time} мин'),
+                );
+              }).toList(),
+            );
+          },
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildInfoChip(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildSubtasksSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Text(
+                'Подзадачи',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.deepPurple),
+                onPressed: _addSubtask,
+              ),
             ],
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: _subtasks.isEmpty
+              ? const Center(
+                  child: Text(
+                    'Нет подзадач',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: _subtasks.length,
+                  itemBuilder: (context, index) {
+                    final subtask = _subtasks[index];
+                    return _buildSubtaskTile(subtask);
+                  },
+                ),
+        ),
+      ],
     );
   }
-
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-    Color? color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color?.withValues(alpha: 0.15) ?? Theme.of(context).dividerColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubtasksHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Подзадачи (${_subtasks.length})',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadSubtasks,
-            tooltip: 'Обновить',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptySubtasks() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.list_alt_outlined,
-            size: 48,
-            color: Theme.of(context).hintColor,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Нет подзадач',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Добавьте подзадачу, чтобы разбить основную на части',
-            style: Theme.of(context).textTheme.bodySmall,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubtaskCard(Task subtask) {
+  
+  Widget _buildSubtaskTile(Task subtask) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
         leading: Checkbox(
           value: subtask.done,
-          onChanged: (_) => _toggleSubtaskDone(subtask),
+          onChanged: (_) {
+            context.read<TaskProvider>().toggleTaskStatus(subtask.id);
+          },
+          activeColor: Colors.deepPurple,
         ),
         title: Text(
           subtask.title,
           style: TextStyle(
             decoration: subtask.done ? TextDecoration.lineThrough : null,
+            color: subtask.done ? Colors.grey : Colors.black87,
           ),
         ),
-        subtitle: subtask.description.isNotEmpty
-            ? Text(
-                subtask.description,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
-              )
-            : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, size: 18),
+              icon: const Icon(Icons.edit, size: 20),
               onPressed: () => _editSubtask(subtask),
-              tooltip: 'Редактировать',
             ),
             IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
+              icon: const Icon(Icons.delete, size: 20, color: Colors.red),
               onPressed: () => _deleteSubtask(subtask),
-              tooltip: 'Удалить',
             ),
           ],
         ),
         onTap: () {
-          // Можно открыть детали подзадачи
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TaskDetailsScreen(task: subtask),
+              builder: (context) => TaskDetailScreen(taskId: subtask.id),
             ),
-          ).then((_) => _loadSubtasks());
+          );
         },
       ),
     );
   }
-
-  Future<void> _toggleSubtaskDone(Task subtask) async {
-    final updated = subtask.copyWith(done: !subtask.done);
-    await _taskRepo.update(updated);
-    await _loadSubtasks();
-  }
-
-  Future<void> _createSubtask() async {
-    final result = await Navigator.push(
+  
+  void _editTask() {
+    Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const TaskFormScreen(),
+        builder: (context) => TaskFormScreen(task: _task),
       ),
-    );
-    
-    if (result == true) {
-      await _loadSubtasks();
-    }
+    ).then((_) {
+      _loadData();
+    });
   }
-
-  Future<void> _editSubtask(Task subtask) async {
-    final result = await Navigator.push(
+  
+  void _addSubtask() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskFormScreen(parentId: widget.taskId),
+      ),
+    ).then((_) {
+      _loadData();
+    });
+  }
+  
+  void _editSubtask(Task subtask) {
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TaskFormScreen(task: subtask),
       ),
-    );
-    
-    if (result == true) {
-      await _loadSubtasks();
-    }
+    ).then((_) {
+      _loadData();
+    });
   }
-
-  Future<void> _deleteSubtask(Task subtask) async {
-    final confirm = await showDialog<bool>(
+  
+  void _deleteSubtask(Task subtask) {
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удаление подзадачи'),
-        content: Text('Вы уверены, что хотите удалить подзадачу "${subtask.title}"?'),
+        title: const Text('Удалить подзадачу?'),
+        content: const Text('Это действие нельзя отменить.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Отмена'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              context.read<TaskProvider>().deleteSubtask(widget.taskId, subtask.id);
+              _loadData();
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Удалить'),
           ),
         ],
       ),
     );
-    
-    if (confirm == true) {
-      // Удаляем связь родитель-потомок
-      final hierarchy = TaskHierarchy(
-        parentId: widget.task.id,
-        childId: subtask.id,
-      );
-      await _hierarchyRepo.deleteChildsBatch([hierarchy]);
-      await _taskRepo.delete(subtask.id);
-      await _loadSubtasks();
-    }
-  }
-
-  void _editTask() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskFormScreen(task: widget.task),
-      ),
-    ).then((_) {
-      // Обновляем данные (родительская задача могла измениться)
-      context.read<TaskListModel>().loadTasks();
-      // Обновляем экран
-      setState(() {});
-    });
   }
 }

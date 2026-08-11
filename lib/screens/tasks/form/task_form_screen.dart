@@ -1,19 +1,19 @@
-// lib/screens/tasks/task_form_screen.dart
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/widgets/select_date_time.dart';
-import 'package:life_game/widgets/tag_chip.dart';
-import 'package:life_game/widgets/tag_selector_modal.dart';
+import 'package:life_game/screens/tasks/tag_provider.dart';
+import 'package:life_game/screens/tasks/task_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:life_game/models/task.dart';
+import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/reward.dart';
+import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/enums/task_difficulty.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 
 class TaskFormScreen extends StatefulWidget {
   final Task? task;
+  final String? parentId;
   
-  const TaskFormScreen({super.key, this.task});
+  const TaskFormScreen({super.key, this.task, this.parentId});
 
   @override
   State<TaskFormScreen> createState() => _TaskFormScreenState();
@@ -21,73 +21,56 @@ class TaskFormScreen extends StatefulWidget {
 
 class _TaskFormScreenState extends State<TaskFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
-  late DateTime _selectedDateTime;
+  late DateTime? _selectedDate;
+  late TimeOfDay? _selectedTime;
+  late bool _isDone;
   late TaskPriority _selectedPriority;
   late TaskDifficulty _selectedDifficulty;
-  late List<Tag> _selectedTags;
-  late bool _isEditing;
+  
+  List<Tag> _selectedTags = [];
+  List<Reward> _rewards = [];
   
   @override
   void initState() {
     super.initState();
-    _isEditing = widget.task != null;
+    
     _titleController = TextEditingController(text: widget.task?.title ?? '');
     _descriptionController = TextEditingController(text: widget.task?.description ?? '');
-    _selectedDateTime = widget.task?.datetime ?? DateTime.now().add(const Duration(hours: 1));
+    _selectedDate = widget.task?.datetime ?? DateTime.now();
+    _selectedTime = TimeOfDay.fromDateTime(widget.task?.datetime ?? DateTime.now());
+    _isDone = widget.task?.done ?? false;
     _selectedPriority = widget.task?.priority ?? TaskPriority.medium;
     _selectedDifficulty = widget.task?.difficulty ?? TaskDifficulty.medium;
-    _selectedTags = [];
     
     // Загружаем теги, если редактируем
-    if (_isEditing) {
-      _loadTaskTags();
+    if (widget.task != null) {
+      final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+      _selectedTags = taskProvider.getTaskTags(widget.task!.id);
     }
   }
-
-  Future<void> _loadTaskTags() async {
-    final tagTaskRepo = TagTaskRepository();
-    final tagRepo = TagRepository();
-    
-    // Получаем все связи тегов для этой задачи
-    final allTagTasks = await tagTaskRepo.getAll();
-    final taskTagTasks = allTagTasks.where((tt) => tt.taskId == widget.task!.id).toList();
-    
-    // Загружаем полные объекты тегов
-    final tags = <Tag>[];
-    for (final tt in taskTagTasks) {
-      final tag = await tagRepo.get(tt.tagId);
-      if (tag != null) {
-        tags.add(tag);
-      }
-    }
-    
-    if (mounted) {
-      setState(() {
-        _selectedTags = tags;
-      });
-    }
-  }
-
+  
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Редактирование задачи' : 'Новая задача'),
+        title: Text(widget.task == null ? 'Создание задачи' : 'Редактирование задачи'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
         actions: [
-          if (_isEditing)
+          if (widget.task != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: _deleteTask,
-              tooltip: 'Удалить',
+              icon: const Icon(Icons.delete),
+              onPressed: _confirmDelete,
             ),
         ],
       ),
@@ -96,15 +79,14 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Название
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Название задачи',
+                  labelText: 'Название задачи *',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.title),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -121,42 +103,172 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Описание',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.description),
                 ),
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
               
               // Дата и время
-              _buildDateTimePicker(),
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: _selectDate,
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Дата',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Text(
+                          _selectedDate != null
+                              ? '${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year}'
+                              : 'Выберите дату',
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: InkWell(
+                      onTap: _selectTime,
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Время',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Text(
+                          _selectedTime != null
+                              ? _selectedTime!.format(context)
+                              : 'Выберите время',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               
-              // Приоритет
-              _buildPrioritySelector(),
+              // Приоритет и сложность
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<TaskPriority>(
+                      value: _selectedPriority,
+                      decoration: const InputDecoration(
+                        labelText: 'Приоритет',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: allTaskPriorities.map((priority) {
+                        return DropdownMenuItem(
+                          value: priority,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: priority.color,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(priority.displayName),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedPriority = value;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: DropdownButtonFormField<TaskDifficulty>(
+                      value: _selectedDifficulty,
+                      decoration: const InputDecoration(
+                        labelText: 'Сложность',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: allTaskDifficulties.map((difficulty) {
+                        return DropdownMenuItem(
+                          value: difficulty,
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 12,
+                                height: 12,
+                                decoration: BoxDecoration(
+                                  color: difficulty.color,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(difficulty.displayName),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() {
+                            _selectedDifficulty = value;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               
-              // Сложность
-              _buildDifficultySelector(),
+              // Статус
+              SwitchListTile(
+                title: const Text('Выполнено'),
+                value: _isDone,
+                onChanged: (value) {
+                  setState(() {
+                    _isDone = value;
+                  });
+                },
+                activeColor: Colors.deepPurple,
+              ),
               const SizedBox(height: 16),
               
               // Теги
-              _buildTagsSection(),
+              const Text(
+                'Теги',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              _buildTagsSelector(),
+              const SizedBox(height: 16),
+              
+              // Награды
+              const Text(
+                'Награды',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              _buildRewardsSection(),
               const SizedBox(height: 24),
               
               // Кнопки
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Отмена'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
                     child: ElevatedButton(
                       onPressed: _saveTask,
-                      child: Text(_isEditing ? 'Сохранить' : 'Создать'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: Text(widget.task == null ? 'Создать' : 'Сохранить'),
                     ),
                   ),
                 ],
@@ -167,225 +279,244 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       ),
     );
   }
-
-  Widget _buildDateTimePicker() {
-    return Card(
-      child: ListTile(
-        leading: const Icon(Icons.event),
-        title: Text('Дата и время'),
-        subtitle: Text(
-          '${_selectedDateTime.day}.${_selectedDateTime.month}.${_selectedDateTime.year} '
-          '${_selectedDateTime.hour}:${_selectedDateTime.minute.toString().padLeft(2, '0')}',
-        ),
-        onTap: () async {
-          final result = await selectDateTime(context, _selectedDateTime);
-          if (result != null) {
-            setState(() {
-              _selectedDateTime = result;
-            });
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildPrioritySelector() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Приоритет',
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
+  
+  Widget _buildTagsSelector() {
+    return Consumer<TagProvider>(
+      builder: (context, tagProvider, child) {
+        final allTags = tagProvider.tags;
+        
+        if (allTags.isEmpty) {
+          return const Text('Нет доступных тегов');
+        }
+        
+        return Wrap(
           spacing: 8,
-          children: TaskPriority.values.map((priority) =>
-            ChoiceChip(
-              label: Text(priority.displayName),
-              selected: _selectedPriority == priority,
-              onSelected: (_) => setState(() => _selectedPriority = priority),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-          ).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDifficultySelector() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Сложность',
-          style: Theme.of(context).textTheme.labelMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: TaskDifficulty.values.map((difficulty) =>
-            ChoiceChip(
-              label: Text(difficulty.displayName),
-              selected: _selectedDifficulty == difficulty,
-              onSelected: (_) => setState(() => _selectedDifficulty = difficulty),
-              backgroundColor: Theme.of(context).cardColor,
-              selectedColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
-          ).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTagsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Теги',
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            TextButton.icon(
-              onPressed: _openTagSelector,
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Добавить тег'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: _selectedTags.map((tag) =>
-            TagChip(
-              title: tag.title,
-              callback: () {
+          children: allTags.map((tag) {
+            final isSelected = _selectedTags.any((t) => t.id == tag.id);
+            
+            return FilterChip(
+              label: Text(tag.title),
+              selected: isSelected,
+              onSelected: (selected) {
                 setState(() {
-                  _selectedTags.remove(tag);
+                  if (selected) {
+                    _selectedTags.add(tag);
+                  } else {
+                    _selectedTags.removeWhere((t) => t.id == tag.id);
+                  }
+                });
+              },
+              backgroundColor: Colors.grey[200],
+              selectedColor: tag.type.color.withOpacity(0.3),
+              labelStyle: TextStyle(
+                color: isSelected ? tag.type.color : Colors.black87,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              shape: StadiumBorder(
+                side: BorderSide(
+                  color: isSelected ? tag.type.color : Colors.transparent,
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+  
+  Widget _buildRewardsSection() {
+    return Column(
+      children: [
+        ..._rewards.map((reward) {
+          return ListTile(
+            title: Text('Награда ${_rewards.indexOf(reward) + 1}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Опыт: ${reward.experience}'),
+                Text('Время: ${reward.time} минут'),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                setState(() {
+                  _rewards.remove(reward);
                 });
               },
             ),
-          ).toList(),
-        ),
-        if (_selectedTags.isEmpty)
-          Text(
-            'Теги не добавлены',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).hintColor,
-            ),
+          );
+        }).toList(),
+        if (_rewards.isNotEmpty) const Divider(),
+        ElevatedButton.icon(
+          onPressed: _addReward,
+          icon: const Icon(Icons.add),
+          label: const Text('Добавить награду'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+            foregroundColor: Colors.black87,
           ),
+        ),
       ],
     );
   }
-
-  void _openTagSelector() {
-    showModalBottomSheet(
+  
+  Future<void> _selectDate() async {
+    final picked = await showDatePicker(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => TagSelectorModal(
-        selectedTags: _selectedTags,
-        onConfirm: (tags) {
-          setState(() {
-            _selectedTags = tags;
-          });
-        },
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+  
+  Future<void> _selectTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime ?? TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
+  }
+  
+  void _addReward() {
+    // Показываем диалог для создания награды
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Добавить награду'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Опыт'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                // Сохраняем в переменную
+              },
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Время (минуты)'),
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                // Сохраняем в переменную
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Упрощённое создание награды
+              setState(() {
+                _rewards.add(Reward(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  skillId: 'skill_1',
+                  taskId: widget.task?.id ?? '',
+                  experience: 10,
+                  time: 5,
+                ));
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Добавить'),
+          ),
+        ],
       ),
     );
   }
-
-  void _saveTask() async {
+  
+  void _saveTask() {
     if (!_formKey.currentState!.validate()) return;
     
-    final task = Task.create(
+    DateTime? dateTime;
+    if (_selectedDate != null && _selectedTime != null) {
+      dateTime = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+    }
+    
+    final task = widget.task?.copyWith(
       title: _titleController.text,
       description: _descriptionController.text,
-      datetime: _selectedDateTime,
-      done: widget.task?.done ?? false,
+      datetime: dateTime,
+      done: _isDone,
+      priority: _selectedPriority,
+      difficulty: _selectedDifficulty,
+    ) ?? Task.create(
+      title: _titleController.text,
+      description: _descriptionController.text,
+      datetime: dateTime,
+      done: _isDone,
       priority: _selectedPriority,
       difficulty: _selectedDifficulty,
     );
     
-    final taskModel = context.read<TaskListModel>();
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
     
-    String taskId;
-    
-    // Если редактирование - сохраняем ID
-    if (_isEditing) {
-      final updatedTask = task.copyWith(id: widget.task!.id);
-      await taskModel.updateTask(updatedTask);
-      taskId = widget.task!.id;
+    if (widget.task == null) {
+      // Добавляем новую задачу
+      if (widget.parentId != null) {
+        taskProvider.addSubtask(widget.parentId!, task);
+      } else {
+        taskProvider.addTask(
+          task,
+          tagIds: _selectedTags.map((t) => t.id).toList(),
+          rewards: _rewards,
+        );
+      }
     } else {
-      await taskModel.addTask(task);
-      taskId = task.id;
-    }
-    
-    // Сохраняем теги
-    await _saveTags(taskId);
-    
-    if (mounted) {
-      Navigator.pop(context, true);
-    }
-  }
-
-  Future<void> _saveTags(String taskId) async {
-    final tagTaskRepo = TagTaskRepository();
-    
-    // Получаем текущие теги задачи
-    final allTagTasks = await tagTaskRepo.getAll();
-    final existingTagTasks = allTagTasks.where((tt) => tt.taskId == taskId).toList();
-    
-    // Создаем множества для сравнения
-    final existingTagIds = existingTagTasks.map((tt) => tt.tagId).toSet();
-    final newTagIds = _selectedTags.map((tag) => tag.id).toSet();
-    
-    // Определяем теги для удаления (были, но теперь их нет)
-    final tagsToRemove = existingTagIds.difference(newTagIds);
-    
-    // Определяем теги для добавления (появились новые)
-    final tagsToAdd = newTagIds.difference(existingTagIds);
-    
-    // Удаляем теги
-    for (final tagId in tagsToRemove) {
-      await tagTaskRepo.delete(taskId, tagId);
-    }
-    
-    // Добавляем теги
-    for (final tagId in tagsToAdd) {
-      final tagTask = TagTask.create(
-        taskId: taskId,
-        tagId: tagId,
+      // Обновляем задачу
+      taskProvider.updateTask(
+        task,
+        tagIds: _selectedTags.map((t) => t.id).toList(),
+        rewards: _rewards,
       );
-      await tagTaskRepo.insert(tagTask);
     }
+    
+    Navigator.pop(context, true);
   }
 
-  void _deleteTask() async {
-    final confirm = await showDialog<bool>(
+  
+  void _confirmDelete() {
+    showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Удаление задачи'),
-        content: const Text('Вы уверены, что хотите удалить эту задачу?'),
+        title: const Text('Удалить задачу?'),
+        content: const Text('Это действие нельзя отменить.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context),
             child: const Text('Отмена'),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+              taskProvider.deleteTask(widget.task!.id);
+              Navigator.pop(context);
+              Navigator.pop(context, true);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Удалить'),
           ),
         ],
       ),
     );
-    
-    if (confirm == true && widget.task != null && context.mounted) {
-      context.read<TaskListModel>().deleteTask(widget.task!.id);
-      Navigator.pop(context);
-    }
   }
 }

@@ -85,6 +85,21 @@ class Reward {
   }
 }
 
+extension RewardCopyWith on Reward {
+  Reward copyWith({
+    String? taskId,
+  }) {
+    return Reward(
+      taskId: taskId ?? this.taskId,
+      id: id,
+      skillId: skillId,
+      date: date,
+      experience: experience,
+      time: time
+    );
+  }
+}
+
 class RewardRepository {
   Database db = DB.db!;
   

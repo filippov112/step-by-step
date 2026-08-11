@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 // AppBar для экранов-списков
-PreferredSizeWidget buildAppBar<T>(
+PreferredSizeWidget buildMainAppBar<T>(
   BuildContext context, {
   bool isRootWidgetTree = false,
   required String title,

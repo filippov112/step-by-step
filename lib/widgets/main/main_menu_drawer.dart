@@ -4,10 +4,10 @@ import 'package:life_game/screens/tags/tag_list_screen.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 
 // Боковое меню для главных экранов модулей приложения
-class MenuDrawer extends StatelessWidget {
+class MainMenuDrawer extends StatelessWidget {
   final String? currentRoute;
   
-  const MenuDrawer({
+  const MainMenuDrawer({
     super.key,
     this.currentRoute,
   });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/tag_skill.dart';
 
 class SkillListModel extends ChangeNotifier {
 

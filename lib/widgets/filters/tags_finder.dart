@@ -2,25 +2,25 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/widgets/tag_chip.dart';
+import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 // Форма поиска и выбора тегов для фильтров и форм связанных с тегами сущностей (достижения, навыки, задачи)
-class TagSelectorModal extends StatefulWidget {
+class TagsFinder extends StatefulWidget {
   final List<Tag> selectedTags;
   final Function(List<Tag>) onConfirm;
 
-  const TagSelectorModal({
+  const TagsFinder({
     super.key,
     required this.selectedTags,
     required this.onConfirm,
   });
 
   @override
-  State<TagSelectorModal> createState() => _TagSelectorModalState();
+  State<TagsFinder> createState() => _TagsFinderState();
 }
 
-class _TagSelectorModalState extends State<TagSelectorModal> {
+class _TagsFinderState extends State<TagsFinder> {
   List<Tag> _selectedTags = [];
   String _searchQuery = '';
   List<Tag> _filteredTags = [];

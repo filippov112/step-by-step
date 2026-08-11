@@ -4,7 +4,8 @@ import 'package:life_game/models/task.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
-class Reward {
+// Награда за задачу (опыт и время, привязанные к некоторому навыку)
+class TaskReward {
   // ------------ Схема ------------
   static const tn = "rewards";
   
@@ -36,7 +37,7 @@ class Reward {
   int time = 0;
 
   // ------------ Конструкторы ------------
-  Reward({
+  TaskReward({
     required this.id,
     required this.skillId,
     required this.taskId,
@@ -45,7 +46,7 @@ class Reward {
     required this.time,
   });
 
-  factory Reward.create({
+  factory TaskReward.create({
     required String skillId,
     required String taskId,
     DateTime? date,
@@ -53,7 +54,7 @@ class Reward {
     int time = 0,
   }) {
     final guid = const Uuid().v4();
-    return Reward(
+    return TaskReward(
       id: guid,
       skillId: skillId,
       taskId: taskId,
@@ -75,7 +76,7 @@ class Reward {
     };
   }
 
-  Reward.fromMap(Map map) {
+  TaskReward.fromMap(Map map) {
     id = map[cId];
     skillId = map[cSkillId];
     taskId = map[cTaskId];
@@ -85,11 +86,11 @@ class Reward {
   }
 }
 
-extension RewardCopyWith on Reward {
-  Reward copyWith({
+extension RewardCopyWith on TaskReward {
+  TaskReward copyWith({
     String? taskId,
   }) {
-    return Reward(
+    return TaskReward(
       taskId: taskId ?? this.taskId,
       id: id,
       skillId: skillId,
@@ -100,43 +101,44 @@ extension RewardCopyWith on Reward {
   }
 }
 
-class RewardRepository {
+// Базовый репозиторий наград за задачи
+class TaskRewardRepository {
   Database db = DB.db!;
   
-  Future<List<Reward>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(Reward.tn);
-    return maps.map((m) => Reward.fromMap(m)).toList();
+  Future<List<TaskReward>> getAll() async {
+    List<Map<String, Object?>> maps = await db.query(TaskReward.tn);
+    return maps.map((m) => TaskReward.fromMap(m)).toList();
   }
 
-  Future<Reward> insert(Reward rw) async {
-    await db.insert(Reward.tn, rw.toMap());
+  Future<TaskReward> insert(TaskReward rw) async {
+    await db.insert(TaskReward.tn, rw.toMap());
     return rw;
   }
 
-  Future<List<int>> insertBatch(Iterable<Reward> models) async {
+  Future<List<int>> insertBatch(Iterable<TaskReward> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (Reward m in models) {
-        res.add(await txn.insert(Reward.tn, m.toMap()));
+      for (TaskReward m in models) {
+        res.add(await txn.insert(TaskReward.tn, m.toMap()));
       }
     });
     return res;
   }
 
-  Future<Reward?> get(String id) async {
-    List<Map> maps = await db.query(Reward.tn, where: '${Reward.cId} = ?', whereArgs: [id]);
+  Future<TaskReward?> get(String id) async {
+    List<Map> maps = await db.query(TaskReward.tn, where: '${TaskReward.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
-      return Reward.fromMap(maps.first as Map<String, Object?>);
+      return TaskReward.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
   Future<int?> delete(String id) async {
-    return await db.delete(Reward.tn, where: '${Reward.cId} = ?', whereArgs: [id]);
+    return await db.delete(TaskReward.tn, where: '${TaskReward.cId} = ?', whereArgs: [id]);
   }
 
-  Future<int?> update(Reward rw) async {
-    return await db.update(Reward.tn, rw.toMap(),
-        where: '${Reward.cId} = ?', whereArgs: [rw.id]);
+  Future<int?> update(TaskReward rw) async {
+    return await db.update(TaskReward.tn, rw.toMap(),
+        where: '${TaskReward.cId} = ?', whereArgs: [rw.id]);
   }
 }

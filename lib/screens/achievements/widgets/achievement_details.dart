@@ -6,7 +6,7 @@ import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
-import 'package:life_game/widgets/tag_chip.dart';
+import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class AchievementDetails extends StatefulWidget {

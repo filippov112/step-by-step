@@ -3,6 +3,7 @@ import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
+// Достижение
 class Achievement {
   // ------------ Схема ------------
   static const tn = "achievements";
@@ -82,6 +83,7 @@ class Achievement {
   }
 }
 
+// Базовый репозиторий достижений
 class AchievementRepository {
   Database db = DB.db!;
   

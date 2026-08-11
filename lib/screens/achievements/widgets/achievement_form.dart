@@ -5,8 +5,8 @@ import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/widgets/tag_selector_modal.dart';
-import 'package:life_game/widgets/tag_chip.dart';
+import 'package:life_game/widgets/filters/tags_finder.dart';
+import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class AchievementForm extends StatefulWidget {
@@ -108,7 +108,7 @@ class _AchievementFormState extends State<AchievementForm> {
     await showDialog<List<Tag>>(
       context: context,
       builder: (context) => Dialog(
-        child: TagSelectorModal(
+        child: TagsFinder(
           selectedTags: _selectedTags,
           onConfirm: (tags) {
             setState(() {

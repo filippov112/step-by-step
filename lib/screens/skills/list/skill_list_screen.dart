@@ -6,12 +6,12 @@ import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
-import 'package:life_game/widgets/custom_floating_action_button.dart';
-import 'package:life_game/widgets/empty_list_screen.dart';
-import 'package:life_game/widgets/search_string.dart';
+import 'package:life_game/widgets/common/custom_floating_action_button.dart';
+import 'package:life_game/widgets/common/empty_list_screen.dart';
+import 'package:life_game/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/widgets/menu_drawer.dart';
-import 'package:life_game/widgets/bottom_menu.dart';
+import 'package:life_game/widgets/main/main_menu_drawer.dart';
+import 'package:life_game/widgets/main/main_bottom_menu.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -101,7 +101,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
             }
           ),
         ),
-        drawer: const MenuDrawer(currentRoute: '/skills'),
+        drawer: const MainMenuDrawer(currentRoute: '/skills'),
         body: Column(
           children: [
             // Отображение выбранных фильтров
@@ -314,7 +314,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
             ),
           ],
         ),
-        bottomNavigationBar: const BottomMenu(),
+        bottomNavigationBar: const MainBottomMenu(),
         floatingActionButton: CustomFloatingActionButton(openFormCreate: () => _navigateToForm(context), tooltip: "Добавить навык"),
       ),
     );

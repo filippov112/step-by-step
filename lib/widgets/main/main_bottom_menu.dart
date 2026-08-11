@@ -3,8 +3,8 @@ import 'package:life_game/screens/home/home_model.dart';
 import 'package:provider/provider.dart';
 
 // Нижняя панель меню основных вкладок приложения
-class BottomMenu extends StatelessWidget {
-  const BottomMenu({super.key});
+class MainBottomMenu extends StatelessWidget {
+  const MainBottomMenu({super.key});
 
   @override
   Widget build(BuildContext context) {

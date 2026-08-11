@@ -6,11 +6,11 @@ import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_details.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
-import 'package:life_game/widgets/menu_drawer.dart';
-import 'package:life_game/widgets/bottom_menu.dart';
-import 'package:life_game/widgets/custom_floating_action_button.dart';
-import 'package:life_game/widgets/empty_list_screen.dart';
-import 'package:life_game/widgets/search_string.dart';
+import 'package:life_game/widgets/main/main_menu_drawer.dart';
+import 'package:life_game/widgets/main/main_bottom_menu.dart';
+import 'package:life_game/widgets/common/custom_floating_action_button.dart';
+import 'package:life_game/widgets/common/empty_list_screen.dart';
+import 'package:life_game/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
 
@@ -40,7 +40,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     var viewModel = context.read<AchievementListModel>();
     return Scaffold(
       appBar: _buildAppBar(),
-      drawer: const MenuDrawer(),
+      drawer: const MainMenuDrawer(),
       endDrawer: AchievementFilters(
         selectedTags: viewModel.selectedTags,
         onConfirm: (tags) {
@@ -92,7 +92,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
           );
         },
       ),
-      bottomNavigationBar: BottomMenu(),
+      bottomNavigationBar: MainBottomMenu(),
       floatingActionButton: CustomFloatingActionButton(openFormCreate: _showCreateForm, tooltip: "Добавить достижение")
     );
   }

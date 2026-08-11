@@ -4,6 +4,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
+// Условие повышения ранга навыка
 class SkillCondition {
   // ------------ Схема ------------
   static const tn = "skill_conditions";
@@ -76,6 +77,7 @@ class SkillCondition {
   }
 }
 
+// Базовый репозиторий условий повышения ранга навыков
 class SkillConditionRepository {
   Database db = DB.db!;
   

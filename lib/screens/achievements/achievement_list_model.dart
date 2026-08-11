@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/tag_achievement.dart';
 import 'package:life_game/services/file_storage_service.dart';
 
 class AchievementListModel extends ChangeNotifier {

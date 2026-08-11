@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/widgets/filters_drawer.dart';
+import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
-import 'package:life_game/widgets/app_bar.dart';
-import 'package:life_game/widgets/menu_drawer.dart';
-import 'package:life_game/widgets/custom_floating_action_button.dart';
-import 'package:life_game/widgets/empty_list_screen.dart';
-import 'package:life_game/widgets/search_string.dart';
+import 'package:life_game/widgets/main/main_app_bar.dart';
+import 'package:life_game/widgets/main/main_menu_drawer.dart';
+import 'package:life_game/widgets/common/custom_floating_action_button.dart';
+import 'package:life_game/widgets/common/empty_list_screen.dart';
+import 'package:life_game/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
 
@@ -134,7 +134,7 @@ class _TagListScreenState extends State<TagListScreen> {
       future: context.read<TagListModel>().loadTags(),
       builder:(BuildContext context, AsyncSnapshot snapshot) {
 
-        PreferredSizeWidget appBar = buildAppBar(
+        PreferredSizeWidget appBar = buildMainAppBar(
           context, 
           isSelectionMode: isSelectionMode, 
           title: 'Теги',
@@ -217,7 +217,7 @@ class _TagListScreenState extends State<TagListScreen> {
         }
 
         return Scaffold(
-          drawer: MenuDrawer(currentRoute: '/tags'),
+          drawer: MainMenuDrawer(currentRoute: '/tags'),
           appBar: appBar,
           endDrawer: FiltersDrawer(filters: filters,),
           body: buildBody(),

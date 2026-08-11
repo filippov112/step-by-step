@@ -3,6 +3,7 @@ import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
+// Навык
 class Skill {
   // ------------ Схема ------------
   static const tn = "skills";
@@ -162,6 +163,7 @@ class Skill {
   }
 }
 
+// Базовый репозиторий навыков
 class SkillRepository {
   Database db = DB.db!;
   

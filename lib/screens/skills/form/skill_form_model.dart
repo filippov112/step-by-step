@@ -3,6 +3,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/tag_skill.dart';
 import 'package:life_game/services/file_storage_service.dart';
 
 class SkillFormModel extends ChangeNotifier {

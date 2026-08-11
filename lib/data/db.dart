@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/reward.dart';
+import 'package:life_game/models/script_task.dart';
+import 'package:life_game/models/tag_achievement.dart';
+import 'package:life_game/models/tag_skill.dart';
+import 'package:life_game/models/tag_task.dart';
+import 'package:life_game/models/task_reward.dart';
 import 'package:life_game/models/script.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/skill_condition.dart';
@@ -42,7 +46,7 @@ class DB {
       await db.execute(Achievement.init);
       await db.execute(Tag.init);
       await db.execute(Script.init);
-      await db.execute(Reward.init);        // зависит от Task, Skill
+      await db.execute(TaskReward.init);        // зависит от Task, Skill
       await db.execute(ScriptTask.init);    // зависит от Script, Task
       await db.execute(SkillCondition.init); // зависит от Skill
       await db.execute(TagSkill.init);      // зависит от Tag, Skill

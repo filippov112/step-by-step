@@ -6,11 +6,11 @@ import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_details.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
-import 'package:life_game/screens/achievements/widgets/tag_selector_modal.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
+import 'package:life_game/widgets/search_string.dart';
 import 'package:provider/provider.dart';
 
 
@@ -22,6 +22,9 @@ class AchievementListScreen extends StatefulWidget {
 }
 
 class _AchievementListScreenState extends State<AchievementListScreen> {
+
+  String searchQuery = '';
+  var searchController = TextEditingController();
 
   @override
   void initState() {
@@ -95,6 +98,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
+
     return AppBar(
       title: const Text('Достижения'),
       actions: [
@@ -106,14 +110,14 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
             onPressed: Scaffold.of(context).openEndDrawer,
           ) 
         ),
-        // Поиск
-        IconButton(
-          icon: const Icon(Icons.search),
-          tooltip: 'Поиск',
-          onPressed: _showSearch,
-        ),
-        const SizedBox(width: 8),
       ],
+      bottom: buildSearchString(
+        placeholder: 'Поиск достижений...', 
+        controller: searchController, 
+        value: searchQuery, 
+        clearCallback: () { context.read<AchievementListModel>().setSearchQuery(''); searchQuery = '';},
+        changeCallback: (val) { context.read<AchievementListModel>().setSearchQuery(val); searchQuery = val; },
+      )
     );
   }
 
@@ -257,38 +261,5 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     if (result == true) {
       context.read<AchievementListModel>().loadData();
     }
-  }
-
-  void _showSearch() {
-    final viewModel = context.read<AchievementListModel>();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Поиск достижений'),
-        content: TextField(
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Введите название или описание...',
-            prefixIcon: Icon(Icons.search),
-          ),
-          onChanged: (value) {
-            viewModel.setSearchQuery(value);
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              viewModel.setSearchQuery('');
-              Navigator.of(context).pop();
-            },
-            child: const Text('Очистить'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Закрыть'),
-          ),
-        ],
-      ),
-    );
   }
 }

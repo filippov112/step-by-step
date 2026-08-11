@@ -14,7 +14,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   Future _selectDateTime(BuildContext context) async {
     var model = context.read<TaskFormModel>();
-    var selectedDateTime = await selectDateTime(context, model.newTask.datetime ?? DateTime.now());
+    var selectedDateTime = await selectDateTime(context, model.datetime ?? DateTime.now());
     if (selectedDateTime != null) {
       model.selectDateTime(selectedDateTime);
     }
@@ -39,7 +39,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   Widget build(BuildContext context) {
 
     var formKey = context.select<TaskFormModel,GlobalKey<FormState>>((model) => model.formKey);
-    var dateTime = context.select<TaskFormModel,DateTime?>((model) => model.newTask.datetime);
+    var dateTime = context.select<TaskFormModel,DateTime?>((model) => model.datetime);
 
     var savebtn = ElevatedButton (
       onPressed: () => _saveTask(context),

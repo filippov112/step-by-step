@@ -14,7 +14,7 @@ class TagListModel extends ChangeNotifier {
   bool isSelectionMode = false;
   
   // Фильтры
-  TagType? selectedTypeFilter;
+  List<TagType>? selectedTypeFilter;
   String searchQuery = '';
 
   bool shouldClearSearchController = false;
@@ -52,7 +52,7 @@ class TagListModel extends ChangeNotifier {
     
     filteredTags = allTags.where((tag) {
       // Фильтр по типу
-      if (selectedTypeFilter != null && tag.type != selectedTypeFilter) {
+      if (selectedTypeFilter != null && !selectedTypeFilter!.contains(tag.type)) {
         return false;
       }
       // Поиск по названию
@@ -72,8 +72,8 @@ class TagListModel extends ChangeNotifier {
     applyFilters();
   }
 
-  void setTypeFilter(List<TagType> types) {
-    selectedTypeFilter = types.length > 1 ? null : types.first;
+  void setTypeFilter(List<TagType>? types) {
+    selectedTypeFilter = types;
     applyFilters();
   }
 

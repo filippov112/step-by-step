@@ -8,6 +8,7 @@ import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
+import 'package:life_game/widgets/search_string.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/bottom_menu.dart';
@@ -25,6 +26,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
   late SkillListModel _viewModel;
   String _searchQuery = '';
   List<Tag> _selectedFilters = [];
+  var searchController = TextEditingController();
 
   @override
   void initState() {
@@ -82,44 +84,21 @@ class _SkillListScreenState extends State<SkillListScreen> {
                 );
               },
             ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () => _viewModel.loadSkills(),
-              tooltip: 'Обновить',
-            ),
           ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Поиск навыков...',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              _searchQuery = '';
-                            });
-                          },
-                        )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
-              ),
-            ),
+          bottom: buildSearchString(
+            placeholder: 'Поиск навыков...',
+            controller: searchController, 
+            value: _searchQuery, 
+            clearCallback: () { 
+              setState(() {
+                _searchQuery = '';
+              });
+            }, 
+            changeCallback: (value) { 
+              setState(() {
+                _searchQuery = value;
+              });
+            }
           ),
         ),
         drawer: const AppDrawer(currentRoute: '/skills'),

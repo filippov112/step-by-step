@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tags/widgets/tag_filter.dart';
-import 'package:life_game/screens/tags/widgets/tag_search.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
+import 'package:life_game/widgets/app_bar.dart';
 import 'package:life_game/widgets/app_drawer.dart';
 import 'package:life_game/widgets/custom_floating_action_button.dart';
 import 'package:life_game/widgets/empty_list_screen.dart';
+import 'package:life_game/widgets/search_string.dart';
 import 'package:provider/provider.dart';
 
 
@@ -21,7 +21,7 @@ class TagListScreen extends StatefulWidget {
 
 class _TagListScreenState extends State<TagListScreen> {
   final TextEditingController _searchController = TextEditingController();
-
+  String searchQuery = '';
 
   @override
   void dispose() {
@@ -96,34 +96,35 @@ class _TagListScreenState extends State<TagListScreen> {
     }
   }
 
-  Future _deleteSelected(int itemCount) async {
+  Future _deleteSelected() async {
     var model = context.read<TagListModel>();
+    int count = model.selectedIds.length;
     var deleteSelected = model.deleteSelected;
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Удаление $itemCount тегов'),
-        content: Text('Вы уверены, что хотите удалить выбранные теги ($itemCount шт.)?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить все'),
-          ),
-        ],
-      ),
-    );
-    if (confirm == true) {
+    // final confirm = await showDialog<bool>(
+    //   context: context,
+    //   builder: (context) => AlertDialog(
+    //     title: Text('Удаление $itemCount тегов'),
+    //     content: Text('Вы уверены, что хотите удалить выбранные теги ($itemCount шт.)?'),
+    //     actions: [
+    //       TextButton(
+    //         onPressed: () => Navigator.pop(context, false),
+    //         child: const Text('Отмена'),
+    //       ),
+    //       TextButton(
+    //         onPressed: () => Navigator.pop(context, true),
+    //         child: const Text('Удалить все'),
+    //       ),
+    //     ],
+    //   ),
+    // );
+    // if (confirm == true) {
       await deleteSelected.call();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Удалено $itemCount тегов')),
+          SnackBar(content: Text('Удалено $count тегов')),
         );
       }
-    }
+    // }
   }
 
   @override
@@ -139,79 +140,37 @@ class _TagListScreenState extends State<TagListScreen> {
 
     var allTags = context.select<TagListModel,List<Tag>>((model) => model.allTags);
     var filteredTags = context.select<TagListModel,List<Tag>>((model) => model.filteredTags);
-    var clearFilters = context.read<TagListModel>().clearFilters;
     var selectedIds = context.select<TagListModel,Set<String>>((model) => model.selectedIds);
 
-    var searchQueryisNotEmpty = context.select<TagListModel,bool>((model) => model.searchQueryisNotEmpty);
     var isSelectionMode = context.select<TagListModel,bool>((model) => model.isSelectionMode);
-    var selectedTypeFilter = context.select<TagListModel,TagType?>((model) => model.selectedTypeFilter);
     var selectAll = context.read<TagListModel>().selectAll;
     var clearSelection = context.read<TagListModel>().clearSelection;
+
+    var updateSearch = context.read<TagListModel>().updateSearch;
     
     return FutureBuilder(
       future: context.read<TagListModel>().loadTags(),
       builder:(BuildContext context, AsyncSnapshot snapshot) {
 
-        Widget filter = TagFilter();
-
-        Widget search = TagSearch( 
-            searchController: _searchController,
-        );
-
-        PreferredSizeWidget appBar = AppBar(
-          title: isSelectionMode 
-              ? Text('Выбрано: ${selectedIds.length}') 
-              : const Text('Теги'),
-          actions: [
-            // Назад
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.pop(context),
-            ),
-
-            // Кнопка "Выбрать все" в режиме выделения
-            if (isSelectionMode)
-              IconButton(
-                icon: Icon(
-                  selectedIds.length == filteredTags.length 
-                      ? Icons.deselect 
-                      : Icons.select_all,
-                ),
-                onPressed: selectAll,
-                tooltip: 'Выбрать все',
-              ),
-            // Кнопка удаления выбранных
-            if (isSelectionMode)
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () => _deleteSelected(selectedIds.length),
-                tooltip: 'Удалить выбранные',
-              ),
-            // Кнопка отмены выделения
-            if (isSelectionMode)
-              IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: clearSelection,
-                tooltip: 'Отменить выделение',
-              ),
-            // Фильтры
-            filter,
-            // Сброс фильтров
-            if (selectedTypeFilter != null || searchQueryisNotEmpty)
-              IconButton(
-                icon: const Icon(Icons.clear_all),
-                onPressed: clearFilters,
-                tooltip: 'Сбросить фильтры',
-              ),
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: search,
-            ),
+        PreferredSizeWidget appBar = buildAppBar(
+          context, 
+          isSelectionMode: isSelectionMode, 
+          title: 'Теги',
+          selectAll: selectAll, 
+          selectedIds: selectedIds, 
+          filteredList: filteredTags, 
+          deleteSelected: _deleteSelected, 
+          clearSelection: clearSelection,
+          searchWidget: buildSearchString(
+            placeholder: 'Поиск тегов...', 
+            controller: _searchController, 
+            value: searchQuery, 
+            clearCallback: () { updateSearch.call(''); searchQuery = '';}, 
+            changeCallback: (val) { updateSearch.call(val); searchQuery = val;}
           ),
+          isRootWidgetTree:false
         );
+        
 
         Widget buildBody() {
           if (allTags.isEmpty || filteredTags.isEmpty) {
@@ -244,6 +203,7 @@ class _TagListScreenState extends State<TagListScreen> {
         return Scaffold(
           drawer: AppDrawer(currentRoute: '/tags'),
           appBar: appBar,
+          endDrawer: TagFilter(),
           body: buildBody(),
           floatingActionButton: CustomFloatingActionButton(openFormCreate: _showAddDialog, tooltip: "Добавить тег"),
         );

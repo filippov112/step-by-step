@@ -6,6 +6,7 @@ import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/tag_chip.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -266,34 +267,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
             spacing: 8,
             runSpacing: 8,
             children: viewModel.selectedTags.map((tag) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: SoloLevelingTheme.glowBlue),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      tag.title,
-                      style: TextStyle(
-                        color: SoloLevelingTheme.glowBlue,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    GestureDetector(
-                      onTap: () => viewModel.toggleTag(tag),
-                      child: Icon(
-                        Icons.close,
-                        size: 16,
-                        color: SoloLevelingTheme.glowBlue,
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return TagChip(title: tag.title, callback: () => viewModel.toggleTag(tag),);
             }).toList(),
           ),
         if (viewModel.selectedTags.isNotEmpty) ...[

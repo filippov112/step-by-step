@@ -17,7 +17,7 @@ class AchievementListModel extends ChangeNotifier {
   List<Achievement> _filteredAchievements = [];
   List<TagAchievement> _allTagAchievements = [];
   List<Tag> _allTags = [];
-  List<Tag> _selectedTags = [];
+  final List<Tag> _selectedTags = [];
   String _searchQuery = '';
   String? statusFilterValue;
   bool _showUnlockedOnly = false;

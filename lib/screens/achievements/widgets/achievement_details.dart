@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 class AchievementDetails extends StatefulWidget {
   final Achievement achievement;
 
-  const AchievementDetails({Key? key, required this.achievement}) : super(key: key);
+  const AchievementDetails({super.key, required this.achievement});
 
   @override
   State<AchievementDetails> createState() => _AchievementDetailsState();

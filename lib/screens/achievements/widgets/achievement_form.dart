@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class AchievementForm extends StatefulWidget {
   final Achievement? achievement;
 
-  const AchievementForm({Key? key, this.achievement}) : super(key: key);
+  const AchievementForm({super.key, this.achievement});
 
   @override
   State<AchievementForm> createState() => _AchievementFormState();

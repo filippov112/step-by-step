@@ -7,18 +7,22 @@ class TaskFormModel extends ChangeNotifier {
   TaskFormModel();
 
   final formKey = GlobalKey<FormState>();
-  final newTask = Task.create(title: "Новая задача");
-  
-  void selectDateTime(DateTime dateTime) {
-    newTask.datetime = dateTime;
+  DateTime? datetime;
+  String title = '';
+  String description = '';
+
+
+
+  void selectDateTime(DateTime dt) {
+    datetime = dt;
     notifyListeners();
   }
-  void selectTitle(String title) {
-    newTask.title = title;
+  void selectTitle(String t) {
+    title = t;
     notifyListeners();
   }
-  void selectDesc(String description) {
-    newTask.description = description;
+  void selectDesc(String d) {
+    description = d;
     notifyListeners();
   }
 
@@ -27,7 +31,7 @@ class TaskFormModel extends ChangeNotifier {
     if (form != null && form.validate()) {
       form.save();
       try {
-        await provider.insert(newTask);
+        await provider.insert(Task.create(title: title, description: description, datetime: datetime));
       } catch (e) {
         return e.toString();
       }

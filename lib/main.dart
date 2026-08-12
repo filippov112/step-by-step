@@ -12,8 +12,6 @@ import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/screens/tasks/old/tag_provider.dart';
-import 'package:life_game/screens/tasks/old/task_provider.dart';
 import 'package:life_game/screens/user/form/user_form_model.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/screens/classes/class_list_screen.dart';
 import 'package:life_game/screens/settings/setting_list_screen.dart';
 import 'package:life_game/screens/tags/tag_list_screen.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
@@ -45,6 +46,7 @@ class MainMenuDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late Widget classes = ClassListScreen();
     late Widget tags = TagListScreen();
     late Widget settings = SettingListScreen();
 
@@ -55,6 +57,14 @@ class MainMenuDrawer extends StatelessWidget {
           Expanded(
             child: ListView(
               children: [
+                _buildMenuItem(
+                  context: context,
+                  icon: Icons.school_outlined,
+                  title: 'Классы',
+                  route: '/classes',
+                  widget: tags,
+                  currentRoute: currentRoute ?? '',
+                ),
                 _buildMenuItem(
                   context: context,
                   icon: Icons.tag,
@@ -71,6 +81,7 @@ class MainMenuDrawer extends StatelessWidget {
                   widget: settings,
                   currentRoute: currentRoute ?? '',
                 ),
+
               ],
             ),
           ),

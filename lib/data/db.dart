@@ -1,6 +1,12 @@
 import 'dart:io';
 import 'package:life_game/models/achievement.dart';
+import 'package:life_game/models/achievement_bonus.dart';
+import 'package:life_game/models/characteristic.dart';
+import 'package:life_game/models/class.dart';
+import 'package:life_game/models/class_hierarchy.dart';
+import 'package:life_game/models/class_skill.dart';
 import 'package:life_game/models/script_task.dart';
+import 'package:life_game/models/skill_rang_bonus.dart';
 import 'package:life_game/models/tag_achievement.dart';
 import 'package:life_game/models/tag_skill.dart';
 import 'package:life_game/models/tag_task.dart';
@@ -38,14 +44,19 @@ class DB {
       onCreate: (Database db, int version) async {
       // When creating the db, create the table
       await db.execute('PRAGMA foreign_keys = ON;');
-
+      await db.execute(Class.init);
       await db.execute(User.init);
       await db.execute(Task.init);
-      await db.execute(TaskHierarchy.init);
       await db.execute(Skill.init);
       await db.execute(Achievement.init);
       await db.execute(Tag.init);
       await db.execute(Script.init);
+      await db.execute(Characteristic.init); // зависит от Class
+      await db.execute(ClassHierarchy.init); // зависит от Class
+      await db.execute(TaskHierarchy.init); // зависит от Task
+      await db.execute(AchievementBonus.init); // зависит от Achievement
+      await db.execute(ClassSkill.init); // зависит от Skill, Class
+      await db.execute(SkillRangBonus.init); // зависит от Skill, Characteristic
       await db.execute(TaskReward.init);        // зависит от Task, Skill
       await db.execute(ScriptTask.init);    // зависит от Script, Task
       await db.execute(SkillCondition.init); // зависит от Skill

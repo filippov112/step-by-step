@@ -1,23 +1,20 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 
-class TaskCard extends StatelessWidget {
+class DetailTaskCard extends StatelessWidget {
 
-  final TaskListModel model;
+  final TaskDetailModel model;
   final Task task;
   final int childrenCount;
   final int childrenDoneCount;
 
-  const TaskCard({
+  const DetailTaskCard({
     super.key, 
     required this.model, 
     required this.task,
@@ -28,7 +25,6 @@ class TaskCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final isSelected = model.selectedIds.contains(task.id);
     final isOverdue = task.isOverdue;
     Color? containterColor = task.done
               ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
@@ -57,17 +53,7 @@ class TaskCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.all(Radius.circular(16)),
           onTap: () {
-            if (model.isSelectionMode) {
-              model.toggleSelectTask(task.id);
-            } else {
-              _openDetails(context, model, task);
-            }
-          },
-          onLongPress: () {
-            if (!model.isSelectionMode) {
-              model.toggleSelectionMode();
-              model.toggleSelectTask(task.id);
-            }
+            _openDetails(context, model, task);
           },
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -76,19 +62,15 @@ class TaskCard extends StatelessWidget {
                 // Чекбокс для выделения или статуса
                 Padding(
                   padding: EdgeInsetsGeometry.only(right: 12),
-                  child: model.isSelectionMode ? Checkbox(
-                      value: isSelected,
-                      onChanged: (_) => model.toggleSelectTask(task.id),
-                    ) :
-                    Checkbox(
-                      value: task.done,
-                      onChanged: (_) => model.toggleTaskDone(task.id),
-                      fillColor: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) return checkFillColor;
-                        return SoloLevelingTheme.steelBlue;
-                      }),
-                      checkColor: checkColor,
-                    ),
+                  child: Checkbox(
+                    value: task.done,
+                    onChanged: (_) => model.toggleTaskDone(task.id),
+                    fillColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) return checkFillColor;
+                      return SoloLevelingTheme.steelBlue;
+                    }),
+                    checkColor: checkColor,
+                  ),
                 ),
                 
                 // Информация о задаче
@@ -140,15 +122,18 @@ class TaskCard extends StatelessWidget {
                       color: Theme.of(context).colorScheme.error,
                     ),
                   ),
+
+                // Сложность
                 _buildDifficultyChip(difficultyBackColor, difficultyForeColor),
-                if (model.isSelectionMode) ...{
-                  SizedBox(width: 8,),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 16),
-                    onPressed: () => _deleteTask(context, task, model.deleteTask),
-                    tooltip: 'Удалить',
-                  ),
-                }
+                SizedBox(width: 8,),
+
+                // Удалить
+                IconButton(
+                  icon: const Icon(Icons.delete_outline, size: 16),
+                  onPressed: () => _deleteTask(context, task, model.deleteTask),
+                  tooltip: 'Удалить',
+                ),
+        
               ],
             ),
           ),
@@ -204,7 +189,7 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  void _openDetails(BuildContext context, TaskListModel model, Task task) {
+  void _openDetails(BuildContext context, TaskDetailModel model, Task task) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -214,7 +199,7 @@ class TaskCard extends StatelessWidget {
         ),
       ),
     ).then((_) { 
-      if (context.mounted) model.loadTasks(); 
+      if (context.mounted) model.loadSubtasks(); 
     });
   }
 }

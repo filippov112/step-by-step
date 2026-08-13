@@ -2,15 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task_hierarchy.dart';
+import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
+import 'package:life_game/screens/tasks/detail/widgets/tile.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
+import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
   final Task task;
-  
   const TaskDetailsScreen({super.key, required this.task});
 
   @override
@@ -18,33 +19,50 @@ class TaskDetailsScreen extends StatefulWidget {
 }
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
-  final TaskHierarchyRepository _hierarchyRepo = TaskHierarchyRepository();
-  final TaskRepository _taskRepo = TaskRepository();
-  
-  List<Task> _subtasks = [];
-  bool _isLoading = true;
+
+  late TaskDetailModel model;
   
   @override
   void initState() {
     super.initState();
-    _loadSubtasks();
+    model = context.read<TaskDetailModel>();
+    model.setLoading(true);
+    model.setTask(widget.task);
   }
   
   Future<void> _loadSubtasks() async {
-    setState(() => _isLoading = true);
-    _subtasks = await _hierarchyRepo.getByParent(widget.task.id);
-    setState(() => _isLoading = false);
+    model.setLoading(true);
+    await model.loadSubtasks();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    var childrenCount = context.select<TaskDetailModel,Map<String,int>>((model) => model.childTasksCount);
+    var childrenDoneCount = context.select<TaskDetailModel,Map<String,int>>((model) => model.childDoneTasksCount);
+    var isLoading = context.select<TaskDetailModel,bool>((model) => model.isLoading);
+    var subtasks = context.select<TaskDetailModel,List<Task>>((model) => model.subtasks);
+    var task = context.select<TaskDetailModel,Task>((model) => model.task);
+
+    var description = context.select<TaskDetailModel,String>((model) => model.task.description);
+    var title = context.select<TaskDetailModel,String>((model) => model.task.title);
+    var datetime = context.select<TaskDetailModel,DateTime?>((model) => model.task.datetime);
+    var priority = context.select<TaskDetailModel,TaskPriority>((model) => model.task.priority);
+    var difficulty = context.select<TaskDetailModel,TaskDifficulty>((model) => model.task.difficulty);
+    var allTags = context.select<TaskDetailModel,List<Tag>>((model) => model.allTags);
+    var done = context.select<TaskDetailModel,bool>((model) => model.task.done);
+    var isOverdue = context.select<TaskDetailModel,bool>((model) => model.task.isOverdue);
+
+    var setDone = model.setDone;
+    var deleteTask = model.deleteTask;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.task.title),
+        title: Text(title),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () => _editTask(),
+            onPressed: () => _editTask(model, task),
             tooltip: 'Редактировать',
           ),
         ],
@@ -53,38 +71,55 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Информация о задаче
-          _buildTaskInfo(context),
+          _buildTaskInfo(context, title, done, description, priority, difficulty, datetime, isOverdue),
           
           // Разделитель
           const Divider(),
           
           // Заголовок подзадач
-          _buildSubtasksHeader(),
+          _buildSubtasksHeader(subtasks),
           
           // Список подзадач
           Expanded(
-            child: _isLoading
+            child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : _subtasks.isEmpty
-                    ? _buildEmptySubtasks()
+                : subtasks.isEmpty
+                    ? EmptyListScreen(
+                      title: "Подзадач нет", 
+                      subtitle: "Добавьте подзадачу, чтобы разбить основную на части", 
+                      icon: Icons.task_alt_outlined
+                      )
                     : ListView.builder(
-                        itemCount: _subtasks.length,
+                        itemCount: subtasks.length,
                         itemBuilder: (context, index) {
-                          return _buildSubtaskCard(_subtasks[index]);
+                          return DetailTaskCard(
+                            model: model, 
+                            task: subtasks[index], 
+                            childrenCount: childrenCount[subtasks[index].id] ?? 0, 
+                            childrenDoneCount: childrenDoneCount[subtasks[index].id] ?? 0
+                          );
                         },
                       ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _createSubtask(widget.task),
+        onPressed: () => _createSubtask(task),
         tooltip: 'Добавить подзадачу',
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _buildTaskInfo(BuildContext context) {
+  Widget _buildTaskInfo(
+    BuildContext context, 
+    String title, 
+    bool done, 
+    String description, 
+    TaskPriority priority,
+    TaskDifficulty difficulty,
+    DateTime? datetime,
+    bool isOverdue) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -95,22 +130,22 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             children: [
               Expanded(
                 child: Text(
-                  widget.task.title,
+                  title,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.task.done
+                  color: done
                       ? Colors.green.withValues(alpha: 0.2)
                       : Colors.orange.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  widget.task.done ? 'Выполнено' : 'В процессе',
+                  done ? 'Выполнено' : 'В процессе',
                   style: TextStyle(
-                    color: widget.task.done ? Colors.green : Colors.orange,
+                    color: done ? Colors.green : Colors.orange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -120,11 +155,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           const SizedBox(height: 8),
           
           // Описание
-          if (widget.task.description.isNotEmpty)
+          if (description.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text(
-                widget.task.description,
+                description,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
@@ -136,19 +171,19 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             children: [
               _buildInfoChip(
                 icon: Icons.priority_high,
-                label: widget.task.priority.displayName,
-                color: widget.task.priority.color,
+                label: priority.displayName,
+                color: priority.color,
               ),
               _buildInfoChip(
                 icon: Icons.speed,
-                label: widget.task.difficulty.displayName,
-                color: widget.task.difficulty.color,
+                label: difficulty.displayName,
+                color: difficulty.color,
               ),
-              if (widget.task.datetime != null)
+              if (datetime != null)
                 _buildInfoChip(
                   icon: Icons.event,
-                  label: '${widget.task.datetime!.day}.${widget.task.datetime!.month}.${widget.task.datetime!.year} ${widget.task.datetime!.hour}:${widget.task.datetime!.minute.toString().padLeft(2, '0')}',
-                  color: widget.task.isOverdue && !widget.task.done
+                  label: '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
+                  color: isOverdue && !done
                       ? Colors.red
                       : null,
                 ),
@@ -187,14 +222,14 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     );
   }
 
-  Widget _buildSubtasksHeader() {
+  Widget _buildSubtasksHeader(List<Task> subtasks) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Подзадачи (${_subtasks.length})',
+            'Подзадачи (${subtasks.length})',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           IconButton(
@@ -205,88 +240,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildEmptySubtasks() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.list_alt_outlined,
-            size: 48,
-            color: Theme.of(context).hintColor,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Нет подзадач',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Добавьте подзадачу, чтобы разбить основную на части',
-            style: Theme.of(context).textTheme.bodySmall,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubtaskCard(Task subtask) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: Checkbox(
-          value: subtask.done,
-          onChanged: (_) => _toggleSubtaskDone(subtask),
-        ),
-        title: Text(
-          subtask.title,
-          style: TextStyle(
-            decoration: subtask.done ? TextDecoration.lineThrough : null,
-          ),
-        ),
-        subtitle: subtask.description.isNotEmpty
-            ? Text(
-                subtask.description,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
-              )
-            : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, size: 18),
-              onPressed: () => _editSubtask(subtask),
-              tooltip: 'Редактировать',
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
-              onPressed: () => _deleteSubtask(subtask),
-              tooltip: 'Удалить',
-            ),
-          ],
-        ),
-        onTap: () {
-          // Можно открыть детали подзадачи
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TaskDetailsScreen(task: subtask),
-            ),
-          ).then((_) => _loadSubtasks());
-        },
-      ),
-    );
-  }
-
-  Future<void> _toggleSubtaskDone(Task subtask) async {
-    final updated = subtask.copyWith(done: !subtask.done);
-    await _taskRepo.update(updated);
-    await _loadSubtasks();
   }
 
   Future<void> _createSubtask(Task currentTask) async {
@@ -302,61 +255,21 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     }
   }
 
-  Future<void> _editSubtask(Task subtask) async {
-    final result = await Navigator.push(
+  void _editTask(TaskDetailModel model, Task task) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskFormScreen(task: subtask),
+        builder: (context) => TaskFormScreen(task: task),
       ),
-    );
-    
-    if (result == true) {
-      await _loadSubtasks();
-    }
-  }
-
-  Future<void> _deleteSubtask(Task subtask) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление подзадачи'),
-        content: Text('Вы уверены, что хотите удалить подзадачу "${subtask.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-    
-    if (confirm == true) {
-      // Удаляем связь родитель-потомок
-      final hierarchy = TaskHierarchy(
-        parentId: widget.task.id,
-        childId: subtask.id,
-      );
-      await _hierarchyRepo.deleteChildsBatch([hierarchy]);
-      await _taskRepo.delete(subtask.id);
-      await _loadSubtasks();
-    }
-  }
-
-  void _editTask() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TaskFormScreen(task: widget.task),
-      ),
-    ).then((_) {
-      // Обновляем данные (родительская задача могла измениться)
-      context.read<TaskListModel>().loadTasks();
-      // Обновляем экран
-      setState(() {});
+    ).then((_) async {
+      if (context.mounted) {
+        var checkExistTask = await model.checkExist();
+        if (!checkExistTask && context.mounted) {
+          Navigator.pop(context);
+          return;
+        }
+        model.loadSubtasks();
+      }
     });
   }
 }

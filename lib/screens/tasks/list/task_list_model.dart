@@ -221,6 +221,14 @@ class TaskListModel extends ChangeNotifier {
     await _applyFiltersAndSort();
     notifyListeners();
   }
+
+  Future deleteTask(String id) async {
+    await _taskRepo.delete(id);
+    _allTasks.removeWhere((t) => t.id == id);
+    _selectedIds.remove(id);
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
   
   Future deleteSelectedTasks() async {
     for (final id in _selectedIds) {

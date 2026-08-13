@@ -30,7 +30,7 @@ Future main() async {
 
         // Tasks
         ChangeNotifierProvider<TaskFormModel>(create: (_) { return TaskFormModel(); }),
-        ChangeNotifierProvider<TaskDetailModel>(create: (_) { return TaskDetailModel(); }),
+        // ChangeNotifierProvider<TaskDetailModel>(create: (_) { return TaskDetailModel(); }),
         ChangeNotifierProvider<TaskListModel>(create: (_) { return TaskListModel(); }),
         
         // User

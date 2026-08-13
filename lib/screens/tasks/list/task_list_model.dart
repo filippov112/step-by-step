@@ -12,6 +12,9 @@ class TaskListModel extends ChangeNotifier {
   final TaskRepository _taskRepo = TaskRepository();
   final TagTaskRepository _tagTaskRepo = TagTaskRepository();
   final TaskHierarchyRepository _hierarchyRepo = TaskHierarchyRepository();
+
+  Map<String,int> childTasksCount = {};
+  Map<String,int> childDoneTasksCount = {};
   
   List<Task> _allTasks = [];
   List<Task> _filteredTasks = [];
@@ -19,14 +22,13 @@ class TaskListModel extends ChangeNotifier {
   
   // Состояние фильтрации
   String _searchQuery = '';
-  Set<TaskPriority> _filterPriority = <TaskPriority>{};
-  Set<TaskDifficulty> _filterDifficulty = <TaskDifficulty>{};
+  final Set<TaskPriority> _filterPriority = <TaskPriority>{};
+  final Set<TaskDifficulty> _filterDifficulty = <TaskDifficulty>{};
   bool _filterDone = false;
   bool _filterUndone = false;
   List<Tag> _selectedTags = [];
   
   // Состояние сортировки
-  
   SortField _sortField = SortField.datetime;
   bool _sortAscending = true;
   
@@ -63,61 +65,61 @@ class TaskListModel extends ChangeNotifier {
   Future<void> loadTasks() async {
     _allTasks = await _taskRepo.getAll();
     _allTagTasks = await _tagTaskRepo.getAll();
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Поиск
-  void setSearchQuery(String query) {
+  Future setSearchQuery(String query) async {
     _searchQuery = query;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  void clearSearch() {
+  Future clearSearch() async {
     _searchQuery = '';
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Фильтры
-  void setPriorityFilter(TaskPriority priority) {
+  Future setPriorityFilter(TaskPriority priority) async {
     if (_filterPriority.contains(priority)) {
       _filterPriority.remove(priority);
     } else {
       _filterPriority.add(priority);
     }
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  void setDifficultyFilter(TaskDifficulty difficulty) {
+  Future setDifficultyFilter(TaskDifficulty difficulty) async {
     if (_filterDifficulty.contains(difficulty)) {
       _filterDifficulty.remove(difficulty);
     } else {
       _filterDifficulty.add(difficulty);
     }
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  void toggleDoneFilter() {
+  Future toggleDoneFilter() async {
     _filterDone = !_filterDone;
     if (_filterDone) _filterUndone = false;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  void toggleUndoneFilter() {
+  Future toggleUndoneFilter() async {
     _filterUndone = !_filterUndone;
     if (_filterUndone) _filterDone = false;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  void setTagsFilter(List<Tag> tags) {
+  Future setTagsFilter(List<Tag> tags) async {
     _selectedTags = tags;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
@@ -133,21 +135,20 @@ class TaskListModel extends ChangeNotifier {
   }
   
   // Сортировка
-  void setSortField(SortField field) {
+  Future setSortField(SortField field) async {
     if (_sortField == field) {
       _sortAscending = !_sortAscending;
     } else {
       _sortField = field;
       _sortAscending = true;
     }
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Основная логика фильтрации и сортировки
-  void _applyFiltersAndSort() {
+  Future _applyFiltersAndSort() async {
     var result = List<Task>.from(_allTasks);
-    
     // Поиск
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
@@ -156,7 +157,6 @@ class TaskListModel extends ChangeNotifier {
         t.description.toLowerCase().contains(query)
       ).toList();
     }
-    
     // Фильтры по приоритету и сложности
     if (_filterPriority.isNotEmpty) {
       result = result.where((t) => _filterPriority.contains(t.priority)).toList();
@@ -164,7 +164,6 @@ class TaskListModel extends ChangeNotifier {
     if (_filterDifficulty.isNotEmpty) {
       result = result.where((t) => _filterDifficulty.contains(t.difficulty)).toList();
     }
-    
     // Фильтр по статусу
     if (_filterDone) {
       result = result.where((t) => t.done).toList();
@@ -172,13 +171,22 @@ class TaskListModel extends ChangeNotifier {
     if (_filterUndone) {
       result = result.where((t) => !t.done).toList();
     }
-    
     // Фильтр по тегам
     if (_selectedTags.isNotEmpty) {
       var selectedTagTasks = _allTagTasks.where((tagTask) => _selectedTags.map((tag) => tag.id).contains(tagTask.tagId));
       result = result.where((task) => selectedTagTasks.map((tagTask) => tagTask.taskId).contains(task.id)).toList(); 
     }
+
+    // Получение счетчиков подзадач
+    childTasksCount.clear();
+    childDoneTasksCount.clear();
     
+    for (var task in result) {
+      var children = await _hierarchyRepo.getByParent(task.id);
+      childTasksCount[task.id] = children.length;
+      childDoneTasksCount[task.id] = children.where((e) => e.done).length;
+    }
+
     // Сортировка
     switch (_sortField) {
       case SortField.title:
@@ -198,48 +206,30 @@ class TaskListModel extends ChangeNotifier {
         result.sort((a, b) => a.difficulty.index.compareTo(b.difficulty.index));
         break;
     }
-    
     if (!_sortAscending) {
       result = result.reversed.toList();
     }
-    
     _filteredTasks = result;
   }
   
-  // CRUD операции
-  Future<void> addTask(Task task) async {
-    await _taskRepo.insert(task);
-    _allTasks.add(task);
-    _applyFiltersAndSort();
-    notifyListeners();
-  }
-  
-  Future<void> updateTask(Task task) async {
+  Future updateTask(Task task) async {
     await _taskRepo.update(task);
     final index = _allTasks.indexWhere((t) => t.id == task.id);
     if (index != -1) {
       _allTasks[index] = task;
     }
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
-  Future<void> deleteTask(String id) async {
-    await _taskRepo.delete(id);
-    _allTasks.removeWhere((t) => t.id == id);
-    _selectedIds.remove(id);
-    _applyFiltersAndSort();
-    notifyListeners();
-  }
-  
-  Future<void> deleteSelectedTasks() async {
+  Future deleteSelectedTasks() async {
     for (final id in _selectedIds) {
       await _taskRepo.delete(id);
       _allTasks.removeWhere((t) => t.id == id);
     }
     _selectedIds.clear();
     _isSelectionMode = false;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   

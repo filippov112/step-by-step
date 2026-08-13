@@ -38,6 +38,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var childrenCount = context.select<TaskListModel,Map<String,int>>((model) => model.childTasksCount);
+    var childrenDoneCount = context.select<TaskListModel,Map<String,int>>((model) => model.childDoneTasksCount);
+
     return Consumer<TaskListModel>(
       builder: (context, model, child) {
         return Scaffold(
@@ -55,7 +58,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
             deleteSelected: model.deleteSelectedTasks,
             clearSelection: model.clearSelection,
           ),
-          body: _buildBody(context, model),
+          body: _buildBody(context, model, childrenCount, childrenDoneCount),
           floatingActionButton: model.isSelectionMode
               ? null
               : CustomFloatingActionButton(
@@ -81,7 +84,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, TaskListModel model) {
+  Widget _buildBody(BuildContext context, TaskListModel model, Map<String,int> childrenCount, Map<String,int> childrenDoneCount) {
     if (model.tasks.isEmpty) {
       return EmptyListScreen(
         title: 'Нет задач',
@@ -89,7 +92,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
         icon: Icons.task_alt_outlined,
       );
     }
-
     if (model.hasActiveFilters && model.tasks.isEmpty) {
       return Center(
         child: Column(
@@ -110,20 +112,20 @@ class _TaskListScreenState extends State<TaskListScreen> {
         ),
       );
     }
-
     return ListView.builder(
       padding: const EdgeInsets.all(8),
       itemCount: model.tasks.length,
       itemBuilder: (context, index) {
         final task = model.tasks[index];
-        return TaskCard(model: model, task: task);
+        return TaskCard(
+          model: model, 
+          task: task, 
+          childrenCount: childrenCount[task.id] ?? 0, 
+          childrenDoneCount: childrenDoneCount[task.id] ?? 0,
+        );
       },
     );
   }
-
-
-
-  
 
   void _openCreateForm() {
     Navigator.push(
@@ -133,6 +135,4 @@ class _TaskListScreenState extends State<TaskListScreen> {
       ),
     ).then((_) => context.read<TaskListModel>().loadTasks());
   }
-
-  
 }

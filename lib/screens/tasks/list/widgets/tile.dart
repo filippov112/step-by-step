@@ -13,11 +13,20 @@ class TaskCard extends StatelessWidget {
 
   final TaskListModel model;
   final Task task;
+  final int childrenCount;
+  final int childrenDoneCount;
 
-  const TaskCard({super.key, required this.model, required this.task});
+  const TaskCard({
+    super.key, 
+    required this.model, 
+    required this.task,
+    this.childrenCount = 0, 
+    this.childrenDoneCount = 0
+  });
 
   @override
   Widget build(BuildContext context) {
+
     final isSelected = model.selectedIds.contains(task.id);
     final isOverdue = task.isOverdue;
     Color? containterColor = task.done
@@ -34,6 +43,7 @@ class TaskCard extends StatelessWidget {
     Color? checkColor =  Theme.of(context).focusColor.withAlpha(100);
     Color checkFillColor = task.done ? SoloLevelingTheme.glowBlue.withValues(alpha: 0.3) : SoloLevelingTheme.glowBlue;
     Color titleColor = task.done ? Theme.of(context).focusColor.withAlpha(100) : Theme.of(context).focusColor;
+    Color counterColor = task.done ? Theme.of(context).focusColor.withAlpha(100) : Theme.of(context).focusColor.withValues(alpha:0.5);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -85,14 +95,32 @@ class TaskCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        task.title,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: titleColor,
-                        ),
+                      Row(
+                        children: [
+                          if (childrenCount > 0) ...{
+                            Text(
+                              '($childrenDoneCount / $childrenCount)',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: counterColor,
+                              ),
+                            ),
+                            SizedBox(width: 8,),
+                          },
+                          Expanded(
+                            child: Text(
+                              task.title,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: titleColor,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
+                      
                       const SizedBox(height: 4),
                       Wrap(
                         spacing: 4,

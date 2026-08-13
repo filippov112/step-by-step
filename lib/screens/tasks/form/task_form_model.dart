@@ -1,41 +1,146 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/task_difficulty.dart';
+import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/tag.dart';
+import 'package:life_game/models/tag_task.dart';
 import 'package:life_game/models/task.dart';
+import 'package:life_game/models/task_hierarchy.dart';
 
 class TaskFormModel extends ChangeNotifier {
-  late TaskRepository provider = TaskRepository();
+  late Task task;
+  late String? parentId;
+  final tagTaskRepo = TagTaskRepository();
+  final taskRepo = TaskRepository();
+  final tagRepo = TagRepository();
+  final hierRepo = TaskHierarchyRepository();
 
-  TaskFormModel();
+  late List<TagTask> _tagTasks;
 
-  final formKey = GlobalKey<FormState>();
-  DateTime? datetime;
-  String title = '';
-  String description = '';
+  late String selectedTitle;
+  late String selectedDescription;
+  late DateTime? selectedDateTime;
+  late TaskPriority selectedPriority;
+  late TaskDifficulty selectedDifficulty;
+  late List<Tag> selectedTags;
+  late bool selectedDone;
+
+  late bool isEditing;
 
 
+  void setTask(Task? t, Task? parent) {
+    isEditing = t != null;
+    parentId = parent?.id;
+    task = t ?? Task.create(title: 'Новая задача');
+    selectedDateTime = task.datetime ?? DateTime.now().add(const Duration(hours: 1));
+    selectedPriority = task.priority;
+    selectedDifficulty = task.difficulty;
+    selectedTitle = task.title;
+    selectedDescription = task.description;
+    selectedDone = task.done;
+    selectedTags = [];
 
-  void selectDateTime(DateTime dt) {
-    datetime = dt;
-    notifyListeners();
+    _loadTaskTags();
   }
-  void selectTitle(String t) {
-    title = t;
-    notifyListeners();
-  }
-  void selectDesc(String d) {
-    description = d;
-    notifyListeners();
-  }
 
-  Future<String?> saveTask() async {
-    final form = formKey.currentState;
-    if (form != null && form.validate()) {
-      form.save();
-      try {
-        await provider.insert(Task.create(title: title, description: description, datetime: datetime));
-      } catch (e) {
-        return e.toString();
+
+  Future<void> _loadTaskTags() async {
+    _tagTasks = (await tagTaskRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
+    final tags = <Tag>[];
+
+    for (final tt in _tagTasks) {
+      final tag = await tagRepo.get(tt.tagId);
+      if (tag != null) {
+        tags.add(tag);
       }
     }
-    return null;
+    selectedTags = tags;
+    notifyListeners();
+  }
+
+  void setTitle(String title) {
+    selectedTitle = title;
+    notifyListeners();
+  }
+  void setDescription(String description) {
+    selectedDescription = description;
+    notifyListeners();
+  }
+  void setDone(bool done) {
+    selectedDone = done;
+    notifyListeners();
+  }
+  void setDateTime(DateTime? datetime) {
+    selectedDateTime = datetime;
+    notifyListeners();
+  }
+  void setPriority(TaskPriority priority) {
+    selectedPriority = priority;
+    notifyListeners();
+  }
+  void setDifficulty(TaskDifficulty difficulty) {
+    selectedDifficulty = difficulty;
+    notifyListeners();
+  }
+  void setSelectedTags(List<Tag> tags) {
+    selectedTags = tags;
+    notifyListeners();
+  }
+
+  Future<bool> deleteTask() async {
+    if (isEditing) {
+      try {
+        await taskRepo.delete(task.id);
+      } catch (e) {
+        print(e);
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> saveTask() async {
+    task.title = selectedTitle;
+    task.description = selectedDescription;
+    task.datetime = selectedDateTime;
+    task.done = selectedDone;
+    task.priority = selectedPriority;
+    task.difficulty = selectedDifficulty;
+
+    // Если редактирование - сохраняем ID
+    try {
+      if (isEditing) {
+        await taskRepo.update(task);
+      } else {
+        await taskRepo.insert(task);
+        if (parentId != null) {
+          hierRepo.insertBatch([TaskHierarchy(parentId: parentId!, childId: task.id)]);
+        }
+      }
+      await _saveTags();
+    }
+    catch (e) {
+      print(e);
+      return false;
+    }
+    return true;
+  }
+
+  Future _saveTags() async {
+    final existingTagIds = _tagTasks.map((tt) => tt.tagId).toSet();
+    final newTagIds = selectedTags.map((tag) => tag.id).toSet();
+    final tagsToRemove = existingTagIds.difference(newTagIds);
+    final tagsToAdd = newTagIds.difference(existingTagIds);
+
+    for (final tagId in tagsToRemove) {
+      await tagTaskRepo.delete(task.id, tagId);
+    }
+    for (final tagId in tagsToAdd) {
+      final tagTask = TagTask.create(
+        taskId: task.id,
+        tagId: tagId,
+      );
+      await tagTaskRepo.insert(tagTask);
+    }
   }
 }

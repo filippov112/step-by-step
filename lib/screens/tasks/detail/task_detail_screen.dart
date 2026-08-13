@@ -77,7 +77,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createSubtask,
+        onPressed: () => _createSubtask(widget.task),
         tooltip: 'Добавить подзадачу',
         child: const Icon(Icons.add),
       ),
@@ -289,11 +289,11 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     await _loadSubtasks();
   }
 
-  Future<void> _createSubtask() async {
+  Future<void> _createSubtask(Task currentTask) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const TaskFormScreen(),
+        builder: (context) => TaskFormScreen(parent:currentTask),
       ),
     );
     

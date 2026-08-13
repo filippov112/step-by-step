@@ -82,6 +82,10 @@ class TaskDetailModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future deleteThisTask() async {
+    await deleteTask(task.id);
+  }
+
   Future updateTask(Task task) async {
     await _taskRepo.update(task);
     final index = _subtasks.indexWhere((t) => t.id == task.id);

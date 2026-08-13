@@ -5,9 +5,12 @@ import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
-import 'package:life_game/screens/tasks/detail/widgets/tile.dart';
+import 'package:life_game/screens/tasks/detail/widgets/description.dart';
+import 'package:life_game/screens/tasks/detail/widgets/header.dart';
+import 'package:life_game/screens/tasks/detail/widgets/subtasks.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class TaskDetailsScreen extends StatefulWidget {
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
   late TaskDetailModel model;
+  var expController = ExpansibleController();
   
   @override
   void initState() {
@@ -28,6 +32,12 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     model = context.read<TaskDetailModel>();
     model.setLoading(true);
     model.setTask(widget.task);
+  }
+
+  @override
+  void dispose() {
+    expController.dispose();
+    super.dispose();
   }
   
   Future<void> _loadSubtasks() async {
@@ -54,191 +64,64 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     var isOverdue = context.select<TaskDetailModel,bool>((model) => model.task.isOverdue);
 
     var setDone = model.setDone;
-    var deleteTask = model.deleteTask;
+    var deleteThisTask = model.deleteThisTask;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () => _editTask(model, task),
-            tooltip: 'Редактировать',
-          ),
-        ],
+      appBar: buildAppBar(
+        'Задача', 
+        editCallback: () => _editTask(model, task), 
+        deleteCallback: () => _deleteThisTask(deleteThisTask)
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Информация о задаче
-          _buildTaskInfo(context, title, done, description, priority, difficulty, datetime, isOverdue),
+          // Шапка
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: buildHeader(title: title, done: done, setDone: setDone),
+          ),
+          // Шапка списка подзадач
+          buildSubtaskSection(
+            context,
+            expController: expController,
+            onExpansionChanged: () => setState(() {}),
+            subtasks: subtasks, 
+          ),
           
-          // Разделитель
-          const Divider(),
-          
-          // Заголовок подзадач
-          _buildSubtasksHeader(subtasks),
-          
-          // Список подзадач
+          const Divider(color: SoloLevelingTheme.steelBlue),
+
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : subtasks.isEmpty
-                    ? EmptyListScreen(
-                      title: "Подзадач нет", 
-                      subtitle: "Добавьте подзадачу, чтобы разбить основную на части", 
-                      icon: Icons.task_alt_outlined
-                      )
-                    : ListView.builder(
-                        itemCount: subtasks.length,
-                        itemBuilder: (context, index) {
-                          return DetailTaskCard(
-                            model: model, 
-                            task: subtasks[index], 
-                            childrenCount: childrenCount[subtasks[index].id] ?? 0, 
-                            childrenDoneCount: childrenDoneCount[subtasks[index].id] ?? 0
-                          );
-                        },
-                      ),
+            child: expController.isExpanded ? 
+            
+            buildSubtaskBlock(
+              context, 
+              model: model, 
+              expController: expController, 
+              onExpansionChanged: () => setState(() {}), 
+              subtasks: subtasks, 
+              isLoading: isLoading, 
+              childrenCount: childrenCount, 
+              childrenDoneCount: childrenDoneCount
+            ) :
+            
+            buildTaskInfo(
+              context,
+              description: description, 
+              done: done, 
+              datetime: datetime, 
+              isOverdue: isOverdue, 
+              priority: priority, 
+              difficulty: difficulty, 
+              allTags: allTags
+            ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: expController.isExpanded ? FloatingActionButton(
         onPressed: () => _createSubtask(task),
         tooltip: 'Добавить подзадачу',
         child: const Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildTaskInfo(
-    BuildContext context, 
-    String title, 
-    bool done, 
-    String description, 
-    TaskPriority priority,
-    TaskDifficulty difficulty,
-    DateTime? datetime,
-    bool isOverdue) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Заголовок и статус
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: done
-                      ? Colors.green.withValues(alpha: 0.2)
-                      : Colors.orange.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  done ? 'Выполнено' : 'В процессе',
-                  style: TextStyle(
-                    color: done ? Colors.green : Colors.orange,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          
-          // Описание
-          if (description.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                description,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          
-          // Детали
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              _buildInfoChip(
-                icon: Icons.priority_high,
-                label: priority.displayName,
-                color: priority.color,
-              ),
-              _buildInfoChip(
-                icon: Icons.speed,
-                label: difficulty.displayName,
-                color: difficulty.color,
-              ),
-              if (datetime != null)
-                _buildInfoChip(
-                  icon: Icons.event,
-                  label: '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
-                  color: isOverdue && !done
-                      ? Colors.red
-                      : null,
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-    Color? color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color?.withValues(alpha: 0.15) ?? Theme.of(context).dividerColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubtasksHeader(List<Task> subtasks) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Подзадачи (${subtasks.length})',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadSubtasks,
-            tooltip: 'Обновить',
-          ),
-        ],
-      ),
+      ) : null,
     );
   }
 
@@ -271,5 +154,32 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         model.loadSubtasks();
       }
     });
+  }
+
+  Future _deleteThisTask(Future Function() deleteTask) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Удаление задачи'),
+        content: const Text('Вы уверены, что хотите удалить эту задачу?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirm == true && context.mounted) {
+      await deleteTask();
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 }

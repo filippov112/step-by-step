@@ -86,17 +86,14 @@ class TaskFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> deleteTask() async {
+  Future deleteTask() async {
     if (isEditing) {
       try {
         await taskRepo.delete(task.id);
       } catch (e) {
         print(e);
-        return false;
       }
-      return true;
     }
-    return false;
   }
 
   Future<bool> saveTask() async {

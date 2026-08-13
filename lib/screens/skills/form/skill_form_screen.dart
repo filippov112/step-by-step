@@ -267,7 +267,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
             spacing: 8,
             runSpacing: 8,
             children: viewModel.selectedTags.map((tag) {
-              return TagChip(title: tag.title, callback: () => viewModel.toggleTag(tag),);
+              return TagChip(title: tag.title);
             }).toList(),
           ),
         if (viewModel.selectedTags.isNotEmpty) ...[

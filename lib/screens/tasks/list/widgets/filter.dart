@@ -112,11 +112,6 @@ class _TaskFiltersState extends State<TaskFilters> {
                   ...selectedTags.map((tag) =>
                     TagChip(
                       title: tag.title,
-                      callback: () {
-                        final updated = List<Tag>.from(selectedTags);
-                        updated.remove(tag);
-                        model.setTagsFilter(updated);
-                      },
                     ),
                   ),
                 ],

@@ -6,6 +6,7 @@ import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:life_game/widgets/dialogs/select_date_time.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
@@ -54,16 +55,9 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     var deleteTask = model.deleteTask;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Редактирование задачи' : 'Новая задача'),
-        actions: [
-          if (isEditing)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _deleteTask(deleteTask),
-              tooltip: 'Удалить',
-            ),
-        ],
+      appBar: buildAppBar(
+        'Задача',
+        deleteCallback: () => _deleteTask(deleteTask),
       ),
       body: Form(
         key: _formKey,
@@ -266,9 +260,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
           children: selectedTags.map((tag) =>
             TagChip(
               title: tag.title,
-              callback: () {
-                selectedTags.remove(tag);
-              },
             ),
           ).toList(),
         ),
@@ -320,7 +311,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
-  Future _deleteTask(Future<bool> Function() deleteTask) async {
+  Future _deleteTask(Future Function() deleteTask) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -340,8 +331,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     );
     
     if (confirm == true && context.mounted) {
-      var result = await deleteTask();
-      if (result && context.mounted) {
+      await deleteTask();
+      if (context.mounted) {
         Navigator.pop(context);
       }
     }

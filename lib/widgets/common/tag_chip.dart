@@ -13,10 +13,11 @@ class TagChip extends StatelessWidget {
     return  Chip(
       backgroundColor: Theme.of(context).dividerColor,
       padding: EdgeInsetsGeometry.all(3),
-      label: Text('#$title', style: TextStyle(fontWeight: FontWeight.normal)),
+      label: Text(title, style: TextStyle(fontWeight: FontWeight.normal)),
       side: BorderSide.none,
       onDeleted: callback,
-      deleteIcon: callback != null ? Icon( Icons.close, size: 16, ) : null,
+      labelPadding: EdgeInsets.only(left: 3),
+      deleteIcon: callback != null ? Icon( Icons.close, size: 13, ) : null,
     );
   }
   

@@ -1,0 +1,159 @@
+
+
+import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/task_difficulty.dart';
+import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/task.dart';
+import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
+import 'package:life_game/screens/tasks/list/task_list_model.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:provider/provider.dart';
+
+class TaskCard extends StatelessWidget {
+
+  final TaskListModel model;
+  final Task task;
+
+  const TaskCard({super.key, required this.model, required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = model.selectedIds.contains(task.id);
+    final isOverdue = task.isOverdue;
+    Color? containterColor = task.done
+              ? Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
+              : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
+    Gradient containterBorderColor = LinearGradient(
+      transform: GradientRotation(0.7),
+      colors: [task.priority.color.withValues(alpha: 0.5), containterColor],
+      stops: [0, 0.2]);
+    
+    Color difficultyForeColor = task.done ? task.difficulty.color.withValues(alpha: 0.2) : task.difficulty.color;
+    Color difficultyBackColor = task.done ? task.difficulty.color.withValues(alpha: 0.06) : task.difficulty.color.withValues(alpha: 0.2);
+    Color? dateColor = task.isOverdue ? Theme.of(context).colorScheme.error : task.done ? Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.2) : Theme.of(context).textTheme.bodyLarge?.color;
+    Color? checkColor =  Theme.of(context).focusColor.withAlpha(100);
+    Color checkFillColor = task.done ? SoloLevelingTheme.glowBlue.withValues(alpha: 0.3) : SoloLevelingTheme.glowBlue;
+    Color titleColor = task.done ? Theme.of(context).focusColor.withAlpha(100) : Theme.of(context).focusColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: containterBorderColor,
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          color: containterColor,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+          onTap: () {
+            if (model.isSelectionMode) {
+              model.toggleSelectTask(task.id);
+            } else {
+              _openDetails(context, task);
+            }
+          },
+          onLongPress: () {
+            if (!model.isSelectionMode) {
+              model.toggleSelectionMode();
+              model.toggleSelectTask(task.id);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                // Чекбокс для выделения или статуса
+                Padding(
+                  padding: EdgeInsetsGeometry.only(right: 12),
+                  child: model.isSelectionMode ? Checkbox(
+                      value: isSelected,
+                      onChanged: (_) => model.toggleSelectTask(task.id),
+                    ) :
+                    Checkbox(
+                      value: task.done,
+                      onChanged: (_) => model.toggleTaskDone(task.id),
+                      fillColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.selected)) return checkFillColor;
+                        return SoloLevelingTheme.steelBlue;
+                      }),
+                      checkColor: checkColor,
+                    ),
+                ),
+                
+                // Информация о задаче
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: titleColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: [
+                          
+                          if (task.datetime != null)
+                            _buildDateTimeChip(context, task.datetime!, dateColor),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Индикатор просрочки
+                if (isOverdue && !task.done)
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(left:12),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                _buildDifficultyChip(difficultyBackColor, difficultyForeColor),
+              ],
+            ),
+          ),
+        ),
+      )
+    );
+  }
+
+  Widget _buildDifficultyChip(Color backColor, Color foreColor) {
+    return Container(
+      margin: EdgeInsets.only(left:12),
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: backColor,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(Icons.build, color: foreColor, size: 16,)
+    );
+  }
+
+  Widget _buildDateTimeChip(BuildContext context, DateTime datetime, Color? color) {
+    return Text(
+      '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
+      style: TextStyle(
+        fontSize: 12,
+        color: color,
+      ),
+    );
+  }
+
+  void _openDetails(BuildContext context, Task task) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TaskDetailsScreen(task: task),
+      ),
+    ).then((_) { if (context.mounted) context.read<TaskListModel>().loadTasks(); });
+  }
+}

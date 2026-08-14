@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
+import 'package:life_game/models/task_reward.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/screens/tasks/form/widgets/buttons.dart';
+import 'package:life_game/screens/tasks/form/widgets/rewards.dart';
 import 'package:life_game/screens/tasks/form/widgets/tags.dart';
 import 'package:life_game/screens/tasks/form/widgets/datetime.dart';
 import 'package:life_game/screens/tasks/form/widgets/description.dart';
@@ -39,6 +42,8 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    var taskId = context.select<TaskFormModel,String>((model) => model.task.id);
     var isEditing = context.select<TaskFormModel,bool>((model) => model.isEditing);
     var selectedDescription = context.select<TaskFormModel,String>((model) => model.selectedDescription);
     var selectedTitle = context.select<TaskFormModel,String>((model) => model.selectedTitle);
@@ -47,12 +52,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     var selectedDifficulty = context.select<TaskFormModel,TaskDifficulty>((model) => model.selectedDifficulty);
     var selectedTags = context.select<TaskFormModel,List<Tag>>((model) => model.selectedTags);
     var selectedDone = context.select<TaskFormModel,bool>((model) => model.selectedDone);
+    var skills = context.select<TaskFormModel,List<Skill>>((model) => model.allSkills);
+    var selectedRewards = context.select<TaskFormModel,List<TaskReward>>((model) => model.selectedRewards);
 
     var setPriority = model.setPriority;
     var setDateTime = model.setDateTime;
     var setDifficulty = model.setDifficulty;
     var setSelectedTags = model.setSelectedTags;
     var setDescription = model.setDescription;
+    var setSelectedRewards = model.setSelectedRewards;
     var setTitle = model.setTitle;
     var setDone = model.setDone;
     var saveTask = model.saveTask;
@@ -135,6 +143,19 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
+                  Divider(color:SoloLevelingTheme.steelBlue,),
+                  const SizedBox(height: 8),
+
+                  // Награды
+                  buildRewardSection(
+                    context, 
+                    selectedRewards: selectedRewards, 
+                    setSelectedRewards: setSelectedRewards, 
+                    skills: skills, 
+                    taskId: taskId
+                  ),
+                  const SizedBox(height: 8),
+
                 ]
               ),   
             ),

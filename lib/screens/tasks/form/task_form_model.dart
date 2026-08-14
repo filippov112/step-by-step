@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_task.dart';
 import 'package:life_game/models/task.dart';
@@ -14,12 +15,14 @@ class TaskFormModel extends ChangeNotifier {
   late String? parentId;
   final tagTaskRepo = TagTaskRepository();
   final rewardRepo = TaskRewardRepository();
+  final skillRepo = SkillRepository();
   final taskRepo = TaskRepository();
   final tagRepo = TagRepository();
   final hierRepo = TaskHierarchyRepository();
 
-  late List<TagTask> _tagTasks;
-  late List<TaskReward> _rewards;
+  List<TagTask> _tagTasks = [];
+  List<TaskReward> _rewards = [];
+  List<Skill> allSkills = [];
 
   late String selectedTitle;
   late String selectedDescription;
@@ -28,8 +31,9 @@ class TaskFormModel extends ChangeNotifier {
   late TaskDifficulty selectedDifficulty;
   late bool selectedDone;
 
-  late List<Tag> selectedTags;
-  late List<TaskReward> selectedRewards;
+  List<Tag> selectedTags = [];
+  List<TaskReward> selectedRewards = [];
+  List<Skill> foundedSkills = [];
 
   late bool isEditing;
 
@@ -52,6 +56,7 @@ class TaskFormModel extends ChangeNotifier {
   Future loadData() async {
     await _loadTaskTags();
     await _loadRewards();
+    await _loadSkills();
     notifyListeners();
   }
 
@@ -71,6 +76,10 @@ class TaskFormModel extends ChangeNotifier {
   Future _loadRewards() async {
     _rewards = (await rewardRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
     selectedRewards = _rewards.where((e) => true).toList();
+  }
+
+  Future _loadSkills() async {
+    allSkills = await skillRepo.getAll();
   }
 
   // -------------------- Commands ------------------------
@@ -105,6 +114,16 @@ class TaskFormModel extends ChangeNotifier {
   }
   void setSelectedRewards(List<TaskReward> rewards) {
     selectedRewards = rewards;
+    notifyListeners();
+  }
+
+  // ---------- Rewards ------------------
+
+  Future searchSkills(String pattern) async {
+    foundedSkills.clear();
+    for (var skill in allSkills.where((skl) => skl.title.contains(pattern))) {
+      foundedSkills.add(skill);
+    }
     notifyListeners();
   }
 
@@ -169,13 +188,20 @@ class TaskFormModel extends ChangeNotifier {
     final newRewardsId = selectedRewards.map((r) => r.id).toSet();
     final rewardsToRemove = existingRewardsId.difference(newRewardsId);
     final rewardsToAdd = newRewardsId.difference(existingRewardsId);
+    final rewardsToUpdate = newRewardsId.difference(rewardsToAdd);
 
     for (final rewardId in rewardsToRemove) {
       await rewardRepo.delete(rewardId);
     }
     for (final rewardId in rewardsToAdd) {
       var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
+      reward.date = task.done ? task.datetime : null;
       await rewardRepo.insert(reward);
+    }
+    for (final rewardId in rewardsToUpdate) {
+      var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
+      reward.date = task.done ? task.datetime : null;
+      await rewardRepo.update(reward);
     }
   }
 }

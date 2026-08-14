@@ -1,15 +1,19 @@
-// lib/screens/tasks/task_form_screen.dart
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
+import 'package:life_game/screens/tasks/form/widgets/buttons.dart';
+import 'package:life_game/screens/tasks/form/widgets/tags.dart';
+import 'package:life_game/screens/tasks/form/widgets/datetime.dart';
+import 'package:life_game/screens/tasks/form/widgets/description.dart';
+import 'package:life_game/screens/tasks/form/widgets/difficulty.dart';
+import 'package:life_game/screens/tasks/form/widgets/priority.dart';
+import 'package:life_game/screens/tasks/form/widgets/status.dart';
+import 'package:life_game/screens/tasks/form/widgets/title.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
-import 'package:life_game/widgets/dialogs/select_date_time.dart';
-import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
 class TaskFormScreen extends StatefulWidget {
@@ -76,228 +80,72 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   SizedBox(height: 12,),
 
                   // Название
-                  TextFormField(
-                    initialValue: selectedTitle,
-                    onSaved: (val) => setTitle.call(val ?? ''),
-                    decoration: const InputDecoration(
-                      labelText: 'Название задачи',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.title),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Введите название задачи';
-                      }
-                      return null;
-                    },
-                  ),
+                  buildTitleInput(selectedTitle: selectedTitle, setTitle: setTitle),
                   const SizedBox(height: 12),
 
                   // Описание
-                  TextFormField(
-                    initialValue: selectedDescription,
-                    onSaved: (val) => setDescription(val ?? ''),
-                    decoration: const InputDecoration(
-                      labelText: 'Описание',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.description),
-                    ),
-                    maxLines: 3,
-                  ),
+                  buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
                   const SizedBox(height: 12), 
                   
                   // Дата и время
-                  _buildDateTimePicker(selectedDatetime, setDateTime),
+                  buildDateTimePicker(
+                    context,
+                    currentDatetime: selectedDatetime, 
+                    setDateTime: setDateTime
+                  ),
 
                   const SizedBox(height: 8,),
                   // Статус
-                  _buildStatusSection(selectedDone, setDone),
-                  
+                  buildStatusSection(
+                    selectedDone: selectedDone,
+                    setDone: setDone
+                  ),
                   
                   const SizedBox(height: 8),
                   Divider(color:SoloLevelingTheme.steelBlue,),
                   const SizedBox(height: 8),
                   
                   // Приоритет
-                  _buildPrioritySelector(selectedPriority, setPriority),
+                  buildPrioritySelector(
+                    context,
+                    currentPriority: selectedPriority, 
+                    setPriority: setPriority
+                  ),
                   
                   const SizedBox(height: 8),
                   Divider(color:SoloLevelingTheme.steelBlue,),
                   const SizedBox(height: 8),
                   
                   // Сложность
-                  _buildDifficultySelector(selectedDifficulty, setDifficulty),
+                  buildDifficultySelector(
+                    context, 
+                    currentDifficulty: selectedDifficulty, 
+                    setDifficulty: setDifficulty
+                  ),
                   
                   const SizedBox(height: 8),
                   Divider(color:SoloLevelingTheme.steelBlue,),
                   const SizedBox(height: 8),
 
                   // Теги
-                  _buildTagsSection(selectedTags, setSelectedTags),
+                  buildTagsSection(
+                    context, 
+                    selectedTags: selectedTags, 
+                    setSelectedTags: setSelectedTags
+                  ),
                   
                   const SizedBox(height: 8),
                 ]
               ),   
             ),
             // Кнопки
-            Padding(
-              padding: EdgeInsetsGeometry.all(8), 
-              child:  Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Отмена'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _saveTask(saveTask),
-                      child: Text(isEditing ? 'Сохранить' : 'Создать'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            buildButtonsBlock(
+              context, 
+              saveCallback: () => _saveTask(saveTask), 
+              isEditing: isEditing
+            )
           ]
         ),
-      ),
-    );
-  }
-
-  Widget _buildDateTimePicker(DateTime? currentDatetime, Function(DateTime?) setDateTime) {
-    return Card(
-      margin: EdgeInsets.all(0),
-      child: ListTile(
-        leading: const Icon(Icons.event),
-        title: Text('Дата и время'),
-        subtitle: Text(currentDatetime != null ?
-          '${currentDatetime.day}.${currentDatetime.month}.${currentDatetime.year} '
-          '${currentDatetime.hour}:${currentDatetime.minute.toString().padLeft(2, '0')}' : '',
-        ),
-        onTap: () async {
-          final result = await selectDateTime(context, currentDatetime ?? DateTime.now());
-          if (result != null) {
-            setDateTime(result);
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildPrioritySelector(TaskPriority currentPriority, Function(TaskPriority) setPriority) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Приоритет',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: TaskPriority.values.map((priority) =>
-            ChoiceChip(
-              label: Text(priority.displayName),
-              selected: currentPriority == priority,
-              onSelected: (_) => setPriority(priority),
-            ),
-          ).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDifficultySelector(TaskDifficulty currentDifficulty, Function(TaskDifficulty) setDifficulty) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Сложность',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: TaskDifficulty.values.map((difficulty) =>
-            ChoiceChip(
-              label: Text(difficulty.displayName),
-              selected: currentDifficulty == difficulty,
-              onSelected: (_) => setDifficulty(difficulty),
-           ),
-          ).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTagsSection(List<Tag> selectedTags, Function(List<Tag>) setSelectedTags) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Теги',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            TextButton.icon(
-              onPressed: () => _openTagSelector(selectedTags, setSelectedTags),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Добавить тег'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: selectedTags.map((tag) =>
-            TagChip(
-              title: tag.title,
-            ),
-          ).toList(),
-        ),
-        if (selectedTags.isEmpty)
-          Text(
-            'Теги не добавлены',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildStatusSection(bool selectedDone, Function(bool) setDone) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            
-            Checkbox(value: selectedDone, onChanged: (val) => setDone(val ?? false)),
-              
-            Text('Выполнена')
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _openTagSelector(List<Tag> selectedTags, Function(List<Tag>) setSelectedTags) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => TagsFinder(
-        selectedTags: selectedTags,
-        onConfirm: (tags) => setSelectedTags(tags),
       ),
     );
   }
@@ -329,7 +177,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         ],
       ),
     );
-    
     if (confirm == true && context.mounted) {
       await deleteTask();
       if (context.mounted) {

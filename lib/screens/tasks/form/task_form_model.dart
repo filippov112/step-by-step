@@ -5,27 +5,35 @@ import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_task.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/models/task_hierarchy.dart';
+import 'package:life_game/models/task_reward.dart';
 
 class TaskFormModel extends ChangeNotifier {
+
+  // -------------- Fields ----------------
   late Task task;
   late String? parentId;
   final tagTaskRepo = TagTaskRepository();
+  final rewardRepo = TaskRewardRepository();
   final taskRepo = TaskRepository();
   final tagRepo = TagRepository();
   final hierRepo = TaskHierarchyRepository();
 
   late List<TagTask> _tagTasks;
+  late List<TaskReward> _rewards;
 
   late String selectedTitle;
   late String selectedDescription;
   late DateTime? selectedDateTime;
   late TaskPriority selectedPriority;
   late TaskDifficulty selectedDifficulty;
-  late List<Tag> selectedTags;
   late bool selectedDone;
+
+  late List<Tag> selectedTags;
+  late List<TaskReward> selectedRewards;
 
   late bool isEditing;
 
+  // ---------------- Initialization ------------------
 
   void setTask(Task? t, Task? parent) {
     isEditing = t != null;
@@ -37,13 +45,17 @@ class TaskFormModel extends ChangeNotifier {
     selectedTitle = task.title;
     selectedDescription = task.description;
     selectedDone = task.done;
-    selectedTags = [];
 
-    _loadTaskTags();
+    loadData();
   }
 
+  Future loadData() async {
+    await _loadTaskTags();
+    await _loadRewards();
+    notifyListeners();
+  }
 
-  Future<void> _loadTaskTags() async {
+  Future _loadTaskTags() async {
     _tagTasks = (await tagTaskRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
     final tags = <Tag>[];
 
@@ -54,8 +66,14 @@ class TaskFormModel extends ChangeNotifier {
       }
     }
     selectedTags = tags;
-    notifyListeners();
   }
+
+  Future _loadRewards() async {
+    _rewards = (await rewardRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
+    selectedRewards = _rewards.where((e) => true).toList();
+  }
+
+  // -------------------- Commands ------------------------
 
   void setTitle(String title) {
     selectedTitle = title;
@@ -85,6 +103,12 @@ class TaskFormModel extends ChangeNotifier {
     selectedTags = tags;
     notifyListeners();
   }
+  void setSelectedRewards(List<TaskReward> rewards) {
+    selectedRewards = rewards;
+    notifyListeners();
+  }
+
+  // ---------- CRUD ---------------------
 
   Future deleteTask() async {
     if (isEditing) {
@@ -103,8 +127,6 @@ class TaskFormModel extends ChangeNotifier {
     task.done = selectedDone;
     task.priority = selectedPriority;
     task.difficulty = selectedDifficulty;
-
-    // Если редактирование - сохраняем ID
     try {
       if (isEditing) {
         await taskRepo.update(task);
@@ -115,6 +137,7 @@ class TaskFormModel extends ChangeNotifier {
         }
       }
       await _saveTags();
+      await _saveRewards();
     }
     catch (e) {
       print(e);
@@ -138,6 +161,21 @@ class TaskFormModel extends ChangeNotifier {
         tagId: tagId,
       );
       await tagTaskRepo.insert(tagTask);
+    }
+  }
+
+  Future _saveRewards() async {
+    final existingRewardsId = _rewards.map((r) => r.id).toSet();
+    final newRewardsId = selectedRewards.map((r) => r.id).toSet();
+    final rewardsToRemove = existingRewardsId.difference(newRewardsId);
+    final rewardsToAdd = newRewardsId.difference(existingRewardsId);
+
+    for (final rewardId in rewardsToRemove) {
+      await rewardRepo.delete(rewardId);
+    }
+    for (final rewardId in rewardsToAdd) {
+      var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
+      await rewardRepo.insert(reward);
     }
   }
 }

@@ -2,7 +2,8 @@ import 'package:life_game/data/db.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/characteristic.dart';
 import 'package:life_game/models/enums/bonus_type.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Бонус к характеристике за достижение
 class AchievementBonus {

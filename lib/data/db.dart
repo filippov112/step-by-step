@@ -19,30 +19,32 @@ import 'package:life_game/models/task.dart';
 import 'package:life_game/models/task_hierarchy.dart';
 import 'package:life_game/models/user.dart';
 import 'package:path/path.dart';
+// import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 
 
 class DB {
   static Database? db;
 
   static Future<void> dropDb() async {
-    // Delete the database
     await deleteDatabase(await _getDBPath());
   }
 
   static Future initDb() async {
-    if (db != null) {
-      return;
-    }
-    // Init ffi loader if needed.
     sqfliteFfiInit();
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+    }
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       databaseFactory = databaseFactoryFfi;
     }
-    // Connection
+
     db = await openDatabase(await _getDBPath(), version: 1,
       onCreate: (Database db, int version) async {
-      // When creating the db, create the table
+
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Class.init);
       await db.execute(User.init);
@@ -66,11 +68,9 @@ class DB {
     });
   }
 
-
   // =======
 
   static Future<String> _getDBPath() async {
-    // Get a location using getDatabasesPath
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'demo.db');
     return path;

@@ -3,8 +3,8 @@ import 'package:life_game/models/characteristic.dart';
 import 'package:life_game/models/enums/bonus_type.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 // Бонусное значение характеристики от ранга навыка
 class SkillRangBonus {
   static const tn = "skill_rang_bonuses";

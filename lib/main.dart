@@ -16,9 +16,10 @@ import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 
-Future main() async {
-  await DB.initDb();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
+  await DB.initDb();
 
   runApp(
     MultiProvider(
@@ -59,7 +60,6 @@ Future main() async {
     )
   );
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

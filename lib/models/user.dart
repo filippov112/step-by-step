@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:life_game/data/db.dart';
 import 'package:life_game/tools/get_age_string.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 // Пользователь
 class User {
   static const tn = "profiles";

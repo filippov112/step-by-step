@@ -1,6 +1,6 @@
 import 'package:life_game/data/db.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 // Класс
 class Class {
   static const tn = "classes";

@@ -1,8 +1,8 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
-
+import 'package:sqflite/sqflite.dart';
 // Навык
 class Skill {
   // ------------ Схема ------------

@@ -1,8 +1,8 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/class.dart';
 import 'package:life_game/models/skill.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
+// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
 // Связь навыка с классом
 class ClassSkill {
   static const tn = "class_skills";

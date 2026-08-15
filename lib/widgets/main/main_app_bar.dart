@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 
 
 // AppBar для экранов-списков
@@ -16,32 +18,15 @@ PreferredSizeWidget buildMainAppBar<T>(
 }) {
 
   Future deleteFunc(int itemCount) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Удаление'),
-        content: Text('Вы уверены, что хотите удалить выбранные записи ($itemCount шт.)?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить все'),
-          ),
-        ],
-      ),
-    );
-    if (confirm == true) {
+    if (await showConfirmDialog(context) == true) {
       deleteSelected.call();
     }
   }
 
   return AppBar(
     title: isSelectionMode 
-        ? Text('Выбрано: ${selectedIds.length}') 
-        : Text(title),
+        ? CustomText('Выбрано: ${selectedIds.length}', size:18) 
+        : CustomText(title, size: 18),
     actions: [
       // Кнопка "Назад"
       if (!isRootWidgetTree) IconButton(

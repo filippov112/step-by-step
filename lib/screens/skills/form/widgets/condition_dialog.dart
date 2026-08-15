@@ -4,6 +4,8 @@ import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/screens/skills/form/widgets/skill_condition_dialog.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 
 class ConditionsListWidget extends StatelessWidget {
   final List<SkillCondition> conditions;
@@ -25,19 +27,15 @@ class ConditionsListWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            const CustomText(
               'Условия прокачки',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              expanded: true,
+              size: 18, weight: FontWeight.bold
             ),
-            ElevatedButton.icon(
+            IconButton(
               onPressed: () => _showAddConditionDialog(context),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Добавить'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
             ),
           ],
         ),
@@ -51,9 +49,9 @@ class ConditionsListWidget extends StatelessWidget {
               border: Border.all(color: SoloLevelingTheme.steelBlue),
             ),
             child: const Center(
-              child: Text(
+              child: CustomText(
                 'Нет добавленных условий',
-                style: TextStyle(color: SoloLevelingTheme.steelBlue),
+                color: SoloLevelingTheme.steelBlue,
               ),
             ),
           )
@@ -144,27 +142,9 @@ class ConditionsListWidget extends StatelessWidget {
     }
   }
 
-  void _confirmDelete(BuildContext context, int index) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление условия'),
-        content: const Text('Вы уверены, что хотите удалить это условие?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              onDelete(index);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
+  Future _confirmDelete(BuildContext context, int index) async {
+    if (await showConfirmDialog(context) == true) {
+      onDelete(index);
+    }
   }
 }

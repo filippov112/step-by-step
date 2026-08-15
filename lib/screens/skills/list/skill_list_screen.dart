@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
@@ -13,7 +12,6 @@ import 'package:provider/provider.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
 
 class SkillListScreen extends StatefulWidget {
   const SkillListScreen({super.key});
@@ -57,7 +55,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.filter_list),
-                      onPressed: () => _showTagsFilterModal(context),
+                      onPressed: () => _openFilters(context),
                       tooltip: 'Фильтр по тегам',
                     ),
                     if (_selectedFilters.isNotEmpty)
@@ -85,20 +83,23 @@ class _SkillListScreenState extends State<SkillListScreen> {
               },
             ),
           ],
-          bottom: buildSearchString(
-            placeholder: 'Поиск навыков...',
-            controller: searchController, 
-            value: _searchQuery, 
-            clearCallback: () { 
-              setState(() {
-                _searchQuery = '';
-              });
-            }, 
-            changeCallback: (value) { 
-              setState(() {
-                _searchQuery = value;
-              });
-            }
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: SearchString(
+              placeholder: 'Поиск навыков...',
+              controller: searchController, 
+              value: _searchQuery, 
+              clearCallback: () { 
+                setState(() {
+                  _searchQuery = '';
+                });
+              }, 
+              changeCallback: (value) { 
+                setState(() {
+                  _searchQuery = value;
+                });
+              }
+            )
           ),
         ),
         drawer: const MainMenuDrawer(currentRoute: '/skills'),
@@ -214,99 +215,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       final skill = filteredSkills[index];
                       final tags = viewModel.getSkillTags(skill.id);
                       
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        child: ListTile(
-                          leading: _buildSkillIcon(skill.icon),
-                          title: Padding(
-                            padding:EdgeInsetsGeometry.only(bottom: 10), 
-                            child: Text(
-                              skill.title,
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: SoloLevelingTheme.paleBlue),
-                            )
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: skill.rang.color.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      skill.rang.name,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: skill.rang.color,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: SoloLevelingTheme.steelBlue.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      '${skill.level} LVL',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: SoloLevelingTheme.paleBlue,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (tags.isNotEmpty) ...[
-                                const SizedBox(height: 8),
-                                Wrap(
-                                  spacing: 4,
-                                  runSpacing: 2,
-                                  children: tags.map((tag) {
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                                      decoration: BoxDecoration(
-                                        color: SoloLevelingTheme.steelBlue,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        tag.title,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: SoloLevelingTheme.glowBlue,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                              const SizedBox(height: 8),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit, color: SoloLevelingTheme.steelBlue,),
-                                onPressed: () => _navigateToForm(context, skill: skill),
-                                tooltip: 'Редактировать',
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: SoloLevelingTheme.steelBlue,),
-                                onPressed: () => _confirmDelete(context, skill.id),
-                                tooltip: 'Удалить',
-                              ),
-                            ],
-                          ),
-                          onTap: () => _navigateToDetail(context, skill.id),
-                        ),
-                      );
+                      return SkillTile(skill: skill, tags: tags, openDetails: () => _navigateToDetail(context, skill.id),);
                     },
                   );
                 },
@@ -320,7 +229,9 @@ class _SkillListScreenState extends State<SkillListScreen> {
     );
   }
 
-  Future<void> _showTagsFilterModal(BuildContext context) async {
+
+  // Открыть фильтры
+  Future<void> _openFilters(BuildContext context) async {
     final result = await showTagsModal(
       context,
       allTags: _viewModel.allTags,
@@ -334,91 +245,12 @@ class _SkillListScreenState extends State<SkillListScreen> {
     }
   }
 
-  Widget _buildSkillIcon(String iconPath) {
-    if (iconPath.isEmpty) {
-      return Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: SoloLevelingTheme.steelBlue.withAlpha(80),
-        ),
-        child: const Icon(Icons.star_border, color: SoloLevelingTheme.steelBlue),
-      );
-    }
-    
-    try {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.file(
-          File(iconPath),
-          width: 48,
-          height: 48,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: SoloLevelingTheme.steelBlue.withAlpha(80),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.broken_image, color: SoloLevelingTheme.steelBlue,),
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      return Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: SoloLevelingTheme.steelBlue.withAlpha(80),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(Icons.image_not_supported, color: SoloLevelingTheme.steelBlue),
-      );
-    }
-  }
-
-  void _confirmDelete(BuildContext context, String skillId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление навыка'),
-        content: const Text('Вы уверены, что хотите удалить этот навык?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _viewModel.deleteSkill(skillId).then((success) {
-                if (!success && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(_viewModel.error ?? 'Ошибка удаления'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              });
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _navigateToForm(BuildContext context, {Skill? skill}) {
+  // Добавить навык
+  void _navigateToForm(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SkillFormScreen(skill: skill),
+        builder: (context) => SkillFormScreen(),
       ),
     ).then((result) {
       if (result == true) {
@@ -427,12 +259,15 @@ class _SkillListScreenState extends State<SkillListScreen> {
     });
   }
 
+  // Открыть навык
   void _navigateToDetail(BuildContext context, String skillId) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SkillDetailScreen(skillId: skillId),
       ),
-    );
+    ).then((_) {
+      _viewModel.loadSkills();
+    });
   }
 }

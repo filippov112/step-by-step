@@ -54,7 +54,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
             selectAll: model.toggleSelectAll,
             selectedIds: model.selectedIds,
             filteredList: model.tasks,
-            searchWidget: _buildSearchWidget(context, model),
+            searchWidget: PreferredSize(
+              preferredSize: const Size.fromHeight(60),
+              child: SearchString(
+                placeholder: 'Поиск задач...',
+                controller: _searchController,
+                value: model.searchQuery,
+                clearCallback: model.clearSearch,
+                changeCallback: model.setSearchQuery,
+              )
+            ),
             deleteSelected: model.deleteSelectedTasks,
             clearSelection: model.clearSelection,
           ),
@@ -68,19 +77,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
           bottomNavigationBar: MainBottomMenu(),
         );
       },
-    );
-  }
-
-  PreferredSizeWidget _buildSearchWidget(
-    BuildContext context,
-    TaskListModel model,
-  ) {
-    return buildSearchString(
-      placeholder: 'Поиск задач...',
-      controller: _searchController,
-      value: model.searchQuery,
-      clearCallback: model.clearSearch,
-      changeCallback: model.setSearchQuery,
     );
   }
 

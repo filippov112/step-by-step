@@ -5,6 +5,9 @@ import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/custom_image_icon.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
@@ -69,8 +72,9 @@ class _AchievementFormState extends State<AchievementForm> {
     try {
       final viewModel = context.read<AchievementListModel>();
       
+      Achievement? result;
       if (widget.achievement == null) {
-        await viewModel.createAchievement(
+        result = await viewModel.createAchievement(
           title: _titleController.text,
           description: _descriptionController.text,
           rarity: _selectedRarity,
@@ -78,7 +82,7 @@ class _AchievementFormState extends State<AchievementForm> {
           tags: _selectedTags,
         );
       } else {
-        await viewModel.updateAchievement(
+        result = await viewModel.updateAchievement(
           widget.achievement!,
           title: _titleController.text,
           description: _descriptionController.text,
@@ -89,12 +93,12 @@ class _AchievementFormState extends State<AchievementForm> {
       }
 
       if (mounted) {
-        Navigator.of(context).pop(true);
+        Navigator.of(context).pop(result);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка: $e')),
+          SnackBar(content: CustomText('Ошибка: $e')),
         );
       }
     } finally {
@@ -123,60 +127,32 @@ class _AchievementFormState extends State<AchievementForm> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: const EdgeInsets.all(12),
       child: Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(14),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.achievement == null ? 'Создание достижения' : 'Редактирование достижения',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 20),
+              
               // Иконка
-              GestureDetector(
-                onTap: _pickIcon,
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Theme.of(context).dividerColor),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickIcon,
+                  child: CustomImageIcon(
+                    _iconPath, 
+                    icon: Icons.add_photo_alternate, 
+                    width: 80, height: 80,
+                    color: _selectedRarity.color
                   ),
-                  child: _iconPath != null
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.file(
-                            File(_iconPath!),
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_photo_alternate,
-                              color: Theme.of(context).hintColor,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Иконка',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Theme.of(context).hintColor,
-                              ),
-                            ),
-                          ],
-                        ),
                 ),
               ),
+              
               const SizedBox(height: 16),
               // Название
               TextFormField(
@@ -224,7 +200,7 @@ class _AchievementFormState extends State<AchievementForm> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(rarity.displayName),
+                        CustomText(rarity.displayName),
                       ],
                     ),
                   );
@@ -248,7 +224,9 @@ class _AchievementFormState extends State<AchievementForm> {
                   ),
                   TextButton(
                     onPressed: _showTagSelector,
-                    child: Text('Выбрать теги'),
+                    child: CustomText(
+                      'Выбрать теги',
+                    ),
                   ),
                 ],
               ),
@@ -259,25 +237,19 @@ class _AchievementFormState extends State<AchievementForm> {
                 children: [
                   Expanded(
                     flex: 1, 
-                    child: OutlinedButton(
+                    child: IconButton(
                       onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                      child: const Text('Отмена'),
-                    ),
+                      icon: Icon(Icons.close)
+                    )
                   ),
                   
                   const SizedBox(width: 8),
                   Expanded(
                     flex: 1, 
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _submit,
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Сохранить'),
-                    ),
+                    child: IconButton(
+                      onPressed: _isLoading ? null : _submit, 
+                      icon: Icon(Icons.save)
+                    )
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
@@ -34,15 +35,15 @@ class _AchievementFiltersState extends State<AchievementFilters> {
         items: [
           const DropdownMenuItem(
             value: 'all',
-            child: Text('Все'),
+            child: CustomText('Все'),
           ),
           const DropdownMenuItem(
             value: 'unlocked',
-            child: Text('Только полученные'),
+            child: CustomText('Полученные'),
           ),
           const DropdownMenuItem(
             value: 'locked',
-            child: Text('Только не полученные'),
+            child: CustomText('Закрытые'),
           ),
         ], 
         initialValue: statusFilterValue ?? 'all', 

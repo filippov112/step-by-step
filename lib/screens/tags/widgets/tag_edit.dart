@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/enums/tag_type.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 
 class TagEditDialog extends StatefulWidget {
   final Tag? tag;
@@ -72,7 +73,7 @@ class _TagEditDialogState extends State<TagEditDialog> {
     );
 
     return AlertDialog(
-      title: Text(_isEditing ? 'Редактирование тега' : 'Новый тег'),
+      insetPadding: const EdgeInsets.all(12),
       content: Form(
         key: _formKey,
         child: Column(
@@ -85,14 +86,22 @@ class _TagEditDialogState extends State<TagEditDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Отмена'),
-        ),
-        ElevatedButton(
-          onPressed: _saveTag,
-          child: Text(_isEditing ? 'Сохранить' : 'Создать'),
-        ),
+        Row(
+          children: [
+            Expanded(
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close),
+              ),
+            ),
+            const SizedBox(width: 8,),
+            Expanded(
+              child: IconButton(
+                onPressed: _saveTag,
+                icon: const Icon(Icons.save),
+              ),
+            ),
+        ],)
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
@@ -66,37 +67,6 @@ class _TagListScreenState extends State<TagListScreen> {
     }
   }
 
-  Future _deleteTag(String id) async {
-    var model = context.read<TagListModel>();
-    var deleteTag = model.deleteTag;
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление тега'),
-        content: const Text('Вы уверены, что хотите удалить этот тег?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-    
-    if (confirm == true) {
-      await deleteTag.call(id);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Тег удален')),
-        );
-      }
-    }
-  }
-
   Future _deleteSelected() async {
     var model = context.read<TagListModel>();
     int count = model.selectedIds.length;
@@ -143,12 +113,15 @@ class _TagListScreenState extends State<TagListScreen> {
           filteredList: filteredTags, 
           deleteSelected: _deleteSelected, 
           clearSelection: clearSelection,
-          searchWidget: buildSearchString(
-            placeholder: 'Поиск тегов...', 
-            controller: _searchController, 
-            value: searchQuery, 
-            clearCallback: () { updateSearch.call(''); searchQuery = '';}, 
-            changeCallback: (val) { updateSearch.call(val); searchQuery = val;}
+          searchWidget: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: SearchString(
+              placeholder: 'Поиск тегов...', 
+              controller: _searchController, 
+              value: searchQuery, 
+              clearCallback: () { updateSearch.call(''); searchQuery = '';}, 
+              changeCallback: (val) { updateSearch.call(val); searchQuery = val;}
+            )
           ),
           isRootWidgetTree:false
         );
@@ -208,7 +181,6 @@ class _TagListScreenState extends State<TagListScreen> {
                 child: TagTile(
                   isSelected: isSelected, 
                   tag: tag, 
-                  deleteTag: _deleteTag, 
                   showEditDialog: _showEditDialog,
                 )
               );

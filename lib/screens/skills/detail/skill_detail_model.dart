@@ -21,7 +21,7 @@ class SkillDetailModel extends ChangeNotifier {
   String? get error => _error;
   
   // Загрузка данных навыка
-  Future<void> loadSkill(String skillId) async {
+  Future<bool> loadSkill(String skillId) async {
     _isLoading = true;
     _error = null;
     _skill = null;
@@ -41,11 +41,14 @@ class SkillDetailModel extends ChangeNotifier {
         for (var condition in _conditions) {
           _completedConditions[condition.id] = condition.date != null;
         }
+        return true;
       } else {
         _error = 'Навык не найден';
+        return false;
       }
     } catch (e) {
       _error = 'Ошибка загрузки навыка: $e';
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

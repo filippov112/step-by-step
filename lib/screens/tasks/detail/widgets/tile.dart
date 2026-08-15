@@ -5,6 +5,7 @@ import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 class DetailTaskCard extends StatelessWidget {
@@ -143,25 +144,7 @@ class DetailTaskCard extends StatelessWidget {
   }
 
   Future<void> _deleteTask(BuildContext context, Task task, Future Function(String) deleteTask) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление задачи'),
-        content: Text('Вы уверены, что хотите удалить задачу "${task.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-    
-    if (confirm == true) {
+    if (await showConfirmDialog(context) == true) {
       await deleteTask(task.id);
     }
   }

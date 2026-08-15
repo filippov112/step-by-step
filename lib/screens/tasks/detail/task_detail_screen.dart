@@ -10,6 +10,7 @@ import 'package:life_game/screens/tasks/detail/widgets/header.dart';
 import 'package:life_game/screens/tasks/detail/widgets/subtasks.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
@@ -78,7 +79,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
           // Шапка
           Padding(
             padding: const EdgeInsets.all(16),
-            child: buildHeader(title: title, done: done, setDone: setDone),
+            child: buildHeader(title: title),
           ),
           // Шапка списка подзадач
           buildSubtaskSection(
@@ -121,7 +122,14 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
         onPressed: () => _createSubtask(task),
         tooltip: 'Добавить подзадачу',
         child: const Icon(Icons.add),
-      ) : null,
+      ) : 
+      FloatingActionButton(
+        onPressed: () => setDone(),
+        tooltip: 'Добавить подзадачу',
+        backgroundColor: SoloLevelingTheme.glowBlue,
+        child: Icon(done ? Icons.task_alt_outlined : Icons.circle_outlined, color: SoloLevelingTheme.darkBlue),
+      )
+      ,
     );
   }
 
@@ -157,25 +165,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   }
 
   Future _deleteThisTask(Future Function() deleteTask) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление задачи'),
-        content: const Text('Вы уверены, что хотите удалить эту задачу?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-    
-    if (confirm == true && context.mounted) {
+    if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteTask();
       if (context.mounted) {
         Navigator.pop(context);

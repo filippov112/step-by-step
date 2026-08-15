@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 class SoloLevelingTheme {
   static const Color darkBlue = Color(0xFF0A0E1A); // почти чёрно-синий
-  static const Color navyBlue = Color(
-    0xFF111B2E,
-  ); // глубокий синий (фон карточек)
+  static const Color navyBlue = Color(0xFF111B2E); // глубокий синий (фон карточек)
   static const Color steelBlue = Color.fromARGB(255, 50, 82, 133); // для границ/разделителей
+  static const Color subText = Color.fromARGB(255, 88, 125, 183); // для границ/разделителей
   static const Color glowBlue = Color(0xFF4FC3F7); // основной акцент (свечение)
   static const Color iceBlue = Color(0xFF81D4FA); // более светлый голубой
   static const Color paleBlue = Color(0xFFB3E5FC); // для текста второстепенного

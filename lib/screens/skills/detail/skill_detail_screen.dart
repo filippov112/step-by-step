@@ -7,6 +7,8 @@ import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/services/exp_calculator.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/custom_image_icon.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
@@ -41,7 +43,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       value: _viewModel,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Детали навыка'),
+          title: const CustomText('Навык'),
           actions: [
             Consumer<SkillDetailModel>(
               builder: (context, viewModel, child) {
@@ -96,38 +98,33 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Заголовок с иконкой
-                  Row(
-                    children: [
-                      _buildSkillIcon(skill.icon),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              skill.title,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            
-                          ],
-                        ),
-                      ),
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: skill.rang.color.withAlpha(40),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [BoxShadow(color: skill.rang.color.withAlpha(100), blurRadius: 10)],
-                        ),
-                        child: Center(child:Text(skill.rang.name, style: TextStyle(fontSize: 32, color: skill.rang.color),),),
-                      )
-                    ],
+
+                  // Иконка
+                  Center(
+                    child: CustomImageIcon(
+                      skill.icon, 
+                      icon: Icons.star_border, 
+                      width:64, height: 64, 
+                      color: skill.rang.color
+                    ),
                   ),
+                  const SizedBox(height: 24),
+
+                  // Заголовок
+                  Card(
+                    margin: const EdgeInsetsGeometry.all(0),
+                    child: CustomText(
+                      skill.title,
+                      size: 20,
+                      weight: const FontWeight(500),
+                      height: 1.15,
+                      lines: null,
+                      overflow: TextOverflow.visible,
+                      padding: const EdgeInsets.all(16),
+                      align: TextAlign.center,
+                    ),
+                  ),
+                   
                   const SizedBox(height: 12),
                   
                   // Прогресс
@@ -159,57 +156,11 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     );
   }
 
-  Widget _buildSkillIcon(String iconPath) {
-    if (iconPath.isEmpty) {
-      return Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: SoloLevelingTheme.steelBlue,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.star_border, size: 32, color: SoloLevelingTheme.paleBlue),
-      );
-    }
-    
-    try {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.file(
-          File(iconPath),
-          width: 64,
-          height: 64,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: SoloLevelingTheme.steelBlue,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.broken_image, color: SoloLevelingTheme.paleBlue),
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      return Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: SoloLevelingTheme.steelBlue,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.image_not_supported, color: SoloLevelingTheme.paleBlue),
-      );
-    }
-  }
-
   Widget _buildProgressCard(SkillDetailModel viewModel) {
     final int exp = viewModel.skill?.experience ?? 0;
     final int level = viewModel.skill?.level ?? 1;
     final int nextLevelExp = ExpCalculator.calcNextLevelExp(level);
+    final SkillRang rang = viewModel.skill?.rang ?? SkillRang.F;
 
     final progress = (exp / nextLevelExp).clamp(0.0, 1.0);
     
@@ -223,29 +174,52 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Накоплено:'),
-                Text('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Осталось:'),
-                Text('${NumberFormat('#,##0', 'en_US').format(nextLevelExp - exp)} EXP', 
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${NumberFormat('#,##0', 'en_US').format(level)} LVL',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                const CustomText('Ранг:'),
+                Container(
+                  margin: EdgeInsets.only(left: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: rang.color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: CustomText(
+                    rang.name,
+                    size: 16,
+                    color: rang.color,
+                    weight: FontWeight.w600,
+                  ),
                 ),
-                Text('${NumberFormat("#0.00").format(progress * 100)}%'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const CustomText('Накоплено:'),
+                CustomText('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
+                  weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const CustomText('Осталось:'),
+                CustomText('${NumberFormat('#,##0', 'en_US').format(nextLevelExp - exp)} EXP', 
+                  weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                )
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  '${NumberFormat('#,##0', 'en_US').format(level)} LVL',
+                  weight: FontWeight.bold
+                ),
+                CustomText('${NumberFormat("#0.00").format(progress * 100)}%'),
               ],
             ),
             const SizedBox(height: 8),
@@ -405,74 +379,24 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     return description != null && description.isNotEmpty;
   }
 
-  void _confirmUpgrade(BuildContext context, SkillDetailModel viewModel) {
-    final nextRang = viewModel.getNextRangForUpgrade();
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Повышение ранга'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Вы хотите повысить ранг навыка до "${nextRang?.name}"?',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Это действие нельзя отменить.',
-              style: TextStyle(color: SoloLevelingTheme.steelBlue, fontSize: 14),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final success = await viewModel.upgradeRank();
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Ранг успешно повышен!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              } else if (!success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(viewModel.error ?? 'Ошибка повышения ранга'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber,
-              foregroundColor: Colors.black,
-            ),
-            child: const Text('Повысить'),
-          ),
-        ],
-      ),
-    );
+  Future _confirmUpgrade(BuildContext context, SkillDetailModel viewModel) async {
+    await viewModel.upgradeRank();
   }
 
-  void _navigateToEdit(BuildContext context) {
+  Future _navigateToEdit(BuildContext context) async {
     if (_viewModel.skill == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SkillFormScreen(skill: _viewModel.skill),
       ),
-    ).then((result) {
+    ).then((result) async {
       if (result == true) {
-        _viewModel.loadSkill(widget.skillId);
+        
+        bool result = await _viewModel.loadSkill(widget.skillId);
+        if (!result && context.mounted) {
+          Navigator.pop(context);
+        }
       }
     });
   }

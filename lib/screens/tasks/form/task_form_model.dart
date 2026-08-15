@@ -42,7 +42,7 @@ class TaskFormModel extends ChangeNotifier {
   void setTask(Task? t, Task? parent) {
     isEditing = t != null;
     parentId = parent?.id;
-    task = t ?? Task.create(title: 'Новая задача');
+    task = t ?? Task.create(title: '');
     selectedDateTime = task.datetime ?? DateTime.now().add(const Duration(hours: 1));
     selectedPriority = task.priority;
     selectedDifficulty = task.difficulty;

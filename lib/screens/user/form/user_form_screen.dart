@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/screens/home/home_model.dart';
+import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/dialogs/select_date_only.dart';
 import 'package:provider/provider.dart';
 import 'user_form_model.dart';
@@ -56,11 +57,13 @@ class UserFormScreen extends StatelessWidget {
  
     var avatarWidget = GestureDetector(
       onTap: () => selectImage(context),
-      child: CircleAvatar(
-        radius: 60,
-        backgroundImage: iconPath != null ? FileImage(File(iconPath)) : null,
-        child: iconPath == null ? const Icon(Icons.add_photo_alternate, size: 40) : null,
-      ),
+      child: CustomImageIcon(
+        iconPath, 
+        icon: Icons.add_photo_alternate, 
+        width: 60, 
+        height: 60, 
+        radius: const BorderRadius.all(Radius.circular(30)),
+      )
     );
 
     var nameWidget = TextFormField(

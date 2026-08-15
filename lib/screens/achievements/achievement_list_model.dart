@@ -140,7 +140,7 @@ class AchievementListModel extends ChangeNotifier {
     _applyFilters();
   }
 
-  Future<void> createAchievement({
+  Future<Achievement?> createAchievement({
     required String title,
     required String description,
     required AchievRar rarity,
@@ -172,6 +172,7 @@ class AchievementListModel extends ChangeNotifier {
 
       _allAchievements.add(achievement);
       _applyFilters();
+      return achievement;
     } catch (e) {
       print('Ошибка создания достижения: $e');
       rethrow;
@@ -181,7 +182,7 @@ class AchievementListModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateAchievement(Achievement achievement, {
+  Future<Achievement?> updateAchievement(Achievement achievement, {
     String? title,
     String? description,
     AchievRar? rarity,
@@ -228,6 +229,7 @@ class AchievementListModel extends ChangeNotifier {
         _allAchievements[index] = updated;
       }
       _applyFilters();
+      return updated;
     } catch (e) {
       print('Ошибка обновления достижения: $e');
       rethrow;

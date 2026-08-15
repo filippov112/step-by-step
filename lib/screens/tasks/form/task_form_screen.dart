@@ -16,6 +16,7 @@ import 'package:life_game/screens/tasks/form/widgets/priority.dart';
 import 'package:life_game/screens/tasks/form/widgets/status.dart';
 import 'package:life_game/screens/tasks/form/widgets/title.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
@@ -181,24 +182,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   }
 
   Future _deleteTask(Future Function() deleteTask) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление задачи'),
-        content: const Text('Вы уверены, что хотите удалить эту задачу?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
-    if (confirm == true && context.mounted) {
+    if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteTask();
       if (context.mounted) {
         Navigator.pop(context);

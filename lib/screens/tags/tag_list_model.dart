@@ -34,11 +34,6 @@ class TagListModel extends ChangeNotifier {
     await _repository.update(tag);
     loadTags();
   }
-  Future deleteTag(String id) async {
-    await _repository.delete(id);
-    selectedIds.remove(id);
-    loadTags();
-  }
   Future deleteSelected() async {
     for (final id in selectedIds) {
       await _repository.delete(id);

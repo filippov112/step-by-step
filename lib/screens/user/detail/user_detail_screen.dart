@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
 import 'package:life_game/screens/user/detail/widgets/custom_progress_bar.dart';
@@ -61,24 +64,20 @@ class UserDetailScreen extends StatelessWidget {
       ),
     );
 
-    var nameWidget = Text(
+    var nameWidget = CustomText(
       user.name,
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        shadows: [
-          Shadow(offset: Offset(1, 1), blurRadius: 4),
-        ],
-      ),
+      size: 24,
+      weight: FontWeight.bold,
+      shadow: const Shadow(offset: Offset(1, 1), blurRadius: 4),
     );
 
     var ageWidget = Row(
       children: [
         const Icon(Icons.watch_later_sharp, size: 16),
         const SizedBox(width: 6),
-        Text(
+        CustomText(
           user.age,
-          style: const TextStyle(fontSize: 16),
+          size: 16, expanded: true,
         )
       ],
     );
@@ -97,8 +96,16 @@ class UserDetailScreen extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
           drawer: MainMenuDrawer(),
-          appBar: AppBar(
-            title: const Text('Профиль'),
+          appBar: buildMainAppBar<Achievement>(
+            context,
+            title: 'Профиль',
+            isRootWidgetTree: true,
+            isSelectionMode: false,
+            selectAll: (){},
+            selectedIds: [],
+            filteredList: [],
+            deleteSelected: (){},
+            clearSelection: (){},
           ),
           body: Padding(
             padding: const EdgeInsets.all(20),
@@ -112,7 +119,7 @@ class UserDetailScreen extends StatelessWidget {
                     avaterWidget,
                     const SizedBox(width: 16),
                     // Имя и возраст
-                    Column(
+                    Expanded( child:Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           levelIconWidget,
@@ -122,6 +129,7 @@ class UserDetailScreen extends StatelessWidget {
                           ageWidget
                         ],
                       ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),

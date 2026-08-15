@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
@@ -49,7 +52,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
       value: _viewModel,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.skill == null ? 'Создание навыка' : 'Редактирование навыка'),
+          title: const CustomText('Навык'),
           actions: [
             if (widget.skill != null)
               IconButton(
@@ -65,159 +68,186 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Иконка
-                  _buildIconPicker(viewModel),
-                  const SizedBox(height: 16),
-                  
-                  if (viewModel.iconPath.isNotEmpty) ...{
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => _deleteIcon(viewModel), 
-                        child: Text('Удалить иконку')
+            return Column(children: [
+
+              Expanded(
+                child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ListView(children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Иконка
+                    const SizedBox(height: 16),
+                    _buildIconPicker(viewModel),
+                    const SizedBox(height: 16),
+                    
+                    if (viewModel.iconPath.isNotEmpty) ...{
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _deleteIcon(viewModel), 
+                          child: Text('Удалить иконку')
+                        ),
                       ),
+                      const SizedBox(height: 16),
+                    },
+
+                    // Название
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Название навыка',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.title),
+                      ),
+                      initialValue: viewModel.title,
+                      onChanged: viewModel.setTitle,
                     ),
                     const SizedBox(height: 16),
-                  },
-
-                  // Название
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Название навыка',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.title),
+                    
+                    // Ранг
+                    DropdownButtonFormField<SkillRang>(
+                      decoration: const InputDecoration(
+                        labelText: 'Ранг',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.arrow_upward),
+                      ),
+                      initialValue: viewModel.rang,
+                      items: SkillRang.values.map((rang) {
+                        return DropdownMenuItem(
+                          value: rang,
+                          child: Text(rang.name),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        if (value != null) viewModel.setRang(value);
+                      },
                     ),
-                    initialValue: viewModel.title,
-                    onChanged: viewModel.setTitle,
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Ранг
-                  DropdownButtonFormField<SkillRang>(
-                    decoration: const InputDecoration(
-                      labelText: 'Ранг',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.arrow_upward),
-                    ),
-                    initialValue: viewModel.rang,
-                    items: SkillRang.values.map((rang) {
-                      return DropdownMenuItem(
-                        value: rang,
-                        child: Text(rang.name),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) viewModel.setRang(value);
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Уровень и опыт
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Уровень',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.numbers),
+                    const SizedBox(height: 16),
+                    
+                    // Уровень и опыт
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Уровень',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.numbers),
+                            ),
+                            keyboardType: TextInputType.number,
+                            initialValue: viewModel.level.toString(),
+                            onChanged: (val) {
+                              final value = int.tryParse(val);
+                              if (value != null) viewModel.setLevel(value);
+                            },
                           ),
-                          keyboardType: TextInputType.number,
-                          initialValue: viewModel.level.toString(),
-                          onChanged: (val) {
-                            final value = int.tryParse(val);
-                            if (value != null) viewModel.setLevel(value);
-                          },
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Опыт',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.star),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: 'Опыт',
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.star),
+                            ),
+                            keyboardType: TextInputType.number,
+                            initialValue: viewModel.experience.toString(),
+                            onChanged: (val) {
+                              final value = int.tryParse(val);
+                              if (value != null) viewModel.setExperience(value);
+                            },
                           ),
-                          keyboardType: TextInputType.number,
-                          initialValue: viewModel.experience.toString(),
-                          onChanged: (val) {
-                            final value = int.tryParse(val);
-                            if (value != null) viewModel.setExperience(value);
-                          },
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  
-                  // Описания для рангов
-                  const Text(
-                    'Описания для рангов',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  ...SkillRang.values.map((rang) {
-                    return _buildDescriptionField(viewModel, rang);
-                  }),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Теги с кнопкой выбора
-                  _buildTagsSelector(viewModel),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Условия
-                  ConditionsListWidget(
-                    conditions: viewModel.conditions,
-                    onAdd: viewModel.addCondition,
-                    onEdit: viewModel.updateCondition,
-                    onDelete: viewModel.removeCondition,
-                  ),
-                  
-                  if (viewModel.error != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Text(
-                        viewModel.error!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
+                      ],
                     ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Кнопки
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: viewModel.isSaving ? null : () => Navigator.pop(context, false),
-                          child: const Text('Отмена'),
+                    const SizedBox(height: 24),
+                    
+                    // Описания для рангов
+                    const CustomText(
+                      'Описания для рангов',
+                      size: 18, weight: FontWeight.bold
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 200, 
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                        border: Border.all(color: SoloLevelingTheme.steelBlue),
+                      ),
+                      child: ListView(children: [
+                        ...SkillRang.values.map((rang) {
+                          return _buildDescriptionField(viewModel, rang);
+                        }),
+                      ],)
+                    ),
+                    
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Теги с кнопкой выбора
+                    _buildTagsSelector(viewModel),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Условия
+                    ConditionsListWidget(
+                      conditions: viewModel.conditions,
+                      onAdd: viewModel.addCondition,
+                      onEdit: viewModel.updateCondition,
+                      onDelete: viewModel.removeCondition,
+                    ),
+                    
+                    if (viewModel.error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          viewModel.error!,
+                          style: const TextStyle(color: Colors.red),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: viewModel.isSaving ? null : () => _saveSkill(context),
-                          child: viewModel.isSaving
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : Text(widget.skill == null ? 'Создать' : 'Сохранить'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    
+                    const SizedBox(height: 24),
+                    
+                    
+                  ],
+                ),
+                ])
+              
               ),
-            );
+              ),
+
+              // Кнопки
+              Padding(
+                padding: const EdgeInsetsGeometry.all(16), 
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: viewModel.isSaving ? null : () => Navigator.pop(context, false),
+                        child: const CustomText('Отмена'),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: viewModel.isSaving ? null : () => _saveSkill(context),
+                        child: viewModel.isSaving
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const CustomText('Сохранить'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],);
+            
+           
           },
         ),
       ),
@@ -231,19 +261,13 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            const CustomText(
               'Теги',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              size: 18, weight: FontWeight.bold
             ),
-            ElevatedButton.icon(
+            IconButton(
               onPressed: () => _showTagsModal(context),
-              icon: const Icon(Icons.edit, size: 18),
-              label: Text(
-                viewModel.selectedTags.isEmpty ? 'Выбрать' : 'Изменить',
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
+              icon: const Icon(Icons.add, size: 18),
             ),
           ],
         ),
@@ -256,9 +280,9 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
               border: Border.all(color: SoloLevelingTheme.steelBlue),
             ),
             child: const Center(
-              child: Text(
+              child: CustomText(
                 'Теги не выбраны',
-                style: TextStyle(color: SoloLevelingTheme.steelBlue),
+                color: SoloLevelingTheme.steelBlue
               ),
             ),
           )
@@ -279,11 +303,9 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                 Icon(Icons.info_outline, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
+                  child: CustomText(
                     'Выбрано тегов: ${viewModel.selectedTags.length}',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
+                    size: 12,
                   ),
                 ),
               ],
@@ -334,9 +356,10 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                     color: SoloLevelingTheme.paleBlue
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const CustomText(
                     'Нажмите для выбора иконки',
-                    style: TextStyle(color: SoloLevelingTheme.paleBlue),
+                    color: SoloLevelingTheme.paleBlue,
+                    padding: EdgeInsets.all(12)
                   ),
                 ],
               )
@@ -449,27 +472,12 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
     }
   }
 
-  void _confirmDelete(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Удаление навыка'),
-        content: const Text('Вы уверены, что хотите удалить этот навык?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Отмена'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context, true);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Удалить'),
-          ),
-        ],
-      ),
-    );
+  Future _confirmDelete(BuildContext context) async {
+    if (await showConfirmDialog(context) == true && context.mounted && widget.skill != null) {
+      await context.read<SkillListModel>().deleteSkill(widget.skill!.id);
+      if (context.mounted) {
+        Navigator.pop(context, true);
+      }
+    }
   }
 }

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 
 // Поисковая строка для AppBar.bottom в экранах-списках
-PreferredSize buildSearchString({
-  required String placeholder,
-  required TextEditingController controller,
-  required String value,
-  required VoidCallback clearCallback,
-  required Function(String) changeCallback
-}) {
+class SearchString extends StatelessWidget {
+  final String placeholder;
+  final TextEditingController controller;
+  final String value;
+  final VoidCallback clearCallback;
+  final Function(String) changeCallback;
 
-  return PreferredSize(
-    preferredSize: const Size.fromHeight(60),
-    child: Padding(
+  const SearchString({super.key, 
+    required this.placeholder,
+    required this.controller,
+    required this.value,
+    required this.clearCallback,
+    required this.changeCallback
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: controller,
@@ -34,6 +41,6 @@ PreferredSize buildSearchString({
         ),
         onChanged: changeCallback,
       ),
-    ),
-  );
+    );
+  }  
 }

@@ -1,0 +1,83 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:flutter/material.dart';
+import 'package:life_game/themes/solo_leveling_theme.dart';
+
+class CustomImageIcon extends StatelessWidget {
+  final String? path;
+  final BorderRadius radius;
+  final double width;
+  final double height;
+  final Color color;
+  final IconData icon;
+
+  const CustomImageIcon(this.path, {super.key, 
+    required this.icon,
+    this.radius = const BorderRadius.all(Radius.circular(8)),
+    this.width = 48,
+    this.height = 48,
+    this.color = SoloLevelingTheme.steelBlue
+  });
+
+  File? getFile() {
+    if (path == null || path!.isEmpty) return null;
+    try {
+      return File(path!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    
+    final file = getFile();
+    final backColor = color.withValues(alpha:0.15);
+    final iconSize = min(width, height) * 0.6;
+
+    return path == null || path!.isEmpty ?
+      Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          color: backColor,
+        ),
+        child: Icon(icon, color: color, size: iconSize),
+      ) :
+
+      (file == null ?
+
+      Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: backColor,
+          borderRadius: radius,
+        ),
+        child:  Icon(Icons.image_not_supported, color: color, size: iconSize),
+      ) :
+
+      ClipRRect(
+        borderRadius: radius,
+        child: Image.file(
+          file,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: backColor,
+                borderRadius: radius,
+              ),
+              child: Icon(Icons.broken_image, color: color, size: iconSize),
+            );
+          },
+        ),
+      ));
+  }
+} 

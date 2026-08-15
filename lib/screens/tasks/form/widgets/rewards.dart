@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/task_reward.dart';
-import 'package:life_game/widgets/filters/reward_dialog.dart';
+import 'package:life_game/screens/tasks/form/widgets/reward_dialog.dart';
 
 Widget buildRewardSection(
   BuildContext context,

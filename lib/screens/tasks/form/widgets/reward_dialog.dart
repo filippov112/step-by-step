@@ -101,13 +101,17 @@ class _RewardDialogState extends State<RewardDialog> {
   }
 
   void _addReward() {
+    _removeReward();
     setState(() {
-      if (currentSkill != null) {
+      if (currentSkill != null && 
+        !_selectedId.contains(currentSkill!.id) && 
+        (expController.text.isNotEmpty || timeController.text.isNotEmpty)) 
+      {
         currentReward = TaskReward.create(
           skillId: currentSkill!.id, 
           taskId: widget.taskId, 
-          experience: int.parse(expController.text), 
-          time: int.parse(timeController.text)
+          experience: expController.text.isEmpty ? 0 : int.parse(expController.text), 
+          time: timeController.text.isEmpty ? 0 : int.parse(timeController.text)
         );
         _selected.add(currentReward!);
         _selectedId.add(currentSkill!.id);
@@ -117,7 +121,7 @@ class _RewardDialogState extends State<RewardDialog> {
 
   void _removeReward() {
     setState(() {
-      if (currentReward != null) {
+      if (currentReward != null && _selectedId.contains(currentReward!.skillId)) {
         _selected.remove(currentReward);
         _selectedId.remove(currentReward!.skillId);
         currentReward = null;

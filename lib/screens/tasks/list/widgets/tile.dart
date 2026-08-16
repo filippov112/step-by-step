@@ -127,7 +127,7 @@ class TaskCard extends StatelessWidget {
                       const SizedBox(height: 4),
 
                       // Дата-время
-                      _buildDateTimeChip(context, task.datetime!, dateColor),
+                      _buildDateTimeChip(context, task.datetime, dateColor),
                     ],
                   ),
                 ),
@@ -177,8 +177,8 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDateTimeChip(BuildContext context, DateTime datetime, Color? color) {
-    return Text(
+  Widget _buildDateTimeChip(BuildContext context, DateTime? datetime, Color? color) {
+    return datetime == null ? const Text('') : Text(
       '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
       style: TextStyle(
         fontSize: 12,
@@ -187,8 +187,8 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  void _openDetails(BuildContext context, TaskListModel model, Task task) {
-    Navigator.push(
+  Future _openDetails(BuildContext context, TaskListModel model, Task task) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
@@ -196,8 +196,7 @@ class TaskCard extends StatelessWidget {
           child: TaskDetailsScreen(task: task),
         ),
       ),
-    ).then((_) { 
-      if (context.mounted) model.loadTasks(); 
-    });
+    );
+    if (context.mounted) model.loadTasks(); 
   }
 }

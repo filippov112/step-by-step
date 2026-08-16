@@ -243,7 +243,10 @@ class TaskListModel extends ChangeNotifier {
   
   Future<void> toggleTaskDone(String id) async {
     final task = _allTasks.firstWhere((t) => t.id == id);
-    final updated = task.copyWith(done: !task.done);
+    final updated = task.copyWith(
+      done: !task.done, 
+      datetime: task.datetime ?? (task.done == false ? DateTime.now() : null) 
+    );
     await updateTask(updated);
   }
   

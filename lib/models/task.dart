@@ -81,7 +81,7 @@ class Task {
       cId: id,
       cTitle: title,
       cDesc: description,
-      cDateTime: (datetime ?? DateTime.now()).millisecondsSinceEpoch ~/ 60000,
+      cDateTime: datetime == null ? null : datetime!.millisecondsSinceEpoch ~/ 60000,
       cDone: done ? 1 : 0,
       cPriority: priority.index,
       cDifficulty: difficulty.index

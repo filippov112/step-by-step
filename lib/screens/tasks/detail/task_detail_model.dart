@@ -64,6 +64,7 @@ class TaskDetailModel extends ChangeNotifier {
   }
 
   void setDone() async {
+    task.datetime = task.datetime ?? (task.done == false ? DateTime.now() : null);
     task.done = !task.done;
     await updateTask(task);
     notifyListeners();
@@ -71,7 +72,10 @@ class TaskDetailModel extends ChangeNotifier {
 
   Future<void> toggleTaskDone(String id) async {
     final task = _subtasks.firstWhere((t) => t.id == id);
-    final updated = task.copyWith(done: !task.done);
+    final updated = task.copyWith(
+      done: !task.done, 
+      datetime: task.datetime ?? (task.done == false ? DateTime.now() : null) 
+    );
     await updateTask(updated);
   }
 

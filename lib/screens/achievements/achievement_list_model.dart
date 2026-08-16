@@ -144,6 +144,7 @@ class AchievementListModel extends ChangeNotifier {
     required String title,
     required String description,
     required AchievRar rarity,
+    DateTime? date,
     String? icon,
     List<Tag> tags = const [],
   }) async {
@@ -155,6 +156,7 @@ class AchievementListModel extends ChangeNotifier {
         title: title,
         description: description,
         rarity: rarity,
+        date: date,
         icon: icon,
       );
 
@@ -186,6 +188,7 @@ class AchievementListModel extends ChangeNotifier {
     String? title,
     String? description,
     AchievRar? rarity,
+    DateTime? date,
     String? icon,
     List<Tag>? tags,
   }) async {
@@ -198,8 +201,8 @@ class AchievementListModel extends ChangeNotifier {
         title: title ?? achievement.title,
         description: description ?? achievement.description,
         rarity: rarity ?? achievement.rarity,
-        date: achievement.date,
-        icon: icon ?? achievement.icon,
+        date: date,
+        icon: icon,
       );
 
       await _repository.update(updated);

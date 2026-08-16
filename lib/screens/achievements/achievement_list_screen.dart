@@ -155,8 +155,10 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     final isUnlocked = ach.date != null;
     
     return Card(
+
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
+        iconColor: Theme.of(context).focusColor,
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         leading: CustomImageIcon(
           ach.icon,
@@ -170,10 +172,9 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
           size: 15,
           lines: 2,
         ),
-        trailing: Icon(
+        trailing: Container(child:Icon(
           isUnlocked ? Icons.check_circle : Icons.circle_outlined,
-          color: isUnlocked ? Colors.green : Colors.grey,
-        ),
+        ),),
         onTap: () => _showDetails(ach),
       ),
     );
@@ -196,7 +197,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
       builder: (context) => AchievementDetails(achievement: ach),
       barrierDismissible: true,
     );
-    if (result == true) {
+    if (context.mounted) {
       context.read<AchievementListModel>().loadData();
     }
   }

@@ -106,7 +106,11 @@ class _AchievementDetailsState extends State<AchievementDetails> {
             if (ach.description.isNotEmpty)
               Expanded(
                 child: ListView(children: [
-                  CustomText(ach.description, lines: null, overflow: TextOverflow.visible, color: SoloLevelingTheme.textSecondary),
+                  CustomText(
+                    ach.description, 
+                    lines: null, 
+                    overflow: TextOverflow.visible
+                  ),
                 ],), 
               ),
             
@@ -138,7 +142,7 @@ class _AchievementDetailsState extends State<AchievementDetails> {
                   ),
                   const SizedBox(width: 8),
                   CustomText(
-                    _formatDate(ach.date!), size: 14, color: SoloLevelingTheme.glowBlue
+                    _formatDate(ach.date!)
                   ),
                 ],
               ),
@@ -153,8 +157,10 @@ class _AchievementDetailsState extends State<AchievementDetails> {
                   Expanded(
                     flex: 1, 
                     child: IconButton(
-                      onPressed: () {
-                        ach.date = DateTime.now();
+                      onPressed: () async {
+                        setState(() {
+                          ach.date = DateTime.now();
+                        });
                         viewModel.updateAchievement(ach);
                       },
                       icon: const Icon(Icons.check),
@@ -176,7 +182,7 @@ class _AchievementDetailsState extends State<AchievementDetails> {
                   child: IconButton(
                     onPressed: _deleteAchievement,
                     icon: const Icon(Icons.delete),
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     tooltip: 'Удалить',
                   ),
                 ),

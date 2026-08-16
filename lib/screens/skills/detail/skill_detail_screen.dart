@@ -68,12 +68,12 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+                    Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
                     const SizedBox(height: 16),
                     Text(
                       viewModel.error!,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
+                      style: TextStyle(color: Theme.of(context).colorScheme.error),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -226,7 +226,6 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             LinearProgressIndicator(
               // value: progress,
               value: 0.3,
-              backgroundColor: Colors.grey.shade200,
               minHeight: 8,
               borderRadius: BorderRadius.all(Radius.circular(4)),
             ),
@@ -295,14 +294,6 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           'Повысить ранг до ${nextRang?.name ?? ''}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.amber,
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
       ),
     );
   }
@@ -318,7 +309,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         leading: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
           Text(rang.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: rang.color)),
         ]),
-        title: Text(description, style: TextStyle(color: SoloLevelingTheme.paleBlue)),
+        title: Text(description, style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }
@@ -351,12 +342,12 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           condition.description.isNotEmpty ? condition.description : 'Без описания',
           style: TextStyle(
             decoration: isCompleted ? TextDecoration.lineThrough : null,
-            color: isCompleted ? SoloLevelingTheme.steelBlue : SoloLevelingTheme.paleBlue,
+            color: isCompleted ? Theme.of(context).textTheme.titleSmall?.color : Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
         subtitle: condition.date != null
             ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}',
-              style: TextStyle(color: SoloLevelingTheme.steelBlue)
+              style: Theme.of(context).textTheme.titleSmall
             )
             : null,
         trailing: Row(

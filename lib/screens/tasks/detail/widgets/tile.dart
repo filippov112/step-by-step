@@ -39,7 +39,7 @@ class DetailTaskCard extends StatelessWidget {
     Color difficultyBackColor = task.done ? task.difficulty.color.withValues(alpha: 0.06) : task.difficulty.color.withValues(alpha: 0.2);
     Color? dateColor = task.isOverdue ? Theme.of(context).colorScheme.error : task.done ? Theme.of(context).textTheme.bodyLarge?.color?.withValues(alpha: 0.2) : Theme.of(context).textTheme.bodyLarge?.color;
     Color? checkColor =  Theme.of(context).focusColor.withAlpha(100);
-    Color checkFillColor = task.done ? SoloLevelingTheme.glowBlue.withValues(alpha: 0.3) : SoloLevelingTheme.glowBlue;
+    Color checkFillColor = task.done ? Theme.of(context).focusColor.withValues(alpha: 0.3) : Theme.of(context).focusColor;
     Color titleColor = task.done ? Theme.of(context).focusColor.withAlpha(100) : Theme.of(context).focusColor;
     Color counterColor = task.done ? Theme.of(context).focusColor.withAlpha(100) : Theme.of(context).focusColor.withValues(alpha:0.5);
 
@@ -68,7 +68,7 @@ class DetailTaskCard extends StatelessWidget {
                     onChanged: (_) => model.toggleTaskDone(task.id),
                     fillColor: WidgetStateProperty.resolveWith((states) {
                       if (states.contains(WidgetState.selected)) return checkFillColor;
-                      return SoloLevelingTheme.steelBlue;
+                      return Theme.of(context).dividerColor;
                     }),
                     checkColor: checkColor,
                   ),

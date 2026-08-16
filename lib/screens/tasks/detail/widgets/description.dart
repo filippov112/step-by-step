@@ -32,7 +32,7 @@ Widget buildTaskInfo(
           allTags: allTags
         ),
 
-        const Divider(color: SoloLevelingTheme.steelBlue),
+        const Divider(),
 
         Text(
           description,

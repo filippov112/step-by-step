@@ -45,6 +45,7 @@ Widget buildRewardSection(
             ...selectedRewards.map((reward) {
               var skill = skills.firstWhere((skill) => skill.id == reward.skillId);
               return buildTile(
+                context,
                 title: skill.title,
                 exp: reward.experience, 
                 time: reward.time, 

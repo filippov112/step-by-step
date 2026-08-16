@@ -27,8 +27,7 @@ class UserDetailScreen extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             blurRadius: 12,
-            spreadRadius: 2,
-            color: SoloLevelingTheme.iceBlue
+            spreadRadius: 2
           ),
         ],
       ),
@@ -45,7 +44,7 @@ class UserDetailScreen extends StatelessWidget {
     var levelIconWidget = Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: SoloLevelingTheme.steelBlue,
+        color: Theme.of(context).dividerColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -54,13 +53,8 @@ class UserDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Text(
-        user.level.toString(),
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-          color: SoloLevelingTheme.textPrimary
-        ),
+      child: CustomText(
+        user.level.toString(), weight: FontWeight.bold 
       ),
     );
 

@@ -16,7 +16,7 @@ Future<bool?> showConfirmDialog(
       context: context,
       builder: (context) => AlertDialog(
         insetPadding: EdgeInsets.all(8),
-        title: title ?? const CustomText('Подтверждение', size: 16, weight: FontWeight.bold, color: SoloLevelingTheme.iceBlue,),
+        title: title ?? const CustomText('Подтверждение', size: 16, weight: FontWeight.bold),
         content: text ?? const CustomText('Вы уверены?'),
         actions: [
           Row(children: [

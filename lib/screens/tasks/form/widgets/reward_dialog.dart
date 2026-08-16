@@ -160,7 +160,7 @@ class _RewardDialogState extends State<RewardDialog> {
             ]
           ),
           
-          Divider(color: Theme.of(context).dividerColor,),
+          const Divider(),
           
           Expanded(
             child: tabIndex == 1 ? buildSearchPanel() : buildRewardsPanel()     
@@ -258,6 +258,7 @@ class _RewardDialogState extends State<RewardDialog> {
                   exp = reward.experience;
                 }
                 return buildTile(
+                  context,
                   title: skill.title, 
                   exp: exp, 
                   time: time, 
@@ -291,6 +292,7 @@ class _RewardDialogState extends State<RewardDialog> {
           Skill skill = _allSkills.firstWhere((skl) => skl.id == reward.skillId);
           
           return buildTile(
+            context,
             title: skill.title, 
             exp: reward.experience, 
             time: reward.time, 
@@ -303,7 +305,9 @@ class _RewardDialogState extends State<RewardDialog> {
   }
 }
 
-Widget buildTile({
+Widget buildTile(
+  BuildContext context,
+  {
     required String title,
     required int exp,
     required int time,
@@ -315,9 +319,9 @@ Widget buildTile({
     padding: const EdgeInsets.symmetric(vertical: 4),
     child: Container(
       decoration: BoxDecoration(
-        color: focused ? SoloLevelingTheme.glowBlue.withValues(alpha:0.5) : 
-          selected ? SoloLevelingTheme.steelBlue.withValues(alpha: 0.5) 
-            : SoloLevelingTheme.steelBlue.withValues(alpha: 0.2),
+        color: focused ? Theme.of(context).focusColor.withValues(alpha:0.5) : 
+          selected ? Theme.of(context).dividerColor.withValues(alpha: 0.5) 
+            : Theme.of(context).dividerColor.withValues(alpha: 0.2),
         borderRadius: BorderRadius.all(Radius.circular(8))
       ),
       child: InkWell(

@@ -44,14 +44,13 @@ class ConditionsListWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              // color: Colors.grey.shade50,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: SoloLevelingTheme.steelBlue),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
-            child: const Center(
+            child: Center(
               child: CustomText(
                 'Нет добавленных условий',
-                color: SoloLevelingTheme.steelBlue,
+                color: Theme.of(context).dividerColor,
               ),
             ),
           )
@@ -92,21 +91,21 @@ class ConditionsListWidget extends StatelessWidget {
           ),
         ),
         title: Text(condition.description.isNotEmpty ? condition.description : 'Без описания',
-          style: TextStyle(color: SoloLevelingTheme.paleBlue)),
+          style:Theme.of(context).textTheme.bodyMedium
+        ),
         subtitle: condition.date != null
-            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}', 
-              style: TextStyle(color: SoloLevelingTheme.glowBlue))
+            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}')
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: SoloLevelingTheme.steelBlue, size: 20),
+              icon: Icon(Icons.edit, color: Theme.of(context).dividerColor, size: 20),
               onPressed: () => _showEditConditionDialog(context, index, condition),
               tooltip: 'Редактировать',
             ),
             IconButton(
-              icon: const Icon(Icons.delete, color: SoloLevelingTheme.steelBlue, size: 20),
+              icon: Icon(Icons.delete, color: Theme.of(context).dividerColor, size: 20),
               onPressed: () => _confirmDelete(context, index),
               tooltip: 'Удалить',
             ),

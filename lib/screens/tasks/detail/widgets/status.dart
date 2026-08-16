@@ -26,7 +26,7 @@ Widget buildStatusSection(
             icon: Icons.event,
             label: '${datetime.day}.${datetime.month}.${datetime.year} ${datetime.hour}:${datetime.minute.toString().padLeft(2, '0')}',
             color: isOverdue && !done
-                ? Colors.red
+                ? Theme.of(context).colorScheme.error
                 : null,
           ),
         _buildInfoChip(

@@ -34,7 +34,6 @@ class TagTile extends StatelessWidget {
       title: CustomText(
         tag.title,
         weight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: SoloLevelingTheme.paleBlue,
       ),
       onTap: () {
         if (isSelectionMode) {
@@ -49,7 +48,7 @@ class TagTile extends StatelessWidget {
         }
       },
       selected: isSelected,
-      selectedTileColor: Colors.blue.shade50,
+      selectedTileColor: Theme.of(context).colorScheme.onPrimary,
     );
   }
   

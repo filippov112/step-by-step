@@ -64,14 +64,14 @@ class _SkillListScreenState extends State<SkillListScreen> {
                         top: 8,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.error,
                             shape: BoxShape.circle,
                           ),
                           child: Text(
                             _selectedFilters.length.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -119,7 +119,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       margin: const EdgeInsets.only(right: 4),
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: SoloLevelingTheme.navyBlue,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -163,12 +163,12 @@ class _SkillListScreenState extends State<SkillListScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline, size: 64, color: Colors.red.shade300),
+                          Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
                           const SizedBox(height: 16),
                           Text(
                             viewModel.error!,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.red),
+                            style: TextStyle(color: Theme.of(context).colorScheme.error),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(

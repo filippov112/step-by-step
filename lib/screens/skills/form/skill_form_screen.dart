@@ -174,7 +174,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.all(Radius.circular(8)),
-                        border: Border.all(color: SoloLevelingTheme.steelBlue),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: ListView(children: [
                         ...SkillRang.values.map((rang) {
@@ -204,7 +204,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                         padding: const EdgeInsets.only(top: 16),
                         child: Text(
                           viewModel.error!,
-                          style: const TextStyle(color: Colors.red),
+                          style: TextStyle(color: Theme.of(context).colorScheme.error),
                         ),
                       ),
                     
@@ -277,12 +277,12 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: SoloLevelingTheme.steelBlue),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
-            child: const Center(
+            child: Center(
               child: CustomText(
                 'Теги не выбраны',
-                color: SoloLevelingTheme.steelBlue
+                color: Theme.of(context).dividerColor
               ),
             ),
           )
@@ -342,23 +342,17 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
         width: double.infinity,
         height: 120,
         decoration: BoxDecoration(
-          // border: Border.all(
-          //   color: Colors.grey.shade300
-          //   ),
           borderRadius: BorderRadius.circular(12),
-          color: SoloLevelingTheme.steelBlue.withAlpha(80),
+          color: Theme.of(context).dividerColor.withAlpha(80),
         ),
         child: viewModel.iconPath.isEmpty
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo, size: 48, 
-                    color: SoloLevelingTheme.paleBlue
-                  ),
+                  Icon(Icons.add_a_photo, size: 48),
                   const SizedBox(height: 8),
                   const CustomText(
                     'Нажмите для выбора иконки',
-                    color: SoloLevelingTheme.paleBlue,
                     padding: EdgeInsets.all(12)
                   ),
                 ],
@@ -375,12 +369,9 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.broken_image, size: 48, color: SoloLevelingTheme.paleBlue),
+                            Icon(Icons.broken_image, size: 48),
                             const SizedBox(height: 8),
-                            Text(
-                              'Ошибка загрузки',
-                              style: TextStyle(color: SoloLevelingTheme.paleBlue),
-                            ),
+                            const CustomText('Ошибка загрузки'),
                           ],
                         );
                       },
@@ -392,12 +383,11 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.6),
+                          color: Theme.of(context).primaryColor.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(
                           Icons.edit,
-                          color: Colors.white,
                           size: 20,
                         ),
                       ),
@@ -465,7 +455,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_viewModel.error ?? 'Ошибка сохранения'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }

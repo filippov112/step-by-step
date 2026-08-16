@@ -48,13 +48,12 @@ class SkillTile extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(0,12,12,12),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: SoloLevelingTheme.steelBlue.withValues(alpha: 0.2),
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: CustomText(
                 '${skill.level}',
                 size: 20,
-                color: SoloLevelingTheme.glowBlue,
                 weight: FontWeight.w600,
               ),
             ),

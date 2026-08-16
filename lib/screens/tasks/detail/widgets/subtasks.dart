@@ -19,7 +19,7 @@ Widget buildSubtaskSection(
         'Подзадачи (${subtasks.where((e) => e.done).length} / ${subtasks.length})',
         style: Theme.of(context).textTheme.titleMedium,
       ),
-      leading: Icon(Icons.task_alt_outlined, color: SoloLevelingTheme.paleBlue,),
+      leading: Icon(Icons.task_alt_outlined),
       children: [ 
         
       ],

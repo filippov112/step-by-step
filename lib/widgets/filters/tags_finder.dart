@@ -96,7 +96,7 @@ class _TagsFinderState extends State<TagsFinder> {
                 children: _selectedTags.map((tag) => TagChip(title: tag.title)).toList(),
               ),
             ),
-          Divider(color: Theme.of(context).dividerColor,),
+          const Divider(),
           // Список тегов
           Expanded(
             child: _filteredTags.isEmpty

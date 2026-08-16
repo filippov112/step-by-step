@@ -24,7 +24,7 @@ class MainMenuDrawer extends StatelessWidget {
     final isSelected = currentRoute == route;
   
     return ListTile(
-      tileColor: isSelected ? SoloLevelingTheme.steelBlue : SoloLevelingTheme.navyBlue,
+      tileColor: isSelected ? Theme.of(context).focusColor : Theme.of(context).cardColor,
       leading: Icon(
         icon,
       ),

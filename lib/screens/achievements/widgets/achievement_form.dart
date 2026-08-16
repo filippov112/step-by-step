@@ -8,6 +8,8 @@ import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:life_game/widgets/dialogs/select_date_only.dart';
+import 'package:life_game/widgets/dialogs/select_date_time.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,7 @@ class _AchievementFormState extends State<AchievementForm> {
   AchievRar _selectedRarity = AchievRar.common;
   List<Tag> _selectedTags = [];
   String? _iconPath;
+  DateTime? _selectedDate;
   bool _isLoading = false;
 
   @override
@@ -38,6 +41,7 @@ class _AchievementFormState extends State<AchievementForm> {
       _titleController.text = widget.achievement!.title;
       _descriptionController.text = widget.achievement!.description;
       _selectedRarity = widget.achievement!.rarity;
+      _selectedDate = widget.achievement!.date;
       _iconPath = widget.achievement!.icon;
       _loadTags();
     }
@@ -78,6 +82,7 @@ class _AchievementFormState extends State<AchievementForm> {
           title: _titleController.text,
           description: _descriptionController.text,
           rarity: _selectedRarity,
+          date: _selectedDate,
           icon: _iconPath,
           tags: _selectedTags,
         );
@@ -87,6 +92,7 @@ class _AchievementFormState extends State<AchievementForm> {
           title: _titleController.text,
           description: _descriptionController.text,
           rarity: _selectedRarity,
+          date: _selectedDate,
           icon: _iconPath,
           tags: _selectedTags,
         );
@@ -184,12 +190,12 @@ class _AchievementFormState extends State<AchievementForm> {
                 initialValue: _selectedRarity,
                 decoration: const InputDecoration(
                   labelText: 'Редкость',
-                  border: OutlineInputBorder(),
                 ),
                 items: AchievRar.values.map((rarity) {
                   return DropdownMenuItem(
                     value: rarity,
                     child: Row(
+                      mainAxisSize: MainAxisSize.max,
                       children: [
                         Container(
                           width: 16,
@@ -210,6 +216,7 @@ class _AchievementFormState extends State<AchievementForm> {
                     _selectedRarity = value!;
                   });
                 },
+                
               ),
               const SizedBox(height: 16),
               // Теги
@@ -230,6 +237,32 @@ class _AchievementFormState extends State<AchievementForm> {
                   ),
                 ],
               ),
+
+              Card(
+                margin: EdgeInsets.all(0),
+                child: ListTile(
+                  titleAlignment: ListTileTitleAlignment.center,
+                  leading: const Icon(Icons.event),
+                  trailing: _selectedDate != null ? IconButton(
+                    onPressed: () => setState(() {
+                      _selectedDate = null;
+                    }), 
+                    icon: Icon(Icons.close)
+                  ) : null,
+                  title: const CustomText('Дата'),
+                  subtitle: CustomText(_selectedDate != null ?
+                    '${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year} '
+                    '${_selectedDate!.hour}:${_selectedDate!.minute.toString().padLeft(2, '0')}' : '',
+                  ),
+                  onTap: () async {
+                    final result = await selectDateOnly(context, _selectedDate ?? DateTime.now());
+                    setState(() {
+                      _selectedDate = result;
+                    });
+                  },
+                ),
+              ),
+
               const SizedBox(height: 20),
               // Кнопки
               Row(

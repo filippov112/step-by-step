@@ -111,7 +111,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
-                  Divider(color:SoloLevelingTheme.steelBlue,),
+                  const Divider(),
                   const SizedBox(height: 8),
                   
                   // Приоритет
@@ -122,7 +122,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
-                  Divider(color:SoloLevelingTheme.steelBlue,),
+                  const Divider(),
                   const SizedBox(height: 8),
                   
                   // Сложность
@@ -133,7 +133,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
-                  Divider(color:SoloLevelingTheme.steelBlue,),
+                  const Divider(),
                   const SizedBox(height: 8),
 
                   // Теги
@@ -144,7 +144,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
-                  Divider(color:SoloLevelingTheme.steelBlue,),
+                  const Divider(),
                   const SizedBox(height: 8),
 
                   // Награды

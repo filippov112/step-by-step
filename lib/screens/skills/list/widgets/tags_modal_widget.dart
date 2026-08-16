@@ -115,7 +115,7 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
                             width: 4,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: isSelected ? SoloLevelingTheme.glowBlue : SoloLevelingTheme.steelBlue,
+                              color: isSelected ? Theme.of(context).focusColor : Theme.of(context).dividerColor,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),

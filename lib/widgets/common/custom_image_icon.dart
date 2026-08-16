@@ -9,7 +9,7 @@ class CustomImageIcon extends StatelessWidget {
   final BorderRadius radius;
   final double width;
   final double height;
-  final Color color;
+  final Color? color;
   final IconData icon;
 
   const CustomImageIcon(this.path, {super.key, 
@@ -17,7 +17,7 @@ class CustomImageIcon extends StatelessWidget {
     this.radius = const BorderRadius.all(Radius.circular(8)),
     this.width = 48,
     this.height = 48,
-    this.color = SoloLevelingTheme.steelBlue
+    this.color
   });
 
   File? getFile() {
@@ -33,7 +33,7 @@ class CustomImageIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     
     final file = getFile();
-    final backColor = color.withValues(alpha:0.15);
+    final backColor = (color ?? Theme.of(context).dividerColor).withValues(alpha:0.15);
     final iconSize = min(width, height) * 0.6;
 
     return path == null || path!.isEmpty ?

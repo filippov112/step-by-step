@@ -1,76 +1,85 @@
 import 'package:flutter/material.dart';
 
 class SoloLevelingTheme {
-  static const Color darkBlue = Color(0xFF0A0E1A); // почти чёрно-синий
-  static const Color navyBlue = Color(0xFF111B2E); // глубокий синий (фон карточек)
-  static const Color steelBlue = Color.fromARGB(255, 50, 82, 133); // для границ/разделителей
-  static const Color subText = Color.fromARGB(255, 88, 125, 183); // для границ/разделителей
-  static const Color glowBlue = Color(0xFF4FC3F7); // основной акцент (свечение)
-  static const Color iceBlue = Color(0xFF81D4FA); // более светлый голубой
-  static const Color paleBlue = Color(0xFFB3E5FC); // для текста второстепенного
-  static const Color textPrimary = Color(0xFFE3F2FD); // почти белый с оттенком
-  static const Color textSecondary = Color(0xFF90CAF9);
+  static const Color back1 = Color(0xFF0A0E1A); // почти чёрно-синий
+  static const Color back2 = Color(0xFF111B2E); // глубокий синий (фон карточек)
+  static const Color details1 = Color.fromARGB(255, 13, 48, 103); // для границ/разделителей
+  static const Color details2 = Color.fromARGB(255, 30, 66, 126); // для границ/разделителей
+  static const Color active1 = Color.fromARGB(255, 66, 193, 252); // основной акцент (свечение)
+  static const Color active2 = Color(0xFF81D4FA); // более светлый голубой
+  static const Color text3 = Color.fromARGB(255, 117, 174, 200); // для текста второстепенного
+  static const Color text2 = Color(0xFFB3E5FC); // для текста второстепенного
+  static const Color text1 = Color(0xFFE3F2FD); // почти белый с оттенком
 
   static ThemeData get theme {
     return ThemeData(
       // ---- Базовые цвета ----
       brightness: Brightness.dark,
-      primaryColor: darkBlue,
-      scaffoldBackgroundColor: darkBlue,
-      canvasColor: navyBlue,
-      cardColor: navyBlue,
-      dividerColor: steelBlue.withValues(alpha: 0.5),
-      focusColor: glowBlue,
-      highlightColor: glowBlue.withValues(alpha: 0.2),
-      splashColor: glowBlue.withValues(alpha: 0.1),
+      primaryColor: back1,
+      scaffoldBackgroundColor: back1,
+      canvasColor: back2,
+      cardColor: back2,
+      dividerColor: details1.withValues(alpha: 0.5),
+      focusColor: active1,
+      highlightColor: active1.withValues(alpha: 0.2),
+      splashColor: active1.withValues(alpha: 0.1),
 
       // ---- Цветовая схема (ColorScheme) ----
       colorScheme: const ColorScheme.dark(
-        primary: darkBlue,
-        secondary: glowBlue,
-        surface: navyBlue,
+        primary: back1,
+        secondary: active1,
+        surface: back2,
         error: Color(0xFFEF5350),
-        onPrimary: textPrimary,
-        onSecondary: darkBlue,
-        onSurface: textPrimary,
-        onError: Colors.white,
+        onPrimary: text1,
+        onSecondary: back1,
+        onSurface: text1,
+        onError: text1,
         brightness: Brightness.dark,
       ),
 
       // ---- Текстовые стили (Solo Leveling UI) ----
       textTheme: const TextTheme(
+        // Шапки
         headlineLarge: TextStyle(
-          color: textPrimary,
+          color: text1,
           fontSize: 28,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
-          shadows: [Shadow(color: glowBlue, blurRadius: 8)],
+          shadows: [Shadow(color: active1, blurRadius: 8)],
         ),
         headlineMedium: TextStyle(
-          color: textPrimary,
+          color: text2,
           fontSize: 22,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
         ),
+
+        
+        
+        // Заголовки
         titleLarge: TextStyle(
-          color: textPrimary,
+          color: text1,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
         titleMedium: TextStyle(
-          color: steelBlue,
+          color: text2,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
         titleSmall: TextStyle(
-          color: steelBlue,
+          color: text3,
           fontSize: 14,
           fontWeight: FontWeight.w400,
         ),
-        bodyLarge: TextStyle(color: textPrimary, fontSize: 16),
-        bodyMedium: TextStyle(color: textSecondary, fontSize: 14),
+        
+        // Текст
+        bodyLarge: TextStyle(color: text1, fontSize: 16),
+        bodyMedium: TextStyle(color: text2, fontSize: 14),
+
+        // Метки
         labelLarge: TextStyle(
-          color: glowBlue,
+          color: active1,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -78,29 +87,29 @@ class SoloLevelingTheme {
 
       // ---- AppBar (как "системное окно") ----
       appBarTheme: const AppBarTheme(
-        backgroundColor: darkBlue,
-        foregroundColor: textPrimary,
+        backgroundColor: back1,
+        foregroundColor: text1,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
-          color: textPrimary,
+          color: text1,
           fontSize: 22,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.0,
-          shadows: [Shadow(color: glowBlue, blurRadius: 6)],
+          shadows: [Shadow(color: active1, blurRadius: 6)],
         ),
-        iconTheme: IconThemeData(color: glowBlue),
+        iconTheme: IconThemeData(color: active1),
       ),
 
       // ---- BottomNavigationBar (в стиле Solo Leveling) ----
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: darkBlue, // фон панели
+        backgroundColor: back1, // фон панели
         elevation: 8, // лёгкая тень для отделения
         type: BottomNavigationBarType.fixed, // все иконки видны (без скрытия)
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        selectedItemColor: glowBlue, // активный элемент — голубое свечение
-        unselectedItemColor: steelBlue, // неактивный — тусклый синий
+        selectedItemColor: active1, // активный элемент — голубое свечение
+        unselectedItemColor: details1, // неактивный — тусклый синий
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -116,13 +125,18 @@ class SoloLevelingTheme {
         // BottomNavigationBar не поддерживает полоску, только цвет иконки/текста
       ),
 
+      // ---- ListTile ----
+      listTileTheme: ListTileThemeData(
+        iconColor: active1
+      ),
+
       // ---- Кнопки ----
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: glowBlue,
-          foregroundColor: darkBlue,
+          backgroundColor: active1,
+          foregroundColor: back1,
           elevation: 4,
-          shadowColor: glowBlue.withValues(alpha: 0.4),
+          shadowColor: active1.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -135,14 +149,14 @@ class SoloLevelingTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: glowBlue,
+          foregroundColor: active1,
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: glowBlue,
-          side: const BorderSide(color: glowBlue, width: 1.5),
+          foregroundColor: active1,
+          side: const BorderSide(color: active1, width: 1.5),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -150,56 +164,56 @@ class SoloLevelingTheme {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: steelBlue,
+        backgroundColor: details1,
       ),
 
       // ---- Поля ввода (как интерфейс системы) ----
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: navyBlue,
+        fillColor: back2,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: steelBlue),
+          borderSide: const BorderSide(color: details1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: steelBlue),
+          borderSide: const BorderSide(color: details1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: glowBlue, width: 2),
+          borderSide: const BorderSide(color: active1, width: 2),
         ),
-        labelStyle: const TextStyle(color: textSecondary),
-        hintStyle: const TextStyle(color: textSecondary, fontSize: 14),
-        prefixIconColor: glowBlue,
-        suffixIconColor: glowBlue,
+        labelStyle: const TextStyle(color: text2),
+        hintStyle: const TextStyle(color: text2, fontSize: 14),
+        prefixIconColor: active1,
+        suffixIconColor: active1,
       ),
 
       // ---- Карточки (как "окна статуса") ----
       cardTheme: CardThemeData(
-        color: navyBlue,
+        color: back2,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: steelBlue.withValues(alpha: 0.3)),
+          side: BorderSide(color: details1.withValues(alpha: 0.3)),
         ),
-        shadowColor: glowBlue.withValues(alpha: 0.1),
+        shadowColor: active1.withValues(alpha: 0.1),
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       ),
 
       // ---- Диалоги, BottomSheet ----
       dialogTheme: DialogThemeData(
-        backgroundColor: navyBlue,
+        backgroundColor: back2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         titleTextStyle: const TextStyle(
-          color: textPrimary,
+          color: text1,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        contentTextStyle: const TextStyle(color: textSecondary, fontSize: 16),
+        contentTextStyle: const TextStyle(color: text2, fontSize: 16),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: navyBlue,
+        backgroundColor: back2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
@@ -208,43 +222,44 @@ class SoloLevelingTheme {
       // ---- Чекбоксы, Switch (в стиле системы) ----
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return glowBlue;
-          return steelBlue;
+          if (states.contains(WidgetState.selected)) return active1;
+          return details1;
         }),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return glowBlue;
-          return steelBlue;
+          if (states.contains(WidgetState.selected)) return active1;
+          return details1;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return glowBlue.withValues(alpha: 0.4);
+            return active1.withValues(alpha: 0.4);
           }
-          return steelBlue.withValues(alpha: 0.3);
+          return details1.withValues(alpha: 0.3);
         }),
       ),
 
       // ---- Слайдеры ----
-      sliderTheme: SliderThemeData(
-        activeTrackColor: glowBlue,
-        inactiveTrackColor: steelBlue,
-        thumbColor: glowBlue,
-        overlayColor: glowBlue.withValues(alpha: 0.2),
+      sliderTheme: const SliderThemeData(
+        activeTrackColor: active1,
+        inactiveTrackColor: details1,
+        thumbColor: active1,
+        overlayColor: active2,
         trackHeight: 4,
-        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 8),
       ),
 
       // ---- Индикаторы загрузки ----
       progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: glowBlue,
-        linearTrackColor: steelBlue,
-        circularTrackColor: steelBlue,
+        color: active1,
+        linearTrackColor: details1,
+        circularTrackColor: details1,
       ),
 
       // ---- Иконки ----
-      iconTheme: const IconThemeData(color: glowBlue, size: 24),
+      primaryIconTheme: const IconThemeData(color: active1, size: 24),
+      iconTheme: const IconThemeData(color: active1, size: 24),
     );
   }
 }

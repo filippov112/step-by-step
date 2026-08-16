@@ -7,7 +7,7 @@ Future<DateTime> selectDateOnly(BuildContext context, DateTime initDate) async {
     context: context,
     initialDate: initDate,
     firstDate: DateTime(1900),
-    lastDate: DateTime(2026),
+    lastDate: DateTime(2100),
   );
   if (date == null) {
     return initDate;

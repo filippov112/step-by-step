@@ -89,7 +89,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             subtasks: subtasks, 
           ),
           
-          const Divider(color: SoloLevelingTheme.steelBlue),
+          Divider(),
 
           Expanded(
             child: expController.isExpanded ? 
@@ -126,8 +126,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       FloatingActionButton(
         onPressed: () => setDone(),
         tooltip: 'Добавить подзадачу',
-        backgroundColor: SoloLevelingTheme.glowBlue,
-        child: Icon(done ? Icons.task_alt_outlined : Icons.circle_outlined, color: SoloLevelingTheme.darkBlue),
+        backgroundColor: Theme.of(context).focusColor,
+        child: Icon(done ? Icons.task_alt_outlined : Icons.circle_outlined, color: Theme.of(context).primaryColor),
       )
       ,
     );

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 
 class CustomImageIcon extends StatelessWidget {
   final String? path;

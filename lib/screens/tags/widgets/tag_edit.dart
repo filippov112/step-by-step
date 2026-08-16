@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/enums/tag_type.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
 
 class TagEditDialog extends StatefulWidget {
   final Tag? tag;

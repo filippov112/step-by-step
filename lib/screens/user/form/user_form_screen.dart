@@ -6,7 +6,6 @@ import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/dialogs/select_date_only.dart';
 import 'package:provider/provider.dart';
 import 'user_form_model.dart';
-import 'dart:io';
 
 
 class UserFormScreen extends StatelessWidget {

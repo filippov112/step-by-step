@@ -1,12 +1,10 @@
 // lib/widgets/achievement_details.dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 

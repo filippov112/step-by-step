@@ -1,12 +1,10 @@
 // lib/screens/skills/skill_detail_screen.dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/services/exp_calculator.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';

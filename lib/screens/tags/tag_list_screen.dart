@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';

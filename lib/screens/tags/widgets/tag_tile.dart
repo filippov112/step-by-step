@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tags/widgets/tag_type_chip.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 

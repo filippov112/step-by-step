@@ -6,7 +6,6 @@ import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';

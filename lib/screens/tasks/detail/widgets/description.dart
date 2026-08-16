@@ -3,7 +3,6 @@ import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tasks/detail/widgets/status.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 
 Widget buildTaskInfo(
   BuildContext context,

@@ -4,7 +4,6 @@ import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
 import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:life_game/widgets/common/search_string.dart';

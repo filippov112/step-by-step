@@ -15,7 +15,6 @@ import 'package:life_game/screens/tasks/form/widgets/difficulty.dart';
 import 'package:life_game/screens/tasks/form/widgets/priority.dart';
 import 'package:life_game/screens/tasks/form/widgets/status.dart';
 import 'package:life_game/screens/tasks/form/widgets/title.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';

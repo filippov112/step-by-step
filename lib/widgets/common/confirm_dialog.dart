@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
 

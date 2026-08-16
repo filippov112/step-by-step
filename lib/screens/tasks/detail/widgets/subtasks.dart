@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/detail/widgets/tile.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 
 Widget buildSubtaskSection(

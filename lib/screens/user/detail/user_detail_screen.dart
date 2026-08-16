@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';

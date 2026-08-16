@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:life_game/screens/classes/class_list_screen.dart';
 import 'package:life_game/screens/settings/setting_list_screen.dart';
 import 'package:life_game/screens/tags/tag_list_screen.dart';
-import 'package:life_game/themes/solo_leveling_theme.dart';
 
 // Боковое меню для главных экранов модулей приложения
 class MainMenuDrawer extends StatelessWidget {

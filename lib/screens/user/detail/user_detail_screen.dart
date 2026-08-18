@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
+import 'package:life_game/screens/user/detail/widgets/activities.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
@@ -14,6 +15,46 @@ import 'package:provider/provider.dart';
 class UserDetailScreen extends StatelessWidget {
   const UserDetailScreen({super.key});
   
+  Map<DateTime, int> _getUserActivities() {
+    final activities = <DateTime, int>{};
+    final now = DateTime.now();
+    
+    // Генерируем демо-данные
+    for (int i = 0; i < 365; i++) {
+      final date = now.subtract(Duration(days: i));
+      // Случайное количество задач (0-12)
+      final count = (i % 7 == 0) ? 0 : (i % 13);
+      activities[DateTime(date.year, date.month, date.day)] = count;
+    }
+    return activities;
+  }
+
+  void _showActivityDetails(BuildContext context, DateTime date, int count) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('${_formatDate(date)}'),
+        content: Text('Выполнено задач: $count'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Закрыть'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day} ${_getMonthName(date.month)} ${date.year}';
+  }
+
+  String _getMonthName(int month) {
+    const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    return months[month - 1];
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -83,6 +124,19 @@ class UserDetailScreen extends StatelessWidget {
       showAsPercent: false, // показываем X / Y
     );
 
+    var activity = ActivityGrid(
+      activities: _getUserActivities(),
+      startDate: DateTime.now().subtract(Duration(days: 70)),
+      endDate: DateTime.now(),
+      cellSpacing: 3,
+      showMonthLabels: false,
+      onCellTap: (date, count) {
+        _showActivityDetails(context, date, count);
+      },
+    );
+
+    
+
     return FutureBuilder(
       future: context.read<UserDetailModel>().loadUser(),
 
@@ -128,6 +182,15 @@ class UserDetailScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 // Опыт
                 expWidget,
+
+                Padding(
+                  padding: EdgeInsetsGeometry.only(top:8), 
+                  child: SizedBox(
+                    height: 150,
+                    child: activity,
+                  ),
+                ),
+                
               ],
             ),
           ),

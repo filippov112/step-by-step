@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/data/db.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/screens/analysis/analysis_model.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/home/home_screen.dart';
 import 'package:life_game/screens/settings/setting_list_model.dart';
@@ -47,9 +46,6 @@ void main() async {
         
         // Settings
         ChangeNotifierProvider<SettingListModel>(create: (_) { return SettingListModel(); }),
-
-        // Analysis
-        ChangeNotifierProvider<AnalysisModel>(create: (_) { return AnalysisModel(); }),
 
         // Achievements
         ChangeNotifierProvider<AchievementListModel>(create: (_) { return AchievementListModel(); }),

@@ -36,12 +36,6 @@ class MainBottomMenu extends StatelessWidget {
             activeIcon: Icon(Icons.diamond),
             label: 'Достижения',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            activeIcon: Icon(Icons.bar_chart),
-            label: 'Аналитика',
-          ),
-          
         ],
         
     );

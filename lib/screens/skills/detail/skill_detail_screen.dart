@@ -94,7 +94,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
 
                   // Иконка

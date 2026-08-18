@@ -24,21 +24,20 @@ class _TagsFinderState extends State<TagsFinder> {
   List<Tag> _selectedTags = [];
   String _searchQuery = '';
   List<Tag> _filteredTags = [];
-
+  final TagRepository _tagRepo = TagRepository();
   @override
   void initState() {
     super.initState();
     _selectedTags = List.from(widget.selectedTags);
-    _filteredTags = _getAllTags();
+    _getAllTags().then((v) => setState(() => _filteredTags = v));
   }
 
-  List<Tag> _getAllTags() {
-    final viewModel = context.read<AchievementListModel>();
-    return viewModel.allTags;
+  Future<List<Tag>> _getAllTags() async {
+    return await _tagRepo.getAll();
   }
 
-  void _applyFilter() {
-    final allTags = _getAllTags();
+  Future _applyFilter() async {
+    final allTags = await _getAllTags();
     if (_searchQuery.isEmpty) {
       _filteredTags = allTags;
     } else {

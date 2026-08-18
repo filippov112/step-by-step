@@ -6,7 +6,7 @@ import 'package:life_game/models/task_hierarchy.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 
-enum SortField { title, datetime, priority, difficulty }
+enum SortTaskField { title, datetime, priority, difficulty }
 
 class TaskListModel extends ChangeNotifier {
   final TaskRepository _taskRepo = TaskRepository();
@@ -29,7 +29,7 @@ class TaskListModel extends ChangeNotifier {
   List<Tag> _selectedTags = [];
   
   // Состояние сортировки
-  SortField _sortField = SortField.datetime;
+  SortTaskField _sortField = SortTaskField.datetime;
   bool _sortAscending = true;
   
   // Режим выделения
@@ -43,7 +43,7 @@ class TaskListModel extends ChangeNotifier {
   Set<String> get selectedIds => _selectedIds;
   String get searchQuery => _searchQuery;
   
-  SortField get sortField => _sortField;
+  SortTaskField get sortField => _sortField;
   bool get sortAscending => _sortAscending;
   
   Set<TaskPriority> get filterPriority => _filterPriority;
@@ -135,7 +135,7 @@ class TaskListModel extends ChangeNotifier {
   }
   
   // Сортировка
-  Future setSortField(SortField field) async {
+  Future setSortField(SortTaskField field) async {
     if (_sortField == field) {
       _sortAscending = !_sortAscending;
     } else {
@@ -189,20 +189,20 @@ class TaskListModel extends ChangeNotifier {
 
     // Сортировка
     switch (_sortField) {
-      case SortField.title:
+      case SortTaskField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
         break;
-      case SortField.datetime:
+      case SortTaskField.datetime:
         result.sort((a, b) {
           final aDate = a.datetime ?? DateTime.now();
           final bDate = b.datetime ?? DateTime.now();
           return aDate.compareTo(bDate);
         });
         break;
-      case SortField.priority:
+      case SortTaskField.priority:
         result.sort((a, b) => a.priority.index.compareTo(b.priority.index));
         break;
-      case SortField.difficulty:
+      case SortTaskField.difficulty:
         result.sort((a, b) => a.difficulty.index.compareTo(b.difficulty.index));
         break;
     }

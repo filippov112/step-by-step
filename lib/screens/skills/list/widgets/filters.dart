@@ -1,100 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
+import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:life_game/widgets/filters/filter_section.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
+enum SortSkillField { title, rang, level }
 
-class TaskFilters extends StatefulWidget {
-  const TaskFilters({super.key});
+class SkillFilters extends StatefulWidget {
+  const SkillFilters({super.key});
 
   @override
-  State<TaskFilters> createState() => _TaskFiltersState();
+  State<SkillFilters> createState() => _SkillFiltersState();
 }
 
-class _TaskFiltersState extends State<TaskFilters> {
+class _SkillFiltersState extends State<SkillFilters> {
 
   @override
   Widget build(BuildContext context) {
 
-    final model = context.read<TaskListModel>();
-    var hasActiveFilters = context.select<TaskListModel,bool>((model) => model.hasActiveFilters);
-    var filterDifficulty = context.select<TaskListModel,Set<TaskDifficulty>>((model) => model.filterDifficulty);
-    var filterDone =  context.select<TaskListModel,bool>((model) => model.filterDone);
-    var filterUndone = context.select<TaskListModel,bool>((model) => model.filterUndone);
-    var filterPriority = context.select<TaskListModel,Set<TaskPriority>>((model) => model.filterPriority);
-    var selectedTags = context.select<TaskListModel,List<Tag>>((model) => model.selectedTags);
-    var sortField = context.select<TaskListModel,SortTaskField>((model) => model.sortField);
-    var sortAscending = context.select<TaskListModel,bool>((model) => model.sortAscending);
+    final model = context.read<SkillListModel>();
+    var hasActiveFilters = context.select<SkillListModel,bool>((model) => model.hasActiveFilters);
+    var filterRang = context.select<SkillListModel,Set<SkillRang>>((model) => model.filterRang);
+    var selectedTags = context.select<SkillListModel,List<Tag>>((model) => model.selectedTags);
+    var sortField = context.select<SkillListModel,SortSkillField>((model) => model.sortField);
+    var sortAscending = context.select<SkillListModel,bool>((model) => model.sortAscending);
 
-    // Приоритет
+    // Ранг
     var priorityFilter = FilterSection(
-      title: 'Приоритет',
-      icon: Icons.priority_high,
+      title: 'Ранг',
+      icon: Icons.star_border,
       children: Wrap(
         spacing: 4,
         runSpacing: 4,
         children: [
-          ...TaskPriority.values.map((priority) =>
+          ...SkillRang.values.map((rang) =>
             FilterChip(
-              label: Text(priority.displayName),
-              selected: filterPriority.contains(priority),
-              onSelected: (_) => model.setPriorityFilter(priority),
+              label: Text(rang.name),
+              selected: filterRang.contains(rang),
+              onSelected: (_) => model.setRangFilter(rang),
             ),
           ),
         ],
       ),
     );
 
-    // Сложность
-    var difficultyFilter = FilterSection(
-      title: 'Сложность',
-      icon: Icons.build,
-      children: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        alignment: WrapAlignment.start,
-        children: [
-          ...TaskDifficulty.values.map((difficulty) =>
-            FilterChip(
-              
-              label: Text(difficulty.displayName),
-              selected: filterDifficulty.contains(difficulty),
-              onSelected: (_) => model.setDifficultyFilter(difficulty),
-              backgroundColor: Theme.of(context).cardColor,
-            ),
-          ),
-        ],
-      ),
-    );
-
-    // Статус
-    var statusFilter = FilterSection(
-      title: 'Статус',
-      icon: Icons.done,
-      children: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        alignment: WrapAlignment.start,
-        children: [
-          FilterChip(
-            label: const Text('Выполненные'),
-            selected: filterDone,
-            onSelected: (_) => model.toggleDoneFilter(),
-          ),
-          FilterChip(
-            label: const Text('Невыполненные'),
-            selected: filterUndone,
-            onSelected: (_) => model.toggleUndoneFilter(),
-          ),
-        ],
-      ),
-    );
+    
 
     // Теги
     var tagsFilter = FilterSection(
@@ -137,7 +91,7 @@ class _TaskFiltersState extends State<TaskFilters> {
               sortField,
               model.setSortField,
               sortAscending,
-              SortTaskField.title,
+              SortSkillField.title,
               'По названию',
             ),
             const SizedBox(height: 8),
@@ -146,8 +100,8 @@ class _TaskFiltersState extends State<TaskFilters> {
               sortField,
               model.setSortField,
               sortAscending,
-              SortTaskField.datetime,
-              'По дате',
+              SortSkillField.rang,
+              'По рангу',
             ),
             const SizedBox(height: 8),
             _buildSortButton(
@@ -155,17 +109,8 @@ class _TaskFiltersState extends State<TaskFilters> {
               sortField,
               model.setSortField,
               sortAscending,
-              SortTaskField.priority,
-              'По приоритету',
-            ),
-            const SizedBox(height: 8),
-            _buildSortButton(
-              context,
-              sortField,
-              model.setSortField,
-              sortAscending,
-              SortTaskField.difficulty,
-              'По сложности',
+              SortSkillField.level,
+              'По уровню',
             ),
           ],
         ),
@@ -179,16 +124,14 @@ class _TaskFiltersState extends State<TaskFilters> {
       ),
       filters: [
        priorityFilter,
-       difficultyFilter,
-       statusFilter,
        tagsFilter,
        sorting
       ],
     );
   }
 
-  void _openTagSelector(BuildContext context) {
-    final model = context.read<TaskListModel>();
+  Future _openTagSelector(BuildContext context) async {
+    final model = context.read<SkillListModel>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -201,10 +144,10 @@ class _TaskFiltersState extends State<TaskFilters> {
   
   Widget _buildSortButton(
     BuildContext context,
-    SortTaskField sortField,
-    Function(SortTaskField) setSortField,
+    SortSkillField sortField,
+    Function(SortSkillField) setSortField,
     bool sortAscending,
-    SortTaskField field,
+    SortSkillField field,
     String label,
   ) {
     final isActive = sortField == field;

@@ -1,113 +1,209 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_skill.dart';
+import 'package:life_game/screens/skills/list/widgets/filters.dart';
+
 
 class SkillListModel extends ChangeNotifier {
-
   final SkillRepository _skillRepo = SkillRepository();
-  final SkillConditionRepository _conditionRepo = SkillConditionRepository();
-  final TagRepository _tagRepo = TagRepository();
   final TagSkillRepository _tagSkillRepo = TagSkillRepository();
+
   
-  List<Skill> _skills = [];
-  List<Tag> _allTags = [];
-  final Map<String, List<Tag>> _skillTags = {};
-  bool _isLoading = false;
-  String? _error;
+  List<Skill> _allSkills = [];
+  List<Skill> _filteredSkills = [];
+  List<TagSkill> _allTagSkills = [];
   
-  List<Skill> get skills => _skills;
-  List<Tag> get allTags => _allTags;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  // Состояние фильтрации
+  String _searchQuery = '';
+  final Set<SkillRang> _filterRang = <SkillRang>{};
+  List<Tag> _selectedTags = [];
+  List<Tag> _tags = [];
   
-  // Загрузка всех навыков
-  Future<void> loadSkills() async {
-    _isLoading = true;
-    _error = null;
+  // Состояние сортировки
+  SortSkillField _sortField = SortSkillField.title;
+  bool _sortAscending = true;
+  
+  // Режим выделения
+  bool _isSelectionMode = false;
+  Set<String> _selectedIds = {};
+  
+  // Геттеры
+  List<Skill> get skills => _filteredSkills;
+  List<TagSkill> get allTags => _allTagSkills;
+  bool get isSelectionMode => _isSelectionMode;
+  Set<String> get selectedIds => _selectedIds;
+  String get searchQuery => _searchQuery;
+  
+  SortSkillField get sortField => _sortField;
+  bool get sortAscending => _sortAscending;
+  
+  Set<SkillRang> get filterRang => _filterRang;
+  List<Tag> get selectedTags => _selectedTags;
+  List<Tag> get tags => _tags;
+  
+  bool get hasActiveFilters {
+    return _searchQuery.isNotEmpty ||
+           _filterRang.isNotEmpty ||
+           _selectedTags.isNotEmpty;
+  }
+  
+  // Загрузка данных
+  Future loadSkills() async {
+    _allSkills = await _skillRepo.getAll();
+    _allTagSkills = await _tagSkillRepo.getAll();
+    await _applyFiltersAndSort();
     notifyListeners();
-    
-    try {
-      _skills = await _skillRepo.getAll();
-      _skills.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-      
-      // Загружаем теги для каждого навыка
-      await _loadSkillTags();
-    } catch (e) {
-      _error = 'Ошибка загрузки навыков: $e';
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+  }
+  
+  // Поиск
+  Future setSearchQuery(String query) async {
+    _searchQuery = query;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  Future clearSearch() async {
+    _searchQuery = '';
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Фильтры
+  Future setRangFilter(SkillRang rang) async {
+    if (_filterRang.contains(rang)) {
+      _filterRang.remove(rang);
+    } else {
+      _filterRang.add(rang);
     }
+    await _applyFiltersAndSort();
+    notifyListeners();
   }
   
-  // Загрузка всех тегов
-  Future<void> loadTags() async {
-    try {
-      _allTags = await _tagRepo.getAll();
-      _allTags.sort((a, b) => a.title.compareTo(b.title));
-      notifyListeners();
-    } catch (e) {
-      _error = 'Ошибка загрузки тегов: $e';
+  
+  Future setTagsFilter(List<Tag> tags) async {
+    _selectedTags = tags;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  void clearAllFilters() {
+    _searchQuery = '';
+    _filterRang.clear();
+    _selectedTags = [];
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Сортировка
+  Future setSortField(SortSkillField field) async {
+    if (_sortField == field) {
+      _sortAscending = !_sortAscending;
+    } else {
+      _sortField = field;
+      _sortAscending = true;
     }
+    await _applyFiltersAndSort();
+    notifyListeners();
   }
   
-  // Загрузка тегов для навыков
-  Future<void> _loadSkillTags() async {
-    _skillTags.clear();
-    final allTagSkills = await _tagSkillRepo.getAll();
-    
-    for (var skill in _skills) {
-      final tagIds = allTagSkills
-          .where((ts) => ts.skillId == skill.id)
-          .map((ts) => ts.tagId)
-          .toList();
-      
-      final tags = _allTags.where((tag) => tagIds.contains(tag.id)).toList();
-      _skillTags[skill.id] = tags;
+  // Основная логика фильтрации и сортировки
+  Future _applyFiltersAndSort() async {
+    var result = List<Skill>.from(_allSkills);
+    // Поиск
+    if (_searchQuery.isNotEmpty) {
+      final query = _searchQuery.toLowerCase();
+      result = result.where((t) =>
+        t.title.toLowerCase().contains(query)
+      ).toList();
     }
+    // Фильтры по приоритету и сложности
+    if (_filterRang.isNotEmpty) {
+      result = result.where((t) => _filterRang.contains(t.rang)).toList();
+    }
+    // Фильтр по тегам
+    if (_selectedTags.isNotEmpty) {
+      var selectedTagTasks = _allTagSkills.where((tagTask) => _selectedTags.map((tag) => tag.id).contains(tagTask.tagId));
+      result = result.where((task) => selectedTagTasks.map((tagTask) => tagTask.skillId).contains(task.id)).toList(); 
+    }
+    // Сортировка
+    switch (_sortField) {
+      case SortSkillField.title:
+        result.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case SortSkillField.rang:
+        result.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+        break;
+      case SortSkillField.level:
+        result.sort((a, b) => a.level.compareTo(b.level));
+        break;
+    }
+    if (!_sortAscending) {
+      result = result.reversed.toList();
+    }
+    _filteredSkills = result;
   }
   
-  // Получение тегов для навыка
-  List<Tag> getSkillTags(String skillId) {
-    return _skillTags[skillId] ?? [];
+  Future updateSkill(Skill skill) async {
+    await _skillRepo.update(skill);
+    final index = _allSkills.indexWhere((t) => t.id == skill.id);
+    if (index != -1) {
+      _allSkills[index] = skill;
+    }
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+
+  Future deleteSkill(String id) async {
+    await _skillRepo.delete(id);
+    _allSkills.removeWhere((t) => t.id == id);
+    _selectedIds.remove(id);
+    _applyFiltersAndSort();
+    notifyListeners();
   }
   
-  // Удаление навыка
-  Future<bool> deleteSkill(String id) async {
-    try {
-      final conditions = await _conditionRepo.getAll();
-      final skillConditions = conditions.where((c) => c.skillId == id);
-      for (var condition in skillConditions) {
-        await _conditionRepo.delete(condition.id);
-      }
-      
-      final tagSkills = await _tagSkillRepo.getAll();
-      final skillTagSkills = tagSkills.where((ts) => ts.skillId == id);
-      for (var ts in skillTagSkills) {
-        await _tagSkillRepo.delete(ts.skillId, ts.tagId);
-      }
-      
+  Future deleteSelectedSkills() async {
+    for (final id in _selectedIds) {
       await _skillRepo.delete(id);
-      
-      _skills.removeWhere((s) => s.id == id);
-      _skillTags.remove(id);
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = 'Ошибка удаления навыка: $e';
-      notifyListeners();
-      return false;
+      _allSkills.removeWhere((t) => t.id == id);
     }
+    _selectedIds.clear();
+    _isSelectionMode = false;
+    await _applyFiltersAndSort();
+    notifyListeners();
   }
   
-  // Получение навыка по ID
-  Skill? getSkillById(String id) {
-    try {
-      return _skills.firstWhere((s) => s.id == id);
-    } catch (e) {
-      return null;
+  // Режим выделения
+  void toggleSelectionMode() {
+    _isSelectionMode = !_isSelectionMode;
+    if (!_isSelectionMode) {
+      _selectedIds.clear();
     }
+    notifyListeners();
+  }
+  
+  void toggleSelectAll() {
+    if (_selectedIds.length == _filteredSkills.length) {
+      _selectedIds.clear();
+    } else {
+      _selectedIds = _filteredSkills.map((t) => t.id).toSet();
+    }
+    notifyListeners();
+  }
+  
+  void toggleSelectSkill(String id) {
+    if (_selectedIds.contains(id)) {
+      _selectedIds.remove(id);
+    } else {
+      _selectedIds.add(id);
+    }
+    notifyListeners();
+  }
+  
+  void clearSelection() {
+    _selectedIds.clear();
+    _isSelectionMode = false;
+    notifyListeners();
   }
 }

@@ -9,7 +9,6 @@ import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
-import 'package:life_game/screens/user/detail/widgets/accum_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:radar_chart_plus/radar_chart_plus.dart';
 import 'package:snap_chart/snap_chart.dart';

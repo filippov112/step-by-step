@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
+import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/widgets/filters.dart';
 import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
-import 'package:life_game/screens/skills/list/widgets/tags_modal_widget.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:life_game/widgets/common/search_string.dart';
+import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
-import 'package:life_game/models/tag.dart';
 
 class SkillListScreen extends StatefulWidget {
   const SkillListScreen({super.key});
@@ -20,253 +20,113 @@ class SkillListScreen extends StatefulWidget {
 }
 
 class _SkillListScreenState extends State<SkillListScreen> {
-  late SkillListModel _viewModel;
-  String _searchQuery = '';
-  List<Tag> _selectedFilters = [];
-  var searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _viewModel = SkillListModel();
-    _viewModel.loadSkills();
-    _viewModel.loadTags();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SkillListModel>().loadSkills();
+    });
   }
 
   @override
   void dispose() {
-    _viewModel.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _viewModel,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Навыки'),
-          actions: [
-            // Кнопка фильтрации по тегам
-            Consumer<SkillListModel>(
-              builder: (context, viewModel, child) {
-                return Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.filter_list),
-                      onPressed: () => _openFilters(context),
-                      tooltip: 'Фильтр по тегам',
-                    ),
-                    if (_selectedFilters.isNotEmpty)
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.error,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            _selectedFilters.length.toString(),
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
+    return Consumer<SkillListModel>(
+      builder: (context, model, child) {
+        return Scaffold(
+
+          appBar: buildMainAppBar<Skill>(
+              context,
+              title: 'Навыки',
+              isRootWidgetTree: true,
+              isSelectionMode: model.isSelectionMode,
+              selectAll: model.toggleSelectAll,
+              selectedIds: model.selectedIds,
+              filteredList: model.skills,
+              searchWidget: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: SearchString(
+                  placeholder: 'Поиск навыков...',
+                  controller: _searchController,
+                  value: model.searchQuery,
+                  clearCallback: model.clearSearch,
+                  changeCallback: model.setSearchQuery,
+                )
+              ),
+              deleteSelected: model.deleteSelectedSkills,
+              clearSelection: model.clearSelection,
             ),
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(60),
-            child: SearchString(
-              placeholder: 'Поиск навыков...',
-              controller: searchController, 
-              value: _searchQuery, 
-              clearCallback: () { 
-                setState(() {
-                  _searchQuery = '';
-                });
-              }, 
-              changeCallback: (value) { 
-                setState(() {
-                  _searchQuery = value;
-                });
-              }
-            )
-          ),
-        ),
-        drawer: const MainMenuDrawer(currentRoute: '/skills'),
-        body: Column(
-          children: [
-            // Отображение выбранных фильтров
-            if (_selectedFilters.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                height: 40,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _selectedFilters.length,
-                  itemBuilder: (context, index) {
-                    final tag = _selectedFilters[index];
-                    return Container(
-                      margin: const EdgeInsets.only(right: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            tag.title,
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _selectedFilters.remove(tag);
-                              });
-                            },
-                            child: Icon(
-                              Icons.close,
-                              size: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+          body: _buildBody(context, model),
+          floatingActionButton: model.isSelectionMode
+              ? null
+              : CustomFloatingActionButton(
+                  openFormCreate: _openCreateForm,
+                  tooltip: 'Создать задачу',
                 ),
-              ),
-            
-            // Список навыков
-            Expanded(
-              child: Consumer<SkillListModel>(
-                builder: (context, viewModel, child) {
-                  if (viewModel.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  
-                  if (viewModel.error != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
-                          const SizedBox(height: 16),
-                          Text(
-                            viewModel.error!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => viewModel.loadSkills(),
-                            child: const Text('Попробовать снова'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  
-                  // Фильтрация
-                  var filteredSkills = viewModel.skills;
-                  
-                  // Поиск по названию
-                  if (_searchQuery.isNotEmpty) {
-                    filteredSkills = filteredSkills.where((skill) =>
-                      skill.title.toLowerCase().contains(_searchQuery.toLowerCase())
-                    ).toList();
-                  }
-                  
-                  // Фильтр по тегам
-                  if (_selectedFilters.isNotEmpty) {
-                    filteredSkills = filteredSkills.where((skill) {
-                      final skillTags = viewModel.getSkillTags(skill.id);
-                      return _selectedFilters.every((filter) => skillTags.contains(filter));
-                    }).toList();
-                  }
-                  
-                  if (filteredSkills.isEmpty) {
-                    return EmptyListScreen(
-                      subtitle: _searchQuery.isNotEmpty || _selectedFilters.isNotEmpty
-                        ? 'Попробуйте изменить параметры поиска'
-                        : 'Создайте свой первый навык',
-                      title: 'Навыки не найдены',
-                      icon: Icons.star_border,
-                    );
-                  }
-                  
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: filteredSkills.length,
-                    itemBuilder: (context, index) {
-                      final skill = filteredSkills[index];
-                      final tags = viewModel.getSkillTags(skill.id);
-                      
-                      return SkillTile(skill: skill, tags: tags, openDetails: () => _navigateToDetail(context, skill.id),);
-                    },
-                  );
-                },
-              ),
+          bottomNavigationBar: MainBottomMenu(),
+        
+          endDrawer: SkillFilters(),
+          drawer: const MainMenuDrawer(currentRoute: '/skills'),
+        );
+      }
+    );
+  }
+
+  Widget _buildBody(BuildContext context, SkillListModel model) {
+    if (model.skills.isEmpty) {
+      return EmptyListScreen(
+        title: 'Нет навыков',
+        subtitle: 'Создайте свой первый навык, нажав на кнопку +',
+        icon: Icons.star_border,
+      );
+    }
+    if (model.hasActiveFilters && model.skills.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
+            const SizedBox(height: 16),
+            Text(
+              'Нет навыков по заданным фильтрам',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: model.clearAllFilters,
+              child: const Text('Сбросить фильтры'),
             ),
           ],
         ),
-        bottomNavigationBar: const MainBottomMenu(),
-        floatingActionButton: CustomFloatingActionButton(openFormCreate: () => _navigateToForm(context), tooltip: "Добавить навык"),
-      ),
-    );
-  }
-
-
-  // Открыть фильтры
-  Future<void> _openFilters(BuildContext context) async {
-    final result = await showTagsModal(
-      context,
-      allTags: _viewModel.allTags,
-      selectedTags: _selectedFilters,
-    );
-    
-    if (result != null) {
-      setState(() {
-        _selectedFilters = result;
-      });
+      );
     }
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      itemCount: model.skills.length,
+      itemBuilder: (context, index) {
+        final skill = model.skills[index];
+        return SkillTile(
+          model: model, 
+          skill: skill, 
+        );
+      },
+    );
   }
 
-  // Добавить навык
-  void _navigateToForm(BuildContext context) {
+  void _openCreateForm() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SkillFormScreen(),
+        builder: (context) => const SkillFormScreen(),
       ),
-    ).then((result) {
-      if (result == true) {
-        _viewModel.loadSkills();
-      }
-    });
-  }
-
-  // Открыть навык
-  void _navigateToDetail(BuildContext context, String skillId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SkillDetailScreen(skillId: skillId),
-      ),
-    ).then((_) {
-      _viewModel.loadSkills();
-    });
+    ).then((_) { if (context.mounted) context.read<SkillListModel>().loadSkills(); });
   }
 }

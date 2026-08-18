@@ -11,16 +11,16 @@ import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
-class AchievementForm extends StatefulWidget {
+class AchievementFormScreen extends StatefulWidget {
   final Achievement? achievement;
 
-  const AchievementForm({super.key, this.achievement});
+  const AchievementFormScreen({super.key, this.achievement});
 
   @override
-  State<AchievementForm> createState() => _AchievementFormState();
+  State<AchievementFormScreen> createState() => _AchievementFormScreenState();
 }
 
-class _AchievementFormState extends State<AchievementForm> {
+class _AchievementFormScreenState extends State<AchievementFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();

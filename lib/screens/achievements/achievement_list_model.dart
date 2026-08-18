@@ -6,289 +6,203 @@ import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_achievement.dart';
 import 'package:life_game/services/file_storage_service.dart';
 
-class AchievementListModel extends ChangeNotifier {
 
-  final AchievementRepository _repository = AchievementRepository();
-  final TagRepository _tagRepository = TagRepository();
-  final TagAchievementRepository _tagAchievementRepository = TagAchievementRepository();
-  final FileStorageService _fileStorage = FileStorageService();
+class AchievementListModel extends ChangeNotifier {
+  final AchievementRepository _achiRepo = AchievementRepository();
+  final TagRepository _tagRepo = TagRepository();
+  final TagAchievementRepository _tagAchiRepo = TagAchievementRepository();
 
   List<Achievement> _allAchievements = [];
   List<Achievement> _filteredAchievements = [];
   List<TagAchievement> _allTagAchievements = [];
-  List<Tag> _allTags = [];
-  final List<Tag> _selectedTags = [];
+  
+  // Состояние фильтрации
   String _searchQuery = '';
-  String? statusFilterValue;
-  bool _showUnlockedOnly = false;
-  bool _showLockedOnly = false;
-  bool _isLoading = false;
-
-  List<Achievement> get filteredAchievements => _filteredAchievements;
-  List<Tag> get allTags => _allTags;
-  List<Tag> get selectedTags => _selectedTags;
+  final Set<AchievRar> _filterRar = <AchievRar>{};
+  List<Tag> _selectedTags = [];
+  
+  // Состояние сортировки
+  SortAchievementField _sortField = SortAchievementField.title;
+  bool _sortAscending = true;
+  
+  // Режим выделения
+  bool _isSelectionMode = false;
+  Set<String> _selectedIds = {};
+  
+  // Геттеры
+  List<Achievement> get Achievements => _filteredAchievements;
+  List<TagAchievement> get allTags => _allTagAchievements;
+  bool get isSelectionMode => _isSelectionMode;
+  Set<String> get selectedIds => _selectedIds;
   String get searchQuery => _searchQuery;
-  bool get showUnlockedOnly => _showUnlockedOnly;
-  bool get showLockedOnly => _showLockedOnly;
-  bool get isLoading => _isLoading;
-
-  AchievementListModel() {
-    loadData();
+  
+  SortAchievementField get sortField => _sortField;
+  bool get sortAscending => _sortAscending;
+  
+  Set<AchievRar> get filterRang => _filterRar;
+  List<Tag> get selectedTags => _selectedTags;
+  
+  bool get hasActiveFilters {
+    return _searchQuery.isNotEmpty ||
+           _filterRar.isNotEmpty ||
+           _selectedTags.isNotEmpty;
   }
-
-  Future<void> loadData() async {
-    _isLoading = true;
+  
+  // Загрузка данных
+  Future loadAchievements() async {
+    _allAchievements = await _AchievementRepo.getAll();
+    _allTagAchievements = await _tagAchievementRepo.getAll();
+    await _applyFiltersAndSort();
     notifyListeners();
-
-    try {
-      _allTags = await _tagRepository.getAll();
-      _allAchievements = await _repository.getAll();
-      _allTagAchievements = await _tagAchievementRepository.getAll();
-      _applyFilters();
-    } catch (e) {
-      print('Ошибка загрузки данных: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
-
-  void _applyFilters() {
+  
+  // Поиск
+  Future setSearchQuery(String query) async {
+    _searchQuery = query;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  Future clearSearch() async {
+    _searchQuery = '';
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Фильтры
+  Future setRangFilter(AchievRar rang) async {
+    if (_filterRar.contains(rang)) {
+      _filterRar.remove(rang);
+    } else {
+      _filterRar.add(rang);
+    }
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  
+  Future setTagsFilter(List<Tag> tags) async {
+    _selectedTags = tags;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  void clearAllFilters() {
+    _searchQuery = '';
+    _filterRar.clear();
+    _selectedTags = [];
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Сортировка
+  Future setSortField(SortAchievementField field) async {
+    if (_sortField == field) {
+      _sortAscending = !_sortAscending;
+    } else {
+      _sortField = field;
+      _sortAscending = true;
+    }
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Основная логика фильтрации и сортировки
+  Future _applyFiltersAndSort() async {
     var result = List<Achievement>.from(_allAchievements);
-
-    // Фильтр по поиску
+    // Поиск
     if (_searchQuery.isNotEmpty) {
-      result = result.where((a) =>
-        a.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-        a.description.toLowerCase().contains(_searchQuery.toLowerCase())
+      final query = _searchQuery.toLowerCase();
+      result = result.where((t) =>
+        t.title.toLowerCase().contains(query)
       ).toList();
     }
-
+    // Фильтры по приоритету и сложности
+    if (_filterRar.isNotEmpty) {
+      result = result.where((t) => _filterRar.contains(t.rang)).toList();
+    }
     // Фильтр по тегам
     if (_selectedTags.isNotEmpty) {
-      var selectedAchId = _allTagAchievements.where((tagAch) =>
-        _selectedTags.map((tag) => tag.id).contains(tagAch.tagId)
-      ).map((tagAch) => tagAch.achievementId);
-
-      result = result.where((a) => selectedAchId.contains(a.id)).toList();
+      var selectedTagTasks = _allTagAchievements.where((tagTask) => _selectedTags.map((tag) => tag.id).contains(tagTask.tagId));
+      result = result.where((task) => selectedTagTasks.map((tagTask) => tagTask.AchievementId).contains(task.id)).toList(); 
     }
-
-    // Фильтр по статусу получения
-    if (_showUnlockedOnly) {
-      result = result.where((a) => a.date != null).toList();
-    } else if (_showLockedOnly) {
-      result = result.where((a) => a.date == null).toList();
+    // Сортировка
+    switch (_sortField) {
+      case SortAchievementField.title:
+        result.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case SortAchievementField.rang:
+        result.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+        break;
+      case SortAchievementField.level:
+        result.sort((a, b) => a.level.compareTo(b.level));
+        break;
     }
-
-    // Сортировка: сначала заблокированные, потом полученные
-    result.sort((a, b) {
-      if (a.date == null && b.date != null) return -1;
-      if (a.date != null && b.date == null) return 1;
-      return 0;
-    });
-
+    if (!_sortAscending) {
+      result = result.reversed.toList();
+    }
     _filteredAchievements = result;
+  }
+  
+  Future updateAchievement(Achievement Achievement) async {
+    await _AchievementRepo.update(Achievement);
+    final index = _allAchievements.indexWhere((t) => t.id == Achievement.id);
+    if (index != -1) {
+      _allAchievements[index] = Achievement;
+    }
+    await _applyFiltersAndSort();
     notifyListeners();
   }
 
-  void setSearchQuery(String query) {
-    _searchQuery = query;
-    _applyFilters();
+  Future deleteAchievement(String id) async {
+    await _AchievementRepo.delete(id);
+    _allAchievements.removeWhere((t) => t.id == id);
+    _selectedIds.remove(id);
+    _applyFiltersAndSort();
+    notifyListeners();
   }
-
-  void toggleTagFilter(Tag tag) {
-    if (_selectedTags.contains(tag)) {
-      _selectedTags.remove(tag);
+  
+  Future deleteSelectedAchievements() async {
+    for (final id in _selectedIds) {
+      await _AchievementRepo.delete(id);
+      _allAchievements.removeWhere((t) => t.id == id);
+    }
+    _selectedIds.clear();
+    _isSelectionMode = false;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
+  // Режим выделения
+  void toggleSelectionMode() {
+    _isSelectionMode = !_isSelectionMode;
+    if (!_isSelectionMode) {
+      _selectedIds.clear();
+    }
+    notifyListeners();
+  }
+  
+  void toggleSelectAll() {
+    if (_selectedIds.length == _filteredAchievements.length) {
+      _selectedIds.clear();
     } else {
-      _selectedTags.add(tag);
+      _selectedIds = _filteredAchievements.map((t) => t.id).toSet();
     }
-    _applyFilters();
-  }
-
-  void clearTagFilters() {
-    _selectedTags.clear();
-    _applyFilters();
-  }
-
-  void toggleStatusFilter() {
-    switch (statusFilterValue) {
-      case null:
-      case 'all':
-        _toggleUnlockedFilter();
-        if (_showUnlockedOnly) {
-          _toggleUnlockedFilter();
-        }
-        break;
-      case 'unlocked':
-        _toggleUnlockedFilter();
-        break;
-      case 'locked':
-        _toggleLockedFilter();
-        break;
-    }
-  }
-
-  void _toggleUnlockedFilter() {
-    _showUnlockedOnly = !_showUnlockedOnly;
-    if (_showUnlockedOnly) _showLockedOnly = false;
-    _applyFilters();
-  }
-
-  void _toggleLockedFilter() {
-    _showLockedOnly = !_showLockedOnly;
-    if (_showLockedOnly) _showUnlockedOnly = false;
-    _applyFilters();
-  }
-
-  Future<Achievement?> createAchievement({
-    required String title,
-    required String description,
-    required AchievRar rarity,
-    DateTime? date,
-    String? icon,
-    List<Tag> tags = const [],
-  }) async {
-    _isLoading = true;
     notifyListeners();
-
-    try {
-      final achievement = Achievement.create(
-        title: title,
-        description: description,
-        rarity: rarity,
-        date: date,
-        icon: icon,
-      );
-
-      await _repository.insert(achievement);
-
-      // Сохраняем теги
-      for (var tag in tags) {
-        await _tagAchievementRepository.insert(
-          TagAchievement.create(
-            achievementId: achievement.id,
-            tagId: tag.id,
-          ),
-        );
-      }
-
-      _allAchievements.add(achievement);
-      _applyFilters();
-      return achievement;
-    } catch (e) {
-      print('Ошибка создания достижения: $e');
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
-
-  Future<Achievement?> updateAchievement(Achievement achievement, {
-    String? title,
-    String? description,
-    AchievRar? rarity,
-    DateTime? date,
-    String? icon,
-    List<Tag>? tags,
-  }) async {
-    _isLoading = true;
+  
+  void toggleSelectAchievement(String id) {
+    if (_selectedIds.contains(id)) {
+      _selectedIds.remove(id);
+    } else {
+      _selectedIds.add(id);
+    }
     notifyListeners();
-
-    try {
-      final updated = Achievement(
-        id: achievement.id,
-        title: title ?? achievement.title,
-        description: description ?? achievement.description,
-        rarity: rarity ?? achievement.rarity,
-        date: date,
-        icon: icon,
-      );
-
-      await _repository.update(updated);
-
-      // Обновляем теги
-      if (tags != null) {
-        // Удаляем старые связи
-        final existingLinks = await _tagAchievementRepository.getAll();
-        final toDelete = existingLinks.where((l) => l.achievementId == achievement.id);
-        for (var link in toDelete) {
-          await _tagAchievementRepository.delete(link.achievementId, link.tagId);
-        }
-
-        // Добавляем новые
-        for (var tag in tags) {
-          await _tagAchievementRepository.insert(
-            TagAchievement.create(
-              achievementId: achievement.id,
-              tagId: tag.id,
-            ),
-          );
-        }
-      }
-
-      final index = _allAchievements.indexWhere((a) => a.id == achievement.id);
-      if (index != -1) {
-        _allAchievements[index] = updated;
-      }
-      _applyFilters();
-      return updated;
-    } catch (e) {
-      print('Ошибка обновления достижения: $e');
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
-
-  Future<void> deleteAchievement(String id) async {
-    _isLoading = true;
+  
+  void clearSelection() {
+    _selectedIds.clear();
+    _isSelectionMode = false;
     notifyListeners();
-
-    try {
-      final achievement = _allAchievements.firstWhere((a) => a.id == id);
-      
-      // Удаляем иконку
-      if (achievement.icon != null) {
-        await _fileStorage.deleteOldFile(achievement.icon);
-      }
-
-      // Удаляем связи с тегами
-      final links = await _tagAchievementRepository.getAll();
-      final toDelete = links.where((l) => l.achievementId == id);
-      for (var link in toDelete) {
-        await _tagAchievementRepository.delete(link.achievementId, link.tagId);
-      }
-
-      await _repository.delete(id);
-      _allAchievements.removeWhere((a) => a.id == id);
-      _applyFilters();
-    } catch (e) {
-      print('Ошибка удаления достижения: $e');
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<String?> saveIcon(File imageFile) async {
-    return await _fileStorage.saveAchievementIcon(imageFile);
-  }
-
-  Future<File?> pickIcon() async {
-    return await _fileStorage.pickImageFromGallery();
-  }
-
-  // Получение тегов для достижения
-  Future<List<Tag>> getTagsForAchievement(String achievementId) async {
-    final links = await _tagAchievementRepository.getAll();
-    final tagIds = links
-        .where((l) => l.achievementId == achievementId)
-        .map((l) => l.tagId)
-        .toList();
-    
-    return _allTags.where((t) => tagIds.contains(t.id)).toList();
   }
 }

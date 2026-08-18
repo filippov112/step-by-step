@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/widgets/achievement_details.dart';
+import 'package:life_game/screens/achievements/detail/achievement_details_screen.dart';
 import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
-import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
+import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
@@ -24,180 +24,113 @@ class AchievementListScreen extends StatefulWidget {
 }
 
 class _AchievementListScreenState extends State<AchievementListScreen> {
-
-  String searchQuery = '';
-  var searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AchievementListModel>().loadData();
+      context.read<AchievementListModel>().loadAchievements();
     });
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
+    return Consumer<AchievementListModel>(
+      builder: (context, model, child) {
+        return Scaffold(
 
-    var viewModel = context.read<AchievementListModel>();
-    return Scaffold(
-      appBar: _buildAppBar(),
-      drawer: const MainMenuDrawer(),
-      endDrawer: AchievementFilters(
-        selectedTags: viewModel.selectedTags,
-        onConfirm: (tags) {
-          viewModel.clearTagFilters();
-          for (var tag in tags) {
-            viewModel.toggleTagFilter(tag);
-          }
-        },
-      ),
-      body: Consumer<AchievementListModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.isLoading && viewModel.filteredAchievements.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (viewModel.filteredAchievements.isEmpty) {
-            return EmptyListScreen(
-              title: "Достижения не найдены", 
-              subtitle: "Создайте своё первое достижение", 
-              icon: Icons.emoji_events_outlined
-              );
-          }
-
-          // Группируем достижения
-          final unlocked = viewModel.filteredAchievements
-              .where((a) => a.date != null)
-              .toList();
-          final locked = viewModel.filteredAchievements
-              .where((a) => a.date == null)
-              .toList();
-
-          return RefreshIndicator(
-            onRefresh: () => viewModel.loadData(),
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (locked.isNotEmpty) ...[
-                  _buildSectionHeader('Не получены', locked.length),
-                  ...locked.map((ach) => _buildAchievementCard(ach)),
-                ],
-                if (locked.isNotEmpty && unlocked.isNotEmpty)
-                  const SizedBox(height: 8),
-                if (unlocked.isNotEmpty) ...[
-                  _buildSectionHeader('Получены', unlocked.length),
-                  ...unlocked.map((ach) => _buildAchievementCard(ach)),
-                ],
-              ],
+          appBar: buildMainAppBar<Achievement>(
+              context,
+              title: 'Достижения',
+              isRootWidgetTree: true,
+              isSelectionMode: model.isSelectionMode,
+              selectAll: model.toggleSelectAll,
+              selectedIds: model.selectedIds,
+              filteredList: model.achievements,
+              searchWidget: PreferredSize(
+                preferredSize: const Size.fromHeight(60),
+                child: SearchString(
+                  placeholder: 'Поиск достижений...',
+                  controller: _searchController,
+                  value: model.searchQuery,
+                  clearCallback: model.clearSearch,
+                  changeCallback: model.setSearchQuery,
+                )
+              ),
+              deleteSelected: model.deleteSelectedAchievements,
+              clearSelection: model.clearSelection,
             ),
-          );
-        },
-      ),
-      bottomNavigationBar: MainBottomMenu(),
-      floatingActionButton: CustomFloatingActionButton(openFormCreate: _showCreateForm, tooltip: "Добавить достижение")
+          body: _buildBody(context, model),
+          floatingActionButton: model.isSelectionMode
+              ? null
+              : CustomFloatingActionButton(
+                  openFormCreate: _openCreateForm,
+                  tooltip: 'Создать достижение',
+                ),
+          bottomNavigationBar: MainBottomMenu(),
+        
+          endDrawer: AchievementFilters(),
+          drawer: const MainMenuDrawer(),
+        );
+      }
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  Widget _buildBody(BuildContext context, AchievementListModel model) {
+    if (model.achievements.isEmpty) {
+      return EmptyListScreen(
+        title: 'Нет достижений',
+        subtitle: 'Добавьте достижение, нажав на кнопку +',
+        icon: Icons.diamond,
+      );
+    }
+    if (model.hasActiveFilters && model.achievements.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
+            const SizedBox(height: 16),
+            Text(
+              'Нет достижений по заданным фильтрам',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: model.clearAllFilters,
+              child: const Text('Сбросить фильтры'),
+            ),
+          ],
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      itemCount: model.achievements.length,
+      itemBuilder: (context, index) {
+        final achievement = model.achievements[index];
+        return AchievementTile(
+          model: model, 
+          achievement: achievement, 
+        );
+      },
+    );
+  }
 
-    return buildMainAppBar<Achievement>(
+  void _openCreateForm() {
+    Navigator.push(
       context,
-      title: 'Достижения',
-      isRootWidgetTree: true,
-      isSelectionMode: false,
-      selectAll: (){},
-      selectedIds: [],
-      filteredList: [],
-      searchWidget:  PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: SearchString(
-          placeholder: 'Поиск достижений...', 
-          controller: searchController, 
-          value: searchQuery, 
-          clearCallback: () { context.read<AchievementListModel>().setSearchQuery(''); searchQuery = '';},
-          changeCallback: (val) { context.read<AchievementListModel>().setSearchQuery(val); searchQuery = val; },
-        )
+      MaterialPageRoute(
+        builder: (context) => const AchievementFormScreen(),
       ),
-      deleteSelected: (){},
-      clearSelection: (){},
-    );
-  }
-
-  Widget _buildSectionHeader(String title, int count) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          CustomText(
-            title,
-            weight: FontWeight.bold,
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: Theme.of(context).hintColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: CustomText(
-              count.toString(), size: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAchievementCard(Achievement ach) {
-    final isUnlocked = ach.date != null;
-    
-    return Card(
-
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        iconColor: Theme.of(context).focusColor,
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        leading: CustomImageIcon(
-          ach.icon,
-          icon: isUnlocked ? Icons.emoji_events : Icons.lock_outline,
-          width: 40,
-          height: 40,
-          color: ach.rarity.color.withValues(alpha: 0.2)
-        ),
-        title: CustomText(
-          ach.title,
-          size: 15,
-          lines: 2,
-        ),
-        trailing: Container(child:Icon(
-          isUnlocked ? Icons.check_circle : Icons.circle_outlined,
-        ),),
-        onTap: () => _showDetails(ach),
-      ),
-    );
-  }
-
-  void _showCreateForm() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => const AchievementForm(),
-      barrierDismissible: true,
-    );
-    if (result == true && context.mounted) {
-      context.read<AchievementListModel>().loadData();
-    }
-  }
-
-  void _showDetails(Achievement ach) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AchievementDetails(achievement: ach),
-      barrierDismissible: true,
-    );
-    if (context.mounted) {
-      context.read<AchievementListModel>().loadData();
-    }
+    ).then((_) { if (context.mounted) context.read<AchievementListModel>().loadAchievements(); });
   }
 }

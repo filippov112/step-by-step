@@ -33,10 +33,11 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
     ).toList();
 
     return Dialog(
+      insetPadding: EdgeInsets.all(8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.7,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             // Заголовок
@@ -128,13 +129,13 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
             // Кнопки
             SizedBox(
               width: double.infinity,
-              child:OutlinedButton(
+              child: OutlinedButton(
                 onPressed: () {
                   setState(() {
                     _tempSelectedTags.clear();
                   });
                 },
-                child: const Text('Очистить всё'),
+                child: const Text('Очистить'),
               ),
             ),
             const SizedBox(height: 16),
@@ -142,19 +143,19 @@ class _TagsModalWidgetState extends State<TagsModalWidget> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: OutlinedButton(
+                  child: IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Отмена'),
+                    icon: const Icon(Icons.close),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   flex: 1,
-                  child: ElevatedButton(
+                  child: IconButton(
                     onPressed: () {
                       Navigator.of(context).pop(_tempSelectedTags);
                     },
-                    child: const Text('Применить'),
+                    icon: const Icon(Icons.save),
                   ),
                 ),
               ],

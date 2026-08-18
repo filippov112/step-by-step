@@ -4,23 +4,23 @@ import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/widgets/achievement_form.dart';
+import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
-class AchievementDetails extends StatefulWidget {
+class AchievementDetailsScreen extends StatefulWidget {
   final Achievement achievement;
 
-  const AchievementDetails({super.key, required this.achievement});
+  const AchievementDetailsScreen({super.key, required this.achievement});
 
   @override
-  State<AchievementDetails> createState() => _AchievementDetailsState();
+  State<AchievementDetailsScreen> createState() => _AchievementDetailsScreenState();
 }
 
-class _AchievementDetailsState extends State<AchievementDetails> {
+class _AchievementDetailsScreenState extends State<AchievementDetailsScreen> {
 
   List<Tag> _tags = [];
   bool _isLoading = true;
@@ -43,7 +43,7 @@ class _AchievementDetailsState extends State<AchievementDetails> {
   Future<void> _editAchievement() async {
     final result = await showDialog<Achievement>(
       context: context,
-      builder: (context) => AchievementForm(achievement: achievement),
+      builder: (context) => AchievementFormScreen(achievement: achievement),
     );
     if (result != null && context.mounted) {
       setState(() {

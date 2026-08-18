@@ -19,7 +19,6 @@ class SkillListModel extends ChangeNotifier {
   String _searchQuery = '';
   final Set<SkillRang> _filterRang = <SkillRang>{};
   List<Tag> _selectedTags = [];
-  List<Tag> _tags = [];
   
   // Состояние сортировки
   SortSkillField _sortField = SortSkillField.title;
@@ -41,7 +40,6 @@ class SkillListModel extends ChangeNotifier {
   
   Set<SkillRang> get filterRang => _filterRang;
   List<Tag> get selectedTags => _selectedTags;
-  List<Tag> get tags => _tags;
   
   bool get hasActiveFilters {
     return _searchQuery.isNotEmpty ||

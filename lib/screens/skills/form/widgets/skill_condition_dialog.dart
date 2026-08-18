@@ -44,6 +44,7 @@ class _ConditionDialogState extends State<ConditionDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.all(8),
       title: Text(widget.existingCondition != null ? 'Редактирование условия' : 'Добавление условия'),
       content: SingleChildScrollView(
         child: Column(
@@ -137,15 +138,15 @@ class _ConditionDialogState extends State<ConditionDialog> {
             children: [
               Expanded(
                 flex: 1,
-                child: OutlinedButton(
+                child: IconButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Отмена'),
+                  icon: const Icon(Icons.close),
                 ),
               ),
               SizedBox(width: 8,),
               Expanded(
                 flex: 1, 
-                child: ElevatedButton(
+                child: IconButton(
                   onPressed: () {
                     final condition = SkillCondition(
                       id: widget.existingCondition?.id ?? '',
@@ -159,7 +160,7 @@ class _ConditionDialogState extends State<ConditionDialog> {
                       'editIndex': widget.editIndex,
                     });
                   },
-                  child: const Text('Сохранить'),
+                  icon: const Icon(Icons.save),
                 ),
               ),
             ],

@@ -74,7 +74,7 @@ class _SkillListScreenState extends State<SkillListScreen> {
           bottomNavigationBar: MainBottomMenu(),
         
           endDrawer: SkillFilters(),
-          drawer: const MainMenuDrawer(currentRoute: '/skills'),
+          drawer: const MainMenuDrawer(),
         );
       }
     );

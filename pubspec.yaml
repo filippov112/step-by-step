@@ -44,6 +44,8 @@ dependencies:
   path_provider: ^2.1.2
   shared_preferences: ^2.5.5
   provider: ^6.1.5+1
+  radar_chart_plus: ^3.0.0
+  snap_chart: ^1.1.1
 
 dev_dependencies:
   flutter_test:

@@ -1,35 +1,27 @@
-String getAgeString(DateTime birthDate) {
-  final now = DateTime.now();
-  
-  // Вычисляем разницу в днях
-  final difference = now.difference(birthDate);
-  final totalDays = difference.inDays;
-  
-  if (totalDays < 0) {
-    return 'Дата рождения в будущем';
-  }
-  
+String getDateIntervalString(DateTime first, DateTime? last) {
+  final DateTime last0 = last ?? DateTime.now();
+
   // Вычисляем полные года
-  int years = now.year - birthDate.year;
+  int years = last0.year - first.year;
   // Корректируем, если день рождения ещё не наступил в этом году
-  if (now.month < birthDate.month || 
-      (now.month == birthDate.month && now.day < birthDate.day)) {
+  if (last0.month < first.month || 
+      (last0.month == first.month && last0.day < first.day)) {
     years--;
   }
   
   // Вычисляем оставшиеся дни после полных лет
-  final lastBirthday = DateTime(now.year, birthDate.month, birthDate.day);
+  final lastBirthday = DateTime(last0.year, first.month, first.day);
   final nextBirthday = DateTime(
-    now.year + (now.isAfter(lastBirthday) ? 1 : 0),
-    birthDate.month,
-    birthDate.day,
+    last0.year + (last0.isAfter(lastBirthday) ? 1 : 0),
+    first.month,
+    first.day,
   );
-  final daysUntilNextBirthday = nextBirthday.difference(now).inDays;
-  final daysAfterLastBirthday = now.difference(lastBirthday).inDays;
+  final daysUntilNextBirthday = nextBirthday.difference(last0).inDays;
+  final daysAfterLastBirthday = last0.difference(lastBirthday).inDays;
   
   // Определяем дни (если ДР уже был в этом году — считаем от него, иначе — до следующего)
   int days;
-  if (now.isAfter(lastBirthday)) {
+  if (last0.isAfter(lastBirthday)) {
     days = daysAfterLastBirthday;
   } else {
     days = 365 - daysUntilNextBirthday; // приблизительно
@@ -37,12 +29,12 @@ String getAgeString(DateTime birthDate) {
   
   // Более точный способ: берём остаток от общего количества дней
   // Вычисляем дни, прошедшие после последнего дня рождения
-  final birthdayThisYear = DateTime(now.year, birthDate.month, birthDate.day);
-  if (now.isAfter(birthdayThisYear)) {
-    days = now.difference(birthdayThisYear).inDays;
+  final birthdayThisYear = DateTime(last0.year, first.month, first.day);
+  if (last0.isAfter(birthdayThisYear)) {
+    days = last0.difference(birthdayThisYear).inDays;
   } else {
-    final birthdayLastYear = DateTime(now.year - 1, birthDate.month, birthDate.day);
-    days = now.difference(birthdayLastYear).inDays;
+    final birthdayLastYear = DateTime(last0.year - 1, first.month, first.day);
+    days = last0.difference(birthdayLastYear).inDays;
   }
   
   // Склонение для лет
@@ -65,5 +57,5 @@ String getAgeString(DateTime birthDate) {
     daysStr = '$days дней';
   }
   
-  return '$yearsStr, $daysStr';
+  return years > 0 ? '$yearsStr, $daysStr' : daysStr;
 }

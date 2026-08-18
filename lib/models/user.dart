@@ -32,7 +32,7 @@ class User {
   int level = 1; // уровень
   int experience = 0; // свободный опыт
 
-  String get age => getAgeString(dateBirth);
+  String get age => getDateIntervalString(dateBirth, DateTime.now());
   int get maxExperience => (10 * pow(1.2, level)).round();  // опыт до следующего уровня
 
   User({

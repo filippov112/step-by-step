@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
+import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/filters.dart';
 import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';

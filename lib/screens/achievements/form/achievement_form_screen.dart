@@ -1,20 +1,24 @@
-// lib/widgets/achievement_form.dart
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
-import 'package:life_game/widgets/dialogs/select_date_only.dart';
-import 'package:life_game/widgets/filters/tags_finder.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
+import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
+import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
+import 'package:life_game/screens/achievements/form/widgets/date.dart';
+import 'package:life_game/screens/achievements/form/widgets/description.dart';
+import 'package:life_game/screens/achievements/form/widgets/icon.dart';
+import 'package:life_game/screens/achievements/form/widgets/priority.dart';
+import 'package:life_game/screens/achievements/form/widgets/tags.dart';
+import 'package:life_game/screens/achievements/form/widgets/title.dart';
+import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
-class AchievementFormScreen extends StatefulWidget {
-  final Achievement? achievement;
 
-  const AchievementFormScreen({super.key, this.achievement});
+class AchievementFormScreen extends StatefulWidget {
+  final Achievement? achi;
+  
+  const AchievementFormScreen({super.key, this.achi});
 
   @override
   State<AchievementFormScreen> createState() => _AchievementFormScreenState();
@@ -22,271 +26,138 @@ class AchievementFormScreen extends StatefulWidget {
 
 class _AchievementFormScreenState extends State<AchievementFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late AchievementFormModel model;
   
-  AchievRar _selectedRarity = AchievRar.common;
-  List<Tag> _selectedTags = [];
-  String? _iconPath;
-  DateTime? _selectedDate;
-  bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
-    if (widget.achievement != null) {
-      _titleController.text = widget.achievement!.title;
-      _descriptionController.text = widget.achievement!.description;
-      _selectedRarity = widget.achievement!.rarity;
-      _selectedDate = widget.achievement!.date;
-      _iconPath = widget.achievement!.icon;
-      _loadTags();
-    }
-  }
-
-  Future<void> _loadTags() async {
-    if (widget.achievement != null) {
-      final viewModel = context.read<AchievementListModel>();
-      final tags = await viewModel.getTagsForAchievement(widget.achievement!.id);
-      setState(() {
-        _selectedTags = tags;
-      });
-    }
-  }
-
-  Future<void> _pickIcon() async {
-    final viewModel = context.read<AchievementListModel>();
-    final file = await viewModel.pickIcon();
-    if (file != null) {
-      final path = await viewModel.saveIcon(file);
-      setState(() {
-        _iconPath = path;
-      });
-    }
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final viewModel = context.read<AchievementListModel>();
-      
-      Achievement? result;
-      if (widget.achievement == null) {
-        result = await viewModel.createAchievement(
-          title: _titleController.text,
-          description: _descriptionController.text,
-          rarity: _selectedRarity,
-          date: _selectedDate,
-          icon: _iconPath,
-          tags: _selectedTags,
-        );
-      } else {
-        result = await viewModel.updateAchievement(
-          widget.achievement!,
-          title: _titleController.text,
-          description: _descriptionController.text,
-          rarity: _selectedRarity,
-          date: _selectedDate,
-          icon: _iconPath,
-          tags: _selectedTags,
-        );
-      }
-
-      if (mounted) {
-        Navigator.of(context).pop(result);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: CustomText('Ошибка: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  void _showTagSelector() async {
-    await showDialog<List<Tag>>(
-      context: context,
-      builder: (context) => Dialog(
-        child: TagsFinder(
-          selectedTags: _selectedTags,
-          onConfirm: (tags) {
-            setState(() {
-              _selectedTags = tags;
-            });
-          },
-        ),
-      ) 
-    );
+    model = context.read<AchievementFormModel>();
+    model.setAchievement(widget.achi);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: const EdgeInsets.all(12),
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-        ),
-        padding: const EdgeInsets.all(14),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              
-              // Иконка
-              Center(
-                child: GestureDetector(
-                  onTap: _pickIcon,
-                  child: CustomImageIcon(
-                    _iconPath, 
-                    icon: Icons.add_photo_alternate, 
-                    width: 80, height: 80,
-                    color: _selectedRarity.color
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              // Название
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Название',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Введите название';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              // Описание
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Описание',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
-              // Редкость
-              DropdownButtonFormField<AchievRar>(
-                initialValue: _selectedRarity,
-                decoration: const InputDecoration(
-                  labelText: 'Редкость',
-                ),
-                items: AchievRar.values.map((rarity) {
-                  return DropdownMenuItem(
-                    value: rarity,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: rarity.color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        CustomText(rarity.displayName),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRarity = value!;
-                  });
-                },
-                
-              ),
-              const SizedBox(height: 16),
-              // Теги
-              Row(
-                children: [
-                  Expanded(
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [ ..._selectedTags.map((t) => TagChip(title: t.title))],
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _showTagSelector,
-                    child: CustomText(
-                      'Выбрать теги',
-                    ),
-                  ),
-                ],
-              ),
 
-              Card(
-                margin: EdgeInsets.all(0),
-                child: ListTile(
-                  titleAlignment: ListTileTitleAlignment.center,
-                  leading: const Icon(Icons.event),
-                  trailing: _selectedDate != null ? IconButton(
-                    onPressed: () => setState(() {
-                      _selectedDate = null;
-                    }), 
-                    icon: Icon(Icons.close)
-                  ) : null,
-                  title: const CustomText('Дата'),
-                  subtitle: CustomText(_selectedDate != null ?
-                    '${_selectedDate!.day}.${_selectedDate!.month}.${_selectedDate!.year} '
-                    '${_selectedDate!.hour}:${_selectedDate!.minute.toString().padLeft(2, '0')}' : '',
-                  ),
-                  onTap: () async {
-                    final result = await selectDateOnly(context, _selectedDate ?? DateTime.now());
-                    setState(() {
-                      _selectedDate = result;
-                    });
-                  },
-                ),
-              ),
+    var achiId = context.select<AchievementFormModel,String>((model) => model.achievement.id);
+    var isEditing = context.select<AchievementFormModel,bool>((model) => model.isEditing);
+    var selectedDescription = context.select<AchievementFormModel,String>((model) => model.selectedDescription);
+    var selectedTitle = context.select<AchievementFormModel,String>((model) => model.selectedTitle);
+    var selectedIcon = context.select<AchievementFormModel,String?>((model) => model.selectedIcon);
+    var selectedDate = context.select<AchievementFormModel,DateTime?>((model) => model.selectedDate);
+    var selectedRarity = context.select<AchievementFormModel,AchievRar>((model) => model.selectedRarity);
+    var selectedTags = context.select<AchievementFormModel,List<Tag>>((model) => model.selectedTags);
+    
+    var setTitle = model.setTitle;
+    var setIcon = model.setIcon;
+    var setRarity = model.setRarity;
+    var setDate = model.setDate;
+    var setDescription = model.setDescription;
+    var setSelectedTags = model.setSelectedTags;
+    
+    var saveAchievement = model.saveAchievement;
+    var deleteAchievement = model.deleteAchievement;
 
-              const SizedBox(height: 20),
-              // Кнопки
-              Row(
-                mainAxisSize: MainAxisSize.max,
+    return Scaffold(
+      appBar: buildAppBar(
+        'Достижение',
+        deleteCallback: () => _delete(deleteAchievement),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: 
+              ListView(
+                padding: const EdgeInsets.all(16),
                 children: [
-                  Expanded(
-                    flex: 1, 
-                    child: IconButton(
-                      onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close)
-                    )
+
+                  // Иконка
+                  CustomIconPicker(
+                    currentIcon: selectedIcon,
+                    setIcon: setIcon
                   ),
                   
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 1, 
-                    child: IconButton(
-                      onPressed: _isLoading ? null : _submit, 
-                      icon: Icon(Icons.save)
-                    )
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+
+                  Text(
+                    'Основные поля',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ],
-              ),
-            ],
-          ),
+                  SizedBox(height: 12,),
+
+                  // Название
+                  buildTitleInput(selectedTitle: selectedTitle, setTitle: setTitle),
+                  const SizedBox(height: 12),
+
+                  // Описание
+                  buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
+                  const SizedBox(height: 12), 
+                  
+                  // Дата
+                  buildDatePicker(
+                    context,
+                    currentDatetime: selectedDate, 
+                    setDateTime: setDate
+                  ),
+
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  
+                  // Редкость
+                  buildRaritySelector(
+                    context, 
+                    currentRarity: selectedRarity, 
+                    setRarity: setRarity
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+
+                  // Теги
+                  buildTagsSection(
+                    context, 
+                    selectedTags: selectedTags, 
+                    setSelectedTags: setSelectedTags
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  
+
+                ]
+              ),   
+            ),
+            // Кнопки
+            buildButtonsBlock(
+              context, 
+              saveCallback: () => _saveAchievement(saveAchievement), 
+              isEditing: isEditing
+            )
+          ]
         ),
       ),
     );
+  }
+
+  Future _saveAchievement(Future<bool> Function() saveAchievement) async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState?.save();
+    var result = await saveAchievement(); 
+    if (mounted) {
+      Navigator.pop(context, result);
+    }
+  }
+
+  Future _delete(Future Function() deleteAchievement) async {
+    if (await showConfirmDialog(context) == true && context.mounted) {
+      await deleteAchievement();
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 }

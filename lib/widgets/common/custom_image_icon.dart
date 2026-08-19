@@ -10,13 +10,15 @@ class CustomImageIcon extends StatelessWidget {
   final double height;
   final Color? color;
   final IconData icon;
+  final Border? border;
 
   const CustomImageIcon(this.path, {super.key, 
     required this.icon,
     this.radius = const BorderRadius.all(Radius.circular(8)),
     this.width = 48,
     this.height = 48,
-    this.color
+    this.color,
+    this.border
   });
 
   File? getFile() {
@@ -42,6 +44,7 @@ class CustomImageIcon extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: radius,
           color: backColor,
+          border: border
         ),
         child: Icon(icon, color: color, size: iconSize),
       ) :
@@ -54,29 +57,41 @@ class CustomImageIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: backColor,
           borderRadius: radius,
+          border: border
         ),
         child:  Icon(Icons.image_not_supported, color: color, size: iconSize),
       ) :
 
       ClipRRect(
         borderRadius: radius,
-        child: Image.file(
-          file,
+        child: Container(
           width: width,
           height: height,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                color: backColor,
-                borderRadius: radius,
-              ),
-              child: Icon(Icons.broken_image, color: color, size: iconSize),
-            );
-          },
+          decoration: BoxDecoration(
+            color: backColor,
+            borderRadius: radius,
+            border: border
+          ),
+          child: Image.file(
+            file,
+            width: width,
+            height: height,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: width,
+                height: height,
+                decoration: BoxDecoration(
+                  color: backColor,
+                  borderRadius: radius,
+                  border: border
+                ),
+                child: Icon(Icons.broken_image, color: color, size: iconSize),
+              );
+            },
+          ),
         ),
-      ));
+      )
+    );
   }
 } 

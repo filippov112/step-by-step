@@ -1,9 +1,7 @@
 // lib/widgets/tag_selector_modal.dart
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/achievement_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
-import 'package:provider/provider.dart';
 
 // Форма поиска и выбора тегов для фильтров и форм связанных с тегами сущностей (достижения, навыки, задачи)
 class TagsFinder extends StatefulWidget {
@@ -50,8 +48,8 @@ class _TagsFinderState extends State<TagsFinder> {
 
   void _toggleTag(Tag tag) {
     setState(() {
-      if (_selectedTags.contains(tag)) {
-        _selectedTags.remove(tag);
+      if (_selectedTags.map((el) => el.id).contains(tag.id)) {
+        _selectedTags.removeWhere((el) => el.id == tag.id);
       } else {
         _selectedTags.add(tag);
       }
@@ -104,7 +102,7 @@ class _TagsFinderState extends State<TagsFinder> {
                     itemCount: _filteredTags.length,
                     itemBuilder: (context, index) {
                       final tag = _filteredTags[index];
-                      final isSelected = _selectedTags.contains(tag);
+                      final isSelected = _selectedTags.map((t) => t.id).contains(tag.id);
                       return CheckboxListTile(
                         value: isSelected,
                         onChanged: (_) => _toggleTag(tag),

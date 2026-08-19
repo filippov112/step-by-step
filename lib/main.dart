@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/data/db.dart';
-import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
+import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
+import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/home/home_screen.dart';
 import 'package:life_game/screens/settings/setting_list_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
+import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
@@ -49,7 +51,8 @@ void main() async {
 
         // Achievements
         ChangeNotifierProvider<AchievementListModel>(create: (_) { return AchievementListModel(); }),
-
+        ChangeNotifierProvider<AchievementDetailsModel>(create: (_) { return AchievementDetailsModel(); }),
+        ChangeNotifierProvider<AchievementFormModel>(create: (_) { return AchievementFormModel(); }),
         // Provider<IUserService>(create: (_) => UserServiceImpl()),
       ],
       child: MyApp(),

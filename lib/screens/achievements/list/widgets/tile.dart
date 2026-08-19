@@ -1,26 +1,7 @@
-// final isUnlocked = ach.date != null;
-//leading: CustomImageIcon(
-//           ach.icon,
-//           icon: isUnlocked ? Icons.emoji_events : Icons.lock_outline,
-//           width: 40,
-//           height: 40,
-//           color: ach.rarity.color.withValues(alpha: 0.2)
-//         ),
-//         title: CustomText(
-//           ach.title,
-//           size: 15,
-//           lines: 2,
-//         ),
-//         trailing: Container(child:Icon(
-//           isUnlocked ? Icons.check_circle : Icons.circle_outlined,
-//         ),),
-
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
@@ -135,7 +116,7 @@ class AchievementTile extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
           create: (context) => AchievementDetailsModel(), 
-          child: AchievementDetailsScreen(achievement: achi),
+          child: AchievementDetailScreen(achievement: achi),
         ),
       ),
     );

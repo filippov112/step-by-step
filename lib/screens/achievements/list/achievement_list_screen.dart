@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
-import 'package:life_game/screens/achievements/achievement_list_model.dart';
+import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
-import 'package:life_game/screens/achievements/widgets/filters.dart';
-import 'package:life_game/screens/achievements/widgets/tile.dart';
+import 'package:life_game/screens/achievements/list/widgets/filters.dart';
+import 'package:life_game/screens/achievements/list/widgets/tile.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
@@ -126,7 +126,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const AchievementFormScreen(),
+        builder: (context) => AchievementFormScreen(),
       ),
     ).then((_) { if (context.mounted) context.read<AchievementListModel>().loadAchievements(); });
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
-import 'package:life_game/screens/achievements/achievement_list_screen.dart';
+import 'package:life_game/screens/achievements/list/achievement_list_screen.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/skills/list/skill_list_screen.dart';
 import 'package:life_game/screens/tasks/list/task_list_screen.dart';

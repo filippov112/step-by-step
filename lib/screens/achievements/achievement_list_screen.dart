@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/screens/achievements/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_screen.dart';
-import 'package:life_game/screens/achievements/widgets/achievement_filters.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:life_game/screens/achievements/widgets/filters.dart';
+import 'package:life_game/screens/achievements/widgets/tile.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
@@ -119,7 +116,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
         final achievement = model.achievements[index];
         return AchievementTile(
           model: model, 
-          achievement: achievement, 
+          achi: achievement, 
         );
       },
     );

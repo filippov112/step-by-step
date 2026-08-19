@@ -1,15 +1,15 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_achievement.dart';
-import 'package:life_game/services/file_storage_service.dart';
 
+
+enum SortAchievementField { title, datetime, rarity }
+enum FilterStatusValue { received, blocked }
 
 class AchievementListModel extends ChangeNotifier {
   final AchievementRepository _achiRepo = AchievementRepository();
-  final TagRepository _tagRepo = TagRepository();
   final TagAchievementRepository _tagAchiRepo = TagAchievementRepository();
 
   List<Achievement> _allAchievements = [];
@@ -19,6 +19,7 @@ class AchievementListModel extends ChangeNotifier {
   // Состояние фильтрации
   String _searchQuery = '';
   final Set<AchievRar> _filterRar = <AchievRar>{};
+  final Set<FilterStatusValue> _filterStatus = <FilterStatusValue>{};
   List<Tag> _selectedTags = [];
   
   // Состояние сортировки
@@ -30,7 +31,7 @@ class AchievementListModel extends ChangeNotifier {
   Set<String> _selectedIds = {};
   
   // Геттеры
-  List<Achievement> get Achievements => _filteredAchievements;
+  List<Achievement> get achievements => _filteredAchievements;
   List<TagAchievement> get allTags => _allTagAchievements;
   bool get isSelectionMode => _isSelectionMode;
   Set<String> get selectedIds => _selectedIds;
@@ -39,19 +40,21 @@ class AchievementListModel extends ChangeNotifier {
   SortAchievementField get sortField => _sortField;
   bool get sortAscending => _sortAscending;
   
-  Set<AchievRar> get filterRang => _filterRar;
+  Set<AchievRar> get filterRarity => _filterRar;
+  Set<FilterStatusValue> get filterStatus => _filterStatus;
   List<Tag> get selectedTags => _selectedTags;
   
   bool get hasActiveFilters {
     return _searchQuery.isNotEmpty ||
            _filterRar.isNotEmpty ||
-           _selectedTags.isNotEmpty;
+           _selectedTags.isNotEmpty ||
+           _filterStatus.isNotEmpty;
   }
   
   // Загрузка данных
   Future loadAchievements() async {
-    _allAchievements = await _AchievementRepo.getAll();
-    _allTagAchievements = await _tagAchievementRepo.getAll();
+    _allAchievements = await _achiRepo.getAll();
+    _allTagAchievements = await _tagAchiRepo.getAll();
     await _applyFiltersAndSort();
     notifyListeners();
   }
@@ -70,11 +73,22 @@ class AchievementListModel extends ChangeNotifier {
   }
   
   // Фильтры
-  Future setRangFilter(AchievRar rang) async {
+  Future setRarityFilter(AchievRar rang) async {
     if (_filterRar.contains(rang)) {
       _filterRar.remove(rang);
     } else {
       _filterRar.add(rang);
+    }
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+
+
+  Future setStatusFilter(FilterStatusValue status) async {
+    if (_filterStatus.contains(status)) {
+      _filterStatus.remove(status);
+    } else {
+      _filterStatus.add(status);
     }
     await _applyFiltersAndSort();
     notifyListeners();
@@ -90,6 +104,7 @@ class AchievementListModel extends ChangeNotifier {
   void clearAllFilters() {
     _searchQuery = '';
     _filterRar.clear();
+    _filterStatus.clear();
     _selectedTags = [];
     _applyFiltersAndSort();
     notifyListeners();
@@ -114,28 +129,37 @@ class AchievementListModel extends ChangeNotifier {
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       result = result.where((t) =>
-        t.title.toLowerCase().contains(query)
+        t.title.toLowerCase().contains(query) ||
+        t.description.toLowerCase().contains(query)
       ).toList();
     }
-    // Фильтры по приоритету и сложности
+    // Фильтры
     if (_filterRar.isNotEmpty) {
-      result = result.where((t) => _filterRar.contains(t.rang)).toList();
+      result = result.where((t) => _filterRar.contains(t.rarity)).toList();
     }
-    // Фильтр по тегам
+    if (_filterStatus.isNotEmpty) {
+      result = result.where((t) => _filterStatus.contains(t.date == null ? FilterStatusValue.blocked : FilterStatusValue.received)).toList();
+    }
     if (_selectedTags.isNotEmpty) {
       var selectedTagTasks = _allTagAchievements.where((tagTask) => _selectedTags.map((tag) => tag.id).contains(tagTask.tagId));
-      result = result.where((task) => selectedTagTasks.map((tagTask) => tagTask.AchievementId).contains(task.id)).toList(); 
+      result = result.where((task) => selectedTagTasks.map((tagTask) => tagTask.achievementId).contains(task.id)).toList(); 
     }
     // Сортировка
     switch (_sortField) {
       case SortAchievementField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
         break;
-      case SortAchievementField.rang:
-        result.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+      case SortAchievementField.datetime:
+        result.sort((a, b) {
+          if (a.date == null && b.date == null) return 0;
+          if (a.date == null && b.date != null) return -1;
+          if (a.date != null && b.date == null) return 1;
+          if (a.date != null && b.date != null) return a.date!.compareTo(b.date!);
+          return 0;
+        });
         break;
-      case SortAchievementField.level:
-        result.sort((a, b) => a.level.compareTo(b.level));
+      case SortAchievementField.rarity:
+        result.sort((a, b) => a.rarity.index.compareTo(b.rarity.index));
         break;
     }
     if (!_sortAscending) {
@@ -144,18 +168,18 @@ class AchievementListModel extends ChangeNotifier {
     _filteredAchievements = result;
   }
   
-  Future updateAchievement(Achievement Achievement) async {
-    await _AchievementRepo.update(Achievement);
-    final index = _allAchievements.indexWhere((t) => t.id == Achievement.id);
+  Future updateAchievement(Achievement ach) async {
+    await _achiRepo.update(ach);
+    final index = _allAchievements.indexWhere((t) => t.id == ach.id);
     if (index != -1) {
-      _allAchievements[index] = Achievement;
+      _allAchievements[index] = ach;
     }
     await _applyFiltersAndSort();
     notifyListeners();
   }
 
   Future deleteAchievement(String id) async {
-    await _AchievementRepo.delete(id);
+    await _achiRepo.delete(id);
     _allAchievements.removeWhere((t) => t.id == id);
     _selectedIds.remove(id);
     _applyFiltersAndSort();
@@ -164,7 +188,7 @@ class AchievementListModel extends ChangeNotifier {
   
   Future deleteSelectedAchievements() async {
     for (final id in _selectedIds) {
-      await _AchievementRepo.delete(id);
+      await _achiRepo.delete(id);
       _allAchievements.removeWhere((t) => t.id == id);
     }
     _selectedIds.clear();

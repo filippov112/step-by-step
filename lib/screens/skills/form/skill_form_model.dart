@@ -19,8 +19,6 @@ class SkillFormModel extends ChangeNotifier {
   // Поля формы
   String _title = '';
   SkillRang _rang = SkillRang.F;
-  int _level = 1;
-  int _experience = 0;
   String _iconPath = '';
   String? _f;
   String? _e;
@@ -47,8 +45,6 @@ class SkillFormModel extends ChangeNotifier {
   // Геттеры
   String get title => _title;
   SkillRang get rang => _rang;
-  int get level => _level;
-  int get experience => _experience;
   String get iconPath => _iconPath;
   List<SkillCondition> get conditions => _conditions;
   List<Tag> get selectedTags => _selectedTags;
@@ -67,8 +63,6 @@ class SkillFormModel extends ChangeNotifier {
       _editingSkill = skill;
       _title = skill.title;
       _rang = skill.rang;
-      _level = skill.level;
-      _experience = skill.experience;
       _iconPath = skill.icon;
       _f = skill.f;
       _e = skill.e;
@@ -132,16 +126,6 @@ class SkillFormModel extends ChangeNotifier {
   
   void setRang(SkillRang value) {
     _rang = value;
-    notifyListeners();
-  }
-  
-  void setLevel(int value) {
-    _level = value.clamp(1, 999);
-    notifyListeners();
-  }
-  
-  void setExperience(int value) {
-    _experience = value.clamp(0, 999999);
     notifyListeners();
   }
   
@@ -269,8 +253,8 @@ class SkillFormModel extends ChangeNotifier {
           id: _editingSkill!.id,
           title: _title.trim(),
           rang: _rang,
-          level: _level,
-          experience: _experience,
+          level: _editingSkill!.level,
+          experience: _editingSkill!.experience,
           icon: _iconPath,
           f: _f,
           e: _e,
@@ -318,8 +302,8 @@ class SkillFormModel extends ChangeNotifier {
         skill = Skill.create(
           title: _title.trim(),
           rang: _rang,
-          level: _level,
-          experience: _experience,
+          level: 0,
+          experience: 0,
           icon: _iconPath,
           f: _f,
           e: _e,

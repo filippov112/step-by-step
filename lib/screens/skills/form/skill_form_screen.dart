@@ -124,44 +124,6 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                     ),
                     const SizedBox(height: 16),
                     
-                    // Уровень и опыт
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Уровень',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.numbers),
-                            ),
-                            keyboardType: TextInputType.number,
-                            initialValue: viewModel.level.toString(),
-                            onChanged: (val) {
-                              final value = int.tryParse(val);
-                              if (value != null) viewModel.setLevel(value);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: 'Опыт',
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.star),
-                            ),
-                            keyboardType: TextInputType.number,
-                            initialValue: viewModel.experience.toString(),
-                            onChanged: (val) {
-                              final value = int.tryParse(val);
-                              if (value != null) viewModel.setExperience(value);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    
                     // Описания для рангов
                     const CustomText(
                       'Описания для рангов',
@@ -208,8 +170,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       ),
                     
                     const SizedBox(height: 24),
-                    
-                    
+                   
                   ],
                 ),
                 ])

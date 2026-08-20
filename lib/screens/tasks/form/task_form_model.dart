@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/skill.dart';
@@ -16,6 +17,7 @@ class TaskFormModel extends ChangeNotifier {
   final tagTaskRepo = TagTaskRepository();
   final rewardRepo = TaskRewardRepository();
   final skillRepo = SkillRepository();
+  final classRepo = ClassRepository();
   final taskRepo = TaskRepository();
   final tagRepo = TagRepository();
   final hierRepo = TaskHierarchyRepository();
@@ -23,6 +25,7 @@ class TaskFormModel extends ChangeNotifier {
   List<TagTask> _tagTasks = [];
   List<TaskReward> _rewards = [];
   List<Skill> allSkills = [];
+  List<Class> allClasses = [];
 
   late String selectedTitle;
   late String selectedDescription;
@@ -42,7 +45,7 @@ class TaskFormModel extends ChangeNotifier {
   void setTask(Task? t, Task? parent) {
     isEditing = t != null;
     parentId = parent?.id;
-    task = t ?? Task.create(title: '');
+    task = t ?? Task.create(title: '', description: '');
     selectedDateTime = task.datetime;
     selectedPriority = task.priority;
     selectedDifficulty = task.difficulty;
@@ -57,6 +60,7 @@ class TaskFormModel extends ChangeNotifier {
     await _loadTaskTags();
     await _loadRewards();
     await _loadSkills();
+    await _loadClasses();
     notifyListeners();
   }
 
@@ -80,6 +84,9 @@ class TaskFormModel extends ChangeNotifier {
 
   Future _loadSkills() async {
     allSkills = await skillRepo.getAll();
+  }
+  Future _loadClasses() async {
+    allClasses = await classRepo.getAll();
   }
 
   // -------------------- Commands ------------------------
@@ -152,7 +159,7 @@ class TaskFormModel extends ChangeNotifier {
       } else {
         await taskRepo.insert(task);
         if (parentId != null) {
-          hierRepo.insertBatch([TaskHierarchy(parentId: parentId!, childId: task.id)]);
+          await hierRepo.insertBatch([TaskHierarchy(parentId: parentId!, childId: task.id)]);
         }
       }
       await _saveTags();

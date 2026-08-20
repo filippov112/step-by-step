@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/task_reward.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
+import 'package:life_game/screens/tasks/form/widgets/reward_tile.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -24,15 +26,26 @@ class RewardDialog extends StatefulWidget {
 
 class _RewardDialogState extends State<RewardDialog> {
   List<TaskReward> _selected = [];
-  List<String> _selectedId = [];
+  
+  Set<String> _selectedSkillsId = {};
+  Set<String> _selectedClassesId = {};
+  
   Skill? currentSkill;
+  Class? currentClass;
   TaskReward? currentReward;
+  
   String _query = '';
   int tabIndex = 0;
+  
   int? currentRowIndexRewards;
   int? currentRowIndexSkills;
-  List<Skill> _filtered = [];
+  int? currentRowIndexClasses;
+  
+  List<Skill> _filteredSkills = [];
   List<Skill> _allSkills = [];
+  
+  List<Class> _allClasses = [];
+  List<Class> _filteredClasses = [];
 
   var expController = TextEditingController();
   var timeController = TextEditingController();
@@ -41,9 +54,14 @@ class _RewardDialogState extends State<RewardDialog> {
   void initState() {
     super.initState();
     _selected = List.from(widget.selectedRewards);
-    _selectedId = _selected.map((e) => e.skillId).toList();
-    _filtered = _getAll();
-    _allSkills = _getAll();
+    _selectedSkillsId = _selected.map((e) => e.skillId).where((e) => e != null).map((e) => e ?? '').toSet();
+    _selectedClassesId = _selected.map((e) => e.classId).where((e) => e != null).map((e) => e ?? '').toSet();
+    
+    _allSkills = _getAllSkills();
+    _filteredSkills = _allSkills.toList();
+
+    _allClasses = _getAllClasses();
+    _filteredClasses = _allClasses.toList();
   }
 
   @override
@@ -53,27 +71,53 @@ class _RewardDialogState extends State<RewardDialog> {
     super.dispose();
   }
 
-  List<Skill> _getAll() {
+  List<Skill> _getAllSkills() {
     final viewModel = context.read<TaskFormModel>();
     return viewModel.allSkills;
   }
 
+  List<Class> _getAllClasses() {
+    final viewModel = context.read<TaskFormModel>();
+    return viewModel.allClasses;
+  }
+
   void _applyFilter() {
     if (_query.isEmpty) {
-      _filtered = _allSkills.toList();
+      _filteredSkills = _allSkills.toList();
+      _filteredClasses = _allClasses.toList();
     } else {
-      _filtered = _allSkills.where((skill) =>
+      _filteredSkills = _allSkills.where((skill) =>
         skill.title.toLowerCase().contains(_query.toLowerCase())
+      ).toList();
+      _filteredClasses = _allClasses.where((cls) =>
+        cls.title.toLowerCase().contains(_query.toLowerCase())
       ).toList();
     }
     setState(() {});
   }
 
-  void _selectSkillReward(Skill skill, TaskReward? reward, int index) {
+  void _selectReward(Skill? skill, Class? cls, TaskReward reward, int index) {
     setState(() {
       currentRowIndexSkills = null;
+      currentRowIndexClasses = null;
       currentRowIndexRewards = index;
       currentSkill = skill;
+      currentClass = cls;
+
+      currentReward = reward;
+      timeController.text = reward.time.toString();
+      expController.text = reward.experience.toString();
+    });
+  }
+
+  void _selectSkill(Skill? skill, TaskReward? reward, int index) {
+    setState(() {
+      currentRowIndexSkills = index;
+      currentRowIndexRewards = null;
+      currentRowIndexClasses = null;
+      currentSkill = skill;
+      currentClass = null;
+
       if (reward != null) {
         currentReward = reward;
         timeController.text = reward.time.toString();
@@ -84,11 +128,14 @@ class _RewardDialogState extends State<RewardDialog> {
     });
   }
 
-  void _selectSkillSkills(Skill skill, TaskReward? reward, int index) {
+  void _selectClass(Class? cls, TaskReward? reward, int index) {
     setState(() {
-      currentRowIndexSkills = index;
+      currentRowIndexSkills = null;
       currentRowIndexRewards = null;
-      currentSkill = skill;
+      currentRowIndexClasses = index;
+      currentSkill = null;
+      currentClass = cls;
+      
       if (reward != null) {
         currentReward = reward;
         timeController.text = reward.time.toString();
@@ -101,30 +148,51 @@ class _RewardDialogState extends State<RewardDialog> {
 
   void _addReward() {
     _removeReward();
+    if (expController.text.isEmpty && timeController.text.isEmpty) return;
+    if (currentSkill == null && currentClass == null) return;
+
+    var exp = expController.text.isEmpty ? 0 : int.parse(expController.text);
+    var time = timeController.text.isEmpty ? 0 : int.parse(timeController.text);
+
     setState(() {
-      if (currentSkill != null && 
-        !_selectedId.contains(currentSkill!.id) && 
-        (expController.text.isNotEmpty || timeController.text.isNotEmpty)) 
+      if (currentSkill != null && !_selectedSkillsId.contains(currentSkill!.id)) 
       {
         currentReward = TaskReward.create(
           skillId: currentSkill!.id, 
           taskId: widget.taskId, 
-          experience: expController.text.isEmpty ? 0 : int.parse(expController.text), 
-          time: timeController.text.isEmpty ? 0 : int.parse(timeController.text)
+          experience: exp, 
+          time: time
         );
         _selected.add(currentReward!);
-        _selectedId.add(currentSkill!.id);
+        _selectedSkillsId.add(currentSkill!.id);
+      } else 
+      if (currentClass != null && !_selectedClassesId.contains(currentClass!.id)) 
+      {
+        currentReward = TaskReward.create(
+          classId: currentClass!.id, 
+          taskId: widget.taskId, 
+          experience: exp, 
+          time: time
+        );
+        _selected.add(currentReward!);
+        _selectedClassesId.add(currentClass!.id);
       }
     });
   }
 
   void _removeReward() {
+
+    if (currentReward == null) return;
+
     setState(() {
-      if (currentReward != null && _selectedId.contains(currentReward!.skillId)) {
-        _selected.remove(currentReward);
-        _selectedId.remove(currentReward!.skillId);
-        currentReward = null;
+      if (_selectedSkillsId.contains(currentReward!.skillId)) {
+        _selectedSkillsId.remove(currentReward!.skillId);
+      } else 
+      if (_selectedClassesId.contains(currentReward!.classId)) {
+        _selectedClassesId.remove(currentReward!.classId);
       }
+      _selected.remove(currentReward);
+      currentReward = null;
     });
   }
 
@@ -136,7 +204,8 @@ class _RewardDialogState extends State<RewardDialog> {
   void _clearRewards() {
     setState(() {
       _selected.clear();
-      _selectedId.clear();
+      _selectedSkillsId.clear();
+      _selectedClassesId.clear();
     });
   }
 
@@ -155,17 +224,53 @@ class _RewardDialogState extends State<RewardDialog> {
             selectedIndex: tabIndex,
             destinations: [
               NavigationDestination(icon: Icon(Icons.card_giftcard), label: 'Добавленные'),
-              NavigationDestination(icon: Icon(Icons.star_border), label: 'Навыки')
+              NavigationDestination(icon: Icon(Icons.star_border), label: 'Навыки'),
+              NavigationDestination(icon: Icon(Icons.school_outlined), label: 'Классы')
             ]
           ),
           
           const Divider(),
+
+          if (tabIndex != 0) 
+            // Поиск
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal:4),
+              child: 
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Поиск...',
+                  prefixIcon: const Icon(Icons.search),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
+                onChanged: (value) {
+                  _query = value;
+                  _applyFilter();
+                },
+              ),
+            ),
           
-          Expanded(
-            child: tabIndex == 1 ? buildSearchPanel() : buildRewardsPanel()     
+          if (tabIndex == 0) SelectedRewardsPanel(
+            rewards: _selected, 
+            currentRowIndex: currentRowIndexRewards, 
+            allClasses: _allClasses, 
+            allSkills: _allSkills, 
+            clickCallback: _selectReward,
+          ),
+          if (tabIndex == 1) SearchSkillsPanel(
+            currentRowIndex: currentRowIndexSkills, 
+            selectedRewards: _selected, 
+            filteredList: _filteredSkills, 
+            selectedIdSet: _selectedSkillsId, 
+            clickCallback: _selectSkill,
+            ),
+          if (tabIndex == 2) SearchClassesPanel(
+            currentRowIndex: currentRowIndexClasses, 
+            selectedRewards: _selected, 
+            filteredList: _filteredClasses, 
+            selectedIdSet: _selectedClassesId, 
+            clickCallback: _selectClass,
           ),
           
-
           Padding(
             padding: EdgeInsetsGeometry.fromLTRB(8,0,8,0), 
             child: Row(children: [
@@ -210,137 +315,197 @@ class _RewardDialogState extends State<RewardDialog> {
     
   }
 
+}
 
-  Widget buildSearchPanel() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Поиск
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal:4),
-          child: 
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Поиск навыков...',
-              prefixIcon: const Icon(Icons.search),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-            ),
-            onChanged: (value) {
-              _query = value;
-              _applyFilter();
-            },
-          ),
-        ),
-
-        Expanded(
-          child: _filtered.isEmpty
-        ? ListView(children: [
-            EmptyListScreen(
-              title: 'Навыки не найдены', 
-              subtitle: 'Попробуйте изменить запрос или добавьте навык', 
-              icon: Icons.star_border
-            )
-          ],)
-        : Padding(
-            padding: EdgeInsetsGeometry.all(8),
-            child: ListView.builder(
-              itemCount: _filtered.length,
-              itemBuilder: (context, index) {
-                Skill skill = _filtered[index];
-                final isSelected = _selectedId.contains(skill.id);
-                int exp = 0;
-                int time = 0;
-                TaskReward? reward;
-                if (isSelected) {
-                  reward = _selected.firstWhere((rew) => rew.skillId == skill.id);
-                  time = reward.time;
-                  exp = reward.experience;
-                }
-                return buildTile(
-                  context,
-                  title: skill.title, 
-                  exp: exp, 
-                  time: time, 
-                  selected: isSelected, 
-                  focused: currentRowIndexSkills == index,
-                  clickCallback: () =>_selectSkillSkills(skill, reward, index)
-                );
-              },
-            )
-          ) 
-        )
-        
-      ],
+class SearchSkillsPanel extends StatelessWidget {
+  final int? currentRowIndex;
+  final List<TaskReward> selectedRewards;
+  final List<Skill> filteredList;
+  final Set<String> selectedIdSet;
+  final Function(Skill?, TaskReward?, int) clickCallback;
+  
+  const SearchSkillsPanel({
+    super.key, 
+    required this.currentRowIndex,
+    required this.selectedRewards,
+    required this.filteredList, 
+    required this.selectedIdSet, 
+    required this.clickCallback
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return Expanded( child:
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          
+          Expanded(
+            child: filteredList.isEmpty
+          ? ListView(children: [
+              EmptyListScreen(
+                title: 'Навыки не найдены', 
+                subtitle: 'Попробуйте изменить запрос или добавьте навык', 
+                icon: Icons.star_border
+              )
+            ],)
+          : Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child: ListView.builder(
+                itemCount: filteredList.length,
+                itemBuilder: (context, index) {
+                  Skill skill = filteredList[index];
+                  final isSelected = selectedIdSet.contains(skill.id);
+                  int exp = 0;
+                  int time = 0;
+                  TaskReward? reward;
+                  if (isSelected) {
+                    reward = selectedRewards.firstWhere((rew) => rew.skillId == skill.id);
+                    time = reward.time;
+                    exp = reward.experience;
+                  }
+                  return RewardTile(
+                    isClass: false,
+                    title: skill.title, 
+                    exp: exp, 
+                    time: time, 
+                    selected: isSelected, 
+                    focused: currentRowIndex == index,
+                    clickCallback: () => clickCallback(skill, reward, index)
+                  );
+                },
+              )
+            ) 
+          )
+        ],
+      )
     );
   }
 
-  Widget buildRewardsPanel() {
-    return _selected.isEmpty
-    ? ListView(children: [
-        EmptyListScreen(
-          title: 'Награды не добавлены', 
-          subtitle: 'Выберите навык и укажите кол-во опыта/времени', 
-          icon: Icons.card_giftcard
-        )
-    ],)
-    : ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        itemCount: _selected.length,
-        itemBuilder: (context, index) {
-          TaskReward reward = _selected[index];
-          Skill skill = _allSkills.firstWhere((skl) => skl.id == reward.skillId);
+}
+
+
+class SearchClassesPanel extends StatelessWidget {
+  final int? currentRowIndex;
+  final List<TaskReward> selectedRewards;
+  final List<Class> filteredList;
+  final Set<String> selectedIdSet;
+  final Function(Class?, TaskReward?, int) clickCallback;
+  
+  const SearchClassesPanel({
+    super.key, 
+    required this.currentRowIndex,
+    required this.selectedRewards,
+    required this.filteredList, 
+    required this.selectedIdSet, 
+    required this.clickCallback
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(child:
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           
-          return buildTile(
-            context,
-            title: skill.title, 
+          Expanded(
+            child: filteredList.isEmpty
+          ? ListView(children: [
+              EmptyListScreen(
+                title: 'Классы не найдены', 
+                subtitle: 'Попробуйте изменить запрос или добавьте класс', 
+                icon: Icons.school_outlined
+              )
+            ],)
+          : Padding(
+              padding: EdgeInsetsGeometry.all(8),
+              child: ListView.builder(
+                itemCount: filteredList.length,
+                itemBuilder: (context, index) {
+                  Class class_ = filteredList[index];
+                  final isSelected = selectedIdSet.contains(class_.id);
+                  int exp = 0;
+                  int time = 0;
+                  TaskReward? reward;
+                  if (isSelected) {
+                    reward = selectedRewards.firstWhere((rew) => rew.classId == class_.id);
+                    time = reward.time;
+                    exp = reward.experience;
+                  }
+                  return RewardTile(
+                    isClass: true,
+                    title: class_.title, 
+                    exp: exp, 
+                    time: time, 
+                    selected: isSelected, 
+                    focused: currentRowIndex == index,
+                    clickCallback: () => clickCallback(class_, reward, index)
+                  );
+                },
+              )
+            ) 
+          )
+        ],
+      )
+    );
+  }
+
+}
+
+
+class SelectedRewardsPanel extends StatelessWidget {
+
+  final int? currentRowIndex;
+  final List<TaskReward> rewards;
+  final List<Class> allClasses;
+  final List<Skill> allSkills;
+  final Function(Skill?, Class?, TaskReward reward, int) clickCallback;
+
+  const SelectedRewardsPanel({
+    super.key,
+    required this.rewards,
+    required this.currentRowIndex,
+    required this.allClasses,
+    required this.allSkills,
+    required this.clickCallback
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(child: 
+      rewards.isEmpty
+      ? ListView(children: [
+          EmptyListScreen(
+            title: 'Награды не добавлены', 
+            subtitle: 'Выберите навык или класс и укажите кол-во опыта/времени', 
+            icon: Icons.card_giftcard
+          )
+      ],)
+      : ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        itemCount: rewards.length,
+        itemBuilder: (context, index) {
+          TaskReward reward = rewards[index];
+          Skill? skill;
+          Class? class_;
+          if (reward.classId != null) {
+            class_ = allClasses.firstWhere((cls) => cls.id == reward.classId);
+          } else {
+            skill = allSkills.firstWhere((skl) => skl.id == reward.skillId);
+          }
+          bool isClass = class_ != null;
+          
+          return RewardTile(
+            isClass: isClass,
+            title: isClass ? class_.title : skill?.title ?? '', 
             exp: reward.experience, 
             time: reward.time, 
             selected: true,
-            focused: currentRowIndexRewards == index,
-            clickCallback: () =>_selectSkillReward(skill, reward, index)
+            focused: currentRowIndex == index,
+            clickCallback: () => clickCallback(skill, class_, reward, index)
           );
         },
-      );
+      )
+    );
   }
-}
-
-Widget buildTile(
-  BuildContext context,
-  {
-    required String title,
-    required int exp,
-    required int time,
-    required bool selected,
-    required bool focused,
-    VoidCallback? clickCallback
-}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Container(
-      decoration: BoxDecoration(
-        color: focused ? Theme.of(context).focusColor.withValues(alpha:0.5) : 
-          selected ? Theme.of(context).dividerColor.withValues(alpha: 0.5) 
-            : Theme.of(context).dividerColor.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.all(Radius.circular(8))
-      ),
-      child: InkWell(
-        canRequestFocus: true,
-        enableFeedback: clickCallback != null,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-        onTap: clickCallback,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(child: Text(title),),
-              SizedBox(width: 8,),
-              if (selected)
-                Text('$exp / $time')
-            ],
-          ),
-        ),
-      ),
-    )
-  );
 }

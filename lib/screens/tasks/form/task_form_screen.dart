@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/skill.dart';
@@ -53,6 +54,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     var selectedTags = context.select<TaskFormModel,List<Tag>>((model) => model.selectedTags);
     var selectedDone = context.select<TaskFormModel,bool>((model) => model.selectedDone);
     var skills = context.select<TaskFormModel,List<Skill>>((model) => model.allSkills);
+    var classes = context.select<TaskFormModel,List<Class>>((model) => model.allClasses);
     var selectedRewards = context.select<TaskFormModel,List<TaskReward>>((model) => model.selectedRewards);
 
     var setPriority = model.setPriority;
@@ -147,15 +149,14 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   const SizedBox(height: 8),
 
                   // Награды
-                  buildRewardSection(
-                    context, 
+                  TaskRewardsSection(
                     selectedRewards: selectedRewards, 
                     setSelectedRewards: setSelectedRewards, 
                     skills: skills, 
+                    classes: classes,
                     taskId: taskId
                   ),
                   const SizedBox(height: 8),
-
                 ]
               ),   
             ),

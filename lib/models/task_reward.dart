@@ -1,10 +1,12 @@
 import 'package:life_game/data/db.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/task.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
-// Награда за задачу (опыт и время, привязанные к некоторому навыку)
+
+
+// Награда (опыт и время)
 class TaskReward {
   // ------------ Схема ------------
   static const tn = "rewards";
@@ -12,26 +14,31 @@ class TaskReward {
   static const cId = "_id";
   static const cSkillId = "_skill_id";
   static const cTaskId = "_task_id";
+  static const cClassId = "_class_id";
   static const cDate = "_date";
   static const cExperience = "_experience";
   static const cTime = "_time";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
-          $cSkillId TEXT NOT NULL, 
-          $cTaskId TEXT NOT NULL,
+          $cSkillId TEXT, 
+          $cTaskId TEXT,
+          $cClassId TEXT,
           $cDate INTEGER,
           $cExperience INTEGER,
           $cTime INTEGER,
           FOREIGN KEY ($cSkillId) REFERENCES ${Skill.tn}(${Skill.cId}) ON DELETE CASCADE,
-          FOREIGN KEY ($cTaskId) REFERENCES ${Task.tn}(${Task.cId}) ON DELETE CASCADE
+          FOREIGN KEY ($cTaskId) REFERENCES ${Task.tn}(${Task.cId}) ON DELETE CASCADE,
+          FOREIGN KEY ($cClassId) REFERENCES ${Class.tn}(${Class.cId}) ON DELETE CASCADE
         );
         ''';
 
   // ------------ Поля ------------
   String id = "";
-  String skillId = "";
-  String taskId = "";
+  String? skillId;
+  String? taskId;
+  String? classId;
+  
   DateTime? date;
   int experience = 0;
   int time = 0;
@@ -39,16 +46,18 @@ class TaskReward {
   // ------------ Конструкторы ------------
   TaskReward({
     required this.id,
-    required this.skillId,
-    required this.taskId,
+    this.skillId,
+    this.taskId,
+    this.classId,
     this.date,
     required this.experience,
     required this.time,
   });
 
   factory TaskReward.create({
-    required String skillId,
-    required String taskId,
+    String? skillId,
+    String? taskId,
+    String? classId,
     DateTime? date,
     int experience = 0,
     int time = 0,
@@ -58,6 +67,7 @@ class TaskReward {
       id: guid,
       skillId: skillId,
       taskId: taskId,
+      classId: classId,
       date: date,
       experience: experience,
       time: time,
@@ -70,6 +80,7 @@ class TaskReward {
       cId: id,
       cSkillId: skillId,
       cTaskId: taskId,
+      cClassId: classId,
       cDate: date?.millisecondsSinceEpoch,
       cExperience: experience,
       cTime: time,
@@ -80,6 +91,7 @@ class TaskReward {
     id = map[cId];
     skillId = map[cSkillId];
     taskId = map[cTaskId];
+    classId = map[cClassId];
     date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
     experience = map[cExperience] ?? 0;
     time = map[cTime] ?? 0;
@@ -94,6 +106,7 @@ extension RewardCopyWith on TaskReward {
       taskId: taskId ?? this.taskId,
       id: id,
       skillId: skillId,
+      classId: classId,
       date: date,
       experience: experience,
       time: time

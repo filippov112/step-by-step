@@ -22,7 +22,7 @@ class Task {
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
-          $cDesc TEXT, 
+          $cDesc TEXT NOT NULL, 
           $cDateTime INTEGER,
           $cDone INTEGER,
           $cPriority INTEGER,
@@ -54,7 +54,7 @@ class Task {
 
   factory Task.create({
     required String title,
-    String description = "",
+    required String description,
     DateTime? datetime,
     bool done = false,
     TaskPriority priority = TaskPriority.medium,

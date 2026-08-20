@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/task_reward.dart';
 import 'package:life_game/screens/tasks/form/widgets/reward_dialog.dart';
+import 'package:life_game/screens/tasks/form/widgets/reward_tile.dart';
 
-Widget buildRewardSection(
-  BuildContext context,
-  {
-    required List<TaskReward> selectedRewards, 
-    required Function(List<TaskReward>) setSelectedRewards,
-    required List<Skill> skills,
-    required String taskId,
-  }) {
+
+class TaskRewardsSection extends StatelessWidget {
+
+  final List<TaskReward> selectedRewards;
+  final Function(List<TaskReward>) setSelectedRewards;
+  final List<Skill> skills;
+  final List<Class> classes;
+  final String taskId;
+
+  const TaskRewardsSection({
+    super.key,
+    required this.selectedRewards, 
+    required this.setSelectedRewards,
+    required this.skills,
+    required this.classes,
+    required this.taskId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,15 +37,17 @@ Widget buildRewardSection(
               'Награды',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            TextButton.icon(
-              onPressed: () => _openRewardsSelector(
-                context, 
-                selectedRewards: selectedRewards, 
-                setSelectedRewards: setSelectedRewards, 
-                taskId: taskId
+            IconButton(
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => RewardDialog(
+                  onConfirm: (rewards) => setSelectedRewards(rewards), 
+                  taskId: taskId, 
+                  selectedRewards: selectedRewards,
+                ),
               ),
               icon: const Icon(Icons.add, size: 16),
-              label: const Text('Указать'),
             ),
           ],
         ),
@@ -43,14 +60,23 @@ Widget buildRewardSection(
           height:300,
           child: ListView(children: [
             ...selectedRewards.map((reward) {
-              var skill = skills.firstWhere((skill) => skill.id == reward.skillId);
-              return buildTile(
-                context,
-                title: skill.title,
+
+              Skill? skill;
+              Class? class_;
+              if (reward.classId != null) {
+                class_ = classes.firstWhere((cls) => cls.id == reward.classId);
+              } else {
+                skill = skills.firstWhere((skl) => skl.id == reward.skillId);
+              }
+              bool isClass = class_ != null;
+              
+              return RewardTile(
+                isClass: isClass,
+                title: isClass ? class_.title : skill?.title ?? '', 
                 exp: reward.experience, 
                 time: reward.time, 
                 selected: true,
-                focused: false
+                focused: false,
               );
             })
           ],)
@@ -64,29 +90,17 @@ Widget buildRewardSection(
           ),
       ],
     );
-}
-
-int sum(List<int> values) {
-  int r = 0;
-  for(var v in values) {
-    r += v;
   }
-  return r;
+  
+  int sum(List<int> values) {
+    int r = 0;
+    for(var v in values) {
+      r += v;
+    }
+    return r;
+  }
 }
 
-void _openRewardsSelector(
-  BuildContext context, {
-  required List<TaskReward> selectedRewards, 
-  required Function(List<TaskReward>) setSelectedRewards,
-  required String taskId
-}) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => RewardDialog(
-      onConfirm: (rewards) => setSelectedRewards(rewards), 
-      taskId: taskId, 
-      selectedRewards: selectedRewards,
-    ),
-  );
-}
+
+
+

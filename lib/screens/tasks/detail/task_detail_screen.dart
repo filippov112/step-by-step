@@ -10,7 +10,7 @@ import 'package:life_game/screens/tasks/detail/widgets/header.dart';
 import 'package:life_game/screens/tasks/detail/widgets/subtasks.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
-import 'package:life_game/widgets/common/entity_appbar.dart';
+import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailsScreen extends StatefulWidget {

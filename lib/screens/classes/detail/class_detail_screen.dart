@@ -13,7 +13,7 @@ import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/widgets/common/entity_appbar.dart';
+import 'package:life_game/widgets/screens/entity_screen.dart';
 
 class ClassDetailScreen extends StatefulWidget {
   final Class record;

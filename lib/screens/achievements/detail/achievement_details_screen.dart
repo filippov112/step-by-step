@@ -6,7 +6,6 @@ import 'package:life_game/screens/achievements/detail/widgets/header.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/widgets/common/entity_appbar.dart';
 
 class AchievementDetailScreen extends StatefulWidget {
   final Achievement achievement;
@@ -34,19 +33,28 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
     var achievement = context.select<AchievementDetailsModel, Achievement>(
       (model) => model.achievement,
     );
-
     var date = context.select<AchievementDetailsModel, DateTime?>(
       (model) => model.achievement.date,
     );
     var setDone = model.setDone;
-    var deleteThis = model.deleteThis;
 
     return Scaffold(
-      appBar: buildAppBar(
-        'Достижение',
-        editCallback: () => _edit(model, achievement),
-        deleteCallback: () => _deleteThis(deleteThis),
+      appBar: AppBar(
+        title: const Text('Достижение'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () => _edit(achievement),
+            tooltip: 'Редактировать',
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _deleteThis,
+            tooltip: 'Удалить',
+          ),
+        ],
       ),
+
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -76,7 +84,7 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
     );
   }
 
-  void _edit(AchievementDetailsModel model, Achievement achi) async {
+  void _edit(Achievement achi) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -95,9 +103,9 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
     });
   }
 
-  Future _deleteThis(Future Function() deleteThis) async {
+  Future _deleteThis() async {
     if (await showConfirmDialog(context) == true && context.mounted) {
-      await deleteThis();
+      await model.deleteThis();
       if (context.mounted) {
         Navigator.pop(context);
       }

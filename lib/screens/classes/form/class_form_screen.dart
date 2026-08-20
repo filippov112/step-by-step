@@ -11,7 +11,7 @@ import 'package:life_game/screens/achievements/form/widgets/title.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/screens/classes/form/widgets/skills.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
-import 'package:life_game/widgets/common/entity_appbar.dart';
+import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class ClassFormScreen extends StatefulWidget {

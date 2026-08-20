@@ -11,7 +11,7 @@ import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
 import 'package:life_game/screens/achievements/form/widgets/title.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
-import 'package:life_game/widgets/common/entity_appbar.dart';
+import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class AchievementFormScreen extends StatefulWidget {
@@ -77,7 +77,10 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     final saveAchievement = model.saveAchievement;
     final deleteAchievement = model.deleteAchievement;
 
-    return Scaffold(
+    return 
+    
+    
+    Scaffold(
       appBar: buildAppBar(
         'Достижение',
         deleteCallback: () => _delete(deleteAchievement),

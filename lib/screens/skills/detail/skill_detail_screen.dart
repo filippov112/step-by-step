@@ -168,7 +168,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     final int time = ExpCalculator.getRemains(viewModel.skill?.time ?? 0) ;
     final int timeLevel = ExpCalculator.getLevel(viewModel.skill?.time ?? 0) ;
     final int timeReq = ExpCalculator.getRequirements(viewModel.skill?.time ?? 0);
-    final timeProgress = (exp / expReq).clamp(0.0, 1.0);
+    final timeProgress = (time / timeReq).clamp(0.0, 1.0);
     
     return Column(children: [
         Card(

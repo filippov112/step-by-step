@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 Widget buildDescriptionInput({
-  required String selectedDescription,
-  required Function(String) setDescription
+  required TextEditingController? controller,
 }) {
   return TextFormField(
-    initialValue: selectedDescription,
-    onSaved: (val) => setDescription(val ?? ''),
+    controller: controller,
     decoration: const InputDecoration(
       labelText: 'Описание',
       border: OutlineInputBorder(),

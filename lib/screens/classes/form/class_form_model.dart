@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/class.dart';
+import 'package:life_game/models/class_skill.dart';
+import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_class.dart';
 
@@ -11,15 +13,19 @@ class ClassFormModel extends ChangeNotifier {
   final _tagClassRepo = TagClassRepository();
   final _classRepo = ClassRepository();
   final _tagRepo = TagRepository();
+  final _classSkillRepo = ClassSkillRepository();
+  final _skillRepo = SkillRepository();
   
-
+  List<Skill> allSkills = [];
   List<TagClass> _classTags = [];
   List<Class> records = [];
+  List<ClassSkill> selectedClassSkills = [];
 
   late String selectedTitle;
   late String selectedDescription;
   String? selectedIcon;
   List<Tag> selectedTags = [];
+  List<ClassSkill> _classSkills = [];
 
   late bool isEditing;
 
@@ -36,6 +42,8 @@ class ClassFormModel extends ChangeNotifier {
 
   Future loadData() async {
     await _loadTaskTags();
+    await _loadSkills();
+    await _loadRewards();
     notifyListeners();
   }
 
@@ -50,6 +58,15 @@ class ClassFormModel extends ChangeNotifier {
       }
     }
     selectedTags = tags;
+  }
+
+  Future _loadSkills() async {
+    allSkills = await _skillRepo.getAll();
+  }
+
+  Future _loadRewards() async {
+    _classSkills = (await _classSkillRepo.getAll()).where((tt) => tt.classId == record.id).toList();
+    selectedClassSkills = _classSkills.toList();
   }
 
   // -------------------- Commands ------------------------
@@ -68,6 +85,10 @@ class ClassFormModel extends ChangeNotifier {
   }
   void setSelectedTags(List<Tag> tags) {
     selectedTags = tags;
+    notifyListeners();
+  }
+  void setSelectedClassSkills(List<ClassSkill> skills) {
+    selectedClassSkills = skills;
     notifyListeners();
   }
 
@@ -94,6 +115,7 @@ class ClassFormModel extends ChangeNotifier {
         await _classRepo.insert(record);
       }
       await _saveTags();
+      await _saveSkills();
     }
     catch (e) {
       print(e);
@@ -120,5 +142,18 @@ class ClassFormModel extends ChangeNotifier {
     }
   }
 
-  
+  Future _saveSkills() async {
+    final existeds = _classSkills.map((r) => r.skillId).toSet();
+    final currents = selectedClassSkills.map((r) => r.skillId).toSet();
+    final toRemove = existeds.difference(currents);
+    final toAdd = currents.difference(existeds);
+
+    for (final skillId in toRemove) {
+      await _classSkillRepo.delete(skillId, record.id);
+    }
+    for (final skillId in toAdd) {
+      var reward = selectedClassSkills.firstWhere((r) => r.skillId == skillId);
+      await _classSkillRepo.insert(reward);
+    }
+  }
 }

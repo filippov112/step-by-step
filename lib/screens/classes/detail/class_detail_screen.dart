@@ -97,7 +97,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
                     // Описание
                     if (description.isNotEmpty)
                       Container(
-                        height: 400,
+                        height: 150,
                         padding: EdgeInsets.only(bottom: 16),
                         child: ListView(
                           children: [
@@ -150,7 +150,7 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     final int time = ExpCalculator.getRemains(viewModel.record.time) ;
     final int timeLevel = ExpCalculator.getLevel(viewModel.record.time) ;
     final int timeReq = ExpCalculator.getRequirements(viewModel.record.time);
-    final timeProgress = (exp / expReq).clamp(0.0, 1.0);
+    final timeProgress = (time / timeReq).clamp(0.0, 1.0);
     
     return Column(children: [
       CustomText('Экспертность', 

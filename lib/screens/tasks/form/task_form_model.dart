@@ -124,16 +124,6 @@ class TaskFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ---------- Rewards ------------------
-
-  Future searchSkills(String pattern) async {
-    foundedSkills.clear();
-    for (var skill in allSkills.where((skl) => skl.title.contains(pattern))) {
-      foundedSkills.add(skill);
-    }
-    notifyListeners();
-  }
-
   // ---------- CRUD ---------------------
 
   Future deleteTask() async {

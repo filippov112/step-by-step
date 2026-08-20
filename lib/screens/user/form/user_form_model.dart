@@ -9,7 +9,7 @@ class UserFormModel extends ChangeNotifier {
   final fileStorage = FileStorageService();
   UserFormModel();
 
-  final formKey = GlobalKey<FormState>();
+  
   final User newUser = User(dateBirth: DateTime(2000));
 
   Future selectAvatar(String selectedImagePath) async {
@@ -22,18 +22,13 @@ class UserFormModel extends ChangeNotifier {
   }
 
 
-  Future<String?> saveProfile() async {
-    final form = formKey.currentState;
-    if (form != null && form.validate()) {
-      form.save();
-      try {
-        await provider.insert(newUser);
-      } 
-      catch (e) {
-        return e.toString();
-      }
+  Future saveProfile() async {
+    try {
+      await provider.insert(newUser);
+    } 
+    catch (e) {
+      return e.toString();
     }
-    return null;
   }
 
 

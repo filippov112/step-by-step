@@ -33,12 +33,26 @@ class TaskFormScreen extends StatefulWidget {
 class _TaskFormScreenState extends State<TaskFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late TaskFormModel model;
+  TextEditingController? titleController;
+  TextEditingController? descController;
   
   @override
   void initState() {
     super.initState();
     model = context.read<TaskFormModel>();
     model.setTask(widget.task, widget.parent);
+
+    var selectedDescription = model.selectedDescription;
+    var selectedTitle = model.selectedTitle;
+    titleController = TextEditingController(text: selectedTitle);
+    descController = TextEditingController(text: selectedDescription);
+  }
+
+  @override
+  void dispose() {
+    titleController?.dispose();
+    descController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,9 +75,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     var setDateTime = model.setDateTime;
     var setDifficulty = model.setDifficulty;
     var setSelectedTags = model.setSelectedTags;
-    var setDescription = model.setDescription;
     var setSelectedRewards = model.setSelectedRewards;
-    var setTitle = model.setTitle;
     var setDone = model.setDone;
     var saveTask = model.saveTask;
     var deleteTask = model.deleteTask;
@@ -90,11 +102,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   SizedBox(height: 12,),
 
                   // Название
-                  buildTitleInput(selectedTitle: selectedTitle, setTitle: setTitle),
+                  buildTitleInput(controller: titleController),
                   const SizedBox(height: 12),
 
                   // Описание
-                  buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
+                  buildDescriptionInput(controller: descController),
                   const SizedBox(height: 12), 
                   
                   // Дата и время
@@ -173,8 +185,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   }
 
   Future _saveTask(Future<bool> Function() saveTask) async {
-    if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState?.save();
+    if (!mounted || _formKey.currentState == null) return;
+    if (! (_formKey.currentState?.validate() ?? false)) return;
+    
+    model.setTitle(titleController?.text ?? '');
+    model.setDescription(descController?.text ?? '');
     var result = await saveTask(); 
     if (mounted) {
       Navigator.pop(context, result);

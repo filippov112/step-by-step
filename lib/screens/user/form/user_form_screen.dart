@@ -8,8 +8,21 @@ import 'package:provider/provider.dart';
 import 'user_form_model.dart';
 
 
-class UserFormScreen extends StatelessWidget {
+class UserFormScreen extends StatefulWidget {
   const UserFormScreen({super.key});
+  @override
+  State<StatefulWidget> createState() => _UserFormScreenState();
+}
+
+class _UserFormScreenState extends State<UserFormScreen> {
+  final formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
 
   Future selectImage(BuildContext context) async {
     final picker = ImagePicker();
@@ -27,7 +40,13 @@ class UserFormScreen extends StatelessWidget {
   
 
   Future saveUser(BuildContext context) async {
-    String? error = await context.read<UserFormModel>().saveProfile();
+    final form = formKey.currentState;
+    if (form == null || !form.validate()) return;
+    
+    var model = context.read<UserFormModel>();
+    await model.selectName(nameController.text);
+    
+    String? error = await model.saveProfile();
     if (error != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -50,7 +69,6 @@ class UserFormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var formKey = context.select<UserFormModel,GlobalKey<FormState>>((model) => model.formKey);
     var iconPath = context.select<UserFormModel,String?>((model) => model.newUser.icon);
     var dateBirth = context.select<UserFormModel,DateTime>((model) => model.newUser.dateBirth);
  
@@ -68,7 +86,7 @@ class UserFormScreen extends StatelessWidget {
     );
 
     var nameWidget = TextFormField(
-      onSaved: (val) => context.read<UserFormModel>().selectName(val ?? ""),
+      controller: nameController,
       decoration: InputDecoration(labelText: "Имя"),
       validator: (value) {
         if (value == null || value.isEmpty) return 'Обязательное поле';
@@ -121,4 +139,5 @@ class UserFormScreen extends StatelessWidget {
       ),
     );
   }
+
 }

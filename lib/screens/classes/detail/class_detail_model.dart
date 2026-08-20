@@ -54,6 +54,7 @@ class ClassDetailModel extends ChangeNotifier {
     record = cls;
     await _loadClassTags();
     await _loadClassSkills();
+    notifyListeners();
   }
 
   Future _delete(String id) async {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/class.dart';
+import 'package:life_game/models/class_skill.dart';
+import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
 import 'package:life_game/screens/achievements/form/widgets/description.dart';
@@ -7,6 +9,7 @@ import 'package:life_game/screens/achievements/form/widgets/icon.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
 import 'package:life_game/screens/achievements/form/widgets/title.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
+import 'package:life_game/screens/classes/form/widgets/skills.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
@@ -24,30 +27,44 @@ class ClassFormScreen extends StatefulWidget {
 class _ClassFormScreenState extends State<ClassFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late ClassFormModel model;
+  TextEditingController? titleController;
+  TextEditingController? descController;
   
+  @override
+  void dispose() {
+    titleController?.dispose();
+    descController?.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     model = context.read<ClassFormModel>();
     model.setClass(widget.record);
+    var selectedDescription = model.selectedDescription;
+    var selectedTitle = model.selectedTitle;
+    titleController = TextEditingController(text: selectedTitle);
+    descController = TextEditingController(text: selectedDescription);
   }
 
   @override
   Widget build(BuildContext context) {
 
     var isEditing = context.select<ClassFormModel,bool>((model) => model.isEditing);
-    var selectedDescription = context.select<ClassFormModel,String>((model) => model.selectedDescription);
-    var selectedTitle = context.select<ClassFormModel,String>((model) => model.selectedTitle);
     var selectedIcon = context.select<ClassFormModel,String?>((model) => model.selectedIcon);
     var selectedTags = context.select<ClassFormModel,List<Tag>>((model) => model.selectedTags);
     
-    var setTitle = model.setTitle;
     var setIcon = model.setIcon;
-    var setDescription = model.setDescription;
     var setSelectedTags = model.setSelectedTags;
     
     var save = model.save;
     var delete = model.delete;
+
+    var classId = context.select<ClassFormModel,String>((model) => model.record.id);
+    var skills = context.select<ClassFormModel,List<Skill>>((model) => model.allSkills);
+    var selectedSkills = context.select<ClassFormModel,List<ClassSkill>>((model) => model.selectedClassSkills);
+    var setSelectedSkills = model.setSelectedClassSkills;
 
     return Scaffold(
       appBar: buildAppBar(
@@ -81,11 +98,11 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
                   SizedBox(height: 12,),
 
                   // Название
-                  buildTitleInput(selectedTitle: selectedTitle, setTitle: setTitle),
+                  buildTitleInput(controller: titleController,),
                   const SizedBox(height: 12),
 
                   // Описание
-                  buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
+                  buildDescriptionInput(controller: descController),
                   const SizedBox(height: 12), 
                   
                   // Теги
@@ -96,8 +113,16 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
                   ),
                   
                   const SizedBox(height: 8),
-                  
 
+                  // Награды
+                  SkillsSection(
+                    selectedSkills: selectedSkills, 
+                    setSelectedSkills: setSelectedSkills, 
+                    skills: skills, 
+                    classId: classId
+                  ),
+                  const SizedBox(height: 8),
+                  
                 ]
               ),   
             ),
@@ -115,7 +140,9 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
   Future _save(Future<bool> Function() save) async {
     if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState?.save();
+
+    model.setTitle(titleController?.text ?? '');
+    model.setDescription(descController?.text ?? '');
     var result = await save(); 
     if (mounted) {
       Navigator.pop(context, result);

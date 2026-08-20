@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 Widget buildTitleInput({
-  required String selectedTitle,
-  required Function(String) setTitle
+  required TextEditingController? controller,
 }) {
   return TextFormField(
-    initialValue: selectedTitle,
-    onSaved: (val) => setTitle.call(val ?? ''),
+    controller: controller,
     decoration: const InputDecoration(
       labelText: 'Название задачи',
       border: OutlineInputBorder(),

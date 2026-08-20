@@ -27,30 +27,40 @@ class AchievementFormScreen extends StatefulWidget {
 class _AchievementFormScreenState extends State<AchievementFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late AchievementFormModel model;
+  TextEditingController? titleController;
+  TextEditingController? descController;
+
+  @override
+  void dispose() {
+    titleController?.dispose();
+    descController?.dispose();
+    super.dispose();
+  }
   
   @override
   void initState() {
     super.initState();
     model = context.read<AchievementFormModel>();
     model.setAchievement(widget.achi);
+
+    var selectedDescription = model.selectedDescription;
+    var selectedTitle = model.selectedTitle;
+    titleController = TextEditingController(text: selectedTitle);
+    descController = TextEditingController(text: selectedDescription);
   }
 
   @override
   Widget build(BuildContext context) {
 
     var isEditing = context.select<AchievementFormModel,bool>((model) => model.isEditing);
-    var selectedDescription = context.select<AchievementFormModel,String>((model) => model.selectedDescription);
-    var selectedTitle = context.select<AchievementFormModel,String>((model) => model.selectedTitle);
     var selectedIcon = context.select<AchievementFormModel,String?>((model) => model.selectedIcon);
     var selectedDate = context.select<AchievementFormModel,DateTime?>((model) => model.selectedDate);
     var selectedRarity = context.select<AchievementFormModel,AchievRar>((model) => model.selectedRarity);
     var selectedTags = context.select<AchievementFormModel,List<Tag>>((model) => model.selectedTags);
     
-    var setTitle = model.setTitle;
     var setIcon = model.setIcon;
     var setRarity = model.setRarity;
     var setDate = model.setDate;
-    var setDescription = model.setDescription;
     var setSelectedTags = model.setSelectedTags;
     
     var saveAchievement = model.saveAchievement;
@@ -88,11 +98,11 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
                   SizedBox(height: 12,),
 
                   // Название
-                  buildTitleInput(selectedTitle: selectedTitle, setTitle: setTitle),
+                  buildTitleInput(controller: titleController),
                   const SizedBox(height: 12),
 
                   // Описание
-                  buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
+                  buildDescriptionInput(controller: descController),
                   const SizedBox(height: 12), 
                   
                   // Дата
@@ -144,7 +154,8 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
   Future _saveAchievement(Future<bool> Function() saveAchievement) async {
     if (!_formKey.currentState!.validate()) return;
-    _formKey.currentState?.save();
+    model.setTitle(titleController?.text ?? '');
+    model.setDescription(descController?.text ?? '');
     var result = await saveAchievement(); 
     if (mounted) {
       Navigator.pop(context, result);

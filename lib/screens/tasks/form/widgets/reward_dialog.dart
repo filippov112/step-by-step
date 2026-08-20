@@ -459,7 +459,7 @@ class SelectedRewardsPanel extends StatelessWidget {
   final List<TaskReward> rewards;
   final List<Class> allClasses;
   final List<Skill> allSkills;
-  final Function(Skill?, Class?, TaskReward reward, int) clickCallback;
+  final Function(Skill?, Class?, TaskReward, int) clickCallback;
 
   const SelectedRewardsPanel({
     super.key,

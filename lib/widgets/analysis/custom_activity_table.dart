@@ -172,8 +172,4 @@ class CustomActivityTable extends StatelessWidget {
       blue: lerpDouble(minC.b, maxV.b, t) ?? 0
     );
   }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}.${date.month}.${date.year}';
-  }
 }

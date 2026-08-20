@@ -8,7 +8,7 @@ class AchievementDetailsModel extends ChangeNotifier {
   final tagAchiRepo = TagAchievementRepository();
   final tagRepo = TagRepository();
 
-  late Achievement achievement;
+  Achievement achievement = Achievement.create(title: '');
   List<Tag> tags = [];
 
   Future<bool> checkExist() async {
@@ -31,12 +31,12 @@ class AchievementDetailsModel extends ChangeNotifier {
       }
     }
     this.tags = tags;
-    notifyListeners();
   }
 
   Future setAchievement(Achievement achi) async {
     achievement = achi;
     await _loadAchiTags();
+    notifyListeners();
   }
 
   void setDone() async {

@@ -9,7 +9,7 @@ import 'package:life_game/models/tag_class.dart';
 class ClassFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  late Class record;
+  Class record = Class.create(title: '');
   final _tagClassRepo = TagClassRepository();
   final _classRepo = ClassRepository();
   final _tagRepo = TagRepository();
@@ -21,13 +21,13 @@ class ClassFormModel extends ChangeNotifier {
   List<Class> records = [];
   List<ClassSkill> selectedClassSkills = [];
 
-  late String selectedTitle;
-  late String selectedDescription;
+  String selectedTitle = '';
+  String selectedDescription = '';
   String? selectedIcon;
   List<Tag> selectedTags = [];
   List<ClassSkill> _classSkills = [];
 
-  late bool isEditing;
+  bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
@@ -37,15 +37,12 @@ class ClassFormModel extends ChangeNotifier {
     selectedIcon = record.icon;
     selectedTitle = record.title;
     selectedDescription = record.description;
-    loadData();
+    notifyListeners();
+    _loadTaskTags();
+    _loadSkills();
+    _loadRewards();
   }
 
-  Future loadData() async {
-    await _loadTaskTags();
-    await _loadSkills();
-    await _loadRewards();
-    notifyListeners();
-  }
 
   Future _loadTaskTags() async {
     _classTags = (await _tagClassRepo.getAll()).where((tt) => tt.classId == record.id).toList();
@@ -58,15 +55,18 @@ class ClassFormModel extends ChangeNotifier {
       }
     }
     selectedTags = tags;
+    notifyListeners();
   }
 
   Future _loadSkills() async {
     allSkills = await _skillRepo.getAll();
+    notifyListeners();
   }
 
   Future _loadRewards() async {
     _classSkills = (await _classSkillRepo.getAll()).where((tt) => tt.classId == record.id).toList();
     selectedClassSkills = _classSkills.toList();
+    notifyListeners();
   }
 
   // -------------------- Commands ------------------------

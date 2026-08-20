@@ -23,7 +23,7 @@ import 'package:provider/provider.dart';
 class TaskFormScreen extends StatefulWidget {
   final Task? task;
   final Task? parent;
-  
+
   const TaskFormScreen({super.key, this.task, this.parent});
 
   @override
@@ -35,17 +35,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   late TaskFormModel model;
   TextEditingController? titleController;
   TextEditingController? descController;
-  
+
   @override
   void initState() {
     super.initState();
     model = context.read<TaskFormModel>();
-    model.setTask(widget.task, widget.parent);
-
-    var selectedDescription = model.selectedDescription;
-    var selectedTitle = model.selectedTitle;
-    titleController = TextEditingController(text: selectedTitle);
-    descController = TextEditingController(text: selectedDescription);
+    titleController = TextEditingController(text: widget.task?.title);
+    descController = TextEditingController(text: widget.task?.description);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model.setTask(widget.task, widget.parent);
+    });
   }
 
   @override
@@ -57,19 +56,42 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    var taskId = context.select<TaskFormModel,String>((model) => model.task.id);
-    var isEditing = context.select<TaskFormModel,bool>((model) => model.isEditing);
-    var selectedDescription = context.select<TaskFormModel,String>((model) => model.selectedDescription);
-    var selectedTitle = context.select<TaskFormModel,String>((model) => model.selectedTitle);
-    var selectedDatetime = context.select<TaskFormModel,DateTime?>((model) => model.selectedDateTime);
-    var selectedPriority = context.select<TaskFormModel,TaskPriority>((model) => model.selectedPriority);
-    var selectedDifficulty = context.select<TaskFormModel,TaskDifficulty>((model) => model.selectedDifficulty);
-    var selectedTags = context.select<TaskFormModel,List<Tag>>((model) => model.selectedTags);
-    var selectedDone = context.select<TaskFormModel,bool>((model) => model.selectedDone);
-    var skills = context.select<TaskFormModel,List<Skill>>((model) => model.allSkills);
-    var classes = context.select<TaskFormModel,List<Class>>((model) => model.allClasses);
-    var selectedRewards = context.select<TaskFormModel,List<TaskReward>>((model) => model.selectedRewards);
+    var taskId = context.select<TaskFormModel, String>(
+      (model) => model.task.id,
+    );
+    var isEditing = context.select<TaskFormModel, bool>(
+      (model) => model.isEditing,
+    );
+    var selectedDescription = context.select<TaskFormModel, String>(
+      (model) => model.selectedDescription,
+    );
+    var selectedTitle = context.select<TaskFormModel, String>(
+      (model) => model.selectedTitle,
+    );
+    var selectedDatetime = context.select<TaskFormModel, DateTime?>(
+      (model) => model.selectedDateTime,
+    );
+    var selectedPriority = context.select<TaskFormModel, TaskPriority>(
+      (model) => model.selectedPriority,
+    );
+    var selectedDifficulty = context.select<TaskFormModel, TaskDifficulty>(
+      (model) => model.selectedDifficulty,
+    );
+    var selectedTags = context.select<TaskFormModel, List<Tag>>(
+      (model) => model.selectedTags,
+    );
+    var selectedDone = context.select<TaskFormModel, bool>(
+      (model) => model.selectedDone,
+    );
+    var skills = context.select<TaskFormModel, List<Skill>>(
+      (model) => model.allSkills,
+    );
+    var classes = context.select<TaskFormModel, List<Class>>(
+      (model) => model.allClasses,
+    );
+    var selectedRewards = context.select<TaskFormModel, List<TaskReward>>(
+      (model) => model.selectedRewards,
+    );
 
     var setPriority = model.setPriority;
     var setDateTime = model.setDateTime;
@@ -90,16 +112,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: 
-              ListView(
+            Expanded(
+              child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-
                   Text(
                     'Основные поля',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
 
                   // Название
                   buildTitleInput(controller: titleController),
@@ -107,78 +128,78 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
                   // Описание
                   buildDescriptionInput(controller: descController),
-                  const SizedBox(height: 12), 
-                  
+                  const SizedBox(height: 12),
+
                   // Дата и время
                   buildDateTimePicker(
                     context,
-                    currentDatetime: selectedDatetime, 
-                    setDateTime: setDateTime
+                    currentDatetime: selectedDatetime,
+                    setDateTime: setDateTime,
                   ),
 
-                  const SizedBox(height: 8,),
+                  const SizedBox(height: 8),
                   // Статус
                   buildStatusSection(
                     selectedDone: selectedDone,
-                    setDone: setDone
+                    setDone: setDone,
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
-                  
+
                   // Приоритет
                   buildPrioritySelector(
                     context,
-                    currentPriority: selectedPriority, 
-                    setPriority: setPriority
+                    currentPriority: selectedPriority,
+                    setPriority: setPriority,
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
-                  
+
                   // Сложность
                   buildDifficultySelector(
-                    context, 
-                    currentDifficulty: selectedDifficulty, 
-                    setDifficulty: setDifficulty
+                    context,
+                    currentDifficulty: selectedDifficulty,
+                    setDifficulty: setDifficulty,
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
 
                   // Теги
                   buildTagsSection(
-                    context, 
-                    selectedTags: selectedTags, 
-                    setSelectedTags: setSelectedTags
+                    context,
+                    selectedTags: selectedTags,
+                    setSelectedTags: setSelectedTags,
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
 
                   // Награды
                   TaskRewardsSection(
-                    selectedRewards: selectedRewards, 
-                    setSelectedRewards: setSelectedRewards, 
-                    skills: skills, 
+                    selectedRewards: selectedRewards,
+                    setSelectedRewards: setSelectedRewards,
+                    skills: skills,
                     classes: classes,
-                    taskId: taskId
+                    taskId: taskId,
                   ),
                   const SizedBox(height: 8),
-                ]
-              ),   
+                ],
+              ),
             ),
             // Кнопки
             buildButtonsBlock(
-              context, 
-              saveCallback: () => _saveTask(saveTask), 
-              isEditing: isEditing
-            )
-          ]
+              context,
+              saveCallback: () => _saveTask(saveTask),
+              isEditing: isEditing,
+            ),
+          ],
         ),
       ),
     );
@@ -186,11 +207,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
   Future _saveTask(Future<bool> Function() saveTask) async {
     if (!mounted || _formKey.currentState == null) return;
-    if (! (_formKey.currentState?.validate() ?? false)) return;
-    
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
     model.setTitle(titleController?.text ?? '');
     model.setDescription(descController?.text ?? '');
-    var result = await saveTask(); 
+    var result = await saveTask();
     if (mounted) {
       Navigator.pop(context, result);
     }

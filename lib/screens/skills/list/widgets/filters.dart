@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:life_game/widgets/filters/filter_section.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';

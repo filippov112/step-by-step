@@ -4,14 +4,12 @@ import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_skill.dart';
-import 'package:life_game/services/file_storage_service.dart';
 
 class SkillFormModel extends ChangeNotifier {
   final SkillRepository _skillRepo = SkillRepository();
   final SkillConditionRepository _conditionRepo = SkillConditionRepository();
   final TagRepository _tagRepo = TagRepository();
   final TagSkillRepository _tagSkillRepo = TagSkillRepository();
-  final FileStorageService _fileStorage = FileStorageService();
   
   // Редактируемый навык
   Skill? _editingSkill;
@@ -19,7 +17,7 @@ class SkillFormModel extends ChangeNotifier {
   // Поля формы
   String _title = '';
   SkillRang _rang = SkillRang.F;
-  String _iconPath = '';
+  String? _iconPath;
   String? _f;
   String? _e;
   String? _d;
@@ -45,7 +43,7 @@ class SkillFormModel extends ChangeNotifier {
   // Геттеры
   String get title => _title;
   SkillRang get rang => _rang;
-  String get iconPath => _iconPath;
+  String? get iconPath => _iconPath;
   List<SkillCondition> get conditions => _conditions;
   List<Tag> get selectedTags => _selectedTags;
   List<Tag> get allTags => _allTags;
@@ -56,9 +54,6 @@ class SkillFormModel extends ChangeNotifier {
   
   // Инициализация для редактирования
   Future<void> loadSkillForEditing(Skill skill) async {
-    _isLoading = true;
-    notifyListeners();
-    
     try {
       _editingSkill = skill;
       _title = skill.title;
@@ -74,12 +69,15 @@ class SkillFormModel extends ChangeNotifier {
       _ss = skill.ss;
       _sss = skill.sss;
       _ex = skill.ex;
-      
+      _isLoading = true;
+      notifyListeners();
+
       // Загружаем условия
       final allConditions = await _conditionRepo.getAll();
       _conditions = allConditions.where((c) => c.skillId == skill.id).toList();
       _conditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-      
+      notifyListeners();
+
       // Загружаем теги
       await _loadTags();
       
@@ -106,15 +104,14 @@ class SkillFormModel extends ChangeNotifier {
       _allTags.sort((a, b) => a.title.compareTo(b.title));
     } catch (e) {
       _error = 'Ошибка загрузки тегов: $e';
+    } finally {
+      notifyListeners();
     }
   }
   
   // Загрузка тегов для нового навыка
   Future<void> loadTags() async {
-    _isLoading = true;
-    notifyListeners();
     await _loadTags();
-    _isLoading = false;
     notifyListeners();
   }
   
@@ -243,11 +240,6 @@ class SkillFormModel extends ChangeNotifier {
       Skill skill;
       
       if (isEditing) {
-        Skill? existingSkill = await _skillRepo.get(_editingSkill!.id);
-        if (existingSkill != null && existingSkill.icon != _iconPath && existingSkill.icon.isNotEmpty) {
-          await _fileStorage.deleteOldFile(_iconPath);        
-        }
-
         // Обновляем существующий навык
         skill = Skill(
           id: _editingSkill!.id,
@@ -346,38 +338,9 @@ class SkillFormModel extends ChangeNotifier {
       return false;
     }
   }
-  
-  // Выбор иконки
-  Future<bool> pickIcon() async {
-    try {
-      final file = await _fileStorage.pickImageFromGallery();
-      if (file == null) return false;
-      
-      final savedPath = await _fileStorage.saveIcon(file);
-      if (savedPath != null) {
-        _iconPath = savedPath;
-        notifyListeners();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      _error = 'Ошибка выбора иконки: $e';
-      notifyListeners();
-      return false;
-    }
-  }
 
-  // Удаление иконки
-  Future<bool> deleteIcon() async {
-    try {
-      _iconPath = '';
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = 'Ошибка удаления иконки: $e';
-      notifyListeners();
-      return false;
-    }
+  void setIcon(String? iconPath) {
+    _iconPath = iconPath;
+    notifyListeners();
   }
-  
 }

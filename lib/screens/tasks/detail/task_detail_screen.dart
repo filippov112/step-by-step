@@ -22,16 +22,16 @@ class TaskDetailsScreen extends StatefulWidget {
 }
 
 class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
-
   late TaskDetailModel model;
   var expController = ExpansibleController();
-  
+
   @override
   void initState() {
     super.initState();
     model = context.read<TaskDetailModel>();
-    model.setLoading(true);
-    model.setTask(widget.task);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model.setTask(widget.task);
+    });
   }
 
   @override
@@ -39,38 +39,60 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     expController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _loadSubtasks() async {
-    model.setLoading(true);
     await model.loadSubtasks();
   }
 
   @override
   Widget build(BuildContext context) {
+    var childrenCount = context.select<TaskDetailModel, Map<String, int>>(
+      (model) => model.childTasksCount,
+    );
+    var childrenDoneCount = context.select<TaskDetailModel, Map<String, int>>(
+      (model) => model.childDoneTasksCount,
+    );
+    var isLoading = context.select<TaskDetailModel, bool>(
+      (model) => model.isLoading,
+    );
+    var subtasks = context.select<TaskDetailModel, List<Task>>(
+      (model) => model.subtasks,
+    );
+    var task = context.select<TaskDetailModel, Task>((model) => model.task);
 
-    var childrenCount = context.select<TaskDetailModel,Map<String,int>>((model) => model.childTasksCount);
-    var childrenDoneCount = context.select<TaskDetailModel,Map<String,int>>((model) => model.childDoneTasksCount);
-    var isLoading = context.select<TaskDetailModel,bool>((model) => model.isLoading);
-    var subtasks = context.select<TaskDetailModel,List<Task>>((model) => model.subtasks);
-    var task = context.select<TaskDetailModel,Task>((model) => model.task);
-
-    var description = context.select<TaskDetailModel,String>((model) => model.task.description);
-    var title = context.select<TaskDetailModel,String>((model) => model.task.title);
-    var datetime = context.select<TaskDetailModel,DateTime?>((model) => model.task.datetime);
-    var priority = context.select<TaskDetailModel,TaskPriority>((model) => model.task.priority);
-    var difficulty = context.select<TaskDetailModel,TaskDifficulty>((model) => model.task.difficulty);
-    var allTags = context.select<TaskDetailModel,List<Tag>>((model) => model.allTags);
-    var done = context.select<TaskDetailModel,bool>((model) => model.task.done);
-    var isOverdue = context.select<TaskDetailModel,bool>((model) => model.task.isOverdue);
+    var description = context.select<TaskDetailModel, String>(
+      (model) => model.task.description,
+    );
+    var title = context.select<TaskDetailModel, String>(
+      (model) => model.task.title,
+    );
+    var datetime = context.select<TaskDetailModel, DateTime?>(
+      (model) => model.task.datetime,
+    );
+    var priority = context.select<TaskDetailModel, TaskPriority>(
+      (model) => model.task.priority,
+    );
+    var difficulty = context.select<TaskDetailModel, TaskDifficulty>(
+      (model) => model.task.difficulty,
+    );
+    var allTags = context.select<TaskDetailModel, List<Tag>>(
+      (model) => model.allTags,
+    );
+    var done = context.select<TaskDetailModel, bool>(
+      (model) => model.task.done,
+    );
+    var isOverdue = context.select<TaskDetailModel, bool>(
+      (model) => model.task.isOverdue,
+    );
 
     var setDone = model.setDone;
     var deleteThisTask = model.deleteThisTask;
 
     return Scaffold(
       appBar: buildAppBar(
-        'Задача', 
-        editCallback: () => _editTask(model, task), 
-        deleteCallback: () => _deleteThisTask(deleteThisTask)
+        'Задача',
+        editCallback: () => _editTask(model, task),
+        deleteCallback: () => _deleteThisTask(deleteThisTask),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,50 +107,51 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
             context,
             expController: expController,
             onExpansionChanged: () => setState(() {}),
-            subtasks: subtasks, 
+            subtasks: subtasks,
           ),
-          
+
           Divider(),
 
           Expanded(
-            child: expController.isExpanded ? 
-            
-            buildSubtaskBlock(
-              context, 
-              model: model, 
-              expController: expController, 
-              onExpansionChanged: () => setState(() {}), 
-              subtasks: subtasks, 
-              isLoading: isLoading, 
-              childrenCount: childrenCount, 
-              childrenDoneCount: childrenDoneCount
-            ) :
-            
-            buildTaskInfo(
-              context,
-              description: description, 
-              done: done, 
-              datetime: datetime, 
-              isOverdue: isOverdue, 
-              priority: priority, 
-              difficulty: difficulty, 
-              allTags: allTags
-            ),
+            child: expController.isExpanded
+                ? buildSubtaskBlock(
+                    context,
+                    model: model,
+                    expController: expController,
+                    onExpansionChanged: () => setState(() {}),
+                    subtasks: subtasks,
+                    isLoading: isLoading,
+                    childrenCount: childrenCount,
+                    childrenDoneCount: childrenDoneCount,
+                  )
+                : buildTaskInfo(
+                    context,
+                    description: description,
+                    done: done,
+                    datetime: datetime,
+                    isOverdue: isOverdue,
+                    priority: priority,
+                    difficulty: difficulty,
+                    allTags: allTags,
+                  ),
           ),
         ],
       ),
-      floatingActionButton: expController.isExpanded ? FloatingActionButton(
-        onPressed: () => _createSubtask(task),
-        tooltip: 'Добавить подзадачу',
-        child: const Icon(Icons.add),
-      ) : 
-      FloatingActionButton(
-        onPressed: () => setDone(),
-        tooltip: 'Добавить подзадачу',
-        backgroundColor: Theme.of(context).focusColor,
-        child: Icon(done ? Icons.task_alt_outlined : Icons.circle_outlined, color: Theme.of(context).primaryColor),
-      )
-      ,
+      floatingActionButton: expController.isExpanded
+          ? FloatingActionButton(
+              onPressed: () => _createSubtask(task),
+              tooltip: 'Добавить подзадачу',
+              child: const Icon(Icons.add),
+            )
+          : FloatingActionButton(
+              onPressed: () => setDone(),
+              tooltip: 'Добавить подзадачу',
+              backgroundColor: Theme.of(context).focusColor,
+              child: Icon(
+                done ? Icons.task_alt_outlined : Icons.circle_outlined,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
     );
   }
 
@@ -136,10 +159,10 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskFormScreen(parent:currentTask),
+        builder: (context) => TaskFormScreen(parent: currentTask),
       ),
     );
-    
+
     if (result == true) {
       await _loadSubtasks();
     }
@@ -148,9 +171,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   void _editTask(TaskDetailModel model, Task task) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => TaskFormScreen(task: task),
-      ),
+      MaterialPageRoute(builder: (context) => TaskFormScreen(task: task)),
     ).then((_) async {
       if (context.mounted) {
         var checkExistTask = await model.checkExist();

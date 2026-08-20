@@ -4,10 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
-class FileStorageService {
+class FileService {
 
   // Сохраняет иконку
-  Future<String?> saveIcon(File imageFile) async {
+  static Future<String?> saveIcon(File imageFile) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final iconDir = Directory('${appDir.path}/icons');
@@ -27,7 +27,7 @@ class FileStorageService {
   }
   
   // Удаляет старый файл
-  Future<void> deleteOldFile(String? oldPath) async {
+  static Future deleteOldFile(String? oldPath) async {
     if (oldPath == null) return;
     try {
       final file = File(oldPath);
@@ -40,7 +40,7 @@ class FileStorageService {
   }
   
   // Выбор изображения из галереи
-  Future<File?> pickImageFromGallery() async {
+  static Future<File?> pickImageFromGallery() async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(

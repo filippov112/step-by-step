@@ -3,10 +3,6 @@ import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 
 class TagListModel extends ChangeNotifier {
-  // late UserRepository provider = UserRepository();
-
-  TagListModel();
-
   final TagRepository _repository = TagRepository();
   List<Tag> allTags = [];
   List<Tag> filteredTags = [];

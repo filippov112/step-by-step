@@ -10,7 +10,7 @@ import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/screens/home/home_screen.dart';
 import 'package:life_game/screens/settings/setting_list_model.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
-import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';

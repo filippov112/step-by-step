@@ -1,44 +1,44 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
-import 'package:life_game/services/file_storage_service.dart';
 
 class UserFormModel extends ChangeNotifier {
-  late UserRepository provider = UserRepository();
-  final fileStorage = FileStorageService();
-  UserFormModel();
+  final UserRepository _userRepo = UserRepository();
+  User? newUser;
+  bool _isEdit = false;
 
-  
-  final User newUser = User(dateBirth: DateTime(2000));
-
-  Future selectAvatar(String selectedImagePath) async {
-    var file = File(selectedImagePath);
-    if (newUser.icon != null) {
-      await fileStorage.deleteOldFile(newUser.icon);
-    }
-    newUser.icon = await fileStorage.saveIcon(file);
+  Future loadData(bool isEdit) async {
+    newUser = (await _userRepo.get()) ?? User(dateBirth: DateTime(2000));
+    _isEdit = isEdit;
     notifyListeners();
   }
 
+  void setIcon(String? iconPath) {
+    newUser?.icon = iconPath;
+    notifyListeners();
+  }
 
-  Future saveProfile() async {
+  Future saveUser() async {
     try {
-      await provider.insert(newUser);
+      if (newUser == null) return;
+      if (!_isEdit) {
+        await _userRepo.insert(newUser!);
+      } else {
+        await _userRepo.update(newUser!);
+      }
+      
     } 
     catch (e) {
       return e.toString();
     }
   }
 
-
-  Future selectDateBirth(DateTime selectedDate) async {
-    newUser.dateBirth = selectedDate;
+  void setDateBirth(DateTime selectedDate) {
+    newUser?.dateBirth = selectedDate;
     notifyListeners();
   }
 
-  Future selectName(String name) async {
-    newUser.name = name;
+  void setName(String name) {
+    newUser?.name = name;
     notifyListeners();
   }
 }

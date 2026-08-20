@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/services/file_storage_service.dart';
 
 class CustomIconPicker extends StatelessWidget {
-  CustomIconPicker({
+  const CustomIconPicker({
     super.key,
     required this.iconPath,
     required this.setIcon,
@@ -20,15 +20,14 @@ class CustomIconPicker extends StatelessWidget {
   final BorderRadiusGeometry? radius;
   final double? borderWidth;
   final Color? color;
-  final FileStorageService fileStorage = FileStorageService();
 
   // Выбор иконки
   Future<bool> pickIcon() async {
     try {
-      final file = await fileStorage.pickImageFromGallery();
+      final file = await FileService.pickImageFromGallery();
       if (file == null) return false;
 
-      final savedPath = await fileStorage.saveIcon(file);
+      final savedPath = await FileService.saveIcon(file);
       if (savedPath != null) {
         setIcon(savedPath);
       }
@@ -59,7 +58,7 @@ class CustomIconPicker extends StatelessWidget {
         : null;
 
     return GestureDetector(
-      onTap: () => pickIcon(),
+      onTap: () => iconPath == null ? pickIcon() : deleteIcon(),
       child: Container(
         width: size,
         height: size,
@@ -82,18 +81,11 @@ class CustomIconPicker extends StatelessWidget {
                   File(iconPath!),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: backColor,
-                        borderRadius: borderRadius,
-                        border: border,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: size * 0.6,
-                          color: foreColor,
-                        ),
+                    return Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        size: size * 0.6,
+                        color: foreColor,
                       ),
                     );
                   },

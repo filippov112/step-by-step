@@ -1,5 +1,6 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:life_game/services/file_storage_service.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
@@ -51,7 +52,7 @@ class Skill {
   SkillRang rang = SkillRang.F; // Ранг
   int time = 0; // Кэш времени
   int experience = 0; // Кэш опыта
-  String icon = ""; // Иконка
+  String? icon; // Иконка
 
   // Описания рангов
   String? f;
@@ -72,7 +73,7 @@ class Skill {
     required this.rang,
     required this.time,
     required this.experience,
-    required this.icon,
+    this.icon,
     this.f,
     this.e,
     this.d,
@@ -90,7 +91,7 @@ class Skill {
     SkillRang rang = SkillRang.F,
     int time = 0,
     int experience = 0,
-    String icon = "",
+    String? icon,
     String? f,
     String? e,
     String? d,
@@ -151,7 +152,7 @@ class Skill {
     rang = SkillRang.values[map[cRang] ?? 0];
     time = map[cTime] ?? 1;
     experience = map[cExperience] ?? 0;
-    icon = map[cIcon] ?? "";
+    icon = map[cIcon];
     f = map[cF];
     e = map[cE];
     d = map[cD];
@@ -198,11 +199,32 @@ class SkillRepository {
   }
 
   Future<int?> delete(String id) async {
+    await deleteIconIfSetupNull(id: id);
     return await db.delete(Skill.tn, where: '${Skill.cId} = ?', whereArgs: [id]);
   }
 
   Future<int?> update(Skill sk) async {
+    await deleteIconIfSetupNull(obj: sk);
     return await db.update(Skill.tn, sk.toMap(),
         where: '${Skill.cId} = ?', whereArgs: [sk.id]);
+  }
+
+  Future deleteIconIfSetupNull({String? id, Skill? obj}) async {
+    // Если удаление
+    if (id != null) {
+      var oldObject = await get(id);
+      // Удаляем, если было
+      if (oldObject != null && oldObject.icon != null) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    } 
+    // Если обновление
+    else if (obj != null) {
+      var oldObject = await get(obj.id);
+      // Удаляем, если было и изменилось
+      if (oldObject != null && oldObject.icon != null && oldObject.icon != obj.icon) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    }
   }
 }

@@ -50,21 +50,22 @@ class SkillListModel extends ChangeNotifier {
   // Загрузка данных
   Future loadSkills() async {
     _allSkills = await _skillRepo.getAll();
+    notifyListeners();
     _allTagSkills = await _tagSkillRepo.getAll();
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Поиск
   Future setSearchQuery(String query) async {
     _searchQuery = query;
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
   Future clearSearch() async {
     _searchQuery = '';
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
@@ -75,14 +76,14 @@ class SkillListModel extends ChangeNotifier {
     } else {
       _filterRang.add(rang);
     }
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
   
-  Future setTagsFilter(List<Tag> tags) async {
+  void setTagsFilter(List<Tag> tags) async {
     _selectedTags = tags;
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
@@ -102,12 +103,12 @@ class SkillListModel extends ChangeNotifier {
       _sortField = field;
       _sortAscending = true;
     }
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Основная логика фильтрации и сортировки
-  Future _applyFiltersAndSort() async {
+  void _applyFiltersAndSort() {
     var result = List<Skill>.from(_allSkills);
     // Поиск
     if (_searchQuery.isNotEmpty) {
@@ -149,7 +150,7 @@ class SkillListModel extends ChangeNotifier {
     if (index != -1) {
       _allSkills[index] = skill;
     }
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
 
@@ -168,7 +169,7 @@ class SkillListModel extends ChangeNotifier {
     }
     _selectedIds.clear();
     _isSelectionMode = false;
-    await _applyFiltersAndSort();
+    _applyFiltersAndSort();
     notifyListeners();
   }
   

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_screen.dart';
-import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/screens/skills/list/widgets/filters.dart';
 import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
@@ -21,12 +21,14 @@ class SkillListScreen extends StatefulWidget {
 
 class _SkillListScreenState extends State<SkillListScreen> {
   final TextEditingController _searchController = TextEditingController();
+  SkillListModel model = SkillListModel();
 
   @override
   void initState() {
     super.initState();
+    model = context.read<SkillListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SkillListModel>().loadSkills();
+      model.loadSkills();
     });
   }
 
@@ -39,45 +41,41 @@ class _SkillListScreenState extends State<SkillListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SkillListModel>(
-      builder: (context, model, child) {
-        return Scaffold(
-
-          appBar: buildMainAppBar<Skill>(
-              context,
-              title: 'Навыки',
-              isRootWidgetTree: true,
-              isSelectionMode: model.isSelectionMode,
-              selectAll: model.toggleSelectAll,
-              selectedIds: model.selectedIds,
-              filteredList: model.skills,
-              searchWidget: PreferredSize(
-                preferredSize: const Size.fromHeight(60),
-                child: SearchString(
-                  placeholder: 'Поиск навыков...',
-                  controller: _searchController,
-                  value: model.searchQuery,
-                  clearCallback: model.clearSearch,
-                  changeCallback: model.setSearchQuery,
-                )
-              ),
-              deleteSelected: model.deleteSelectedSkills,
-              clearSelection: model.clearSelection,
+    return Scaffold(
+      appBar: buildMainAppBar<Skill>(
+          context,
+          title: 'Навыки',
+          isRootWidgetTree: true,
+          isSelectionMode: model.isSelectionMode,
+          selectAll: model.toggleSelectAll,
+          selectedIds: model.selectedIds,
+          filteredList: model.skills,
+          searchWidget: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: SearchString(
+              placeholder: 'Поиск навыков...',
+              controller: _searchController,
+              value: model.searchQuery,
+              clearCallback: model.clearSearch,
+              changeCallback: model.setSearchQuery,
+            )
+          ),
+          deleteSelected: model.deleteSelectedSkills,
+          clearSelection: model.clearSelection,
+        ),
+      body: _buildBody(context, model),
+      floatingActionButton: model.isSelectionMode
+          ? null
+          : CustomFloatingActionButton(
+              openFormCreate: _openCreateForm,
+              tooltip: 'Создать задачу',
             ),
-          body: _buildBody(context, model),
-          floatingActionButton: model.isSelectionMode
-              ? null
-              : CustomFloatingActionButton(
-                  openFormCreate: _openCreateForm,
-                  tooltip: 'Создать задачу',
-                ),
-          bottomNavigationBar: MainBottomMenu(),
-        
-          endDrawer: SkillFilters(),
-          drawer: const MainMenuDrawer(),
-        );
-      }
+      bottomNavigationBar: MainBottomMenu(),
+    
+      endDrawer: SkillFilters(),
+      drawer: const MainMenuDrawer(),
     );
+  
   }
 
   Widget _buildBody(BuildContext context, SkillListModel model) {

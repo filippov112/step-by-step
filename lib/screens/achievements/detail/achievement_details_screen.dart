@@ -24,7 +24,9 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
   void initState() {
     super.initState();
     model = context.read<AchievementDetailsModel>();
-    model.setAchievement(widget.achievement);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model.setAchievement(widget.achievement);
+    });
   }
 
   @override
@@ -86,6 +88,8 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
         if (!checkExist && context.mounted) {
           Navigator.pop(context);
           return;
+        } else {
+          setState(() {});
         }
       }
     });

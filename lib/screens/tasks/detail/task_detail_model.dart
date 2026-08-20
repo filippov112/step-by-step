@@ -11,7 +11,7 @@ class TaskDetailModel extends ChangeNotifier {
   
   final tagRepo = TagRepository();
 
-  late Task task;
+  Task task = Task.create(title: '', description: '');
   List<Tag> allTags = [];
   
   Map<String,int> childTasksCount = {};
@@ -21,10 +21,6 @@ class TaskDetailModel extends ChangeNotifier {
   
   List<Task> _subtasks = [];
   List<Task> get subtasks => _subtasks;
-
-  void setLoading(bool value) {
-    isLoading = value;
-  }
 
   Future<bool> checkExist() async {
     return await _taskRepo.get(task.id) != null;
@@ -45,15 +41,19 @@ class TaskDetailModel extends ChangeNotifier {
   }
 
   Future setTask(Task tsk) async {
+    isLoading = true;
     task = tsk;
+    notifyListeners();
     await _loadTaskTags();
     await loadSubtasks();
   }
   // Загрузка данных
   Future<void> loadSubtasks() async {
+    isLoading = true;
+    notifyListeners();
     _subtasks = await _hierarchyRepo.getByParent(task.id);
     await _applyFiltersAndSort();
-    setLoading(false);
+    isLoading = false;
     notifyListeners();
   }
 

@@ -8,7 +8,7 @@ import 'package:life_game/models/tag_achievement.dart';
 class AchievementFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  late Achievement achievement;
+  Achievement achievement = Achievement.create(title: '');
   final tagAchiRepo = TagAchievementRepository();
   final achiRepo = AchievementRepository();
   final tagRepo = TagRepository();
@@ -17,15 +17,15 @@ class AchievementFormModel extends ChangeNotifier {
   List<TagAchievement> _tagAchievements = [];
   List<Achievement> allAchievements = [];
 
-  late String selectedTitle;
-  late String selectedDescription;
+  String selectedTitle = '';
+  String selectedDescription = '';
   String? selectedIcon;
   DateTime? selectedDate;
-  late AchievRar selectedRarity;
+  AchievRar selectedRarity = AchievRar.common;
 
   List<Tag> selectedTags = [];
 
-  late bool isEditing;
+  bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
@@ -37,12 +37,8 @@ class AchievementFormModel extends ChangeNotifier {
     selectedIcon = achievement.icon;
     selectedTitle = achievement.title;
     selectedDescription = achievement.description;
-    loadData();
-  }
-
-  Future loadData() async {
-    await _loadTaskTags();
     notifyListeners();
+    _loadTaskTags();
   }
 
   Future _loadTaskTags() async {
@@ -56,6 +52,7 @@ class AchievementFormModel extends ChangeNotifier {
       }
     }
     selectedTags = tags;
+    notifyListeners();
   }
 
   // -------------------- Commands ------------------------

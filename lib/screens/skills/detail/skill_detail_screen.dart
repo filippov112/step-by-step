@@ -12,7 +12,7 @@ import 'package:life_game/models/enums/skill_rang.dart';
 
 class SkillDetailScreen extends StatefulWidget {
   final String skillId;
-  
+
   const SkillDetailScreen({super.key, required this.skillId});
 
   @override
@@ -26,7 +26,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   void initState() {
     super.initState();
     _viewModel = SkillDetailModel();
-    _viewModel.loadSkill(widget.skillId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel.loadSkill(widget.skillId);
+    });
   }
 
   @override
@@ -60,18 +62,24 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
             if (viewModel.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            
+
             if (viewModel.error != null) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, size: 64, color: Theme.of(context).colorScheme.error),
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       viewModel.error!,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -82,28 +90,28 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                 ),
               );
             }
-            
+
             if (viewModel.skill == null) {
               return const Center(child: Text('Навык не найден'));
             }
-            
+
             final skill = viewModel.skill!;
 
             var descriptionsCard = _buildDescriptionsCard(viewModel);
-            
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-
                   // Иконка
                   Center(
                     child: CustomImageIcon(
-                      skill.icon, 
-                      icon: Icons.star_border, 
-                      width:64, height: 64, 
-                      color: skill.rang.color
+                      skill.icon,
+                      icon: Icons.star_border,
+                      width: 64,
+                      height: 64,
+                      color: skill.rang.color,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -122,22 +130,22 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                       align: TextAlign.center,
                     ),
                   ),
-                   
+
                   const SizedBox(height: 12),
-                  
+
                   // Прогресс
                   _buildProgressCard(viewModel),
-                  
+
                   const SizedBox(height: 12),
                   const Divider(),
                   const SizedBox(height: 12),
-                  
+
                   // Кнопка повышения ранга
                   if (viewModel.canUpgradeRank()) ...{
                     _buildUpgradeButton(viewModel),
                     const SizedBox(height: 12),
                   },
-                    
+
                   // Описания для рангов
                   if (descriptionsCard != null) ...{
                     descriptionsCard,
@@ -146,7 +154,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
                   // Условия
                   if (viewModel.conditions.isNotEmpty) ...{
-                    _buildConditionsCard(viewModel)
+                    _buildConditionsCard(viewModel),
                   },
                 ],
               ),
@@ -159,171 +167,206 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
   Widget _buildProgressCard(SkillDetailModel viewModel) {
     final SkillRang rang = viewModel.skill?.rang ?? SkillRang.F;
-    
-    final int exp = ExpCalculator.getRemains(viewModel.skill?.experience ?? 0) ;
-    final int expLevel = ExpCalculator.getLevel(viewModel.skill?.experience ?? 0) ;
-    final int expReq = ExpCalculator.getRequirements(viewModel.skill?.experience ?? 0);
+
+    final int exp = ExpCalculator.getRemains(viewModel.skill?.experience ?? 0);
+    final int expLevel = ExpCalculator.getLevel(
+      viewModel.skill?.experience ?? 0,
+    );
+    final int expReq = ExpCalculator.getRequirements(
+      viewModel.skill?.experience ?? 0,
+    );
     final expProgress = (exp / expReq).clamp(0.0, 1.0);
 
-    final int time = ExpCalculator.getRemains(viewModel.skill?.time ?? 0) ;
-    final int timeLevel = ExpCalculator.getLevel(viewModel.skill?.time ?? 0) ;
-    final int timeReq = ExpCalculator.getRequirements(viewModel.skill?.time ?? 0);
+    final int time = ExpCalculator.getRemains(viewModel.skill?.time ?? 0);
+    final int timeLevel = ExpCalculator.getLevel(viewModel.skill?.time ?? 0);
+    final int timeReq = ExpCalculator.getRequirements(
+      viewModel.skill?.time ?? 0,
+    );
     final timeProgress = (time / timeReq).clamp(0.0, 1.0);
-    
-    return Column(children: [
+
+    return Column(
+      children: [
         Card(
-        margin: EdgeInsetsGeometry.all(0),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText('Ранг:'),
-                  Container(
-                    margin: EdgeInsets.only(left: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: rang.color.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(6),
+          margin: EdgeInsetsGeometry.all(0),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomText('Ранг:'),
+                    Container(
+                      margin: EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: rang.color.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: CustomText(
+                        rang.name,
+                        size: 16,
+                        color: rang.color,
+                        weight: FontWeight.w600,
+                      ),
                     ),
-                    child: CustomText(
-                      rang.name,
-                      size: 16,
-                      color: rang.color,
-                      weight: FontWeight.w600,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        CustomText(
+          'Экспертность',
+          size: 18,
+          color: Theme.of(context).colorScheme.onSurface,
+          padding: EdgeInsets.fromLTRB(0, 16, 8, 8),
+        ),
+
+        Card(
+          margin: EdgeInsetsGeometry.all(0),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomText('Накоплено:'),
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(exp)} EXP',
+                      weight: FontWeight.bold,
+                      expanded: true,
+                      padding: EdgeInsets.only(left: 12),
+                      align: TextAlign.right,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomText('Осталось:'),
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(expReq - exp)} EXP',
+                      weight: FontWeight.bold,
+                      expanded: true,
+                      padding: EdgeInsets.only(left: 12),
+                      align: TextAlign.right,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(expLevel)} LVL',
+                      weight: FontWeight.bold,
+                    ),
+                    CustomText(
+                      '${NumberFormat("#0.00").format(expProgress * 100)}%',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(
+                  value: expProgress,
+                  minHeight: 8,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
 
-      CustomText('Экспертность', 
-        size: 18, 
-        color: Theme.of(context).colorScheme.onSurface, 
-        padding: EdgeInsets.fromLTRB(0,16,8,8)
-      ),
+        CustomText(
+          'Мастерство',
+          size: 18,
+          color: Theme.of(context).colorScheme.onSurface,
+          padding: EdgeInsets.fromLTRB(0, 16, 8, 8),
+        ),
 
-      Card(
-        margin: EdgeInsetsGeometry.all(0),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText('Накоплено:'),
-                  CustomText('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
-                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText('Осталось:'),
-                  CustomText('${NumberFormat('#,##0', 'en_US').format(expReq - exp)} EXP', 
-                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                  )
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    '${NumberFormat('#,##0', 'en_US').format(expLevel)} LVL',
-                    weight: FontWeight.bold
-                  ),
-                  CustomText('${NumberFormat("#0.00").format(expProgress * 100)}%'),
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: expProgress,
-                minHeight: 8,
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-              ),
-            ],
+        Card(
+          margin: EdgeInsetsGeometry.all(0),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomText('Накоплено:'),
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(time)} MIN',
+                      weight: FontWeight.bold,
+                      expanded: true,
+                      padding: EdgeInsets.only(left: 12),
+                      align: TextAlign.right,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomText('Осталось:'),
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(timeReq - time)} MIN',
+                      weight: FontWeight.bold,
+                      expanded: true,
+                      padding: EdgeInsets.only(left: 12),
+                      align: TextAlign.right,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      '${NumberFormat('#,##0', 'en_US').format(timeLevel)} LVL',
+                      weight: FontWeight.bold,
+                    ),
+                    CustomText(
+                      '${NumberFormat("#0.00").format(timeProgress * 100)}%',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(
+                  value: timeProgress,
+                  minHeight: 8,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-
-      CustomText('Мастерство', 
-        size: 18, 
-        color: Theme.of(context).colorScheme.onSurface, 
-        padding: EdgeInsets.fromLTRB(0,16,8,8)
-      ),
-
-      Card(
-        margin: EdgeInsetsGeometry.all(0),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText('Накоплено:'),
-                  CustomText('${NumberFormat('#,##0', 'en_US').format(time)} MIN', 
-                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const CustomText('Осталось:'),
-                  CustomText('${NumberFormat('#,##0', 'en_US').format(timeReq - time)} MIN', 
-                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                  )
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    '${NumberFormat('#,##0', 'en_US').format(timeLevel)} LVL',
-                    weight: FontWeight.bold
-                  ),
-                  CustomText('${NumberFormat("#0.00").format(timeProgress * 100)}%'),
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: timeProgress,
-                minHeight: 8,
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],);
+      ],
+    );
   }
 
   Widget? _buildDescriptionsCard(SkillDetailModel viewModel) {
-    var descs = SkillRang.values.where((rang) => _checkDescriptionTile(viewModel, rang)).map((rang) => _buildDescriptionTile(viewModel, rang));
+    var descs = SkillRang.values
+        .where((rang) => _checkDescriptionTile(viewModel, rang))
+        .map((rang) => _buildDescriptionTile(viewModel, rang));
     List<Widget> descList = [];
-    for(var desc in descs) {
+    for (var desc in descs) {
       descList.add(desc);
       descList.add(Divider());
     }
     if (descs.isEmpty) {
       return null;
-    } 
-    descList.removeLast();   
+    }
+    descList.removeLast();
 
     return Card(
       margin: EdgeInsetsGeometry.all(0),
@@ -331,9 +374,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...descList,
-          ],
+          children: [...descList],
         ),
       ),
     );
@@ -341,8 +382,8 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
 
   Widget _buildConditionsCard(SkillDetailModel viewModel) {
     var conditions = viewModel.conditions.map((condition) {
-                      return _buildConditionTile(viewModel, condition);
-                    });
+      return _buildConditionTile(viewModel, condition);
+    });
 
     return Card(
       margin: EdgeInsetsGeometry.all(0),
@@ -350,18 +391,15 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...conditions
-          ],
+          children: [...conditions],
         ),
       ),
     );
   }
 
-
   Widget _buildUpgradeButton(SkillDetailModel viewModel) {
     final nextRang = viewModel.getNextRangForUpgrade();
-    
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
@@ -384,24 +422,38 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       child: ListTile(
         titleTextStyle: TextStyle(fontWeight: FontWeight.normal),
         titleAlignment: ListTileTitleAlignment.top,
-        leading: Column(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.start, children: [
-          Text(rang.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: rang.color)),
-        ]),
+        leading: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              rang.name,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: rang.color,
+              ),
+            ),
+          ],
+        ),
         title: Text(description, style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }
 
-  Widget _buildConditionTile(SkillDetailModel viewModel, SkillCondition condition) {
+  Widget _buildConditionTile(
+    SkillDetailModel viewModel,
+    SkillCondition condition,
+  ) {
     final isCompleted = viewModel.completedConditions[condition.id] ?? false;
-    
+
     return Card(
       child: ListTile(
         contentPadding: EdgeInsetsGeometry.all(10),
         leading: Container(
           width: 40,
           height: 40,
-          margin: EdgeInsetsGeometry.fromLTRB(8,0,0,0),
+          margin: EdgeInsetsGeometry.fromLTRB(8, 0, 0, 0),
           decoration: BoxDecoration(
             color: condition.rang.color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
@@ -417,23 +469,29 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
           ),
         ),
         title: Text(
-          condition.description.isNotEmpty ? condition.description : 'Без описания',
+          condition.description.isNotEmpty
+              ? condition.description
+              : 'Без описания',
           style: TextStyle(
             decoration: isCompleted ? TextDecoration.lineThrough : null,
-            color: isCompleted ? Theme.of(context).textTheme.titleSmall?.color : Theme.of(context).textTheme.bodyMedium?.color,
+            color: isCompleted
+                ? Theme.of(context).textTheme.titleSmall?.color
+                : Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
         subtitle: condition.date != null
-            ? Text('Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}',
-              style: Theme.of(context).textTheme.titleSmall
-            )
+            ? Text(
+                'Выполнено: ${condition.date!.day}.${condition.date!.month}.${condition.date!.year}',
+                style: Theme.of(context).textTheme.titleSmall,
+              )
             : null,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Checkbox(
               value: isCompleted,
-              onChanged: (_) => viewModel.toggleConditionCompletion(condition.id),
+              onChanged: (_) =>
+                  viewModel.toggleConditionCompletion(condition.id),
             ),
           ],
         ),
@@ -442,13 +500,15 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
     );
   }
 
-
   bool _checkDescriptionTile(SkillDetailModel viewModel, SkillRang rang) {
     final description = viewModel.getDescriptionForRang(rang);
     return description != null && description.isNotEmpty;
   }
 
-  Future _confirmUpgrade(BuildContext context, SkillDetailModel viewModel) async {
+  Future _confirmUpgrade(
+    BuildContext context,
+    SkillDetailModel viewModel,
+  ) async {
     await viewModel.upgradeRank();
   }
 
@@ -461,7 +521,6 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
       ),
     ).then((result) async {
       if (result == true) {
-        
         bool result = await _viewModel.loadSkill(widget.skillId);
         if (!result && context.mounted) {
           Navigator.pop(context);

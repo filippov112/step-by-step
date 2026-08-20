@@ -1,5 +1,6 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/services/file_storage_service.dart';
 import 'package:sqflite/sqflite.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
@@ -117,11 +118,32 @@ class AchievementRepository {
   }
 
   Future<int?> delete(String id) async {
+    await deleteIconIfSetupNull(id: id);
     return await db.delete(Achievement.tn, where: '${Achievement.cId} = ?', whereArgs: [id]);
   }
 
   Future<int?> update(Achievement ach) async {
+    await deleteIconIfSetupNull(obj: ach);
     return await db.update(Achievement.tn, ach.toMap(),
         where: '${Achievement.cId} = ?', whereArgs: [ach.id]);
+  }
+
+  Future deleteIconIfSetupNull({String? id, Achievement? obj}) async {
+    // Если удаление
+    if (id != null) {
+      var oldObject = await get(id);
+      // Удаляем, если было
+      if (oldObject != null && oldObject.icon != null) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    } 
+    // Если обновление
+    else if (obj != null) {
+      var oldObject = await get(obj.id);
+      // Удаляем, если было и изменилось
+      if (oldObject != null && oldObject.icon != null && oldObject.icon != obj.icon) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    }
   }
 }

@@ -12,7 +12,7 @@ class ClassDetailModel extends ChangeNotifier {
   final _tagClassRepo = TagClassRepository();
   final _tagRepo = TagRepository();
 
-  late Class record;
+  Class record = Class.create(title: '');
   List<Tag> tags = [];
   List<Skill> skills = [];
 
@@ -34,6 +34,7 @@ class ClassDetailModel extends ChangeNotifier {
       if (skl == null) continue;
       skills.add(skl);
     }
+    notifyListeners();
   }
 
   Future<void> _loadClassTags() async {
@@ -52,9 +53,9 @@ class ClassDetailModel extends ChangeNotifier {
 
   Future setClass(Class cls) async {
     record = cls;
+    notifyListeners();
     await _loadClassTags();
     await _loadClassSkills();
-    notifyListeners();
   }
 
   Future _delete(String id) async {

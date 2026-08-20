@@ -1,4 +1,5 @@
 import 'package:life_game/data/db.dart';
+import 'package:life_game/services/file_storage_service.dart';
 import 'package:life_game/tools/get_age_string.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -43,7 +44,7 @@ class User {
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       cName: name,
-      cIcon: icon ?? "",
+      cIcon: icon,
       cBirthDate: dateBirth.millisecondsSinceEpoch ~/ (24 * 60 * 60 * 1000),
       cExperience: experience,
       cTime: time
@@ -94,12 +95,33 @@ class UserRepository {
   }
 
   Future<int?> delete(int id) async {
+    await deleteIconIfSetupNull(id: id);
     return await db.delete(User.tn, where: '${User.cId} = ?', whereArgs: [id]);
   }
 
-  Future<int?> update(User tsk) async {
-    return await db.update(User.tn, tsk.toMap(),
-        where: '${User.cId} = ?', whereArgs: [tsk.id]);
+  Future<int?> update(User usr) async {
+    await deleteIconIfSetupNull(obj: usr);
+    return await db.update(User.tn, usr.toMap(),
+        where: '${User.cId} = ?', whereArgs: [usr.id]);
+  }
+
+  Future deleteIconIfSetupNull({int? id, User? obj}) async {
+    // Если удаление
+    if (id != null) {
+      var oldObject = await get();
+      // Удаляем, если было
+      if (oldObject != null && oldObject.icon != null) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    } 
+    // Если обновление
+    else if (obj != null) {
+      var oldObject = await get();
+      // Удаляем, если было и изменилось
+      if (oldObject != null && oldObject.icon != null && oldObject.icon != obj.icon) {
+        await FileService.deleteOldFile(oldObject.icon);
+      }
+    }
   }
 }
 

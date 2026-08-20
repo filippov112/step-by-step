@@ -40,39 +40,42 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
   void initState() {
     super.initState();
     model = context.read<AchievementFormModel>();
-    model.setAchievement(widget.achi);
+    titleController = TextEditingController();
+    descController = TextEditingController();
 
-    var selectedDescription = model.selectedDescription;
-    var selectedTitle = model.selectedTitle;
-    titleController = TextEditingController(text: selectedTitle);
-    descController = TextEditingController(text: selectedDescription);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model.setAchievement(widget.achi);
+      titleController?.text = widget.achi?.title ?? '';
+      descController?.text = widget.achi?.description ?? '';
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var isEditing = context.select<AchievementFormModel, bool>(
+    final isEditing = context.select<AchievementFormModel, bool>(
       (model) => model.isEditing,
     );
-    var selectedIcon = context.select<AchievementFormModel, String?>(
+    final selectedIcon = context.select<AchievementFormModel, String?>(
       (model) => model.selectedIcon,
     );
-    var selectedDate = context.select<AchievementFormModel, DateTime?>(
+    final selectedDate = context.select<AchievementFormModel, DateTime?>(
       (model) => model.selectedDate,
     );
-    var selectedRarity = context.select<AchievementFormModel, AchievRar>(
+    final selectedRarity = context.select<AchievementFormModel, AchievRar>(
       (model) => model.selectedRarity,
     );
-    var selectedTags = context.select<AchievementFormModel, List<Tag>>(
+    final selectedTags = context.select<AchievementFormModel, List<Tag>>(
       (model) => model.selectedTags,
     );
+    
 
-    var setIcon = model.setIcon;
-    var setRarity = model.setRarity;
-    var setDate = model.setDate;
-    var setSelectedTags = model.setSelectedTags;
+    final setIcon = model.setIcon;
+    final setRarity = model.setRarity;
+    final setDate = model.setDate;
+    final setSelectedTags = model.setSelectedTags;
 
-    var saveAchievement = model.saveAchievement;
-    var deleteAchievement = model.deleteAchievement;
+    final saveAchievement = model.saveAchievement;
+    final deleteAchievement = model.deleteAchievement;
 
     return Scaffold(
       appBar: buildAppBar(
@@ -88,14 +91,13 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-
                   // Иконка
                   Center(
                     child: CustomIconPicker(
                       iconPath: selectedIcon,
                       setIcon: setIcon,
                       borderWidth: 3,
-                      color: selectedRarity.color
+                      color: selectedRarity.color,
                     ),
                   ),
 

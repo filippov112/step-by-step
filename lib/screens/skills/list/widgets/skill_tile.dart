@@ -3,7 +3,7 @@ import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
-import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
+import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/services/exp_calculator.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';

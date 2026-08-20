@@ -14,7 +14,8 @@ PreferredSizeWidget buildMainAppBar<T>(
   required Iterable<T> filteredList,
   PreferredSizeWidget? searchWidget,
   required VoidCallback deleteSelected,
-  required VoidCallback clearSelection
+  required VoidCallback clearSelection,
+  List<Widget>? actions
 }) {
 
   Future deleteFunc(int itemCount) async {
@@ -53,6 +54,7 @@ PreferredSizeWidget buildMainAppBar<T>(
           onPressed: clearSelection,
           tooltip: 'Отменить выделение',
         ),
+      ...?actions,
       // Фильтры
       Builder(
         builder: (context) => IconButton(

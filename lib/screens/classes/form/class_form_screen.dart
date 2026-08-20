@@ -14,10 +14,9 @@ import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
-
 class ClassFormScreen extends StatefulWidget {
   final Class? record;
-  
+
   const ClassFormScreen({super.key, this.record});
 
   @override
@@ -29,7 +28,7 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
   late ClassFormModel model;
   TextEditingController? titleController;
   TextEditingController? descController;
-  
+
   @override
   void dispose() {
     titleController?.dispose();
@@ -41,52 +40,56 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
   void initState() {
     super.initState();
     model = context.read<ClassFormModel>();
-    model.setClass(widget.record);
-    var selectedDescription = model.selectedDescription;
-    var selectedTitle = model.selectedTitle;
-    titleController = TextEditingController(text: selectedTitle);
-    descController = TextEditingController(text: selectedDescription);
+    titleController = TextEditingController(text: widget.record?.title);
+    descController = TextEditingController(text: widget.record?.description);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      model.setClass(widget.record);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    var isEditing = context.select<ClassFormModel, bool>(
+      (model) => model.isEditing,
+    );
+    var selectedIcon = context.select<ClassFormModel, String?>(
+      (model) => model.selectedIcon,
+    );
+    var selectedTags = context.select<ClassFormModel, List<Tag>>(
+      (model) => model.selectedTags,
+    );
 
-    var isEditing = context.select<ClassFormModel,bool>((model) => model.isEditing);
-    var selectedIcon = context.select<ClassFormModel,String?>((model) => model.selectedIcon);
-    var selectedTags = context.select<ClassFormModel,List<Tag>>((model) => model.selectedTags);
-    
     var setIcon = model.setIcon;
     var setSelectedTags = model.setSelectedTags;
-    
+
     var save = model.save;
     var delete = model.delete;
 
-    var classId = context.select<ClassFormModel,String>((model) => model.record.id);
-    var skills = context.select<ClassFormModel,List<Skill>>((model) => model.allSkills);
-    var selectedSkills = context.select<ClassFormModel,List<ClassSkill>>((model) => model.selectedClassSkills);
+    var classId = context.select<ClassFormModel, String>(
+      (model) => model.record.id,
+    );
+    var skills = context.select<ClassFormModel, List<Skill>>(
+      (model) => model.allSkills,
+    );
+    var selectedSkills = context.select<ClassFormModel, List<ClassSkill>>(
+      (model) => model.selectedClassSkills,
+    );
     var setSelectedSkills = model.setSelectedClassSkills;
 
     return Scaffold(
-      appBar: buildAppBar(
-        'Класс',
-        deleteCallback: () => _delete(delete),
-      ),
+      appBar: buildAppBar('Класс', deleteCallback: () => _delete(delete)),
       body: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: 
-              ListView(
+            Expanded(
+              child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-
                   // Иконка
-                  CustomIconPicker(
-                    iconPath: selectedIcon,
-                    setIcon: setIcon
-                  ),
-                  
+                  CustomIconPicker(iconPath: selectedIcon, setIcon: setIcon),
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
@@ -95,44 +98,43 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
                     'Основные поля',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
 
                   // Название
-                  buildTitleInput(controller: titleController,),
+                  buildTitleInput(controller: titleController),
                   const SizedBox(height: 12),
 
                   // Описание
                   buildDescriptionInput(controller: descController),
-                  const SizedBox(height: 12), 
-                  
+                  const SizedBox(height: 12),
+
                   // Теги
                   buildTagsSection(
-                    context, 
-                    selectedTags: selectedTags, 
-                    setSelectedTags: setSelectedTags
+                    context,
+                    selectedTags: selectedTags,
+                    setSelectedTags: setSelectedTags,
                   ),
-                  
+
                   const SizedBox(height: 8),
 
                   // Награды
                   SkillsSection(
-                    selectedSkills: selectedSkills, 
-                    setSelectedSkills: setSelectedSkills, 
-                    skills: skills, 
-                    classId: classId
+                    selectedSkills: selectedSkills,
+                    setSelectedSkills: setSelectedSkills,
+                    skills: skills,
+                    classId: classId,
                   ),
                   const SizedBox(height: 8),
-                  
-                ]
-              ),   
+                ],
+              ),
             ),
             // Кнопки
             buildButtonsBlock(
-              context, 
-              saveCallback: () => _save(save), 
-              isEditing: isEditing
-            )
-          ]
+              context,
+              saveCallback: () => _save(save),
+              isEditing: isEditing,
+            ),
+          ],
         ),
       ),
     );
@@ -143,7 +145,7 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
     model.setTitle(titleController?.text ?? '');
     model.setDescription(descController?.text ?? '');
-    var result = await save(); 
+    var result = await save();
     if (mounted) {
       Navigator.pop(context, result);
     }

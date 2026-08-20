@@ -12,8 +12,8 @@ import 'package:life_game/models/task_reward.dart';
 class TaskFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  late Task task;
-  late String? parentId;
+  Task task = Task.create(title: '', description: '');
+  String? parentId;
   final tagTaskRepo = TagTaskRepository();
   final rewardRepo = TaskRewardRepository();
   final skillRepo = SkillRepository();
@@ -27,18 +27,18 @@ class TaskFormModel extends ChangeNotifier {
   List<Skill> allSkills = [];
   List<Class> allClasses = [];
 
-  late String selectedTitle;
-  late String selectedDescription;
-  late DateTime? selectedDateTime;
-  late TaskPriority selectedPriority;
-  late TaskDifficulty selectedDifficulty;
-  late bool selectedDone;
+  String selectedTitle = '';
+  String selectedDescription = '';
+  DateTime? selectedDateTime;
+  TaskPriority selectedPriority = TaskPriority.medium;
+  TaskDifficulty selectedDifficulty = TaskDifficulty.medium;
+  bool selectedDone = false;
 
   List<Tag> selectedTags = [];
   List<TaskReward> selectedRewards = [];
   List<Skill> foundedSkills = [];
 
-  late bool isEditing;
+  bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
@@ -52,7 +52,7 @@ class TaskFormModel extends ChangeNotifier {
     selectedTitle = task.title;
     selectedDescription = task.description;
     selectedDone = task.done;
-
+    notifyListeners();
     loadData();
   }
 
@@ -61,7 +61,6 @@ class TaskFormModel extends ChangeNotifier {
     await _loadRewards();
     await _loadSkills();
     await _loadClasses();
-    notifyListeners();
   }
 
   Future _loadTaskTags() async {
@@ -75,18 +74,22 @@ class TaskFormModel extends ChangeNotifier {
       }
     }
     selectedTags = tags;
+    notifyListeners();
   }
 
   Future _loadRewards() async {
     _rewards = (await rewardRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
     selectedRewards = _rewards.where((e) => true).toList();
+    notifyListeners();
   }
 
   Future _loadSkills() async {
     allSkills = await skillRepo.getAll();
+    notifyListeners();
   }
   Future _loadClasses() async {
     allClasses = await classRepo.getAll();
+    notifyListeners();
   }
 
   // -------------------- Commands ------------------------

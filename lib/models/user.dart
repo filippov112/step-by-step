@@ -1,17 +1,17 @@
-import 'dart:math';
 import 'package:life_game/data/db.dart';
 import 'package:life_game/tools/get_age_string.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
+
+
 // Пользователь
 class User {
   static const tn = "profiles";
+  
   static const cId = "_id";
   static const cName = "_name";
   static const cIcon = "_icon";
   static const cBirthDate = "_dbirth";
-
-  static const cLevel = "_level";
+  static const cTime = "_time";
   static const cExperience = "_exp";
 
   static const init = '''CREATE TABLE $tn (
@@ -19,29 +19,25 @@ class User {
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
           $cBirthDate INTEGER,
-
-          $cLevel INTEGER,
+          $cTime INTEGER,
           $cExperience INTEGER
         )''';
 
   int? id;
-  String name = "";
-  String? icon;
-  DateTime dateBirth = DateTime(2000);
-
-  int level = 1; // уровень
-  int experience = 0; // свободный опыт
+  String name = ""; // Никнейм
+  String? icon; // Аватар
+  DateTime dateBirth = DateTime(2000); // Дата рождения
+  int time = 0; // Кэш времени
+  int experience = 0; // Кэш опыта
 
   String get age => getDateIntervalString(dateBirth, DateTime.now());
-  int get maxExperience => (10 * pow(1.2, level)).round();  // опыт до следующего уровня
 
   User({
     this.name = "", 
     this.icon, 
     required this.dateBirth,
-  
     this.experience = 0,
-    this.level = 1
+    this.time = 0
   });
 
   Map<String, Object?> toMap() {
@@ -49,9 +45,8 @@ class User {
       cName: name,
       cIcon: icon ?? "",
       cBirthDate: dateBirth.millisecondsSinceEpoch ~/ 60000,
-
       cExperience: experience,
-      cLevel: level
+      cTime: time
     };
     if (id != null) {
       map[cId] = id;
@@ -64,9 +59,8 @@ class User {
     name = map[cName];
     icon = map[cIcon];
     dateBirth = DateTime.fromMillisecondsSinceEpoch(map[cBirthDate] * 60000);
-
     experience = map[cExperience];
-    level = map[cLevel];
+    time = map[cTime];
   }
 }
 

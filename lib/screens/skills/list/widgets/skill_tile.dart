@@ -4,6 +4,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
 import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
 import 'package:life_game/screens/tasks/form/widgets/skill_list_model.dart';
+import 'package:life_game/services/exp_calculator.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
@@ -99,7 +100,7 @@ class SkillTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: CustomText(
-                    '${skill.level}',
+                    '${ExpCalculator.getLevel(skill.experience)}',
                     size: 18,
                     color: skill.rang.color,
                     weight: FontWeight.w600,

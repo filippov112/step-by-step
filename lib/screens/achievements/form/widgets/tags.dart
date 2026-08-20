@@ -14,16 +14,15 @@ Widget buildTagsSection(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Теги',
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            TextButton.icon(
+            IconButton(
               onPressed: () => _openTagSelector(context, selectedTags, setSelectedTags),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Добавить тег'),
+              icon: const Icon(Icons.add),
             ),
           ],
         ),

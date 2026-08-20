@@ -134,7 +134,7 @@ class SkillListModel extends ChangeNotifier {
         result.sort((a, b) => a.rang.index.compareTo(b.rang.index));
         break;
       case SortSkillField.level:
-        result.sort((a, b) => a.level.compareTo(b.level));
+        result.sort((a, b) => a.experience.compareTo(b.experience));
         break;
     }
     if (!_sortAscending) {

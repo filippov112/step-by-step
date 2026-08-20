@@ -127,6 +127,9 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   
                   // Прогресс
                   _buildProgressCard(viewModel),
+                  
+                  const SizedBox(height: 12),
+                  const Divider(),
                   const SizedBox(height: 12),
                   
                   // Кнопка повышения ранга
@@ -155,82 +158,159 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
   }
 
   Widget _buildProgressCard(SkillDetailModel viewModel) {
-    final int exp = viewModel.skill?.experience ?? 0;
-    final int level = viewModel.skill?.level ?? 1;
-    final int nextLevelExp = ExpCalculator.calcNextLevelExp(level);
     final SkillRang rang = viewModel.skill?.rang ?? SkillRang.F;
-
-    final progress = (exp / nextLevelExp).clamp(0.0, 1.0);
     
-    return Card(
-      margin: EdgeInsetsGeometry.all(0),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const CustomText('Ранг:'),
-                Container(
-                  margin: EdgeInsets.only(left: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: rang.color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
+    final int exp = ExpCalculator.getRemains(viewModel.skill?.experience ?? 0) ;
+    final int expLevel = ExpCalculator.getLevel(viewModel.skill?.experience ?? 0) ;
+    final int expReq = ExpCalculator.getRequirements(viewModel.skill?.experience ?? 0);
+    final expProgress = (exp / expReq).clamp(0.0, 1.0);
+
+    final int time = ExpCalculator.getRemains(viewModel.skill?.time ?? 0) ;
+    final int timeLevel = ExpCalculator.getLevel(viewModel.skill?.time ?? 0) ;
+    final int timeReq = ExpCalculator.getRequirements(viewModel.skill?.time ?? 0);
+    final timeProgress = (exp / expReq).clamp(0.0, 1.0);
+    
+    return Column(children: [
+        Card(
+        margin: EdgeInsetsGeometry.all(0),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CustomText('Ранг:'),
+                  Container(
+                    margin: EdgeInsets.only(left: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: rang.color.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: CustomText(
+                      rang.name,
+                      size: 16,
+                      color: rang.color,
+                      weight: FontWeight.w600,
+                    ),
                   ),
-                  child: CustomText(
-                    rang.name,
-                    size: 16,
-                    color: rang.color,
-                    weight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const CustomText('Накоплено:'),
-                CustomText('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
-                  weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const CustomText('Осталось:'),
-                CustomText('${NumberFormat('#,##0', 'en_US').format(nextLevelExp - exp)} EXP', 
-                  weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
-                )
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomText(
-                  '${NumberFormat('#,##0', 'en_US').format(level)} LVL',
-                  weight: FontWeight.bold
-                ),
-                CustomText('${NumberFormat("#0.00").format(progress * 100)}%'),
-              ],
-            ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(
-              // value: progress,
-              value: 0.3,
-              minHeight: 8,
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    );
+
+      CustomText('Экспертность', 
+        size: 18, 
+        color: Theme.of(context).colorScheme.onSurface, 
+        padding: EdgeInsets.fromLTRB(0,16,8,8)
+      ),
+
+      Card(
+        margin: EdgeInsetsGeometry.all(0),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CustomText('Накоплено:'),
+                  CustomText('${NumberFormat('#,##0', 'en_US').format(exp)} EXP', 
+                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CustomText('Осталось:'),
+                  CustomText('${NumberFormat('#,##0', 'en_US').format(expReq - exp)} EXP', 
+                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                  )
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    '${NumberFormat('#,##0', 'en_US').format(expLevel)} LVL',
+                    weight: FontWeight.bold
+                  ),
+                  CustomText('${NumberFormat("#0.00").format(expProgress * 100)}%'),
+                ],
+              ),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: expProgress,
+                minHeight: 8,
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      CustomText('Мастерство', 
+        size: 18, 
+        color: Theme.of(context).colorScheme.onSurface, 
+        padding: EdgeInsets.fromLTRB(0,16,8,8)
+      ),
+
+      Card(
+        margin: EdgeInsetsGeometry.all(0),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CustomText('Накоплено:'),
+                  CustomText('${NumberFormat('#,##0', 'en_US').format(time)} MIN', 
+                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const CustomText('Осталось:'),
+                  CustomText('${NumberFormat('#,##0', 'en_US').format(timeReq - time)} MIN', 
+                    weight: FontWeight.bold, expanded: true, padding: EdgeInsets.only(left:12), align: TextAlign.right,
+                  )
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomText(
+                    '${NumberFormat('#,##0', 'en_US').format(timeLevel)} LVL',
+                    weight: FontWeight.bold
+                  ),
+                  CustomText('${NumberFormat("#0.00").format(timeProgress * 100)}%'),
+                ],
+              ),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: timeProgress,
+                minHeight: 8,
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],);
   }
 
   Widget? _buildDescriptionsCard(SkillDetailModel viewModel) {

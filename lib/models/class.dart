@@ -9,12 +9,16 @@ class Class {
   static const cTitle = "_title";
   static const cDescription = "_description";
   static const cIcon = "_icon";
+  static const cExperience = "_exp";
+  static const cTime = "_time";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY,
           $cTitle TEXT NOT NULL,
           $cDescription TEXT NOT NULL,
-          $cIcon TEXT
+          $cIcon TEXT,
+          $cTime INTEGER,
+          $cExperience INTEGER
         );
         ''';
 
@@ -22,11 +26,15 @@ class Class {
   String title = ""; // Название
   String description = ""; // Описание
   String? icon; // Иконка
+  int experience = 0; // Кэш опыта
+  int time = 0; // Кэш времени
 
   Class({
     required this.id,
     required this.title,
     required this.description,
+    required this.experience,
+    required this.time,
     this.icon,
   });
 
@@ -34,6 +42,8 @@ class Class {
     required String title,
     String? description,
     String? icon,
+    int experience = 0,
+    int time = 0
   }) {
     final guid = const Uuid().v4();
     return Class(
@@ -41,6 +51,8 @@ class Class {
       title: title,
       description: description ?? '',
       icon: icon,
+      experience: experience,
+      time: time
     );
   }
 
@@ -50,6 +62,8 @@ class Class {
       cTitle: title,
       cDescription: description,
       cIcon: icon,
+      cExperience: experience,
+      cTime: time
     };
   }
 
@@ -58,6 +72,8 @@ class Class {
     title = map[cTitle];
     description = map[cDescription];
     icon = map[cIcon];
+    experience = map[cExperience];
+    time = map[cTime];
   }
 }
 

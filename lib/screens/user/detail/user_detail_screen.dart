@@ -5,6 +5,7 @@ import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/screens/user/detail/widgets/accumulation.dart';
 import 'package:life_game/screens/user/detail/widgets/activities.dart';
+import 'package:life_game/services/exp_calculator.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
@@ -112,12 +113,11 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     );
 
     var expWidget = AccumulationDynamic(
-      level: user.level,
-      deltaValue: 2,
-      currentValue: 11,
+      level: ExpCalculator.getLevel(user.experience),
+      deltaValue: 0,
+      currentValue: ExpCalculator.getRemains(user.experience).toDouble(),
       title: 'Опыт',
-      // value: user.experience.toDouble(),
-      nextLevel: user.maxExperience.toDouble(),
+      nextLevel: ExpCalculator.getRequirements(user.experience).toDouble(),
       icon: Icons.stars,
       oldData: [
         SnapSpot(DateTime(2026, 1, 1).millisecondsSinceEpoch.toDouble(), 3),

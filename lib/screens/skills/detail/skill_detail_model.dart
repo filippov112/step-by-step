@@ -159,7 +159,7 @@ class SkillDetailModel extends ChangeNotifier {
         id: _skill!.id,
         title: _skill!.title,
         rang: newRang,
-        level: _skill!.level,
+        time: _skill!.time,
         experience: _skill!.experience,
         icon: _skill!.icon,
         f: _skill!.f,

@@ -11,7 +11,7 @@ class Skill {
   static const cId = "_id";
   static const cTitle = "_title";
   static const cRang = "_rang";
-  static const cLevel = "_level";
+  static const cTime = "_time";
   static const cExperience = "_experience";
   static const cIcon = "_icon";
   static const cF = "_f";
@@ -29,7 +29,7 @@ class Skill {
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cRang INTEGER,
-          $cLevel INTEGER,
+          $cTime INTEGER,
           $cExperience INTEGER,
           $cIcon TEXT,
           $cF TEXT,
@@ -47,11 +47,13 @@ class Skill {
 
   // ------------ Поля ------------
   String id = "";
-  String title = "";
-  SkillRang rang = SkillRang.F;
-  int level = 1;
-  int experience = 0;
-  String icon = "";
+  String title = ""; // Название
+  SkillRang rang = SkillRang.F; // Ранг
+  int time = 0; // Кэш времени
+  int experience = 0; // Кэш опыта
+  String icon = ""; // Иконка
+
+  // Описания рангов
   String? f;
   String? e;
   String? d;
@@ -68,7 +70,7 @@ class Skill {
     required this.id,
     required this.title,
     required this.rang,
-    required this.level,
+    required this.time,
     required this.experience,
     required this.icon,
     this.f,
@@ -86,7 +88,7 @@ class Skill {
   factory Skill.create({
     required String title,
     SkillRang rang = SkillRang.F,
-    int level = 1,
+    int time = 0,
     int experience = 0,
     String icon = "",
     String? f,
@@ -105,7 +107,7 @@ class Skill {
       id: guid,
       title: title,
       rang: rang,
-      level: level,
+      time: time,
       experience: experience,
       icon: icon,
       f: f,
@@ -127,7 +129,7 @@ class Skill {
       cId: id,
       cTitle: title,
       cRang: rang.index,
-      cLevel: level,
+      cTime: time,
       cExperience: experience,
       cIcon: icon,
       cF: f,
@@ -147,7 +149,7 @@ class Skill {
     id = map[cId];
     title = map[cTitle];
     rang = SkillRang.values[map[cRang] ?? 0];
-    level = map[cLevel] ?? 1;
+    time = map[cTime] ?? 1;
     experience = map[cExperience] ?? 0;
     icon = map[cIcon] ?? "";
     f = map[cF];

@@ -253,7 +253,7 @@ class SkillFormModel extends ChangeNotifier {
           id: _editingSkill!.id,
           title: _title.trim(),
           rang: _rang,
-          level: _editingSkill!.level,
+          time: _editingSkill!.time,
           experience: _editingSkill!.experience,
           icon: _iconPath,
           f: _f,
@@ -302,7 +302,7 @@ class SkillFormModel extends ChangeNotifier {
         skill = Skill.create(
           title: _title.trim(),
           rang: _rang,
-          level: 0,
+          time: 0,
           experience: 0,
           icon: _iconPath,
           f: _f,

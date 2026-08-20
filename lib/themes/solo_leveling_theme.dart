@@ -32,7 +32,7 @@ class SoloLevelingTheme {
         error: Color(0xFFEF5350),
         onPrimary: text1,
         onSecondary: back1,
-        onSurface: text1,
+        onSurface: text2,
         onError: text1,
         brightness: Brightness.dark,
       ),

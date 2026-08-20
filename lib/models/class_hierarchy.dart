@@ -22,13 +22,6 @@ class ClassHierarchy {
 
   ClassHierarchy({required this.parentId, required this.childId});
 
-  factory ClassHierarchy.create({
-    required String parentId,
-    required String childId,
-  }) {
-    return ClassHierarchy(parentId: parentId, childId: childId);
-  }
-
   Map<String, Object?> toMap() {
     return {cParentId: parentId, cChildId: childId};
   }

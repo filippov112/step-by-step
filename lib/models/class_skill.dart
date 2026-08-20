@@ -23,13 +23,6 @@ class ClassSkill {
 
   ClassSkill({required this.skillId, required this.classId});
 
-  factory ClassSkill.create({
-    required String skillId,
-    required String classId,
-  }) {
-    return ClassSkill(skillId: skillId, classId: classId);
-  }
-
   Map<String, Object?> toMap() {
     return {cSkillId: skillId, cClassId: classId};
   }

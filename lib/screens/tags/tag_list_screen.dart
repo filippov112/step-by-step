@@ -188,7 +188,7 @@ class _TagListScreenState extends State<TagListScreen> {
         }
 
         return Scaffold(
-          drawer: MainMenuDrawer(currentRoute: '/tags'),
+          drawer: MainMenuDrawer(currentModule: AppModule.tags),
           appBar: appBar,
           endDrawer: FiltersDrawer(filters: filters,),
           body: buildBody(),

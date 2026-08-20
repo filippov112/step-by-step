@@ -8,6 +8,7 @@ import 'package:life_game/models/class_skill.dart';
 import 'package:life_game/models/script_task.dart';
 import 'package:life_game/models/skill_rang_bonus.dart';
 import 'package:life_game/models/tag_achievement.dart';
+import 'package:life_game/models/tag_class.dart';
 import 'package:life_game/models/tag_skill.dart';
 import 'package:life_game/models/tag_task.dart';
 import 'package:life_game/models/task_reward.dart';
@@ -53,6 +54,7 @@ class DB {
       await db.execute(Achievement.init);
       await db.execute(Tag.init);
       await db.execute(Script.init);
+      await db.execute(TagClass.init);
       await db.execute(Characteristic.init); // зависит от Class
       await db.execute(ClassHierarchy.init); // зависит от Class
       await db.execute(TaskHierarchy.init); // зависит от Task

@@ -15,12 +15,10 @@ class _TagEditDialogState extends State<TagEditDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TagType _selectedType;
-  bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
-    _isEditing = widget.tag != null;
     _titleController = TextEditingController(text: widget.tag?.title ?? '');
     _selectedType = widget.tag?.type ?? TagType.common;
   }

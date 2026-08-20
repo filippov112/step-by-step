@@ -4,6 +4,7 @@ enum TagType {
   skill,
   achievement,
   task,
+  class_,
   common
 }
 
@@ -18,6 +19,8 @@ extension TagTypeExt on TagType {
         return 'Достижение';
       case TagType.task:
         return 'Задача';
+      case TagType.class_:
+        return 'Класс';
     }
   }
 
@@ -31,6 +34,8 @@ extension TagTypeExt on TagType {
         return Colors.amber;
       case TagType.task:
         return Colors.green;
+      case TagType.class_:
+        return Colors.deepOrange;
     }
   }
 }

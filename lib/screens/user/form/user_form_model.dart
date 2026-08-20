@@ -17,7 +17,7 @@ class UserFormModel extends ChangeNotifier {
     if (newUser.icon != null) {
       await fileStorage.deleteOldFile(newUser.icon);
     }
-    newUser.icon = await fileStorage.saveAvatar(file);
+    newUser.icon = await fileStorage.saveIcon(file);
     notifyListeners();
   }
 

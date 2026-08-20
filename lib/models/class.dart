@@ -1,44 +1,45 @@
 import 'package:life_game/data/db.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 // Класс
 class Class {
   static const tn = "classes";
   static const cId = "_id";
-  static const cName = "_name";
+  static const cTitle = "_title";
   static const cDescription = "_description";
   static const cIcon = "_icon";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY,
-          $cName TEXT NOT NULL,
+          $cTitle TEXT NOT NULL,
           $cDescription TEXT NOT NULL,
           $cIcon TEXT
         );
         ''';
 
   String id = "";
-  String name = ""; // Название
+  String title = ""; // Название
   String description = ""; // Описание
   String? icon; // Иконка
 
   Class({
     required this.id,
-    required this.name,
+    required this.title,
     required this.description,
     this.icon,
   });
 
   factory Class.create({
-    required String id,
-    required String name,
-    required String description,
+    required String title,
+    String? description,
     String? icon,
   }) {
+    final guid = const Uuid().v4();
     return Class(
-      id: id,
-      name: name,
-      description: description,
+      id: guid,
+      title: title,
+      description: description ?? '',
       icon: icon,
     );
   }
@@ -46,7 +47,7 @@ class Class {
   Map<String, Object?> toMap() {
     return {
       cId: id,
-      cName: name,
+      cTitle: title,
       cDescription: description,
       cIcon: icon,
     };
@@ -54,7 +55,7 @@ class Class {
 
   Class.fromMap(Map map) {
     id = map[cId];
-    name = map[cName];
+    title = map[cTitle];
     description = map[cDescription];
     icon = map[cIcon];
   }

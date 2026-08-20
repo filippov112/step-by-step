@@ -2,58 +2,20 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class FileStorageService {
-  // Сохраняет изображение в постоянное хранилище и возвращает новый путь
-  Future<String?> saveAvatar(File imageFile) async {
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final avatarDir = Directory('${appDir.path}/avatars');
-      if (!await avatarDir.exists()) {
-        await avatarDir.create(recursive: true);
-      }
-      
-      final fileName = 'avatar_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final newPath = '${avatarDir.path}/$fileName';
-      final newFile = await imageFile.copy(newPath);
-      
-      return newFile.path;
-    } catch (e) {
-      print('Ошибка сохранения аватара: $e');
-      return null;
-    }
-  }
-  
-  // Сохраняет иконку навыка
-  Future<String?> saveSkillIcon(File imageFile) async {
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final iconDir = Directory('${appDir.path}/skill_icons');
-      if (!await iconDir.exists()) {
-        await iconDir.create(recursive: true);
-      }
-      
-      final fileName = 'skill_icon_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final newPath = '${iconDir.path}/$fileName';
-      final newFile = await imageFile.copy(newPath);
-      
-      return newFile.path;
-    } catch (e) {
-      print('Ошибка сохранения иконки навыка: $e');
-      return null;
-    }
-  }
 
-  // Сохраняет иконку достижения
-  Future<String?> saveAchievementIcon(File imageFile) async {
+  // Сохраняет иконку
+  Future<String?> saveIcon(File imageFile) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final iconDir = Directory('${appDir.path}/achievement_icons');
+      final iconDir = Directory('${appDir.path}/icons');
       if (!await iconDir.exists()) {
         await iconDir.create(recursive: true);
       }
-      
-      final fileName = 'achievement_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final guid = const Uuid().v7();
+      final fileName = 'icon_$guid.jpg';
       final newPath = '${iconDir.path}/$fileName';
       final newFile = await imageFile.copy(newPath);
       

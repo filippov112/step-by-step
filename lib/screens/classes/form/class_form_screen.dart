@@ -1,65 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
 import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
-import 'package:life_game/screens/achievements/form/widgets/date.dart';
 import 'package:life_game/screens/achievements/form/widgets/description.dart';
 import 'package:life_game/screens/achievements/form/widgets/icon.dart';
-import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
 import 'package:life_game/screens/achievements/form/widgets/title.dart';
+import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
 
-class AchievementFormScreen extends StatefulWidget {
-  final Achievement? achi;
+class ClassFormScreen extends StatefulWidget {
+  final Class? record;
   
-  const AchievementFormScreen({super.key, this.achi});
+  const ClassFormScreen({super.key, this.record});
 
   @override
-  State<AchievementFormScreen> createState() => _AchievementFormScreenState();
+  State<ClassFormScreen> createState() => _ClassFormScreenState();
 }
 
-class _AchievementFormScreenState extends State<AchievementFormScreen> {
+class _ClassFormScreenState extends State<ClassFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  late AchievementFormModel model;
+  late ClassFormModel model;
   
   @override
   void initState() {
     super.initState();
-    model = context.read<AchievementFormModel>();
-    model.setAchievement(widget.achi);
+    model = context.read<ClassFormModel>();
+    model.setClass(widget.record);
   }
 
   @override
   Widget build(BuildContext context) {
 
-    var isEditing = context.select<AchievementFormModel,bool>((model) => model.isEditing);
-    var selectedDescription = context.select<AchievementFormModel,String>((model) => model.selectedDescription);
-    var selectedTitle = context.select<AchievementFormModel,String>((model) => model.selectedTitle);
-    var selectedIcon = context.select<AchievementFormModel,String?>((model) => model.selectedIcon);
-    var selectedDate = context.select<AchievementFormModel,DateTime?>((model) => model.selectedDate);
-    var selectedRarity = context.select<AchievementFormModel,AchievRar>((model) => model.selectedRarity);
-    var selectedTags = context.select<AchievementFormModel,List<Tag>>((model) => model.selectedTags);
+    var isEditing = context.select<ClassFormModel,bool>((model) => model.isEditing);
+    var selectedDescription = context.select<ClassFormModel,String>((model) => model.selectedDescription);
+    var selectedTitle = context.select<ClassFormModel,String>((model) => model.selectedTitle);
+    var selectedIcon = context.select<ClassFormModel,String?>((model) => model.selectedIcon);
+    var selectedTags = context.select<ClassFormModel,List<Tag>>((model) => model.selectedTags);
     
     var setTitle = model.setTitle;
     var setIcon = model.setIcon;
-    var setRarity = model.setRarity;
-    var setDate = model.setDate;
     var setDescription = model.setDescription;
     var setSelectedTags = model.setSelectedTags;
     
-    var saveAchievement = model.saveAchievement;
-    var deleteAchievement = model.deleteAchievement;
+    var save = model.save;
+    var delete = model.delete;
 
     return Scaffold(
       appBar: buildAppBar(
-        'Достижение',
-        deleteCallback: () => _delete(deleteAchievement),
+        'Класс',
+        deleteCallback: () => _delete(delete),
       ),
       body: Form(
         key: _formKey,
@@ -95,28 +88,6 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
                   buildDescriptionInput(selectedDescription: selectedDescription, setDescription: setDescription),
                   const SizedBox(height: 12), 
                   
-                  // Дата
-                  buildDatePicker(
-                    context,
-                    currentDatetime: selectedDate, 
-                    setDateTime: setDate
-                  ),
-
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-                  
-                  // Редкость
-                  buildRaritySelector(
-                    context, 
-                    currentRarity: selectedRarity, 
-                    setRarity: setRarity
-                  ),
-                  
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
                   // Теги
                   buildTagsSection(
                     context, 
@@ -133,7 +104,7 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
             // Кнопки
             buildButtonsBlock(
               context, 
-              saveCallback: () => _saveAchievement(saveAchievement), 
+              saveCallback: () => _save(save), 
               isEditing: isEditing
             )
           ]
@@ -142,18 +113,18 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     );
   }
 
-  Future _saveAchievement(Future<bool> Function() saveAchievement) async {
+  Future _save(Future<bool> Function() save) async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState?.save();
-    var result = await saveAchievement(); 
+    var result = await save(); 
     if (mounted) {
       Navigator.pop(context, result);
     }
   }
 
-  Future _delete(Future Function() deleteAchievement) async {
+  Future _delete(Future Function() delete) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
-      await deleteAchievement();
+      await delete();
       if (context.mounted) {
         Navigator.pop(context);
       }

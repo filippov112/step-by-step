@@ -2,6 +2,7 @@ import 'package:life_game/data/db.dart';
 import 'package:life_game/models/class.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 // Характеристика класса
 class Characteristic {
   static const tn = "characteristics";
@@ -32,13 +33,13 @@ class Characteristic {
   });
 
   factory Characteristic.create({
-    required String id,
     required String classId,
     required String name,
     int value = 0,
   }) {
+    final guid = const Uuid().v4();
     return Characteristic(
-      id: id,
+      id: guid,
       classId: classId,
       name: name,
       value: value,

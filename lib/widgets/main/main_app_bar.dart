@@ -28,12 +28,6 @@ PreferredSizeWidget buildMainAppBar<T>(
         ? CustomText('Выбрано: ${selectedIds.length}', size:18) 
         : CustomText(title, size: 18),
     actions: [
-      // Кнопка "Назад"
-      if (!isRootWidgetTree) IconButton(
-        icon: const Icon(Icons.arrow_back_ios),
-        onPressed: () => Navigator.pop(context),
-      ),
-
       // Кнопка "Выбрать все" в режиме выделения
       if (isSelectionMode)
         IconButton(

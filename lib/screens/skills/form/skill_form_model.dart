@@ -369,7 +369,7 @@ class SkillFormModel extends ChangeNotifier {
       final file = await _fileStorage.pickImageFromGallery();
       if (file == null) return false;
       
-      final savedPath = await _fileStorage.saveSkillIcon(file);
+      final savedPath = await _fileStorage.saveIcon(file);
       if (savedPath != null) {
         _iconPath = savedPath;
         notifyListeners();

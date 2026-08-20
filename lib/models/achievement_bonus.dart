@@ -3,6 +3,7 @@ import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/characteristic.dart';
 import 'package:life_game/models/enums/bonus_type.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 // Бонус к характеристике за достижение
@@ -40,14 +41,14 @@ class AchievementBonus {
   });
 
   factory AchievementBonus.create({
-    required String id,
     required String achievementId,
     required String characteristicId,
     BonusType type = BonusType.constant,
     int value = 1,
   }) {
+    final guid = const Uuid().v4();
     return AchievementBonus(
-      id: id,
+      id: guid,
       achievementId: achievementId,
       characteristicId: characteristicId,
       type: type,

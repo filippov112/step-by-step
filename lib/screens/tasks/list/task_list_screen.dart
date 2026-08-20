@@ -45,7 +45,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       builder: (context, model, child) {
         return Scaffold(
           endDrawer: TaskFilters(),
-          drawer: const MainMenuDrawer(currentRoute: '/tasks'),
+          drawer: const MainMenuDrawer(),
           appBar: buildMainAppBar<Task>(
             context,
             title: 'Задачи',

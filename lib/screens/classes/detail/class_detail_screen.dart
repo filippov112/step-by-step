@@ -1,10 +1,9 @@
 // lib/widgets/achievement_details.dart
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/class.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
+import 'package:life_game/screens/classes/detail/class_detail_model.dart';
+import 'package:life_game/screens/classes/form/class_form_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
@@ -14,48 +13,41 @@ import 'package:life_game/widgets/common/entity_appbar.dart';
 
 
 
-class AchievementDetailScreen extends StatefulWidget {
-  final Achievement achievement;
-  const AchievementDetailScreen({super.key, required this.achievement});
+class ClassDetailScreen extends StatefulWidget {
+  final Class record;
+  const ClassDetailScreen({super.key, required this.record});
 
   @override
-  State<AchievementDetailScreen> createState() => _AchievementDetailScreenState();
+  State<ClassDetailScreen> createState() => _ClassDetailScreenState();
 }
 
-class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
+class _ClassDetailScreenState extends State<ClassDetailScreen> {
 
-  late AchievementDetailsModel model;
+  late ClassDetailModel model;
   
   @override
   void initState() {
     super.initState();
-    model = context.read<AchievementDetailsModel>();
-    model.setAchievement(widget.achievement);
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    model = context.read<ClassDetailModel>();
+    model.setClass(widget.record);
   }
 
   @override
   Widget build(BuildContext context) {
 
-    var achievement = context.select<AchievementDetailsModel,Achievement>((model) => model.achievement);
+    var record = context.select<ClassDetailModel,Class>((model) => model.record);
 
-    var description = context.select<AchievementDetailsModel,String>((model) => model.achievement.description);
-    var title = context.select<AchievementDetailsModel,String>((model) => model.achievement.title);
-    var icon = context.select<AchievementDetailsModel,String?>((model) => model.achievement.icon);
-    var date = context.select<AchievementDetailsModel,DateTime?>((model) => model.achievement.date);
-    var rarity = context.select<AchievementDetailsModel,AchievRar>((model) => model.achievement.rarity);
-    var tags = context.select<AchievementDetailsModel,List<Tag>>((model) => model.tags);
+    var description = context.select<ClassDetailModel,String>((model) => model.record.description);
+    var title = context.select<ClassDetailModel,String>((model) => model.record.title);
+    var icon = context.select<ClassDetailModel,String?>((model) => model.record.icon);
+    var tags = context.select<ClassDetailModel,List<Tag>>((model) => model.tags);
 
-    var setDone = model.setDone;
     var deleteThis = model.deleteThis;
 
     return Scaffold(
       appBar: buildAppBar(
-        'Достижение', 
-        editCallback: () => _edit(model, achievement), 
+        'Класс', 
+        editCallback: () => _edit(model, record), 
         deleteCallback: () => _deleteThis(deleteThis)
       ),
       body: Column(
@@ -73,8 +65,7 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
                       icon, 
                       icon: Icons.emoji_events, 
                       width: 60, height: 60,
-                      color: rarity.color,
-                      borderColor:rarity.color, 
+                      // color: rarity.color,
                       borderWidth: 2,
                     ),
 
@@ -115,24 +106,7 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
                         ),
                       },
                   
-                      // Дата получения
-                      if (date != null) ...{
-                        const SizedBox(height: 12),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              size: 14,
-                            ),
-                            const SizedBox(width: 8),
-                            CustomText(
-                              _formatDate(date)
-                            ),
-                          ],
-                        ),
-                      },
+                      
                   
                   ],
                 ) ,)
@@ -141,20 +115,14 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
           )
         ]
       ),
-      
-      floatingActionButton: (date == null) ? FloatingActionButton(
-        onPressed: setDone,
-        tooltip: 'Подтвердить получение',
-        child: const Icon(Icons.task_alt),
-      ) : null,
     );
   }
 
-  void _edit(AchievementDetailsModel model, Achievement achi) async {
+  void _edit(ClassDetailModel model, Class cls) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AchievementFormScreen(achi: achi),
+        builder: (context) => ClassFormScreen(record: cls),
       ),
     ).then((_) async {
       if (context.mounted) {

@@ -59,8 +59,10 @@ class UserFormScreen extends StatelessWidget {
       child: CustomImageIcon(
         iconPath, 
         icon: Icons.add_photo_alternate, 
-        width: 60, 
-        height: 60, 
+        width: 120, 
+        height: 120, 
+        borderColor: Theme.of(context).focusColor, 
+        borderWidth: 3,
         radius: const BorderRadius.all(Radius.circular(30)),
       )
     );

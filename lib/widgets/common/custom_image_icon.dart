@@ -10,7 +10,8 @@ class CustomImageIcon extends StatelessWidget {
   final double height;
   final Color? color;
   final IconData icon;
-  final Border? border;
+  final Color? borderColor;
+  final double? borderWidth;
 
   const CustomImageIcon(this.path, {super.key, 
     required this.icon,
@@ -18,7 +19,8 @@ class CustomImageIcon extends StatelessWidget {
     this.width = 48,
     this.height = 48,
     this.color,
-    this.border
+    this.borderColor,
+    this.borderWidth
   });
 
   File? getFile() {
@@ -36,6 +38,10 @@ class CustomImageIcon extends StatelessWidget {
     final file = getFile();
     final backColor = (color ?? Theme.of(context).dividerColor).withValues(alpha:0.15);
     final iconSize = min(width, height) * 0.6;
+    final border = Border.all(
+      color: borderColor ?? Theme.of(context).dividerColor, 
+      width: borderWidth ?? 0
+    );
 
     return path == null || path!.isEmpty ?
       Container(
@@ -62,16 +68,17 @@ class CustomImageIcon extends StatelessWidget {
         child:  Icon(Icons.image_not_supported, color: color, size: iconSize),
       ) :
 
-      ClipRRect(
-        borderRadius: radius,
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: backColor,
-            borderRadius: radius,
-            border: border
-          ),
+      Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: backColor,
+          borderRadius: radius,
+          border: border
+        ),
+        child: ClipRRect(
+          borderRadius: radius,
+          clipBehavior: Clip.hardEdge,
           child: Image.file(
             file,
             width: width,

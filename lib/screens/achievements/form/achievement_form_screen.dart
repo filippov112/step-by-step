@@ -6,7 +6,7 @@ import 'package:life_game/screens/achievements/form/achievement_form_model.dart'
 import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
 import 'package:life_game/screens/achievements/form/widgets/date.dart';
 import 'package:life_game/screens/achievements/form/widgets/description.dart';
-import 'package:life_game/screens/achievements/form/widgets/icon.dart';
+import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
 import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
 import 'package:life_game/screens/achievements/form/widgets/title.dart';
@@ -14,10 +14,9 @@ import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/common/entity_appbar.dart';
 import 'package:provider/provider.dart';
 
-
 class AchievementFormScreen extends StatefulWidget {
   final Achievement? achi;
-  
+
   const AchievementFormScreen({super.key, this.achi});
 
   @override
@@ -36,7 +35,7 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     descController?.dispose();
     super.dispose();
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -51,18 +50,27 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var isEditing = context.select<AchievementFormModel, bool>(
+      (model) => model.isEditing,
+    );
+    var selectedIcon = context.select<AchievementFormModel, String?>(
+      (model) => model.selectedIcon,
+    );
+    var selectedDate = context.select<AchievementFormModel, DateTime?>(
+      (model) => model.selectedDate,
+    );
+    var selectedRarity = context.select<AchievementFormModel, AchievRar>(
+      (model) => model.selectedRarity,
+    );
+    var selectedTags = context.select<AchievementFormModel, List<Tag>>(
+      (model) => model.selectedTags,
+    );
 
-    var isEditing = context.select<AchievementFormModel,bool>((model) => model.isEditing);
-    var selectedIcon = context.select<AchievementFormModel,String?>((model) => model.selectedIcon);
-    var selectedDate = context.select<AchievementFormModel,DateTime?>((model) => model.selectedDate);
-    var selectedRarity = context.select<AchievementFormModel,AchievRar>((model) => model.selectedRarity);
-    var selectedTags = context.select<AchievementFormModel,List<Tag>>((model) => model.selectedTags);
-    
     var setIcon = model.setIcon;
     var setRarity = model.setRarity;
     var setDate = model.setDate;
     var setSelectedTags = model.setSelectedTags;
-    
+
     var saveAchievement = model.saveAchievement;
     var deleteAchievement = model.deleteAchievement;
 
@@ -74,19 +82,23 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
       body: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: 
-              ListView(
+            Expanded(
+              child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
 
                   // Иконка
-                  CustomIconPicker(
-                    currentIcon: selectedIcon,
-                    setIcon: setIcon
+                  Center(
+                    child: CustomIconPicker(
+                      iconPath: selectedIcon,
+                      setIcon: setIcon,
+                      borderWidth: 3,
+                      color: selectedRarity.color
+                    ),
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
@@ -95,7 +107,7 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
                     'Основные поля',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  SizedBox(height: 12,),
+                  SizedBox(height: 12),
 
                   // Название
                   buildTitleInput(controller: titleController),
@@ -103,50 +115,48 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
                   // Описание
                   buildDescriptionInput(controller: descController),
-                  const SizedBox(height: 12), 
-                  
+                  const SizedBox(height: 12),
+
                   // Дата
                   buildDatePicker(
                     context,
-                    currentDatetime: selectedDate, 
-                    setDateTime: setDate
+                    currentDatetime: selectedDate,
+                    setDateTime: setDate,
                   ),
 
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
-                  
+
                   // Редкость
                   buildRaritySelector(
-                    context, 
-                    currentRarity: selectedRarity, 
-                    setRarity: setRarity
+                    context,
+                    currentRarity: selectedRarity,
+                    setRarity: setRarity,
                   ),
-                  
+
                   const SizedBox(height: 8),
                   const Divider(),
                   const SizedBox(height: 8),
 
                   // Теги
                   buildTagsSection(
-                    context, 
-                    selectedTags: selectedTags, 
-                    setSelectedTags: setSelectedTags
+                    context,
+                    selectedTags: selectedTags,
+                    setSelectedTags: setSelectedTags,
                   ),
-                  
-                  const SizedBox(height: 8),
-                  
 
-                ]
-              ),   
+                  const SizedBox(height: 8),
+                ],
+              ),
             ),
             // Кнопки
             buildButtonsBlock(
-              context, 
-              saveCallback: () => _saveAchievement(saveAchievement), 
-              isEditing: isEditing
-            )
-          ]
+              context,
+              saveCallback: () => _saveAchievement(saveAchievement),
+              isEditing: isEditing,
+            ),
+          ],
         ),
       ),
     );
@@ -156,7 +166,7 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     model.setTitle(titleController?.text ?? '');
     model.setDescription(descController?.text ?? '');
-    var result = await saveAchievement(); 
+    var result = await saveAchievement();
     if (mounted) {
       Navigator.pop(context, result);
     }

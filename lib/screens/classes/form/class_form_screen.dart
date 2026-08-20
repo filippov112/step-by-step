@@ -5,7 +5,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
 import 'package:life_game/screens/achievements/form/widgets/description.dart';
-import 'package:life_game/screens/achievements/form/widgets/icon.dart';
+import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
 import 'package:life_game/screens/achievements/form/widgets/title.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
@@ -83,7 +83,7 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
                   // Иконка
                   CustomIconPicker(
-                    currentIcon: selectedIcon,
+                    iconPath: selectedIcon,
                     setIcon: setIcon
                   ),
                   

@@ -3,13 +3,11 @@ import 'package:life_game/widgets/analysis/custom_activity_table.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
-
 // Виджет отображения активности пользователя
 class UserActivity extends StatefulWidget {
-  
-  final Map<DateTime,int> tasks;
-  final Map<DateTime,int> experiences;
-  final Map<DateTime,int> times;
+  final Map<DateTime, int> tasks;
+  final Map<DateTime, int> experiences;
+  final Map<DateTime, int> times;
   final int maxExp;
   final int maxTime;
   final int deltaExp;
@@ -18,7 +16,8 @@ class UserActivity extends StatefulWidget {
   final DateTime firstDay;
   final DateTime lastDay;
 
-  const UserActivity({super.key,  
+  const UserActivity({
+    super.key,
     required this.tasks,
     required this.experiences,
     required this.times,
@@ -27,8 +26,8 @@ class UserActivity extends StatefulWidget {
     required this.deltaExp,
     required this.deltaTime,
     required this.maxTasksCount,
-    required this.firstDay, 
-    required this.lastDay
+    required this.firstDay,
+    required this.lastDay,
   });
 
   @override
@@ -38,90 +37,86 @@ class UserActivity extends StatefulWidget {
 enum UserActivityType { time, exp, tasks }
 
 class _UserActivityState extends State<UserActivity> {
- 
   UserActivityType selectedType = UserActivityType.tasks;
 
-  Map<DateTime,int> _getData() {
+  Map<DateTime, int> _getData() {
     switch (selectedType) {
-      case UserActivityType.time: return widget.times;
-      case UserActivityType.exp: return widget.experiences;
-      default: return widget.tasks;
+      case UserActivityType.time:
+        return widget.times;
+      case UserActivityType.exp:
+        return widget.experiences;
+      default:
+        return widget.tasks;
     }
   }
 
   int _getMaxValue() {
     switch (selectedType) {
-      case UserActivityType.time: return widget.maxTime;
-      case UserActivityType.exp: return widget.maxExp;
-      default: return widget.maxTasksCount;
+      case UserActivityType.time:
+        return widget.maxTime;
+      case UserActivityType.exp:
+        return widget.maxExp;
+      default:
+        return widget.maxTasksCount;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-      
     return CustomCardBlock(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      title: 'Активность',
+      icon: Icons.speed,
+      trailing: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Заголовок
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-
-              // Иконка
-              Icon(Icons.speed, size: 32),
-              const SizedBox(width: 8),
-              
-              // Название блока
-              CustomText(
-                'Активность',
-                size: 16,
-                color: Theme.of(context).colorScheme.onPrimary,
-                expanded: true,
-                weight: FontWeight(500),
-              ),
-
-              // Тип данных
-              Padding(
-                padding: EdgeInsetsGeometry.only(left: 8),
-                child: IconButton(
-                  color: selectedType == UserActivityType.tasks ? Theme.of(context).focusColor : Theme.of(context).dividerColor,
-                  onPressed: () => setState(() => selectedType = UserActivityType.tasks), icon: Icon(Icons.task_alt_outlined)),
-              ),
-              Padding(
-                padding: EdgeInsetsGeometry.only(left: 8),
-                child: IconButton(
-                  color: selectedType == UserActivityType.exp ? Theme.of(context).focusColor : Theme.of(context).dividerColor,
-                  onPressed: () => setState(() => selectedType = UserActivityType.exp), icon: Icon(Icons.wb_incandescent)),
-              ),
-              Padding(
-                padding: EdgeInsetsGeometry.only(left: 8),
-                child: IconButton(
-                  color: selectedType == UserActivityType.time ? Theme.of(context).focusColor : Theme.of(context).dividerColor,
-                  onPressed: () => setState(() => selectedType = UserActivityType.time), icon: Icon(Icons.schedule_outlined)),
-              ),
-            ],
+          // Тип данных
+          Padding(
+            padding: EdgeInsetsGeometry.only(left: 8),
+            child: IconButton(
+              color: selectedType == UserActivityType.tasks
+                  ? Theme.of(context).focusColor
+                  : Theme.of(context).dividerColor,
+              onPressed: () =>
+                  setState(() => selectedType = UserActivityType.tasks),
+              icon: Icon(Icons.task_alt_outlined),
+            ),
           ),
-
-          
-          const SizedBox(height: 8),
-          
-          SizedBox(
-            height: 150,
-            child: CustomActivityTable(
-              activities: _getData(),
-              maxValue: _getMaxValue(),
-              startDate: widget.firstDay,
-              endDate: widget.lastDay,
-              cellSpacing: 3,
-              showMonthLabels: true,
-              showWeekLabels: true,
-            )
+          Padding(
+            padding: EdgeInsetsGeometry.only(left: 8),
+            child: IconButton(
+              color: selectedType == UserActivityType.exp
+                  ? Theme.of(context).focusColor
+                  : Theme.of(context).dividerColor,
+              onPressed: () =>
+                  setState(() => selectedType = UserActivityType.exp),
+              icon: Icon(Icons.wb_incandescent),
+            ),
           ),
-          
+          Padding(
+            padding: EdgeInsetsGeometry.only(left: 8),
+            child: IconButton(
+              color: selectedType == UserActivityType.time
+                  ? Theme.of(context).focusColor
+                  : Theme.of(context).dividerColor,
+              onPressed: () =>
+                  setState(() => selectedType = UserActivityType.time),
+              icon: Icon(Icons.schedule_outlined),
+            ),
+          ),
         ],
-      )
+      ),
+      child: SizedBox(
+        height: 150,
+        child: CustomActivityTable(
+          activities: _getData(),
+          maxValue: _getMaxValue(),
+          startDate: widget.firstDay,
+          endDate: widget.lastDay,
+          cellSpacing: 3,
+          showMonthLabels: true,
+          showWeekLabels: true,
+        ),
+      ),
     );
   }
 }

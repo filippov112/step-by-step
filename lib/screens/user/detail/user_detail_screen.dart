@@ -8,9 +8,9 @@ import 'package:life_game/screens/user/detail/widgets/user_info.dart';
 import 'package:life_game/services/exp_calculator.dart';
 import 'package:life_game/widgets/filters/filter_section.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';
-import 'package:life_game/widgets/main/main_app_bar.dart';
-import 'package:life_game/widgets/main/main_bottom_menu.dart';
-import 'package:life_game/widgets/main/main_menu_drawer.dart';
+import 'package:life_game/widgets/common/app_bar_list.dart';
+import 'package:life_game/screens/home/widgets/bottom_menu.dart';
+import 'package:life_game/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:snap_chart/snap_chart.dart';
 

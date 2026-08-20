@@ -5,8 +5,9 @@ import 'package:life_game/screens/tags/tag_list_model.dart';
 import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/screens/tags/widgets/tag_tile.dart';
 import 'package:life_game/screens/tags/widgets/tag_edit.dart';
-import 'package:life_game/widgets/main/main_app_bar.dart';
-import 'package:life_game/widgets/main/main_menu_drawer.dart';
+import 'package:life_game/widgets/common/app_bar_list.dart';
+import 'package:life_game/screens/home/widgets/bottom_menu.dart';
+import 'package:life_game/screens/home/widgets/left_menu.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:life_game/widgets/common/search_string.dart';
@@ -188,11 +189,12 @@ class _TagListScreenState extends State<TagListScreen> {
         }
 
         return Scaffold(
-          drawer: MainMenuDrawer(currentModule: AppModule.tags),
+          drawer: MainMenuDrawer(),
           appBar: appBar,
           endDrawer: FiltersDrawer(filters: filters,),
           body: buildBody(),
           floatingActionButton: CustomFloatingActionButton(openFormCreate: _showAddDialog, tooltip: "Добавить тег"),
+          bottomNavigationBar: const MainBottomMenu(),
         );
       }
     );

@@ -4,10 +4,12 @@ import 'package:life_game/screens/classes/form/class_form_screen.dart';
 import 'package:life_game/screens/classes/list/class_list_model.dart';
 import 'package:life_game/screens/classes/list/widgets/filters.dart';
 import 'package:life_game/screens/classes/list/widgets/tile.dart';
-import 'package:life_game/widgets/main/main_app_bar.dart';
+import 'package:life_game/widgets/common/app_bar_list.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:life_game/widgets/common/search_string.dart';
+import 'package:life_game/screens/home/widgets/bottom_menu.dart';
+import 'package:life_game/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 
@@ -72,7 +74,8 @@ class _ClassListScreenState extends State<ClassListScreen> {
               ),
         
           endDrawer: ClassFilters(),
-          // drawer: const MainMenuDrawer(),
+          drawer: const MainMenuDrawer(),
+          bottomNavigationBar: const MainBottomMenu(),
         );
       }
     );

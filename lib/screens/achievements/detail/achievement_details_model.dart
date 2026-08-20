@@ -14,8 +14,7 @@ class AchievementDetailsModel extends ChangeNotifier {
   Future<bool> checkExist() async {
     var newRecord = await _achiRepo.get(achievement.id);
     if (newRecord != null) {
-      achievement = newRecord;
-      notifyListeners();
+      await setAchievement(newRecord);
       return true;
     }
     return false;

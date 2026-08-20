@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/user.dart';
+import 'package:life_game/screens/home/widgets/modules.dart';
 
 class HomeModel extends ChangeNotifier {
   User? user;
-  int currentTab = 1;
+  AppModule currentModule = AppModule.tasks;
   bool get userIsExist => user != null;
 
-  final UserRepository _userProvider = UserRepository();
+  final UserRepository _userRepo = UserRepository();
   
   Future loadUser() async {
-    user = await _userProvider.get(); 
+    user = await _userRepo.get(); 
     notifyListeners();
   }
 
-  void selectTab(int id) {
-    currentTab = id;
+  void selectModule(AppModule module) {
+    currentModule = module;
     notifyListeners();
   }
 

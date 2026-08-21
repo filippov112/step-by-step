@@ -1,17 +1,18 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/screens/user/detail/widgets/accumulation.dart';
-import 'package:life_game/screens/user/detail/widgets/activities.dart';
+import 'package:life_game/widgets/analysis/custom_activity_table.dart';
 import 'package:life_game/services/exp_calculator.dart';
+import 'package:life_game/widgets/analysis/custom_rose_chart.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:life_game/widgets/main/main_app_bar.dart';
 import 'package:life_game/widgets/main/main_bottom_menu.dart';
 import 'package:life_game/widgets/main/main_menu_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:radar_chart_plus/radar_chart_plus.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 
@@ -26,12 +27,12 @@ class UserDetailScreen extends StatefulWidget {
 
 class _UserDetailScreenState extends State<UserDetailScreen> {
 
-  Map<DateTime, int> _getUserActivities() {
+  Map<DateTime, int> _getUserActivities(int cnt) {
     final activities = <DateTime, int>{};
     final now = DateTime.now();
     
     // Генерируем демо-данные
-    for (int i = 0; i < 365; i++) {
+    for (int i = 0; i < cnt; i++) {
       final date = now.subtract(Duration(days: i));
       // Случайное количество задач (0-12)
       final count = (i % 7 == 0) ? 0 : (i % 13);
@@ -135,12 +136,17 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       firstDayDelta: DateTime(2026,5,1),
     );
 
-    var activity = ActivityGrid(
-      activities: _getUserActivities(),
-      startDate: DateTime.now().subtract(Duration(days: 70)),
+    var countDays = 7;
+    var dayData = _getUserActivities(countDays);
+    var maxv = dayData.values.reduce(max);
+    var activity = CustomActivityTable(
+      activities: dayData,
+      maxValue: maxv,
+      startDate: DateTime.now().subtract(Duration(days: countDays - 1)),
       endDate: DateTime.now(),
       cellSpacing: 3,
-      showMonthLabels: false,
+      showMonthLabels: true,
+      showWeekLabels: true,
       onCellTap: (date, count) {
         _showActivityDetails(context, date, count);
       },
@@ -203,18 +209,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                   ),
 
                   
-                  SizedBox(height: 400, child: RadarChartPlus(
-                    ticks: [2, 4, 6],
-                    labels: ['AA', 'BB', 'CC'],
-                    dataSets: [
-                      RadarDataSet(
-                        data: [3, 2, 5],
-                        borderColor: Color(0xFF8072F3),
-                        fillColor: Color(0x668072F3),
-                        dotColor: Color(0xFF8072F3),
-                      ),
-                    ],
-                  )),
+                  CustomRoseChart()
    
                 ]
                 ) 

@@ -1,7 +1,8 @@
 // ---- Прогресс-бар с иконкой и числом ----
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/user/detail/widgets/accum_bar.dart';
-import 'package:life_game/screens/user/detail/widgets/accum_chart.dart';
+import 'package:life_game/tools/get_age_string.dart';
+import 'package:life_game/widgets/analysis/custom_progress_bar.dart';
+import 'package:life_game/widgets/analysis/custom_linear_chart.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 import 'package:snap_chart/snap_chart.dart';
 
@@ -101,17 +102,47 @@ class AccumulationDynamic extends StatelessWidget {
 
           // Прогресс-бар
           const SizedBox(height: 8),
-          AccumBar(value: currentValue, maxValue: nextLevel, deltaValue: deltaValue),
+          CustomProgressBar(value: currentValue, maxValue: nextLevel, deltaValue: deltaValue),
 
           // График роста
           const SizedBox(height: 8),
-          AccumChart(
-            oldData: oldData,
-            newData: newData, 
-            firstDay: firstDay, 
-            lastDay: lastDay,
-            firstDayDelta: firstDayDelta,
-          )
+          Container(
+            padding: EdgeInsets.fromLTRB(8,8,8,4),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
+              border: Border.all(color: Theme.of(context).dividerColor, width: 2)
+            ),
+            child: Stack(children: [
+              CustomLinearChart(
+                sortedData: [oldData, newData], 
+                minV: firstDay.millisecondsSinceEpoch.toDouble(), 
+                maxV: lastDay.millisecondsSinceEpoch.toDouble(),
+                colors: [Theme.of(context).focusColor, Colors.orange],
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                height: 100, 
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomText(
+                          '${getDateIntervalString(firstDay, lastDay)} / ${getDateIntervalString(firstDayDelta, lastDay)}'
+                          , align: TextAlign.end,
+                        ),
+                    ],
+                  ),
+                  ],
+                )
+              ,)
+              
+            ],)
+          ),
         ],
       )
     );

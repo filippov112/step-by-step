@@ -44,7 +44,7 @@ class User {
     var map = <String, Object?>{
       cName: name,
       cIcon: icon ?? "",
-      cBirthDate: dateBirth.millisecondsSinceEpoch ~/ 60000,
+      cBirthDate: dateBirth.millisecondsSinceEpoch ~/ (24 * 60 * 60 * 1000),
       cExperience: experience,
       cTime: time
     };
@@ -58,7 +58,7 @@ class User {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon];
-    dateBirth = DateTime.fromMillisecondsSinceEpoch(map[cBirthDate] * 60000);
+    dateBirth = DateTime.fromMillisecondsSinceEpoch(map[cBirthDate] * (24 * 60 * 60 * 1000));
     experience = map[cExperience];
     time = map[cTime];
   }

@@ -84,7 +84,7 @@ class TaskReward {
       cSkillId: skillId,
       cTaskId: taskId,
       cClassId: classId,
-      cDate: date?.millisecondsSinceEpoch,
+      cDate: date == null ? date : date!.millisecondsSinceEpoch ~/ (24 * 60 * 60 * 1000),
       cExperience: experience,
       cTime: time,
     };
@@ -95,7 +95,7 @@ class TaskReward {
     skillId = map[cSkillId];
     taskId = map[cTaskId];
     classId = map[cClassId];
-    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate] * (24 * 60 * 60 * 1000));
     experience = map[cExperience] ?? 0;
     time = map[cTime] ?? 0;
   }

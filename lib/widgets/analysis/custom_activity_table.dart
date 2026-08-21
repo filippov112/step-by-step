@@ -1,31 +1,31 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
-class ActivityGrid extends StatelessWidget {
-  final Map<DateTime, int> activities; // Дата -> количество задач
-  final DateTime startDate;
-  final DateTime endDate;
-  final double cellSpacing;
-  final Color emptyColor;
-  final List<Color> levelColors;
-  final void Function(DateTime date, int count)? onCellTap;
-  final bool showWeekLabels;
-  final bool showMonthLabels;
 
-  const ActivityGrid({
+// Виджет активности за период
+class CustomActivityTable extends StatelessWidget {
+  final Map<DateTime, int> activities; // Набор данных
+  final DateTime startDate; // Начало периода
+  final DateTime endDate; // Конец периода
+  final double cellSpacing; // Промежутки между ячейками
+  final Color? minColor; // Минимальный цвет
+  final Color? maxColor; // Максимальный цвет
+  final int maxValue; // Верхняя граница значений
+  final void Function(DateTime date, int count)? onCellTap; // Колбек при нажатии на ячейку
+  final bool showWeekLabels; // Отображать дни недели
+  final bool showMonthLabels; // Отображать месяца
+
+  const CustomActivityTable({
     super.key,
     required this.activities,
     required this.startDate,
     required this.endDate,
     this.cellSpacing = 4,
-    this.emptyColor = const Color(0xFFEBEDF0),
-    this.levelColors = const [
-      Color(0xFFEBEDF0), // 0
-      Color(0xFF9BE9A8), // 1-3
-      Color(0xFF40C463), // 4-6
-      Color(0xFF30A14E), // 7-9
-      Color(0xFF216E39), // 10+
-    ],
+    this.minColor,
+    this.maxColor,
+    required this.maxValue,
     this.onCellTap,
     this.showWeekLabels = true,
     this.showMonthLabels = true,
@@ -102,14 +102,15 @@ class ActivityGrid extends StatelessWidget {
             )
           );
         }),
-        Expanded(child: 
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
-            padding: const EdgeInsets.only(right: 2),
-            child: SizedBox()
-          )
-        ),
+        if (showMonthLabels)
+          Expanded(child: 
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
+              padding: const EdgeInsets.only(right: 2),
+              child: SizedBox()
+            )
+          ),
       ]
     );
   }
@@ -119,6 +120,9 @@ class ActivityGrid extends StatelessWidget {
   /// Основная сетка
   List<Widget> _buildGrid(BuildContext context, List<List<DateTime>> weeks) {
     
+    var minC = minColor ?? Theme.of(context).dividerColor;
+    var maxC = maxColor ?? Theme.of(context).focusColor;
+
     return weeks.map((week) {
           return Expanded(
             child: Column(
@@ -126,10 +130,13 @@ class ActivityGrid extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [ 
                 ...week.map((day) {
-                  final isRealDay = day.year >= 2020;
+                  final isRealDay = activities.keys.contains(day);
+                  if (!isRealDay) {
+                    return Expanded(child: SizedBox(),);
+                  }
                   final count = isRealDay ? (activities[day] ?? 0) : 0;
-                  final color = _getColorForCount(count);
-                
+                  final color = _getColorForCount(minC, maxC, count);
+              
                   return Expanded(child:
                     GestureDetector(
                       onTap: isRealDay && onCellTap != null
@@ -139,11 +146,6 @@ class ActivityGrid extends StatelessWidget {
                         margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
                         decoration: BoxDecoration(
                           color: isRealDay ? color : Colors.transparent,
-                          borderRadius: BorderRadius.circular(2),
-                          border: Border.all(
-                            color: isRealDay ? Theme.of(context).dividerColor : Colors.transparent,
-                            width: 1,
-                          ),
                         ),
                         child: isRealDay && count > 0
                             ? Tooltip(
@@ -158,7 +160,8 @@ class ActivityGrid extends StatelessWidget {
 
                 if (week.length < 7) Expanded(flex: 7 - week.length, child: SizedBox(),),
 
-                Expanded(child: Text(getBeginMonth(week)),)
+                if (showMonthLabels)
+                  Expanded(child: Text(getBeginMonth(week)),)
               ]
             )
           );
@@ -171,13 +174,15 @@ class ActivityGrid extends StatelessWidget {
     return months[day.month - 1];
   }
 
-  /// Определяем цвет по количеству задач
-  Color _getColorForCount(int count) {
-    if (count == 0) return emptyColor;
-    if (count <= 3) return levelColors[1];
-    if (count <= 6) return levelColors[2];
-    if (count <= 9) return levelColors[3];
-    return levelColors[4];
+  /// Определяем цвет
+  Color _getColorForCount(Color minC, Color maxV, int v) {
+    var t = maxValue == 0 || maxValue <= v ? 0.0 : v.toDouble() / maxValue;
+    return Color.from(
+      alpha: 1, 
+      red: lerpDouble(minC.r, maxV.r, t) ?? 0, 
+      green: lerpDouble(minC.g, maxV.g, t) ?? 0, 
+      blue: lerpDouble(minC.b, maxV.b, t) ?? 0
+    );
   }
 
   String _formatDate(DateTime date) {

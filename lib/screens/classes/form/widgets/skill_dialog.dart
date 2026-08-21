@@ -3,7 +3,6 @@ import 'package:life_game/models/class_skill.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/screens/classes/form/widgets/skill_tile.dart';
-import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 

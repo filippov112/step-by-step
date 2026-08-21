@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/class.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
-import 'package:life_game/screens/achievements/form/widgets/description.dart';
-import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
-import 'package:life_game/screens/achievements/form/widgets/tags.dart';
-import 'package:life_game/screens/achievements/form/widgets/title.dart';
+import 'package:life_game/screens/classes/form/widgets/icon.dart';
+import 'package:life_game/screens/classes/form/widgets/tags.dart';
+import 'package:life_game/widgets/common/multiline_input.dart';
+import 'package:life_game/widgets/common/singleline_input.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/screens/classes/form/widgets/skills.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
@@ -26,13 +22,13 @@ class ClassFormScreen extends StatefulWidget {
 class _ClassFormScreenState extends State<ClassFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late ClassFormModel model;
-  TextEditingController? titleController;
-  TextEditingController? descController;
+  late TextEditingController titleController;
+  late TextEditingController descController;
 
   @override
   void dispose() {
-    titleController?.dispose();
-    descController?.dispose();
+    titleController.dispose();
+    descController.dispose();
     super.dispose();
   }
 
@@ -49,102 +45,47 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var isEditing = context.select<ClassFormModel, bool>(
-      (model) => model.isEditing,
-    );
-    var selectedIcon = context.select<ClassFormModel, String?>(
-      (model) => model.selectedIcon,
-    );
-    var selectedTags = context.select<ClassFormModel, List<Tag>>(
-      (model) => model.selectedTags,
-    );
-
-    var setIcon = model.setIcon;
-    var setSelectedTags = model.setSelectedTags;
-
     var save = model.save;
     var delete = model.delete;
 
-    var classId = context.select<ClassFormModel, String>(
-      (model) => model.record.id,
-    );
-    var skills = context.select<ClassFormModel, List<Skill>>(
-      (model) => model.allSkills,
-    );
-    var selectedSkills = context.select<ClassFormModel, List<ClassSkill>>(
-      (model) => model.selectedClassSkills,
-    );
-    var setSelectedSkills = model.setSelectedClassSkills;
+    return EntityScreen(
+      title: 'Класс',
+      saveCallback: () => _save(save),
+      deleteCallback:  widget.record == null ? () {} :  () => _delete(delete),
+      formKey: _formKey,
+      children: [
+        // Иконка
+        const ClassFormIcon(),
+        const SizedBox(height: 12),
 
-    return Scaffold(
-      appBar: buildAppBar('Класс', deleteCallback: () => _delete(delete)),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // Иконка
-                  CustomIconPicker(iconPath: selectedIcon, setIcon: setIcon),
-
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  Text(
-                    'Основные поля',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 12),
-
-                  // Название
-                  buildTitleInput(controller: titleController),
-                  const SizedBox(height: 12),
-
-                  // Описание
-                  buildDescriptionInput(controller: descController),
-                  const SizedBox(height: 12),
-
-                  // Теги
-                  buildTagsSection(
-                    context,
-                    selectedTags: selectedTags,
-                    setSelectedTags: setSelectedTags,
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Награды
-                  SkillsSection(
-                    selectedSkills: selectedSkills,
-                    setSelectedSkills: setSelectedSkills,
-                    skills: skills,
-                    classId: classId,
-                  ),
-                  const SizedBox(height: 8),
-                ],
-              ),
-            ),
-            // Кнопки
-            buildButtonsBlock(
-              context,
-              saveCallback: () => _save(save),
-              isEditing: isEditing,
-            ),
-          ],
+        // Название
+        SinglelineInput(
+          isRequired: true,
+          requiredErrorText: 'Введите название',
+          title: 'Название',
+          controller: titleController,
         ),
-      ),
+        const SizedBox(height: 12),
+
+        // Описание
+        CustomMultilineTextInput(title: 'Описание', controller: descController),
+        const SizedBox(height: 12),
+
+        // Теги
+        const ClassFormTags(),
+        const SizedBox(height: 12),
+
+        // Навыки
+        const ClassFormSkills(),
+      ],
     );
   }
 
   Future _save(Future<bool> Function() save) async {
     if (!_formKey.currentState!.validate()) return;
 
-    model.setTitle(titleController?.text ?? '');
-    model.setDescription(descController?.text ?? '');
+    model.setTitle(titleController.text);
+    model.setDescription(descController.text);
     var result = await save();
     if (mounted) {
       Navigator.pop(context, result);

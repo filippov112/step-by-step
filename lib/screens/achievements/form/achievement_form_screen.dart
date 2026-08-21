@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
-import 'package:life_game/screens/achievements/form/widgets/buttons.dart';
 import 'package:life_game/screens/achievements/form/widgets/date.dart';
-import 'package:life_game/screens/achievements/form/widgets/description.dart';
-import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
+import 'package:life_game/widgets/common/multiline_input.dart';
+import 'package:life_game/screens/achievements/form/widgets/icon.dart';
 import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
-import 'package:life_game/screens/achievements/form/widgets/title.dart';
+import 'package:life_game/widgets/common/singleline_input.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
 import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +23,13 @@ class AchievementFormScreen extends StatefulWidget {
 class _AchievementFormScreenState extends State<AchievementFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late AchievementFormModel model;
-  TextEditingController? titleController;
-  TextEditingController? descController;
+  late TextEditingController titleController;
+  late TextEditingController descController;
 
   @override
   void dispose() {
-    titleController?.dispose();
-    descController?.dispose();
+    titleController.dispose();
+    descController.dispose();
     super.dispose();
   }
 
@@ -45,125 +42,50 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.setAchievement(widget.achi);
-      titleController?.text = widget.achi?.title ?? '';
-      descController?.text = widget.achi?.description ?? '';
+      titleController.text = widget.achi?.title ?? '';
+      descController.text = widget.achi?.description ?? '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = context.select<AchievementFormModel, bool>(
-      (model) => model.isEditing,
-    );
-    final selectedIcon = context.select<AchievementFormModel, String?>(
-      (model) => model.selectedIcon,
-    );
-    final selectedDate = context.select<AchievementFormModel, DateTime?>(
-      (model) => model.selectedDate,
-    );
-    final selectedRarity = context.select<AchievementFormModel, AchievRar>(
-      (model) => model.selectedRarity,
-    );
-    final selectedTags = context.select<AchievementFormModel, List<Tag>>(
-      (model) => model.selectedTags,
-    );
-    
-
-    final setIcon = model.setIcon;
-    final setRarity = model.setRarity;
-    final setDate = model.setDate;
-    final setSelectedTags = model.setSelectedTags;
-
     final saveAchievement = model.saveAchievement;
     final deleteAchievement = model.deleteAchievement;
 
-    return 
-    
-    
-    Scaffold(
-      appBar: buildAppBar(
-        'Достижение',
-        deleteCallback: () => _delete(deleteAchievement),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // Иконка
-                  Center(
-                    child: CustomIconPicker(
-                      iconPath: selectedIcon,
-                      setIcon: setIcon,
-                      borderWidth: 3,
-                      color: selectedRarity.color,
-                    ),
-                  ),
+    return EntityScreen(
+      title: 'Достижение',
+      formKey: _formKey,
+      saveCallback: () => _saveAchievement(saveAchievement),
+      deleteCallback: widget.achi == null ? () {} : () => _delete(deleteAchievement),
+      children: [
+        // Иконка
+        const AchievFormIcon(),
+        const SizedBox(height: 12),
 
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  Text(
-                    'Основные поля',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  SizedBox(height: 12),
-
-                  // Название
-                  buildTitleInput(controller: titleController),
-                  const SizedBox(height: 12),
-
-                  // Описание
-                  buildDescriptionInput(controller: descController),
-                  const SizedBox(height: 12),
-
-                  // Дата
-                  buildDatePicker(
-                    context,
-                    currentDatetime: selectedDate,
-                    setDateTime: setDate,
-                  ),
-
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  // Редкость
-                  buildRaritySelector(
-                    context,
-                    currentRarity: selectedRarity,
-                    setRarity: setRarity,
-                  ),
-
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-
-                  // Теги
-                  buildTagsSection(
-                    context,
-                    selectedTags: selectedTags,
-                    setSelectedTags: setSelectedTags,
-                  ),
-
-                  const SizedBox(height: 8),
-                ],
-              ),
-            ),
-            // Кнопки
-            buildButtonsBlock(
-              context,
-              saveCallback: () => _saveAchievement(saveAchievement),
-              isEditing: isEditing,
-            ),
-          ],
+        // Название
+        SinglelineInput(
+          isRequired: true,
+          requiredErrorText: 'Введите название',
+          title: 'Название',
+          controller: titleController,
         ),
-      ),
+        const SizedBox(height: 12),
+
+        // Описание
+        CustomMultilineTextInput(title: 'Описание', controller: descController),
+        const SizedBox(height: 12),
+
+        // Дата
+        const AchievFormDate(),
+        const SizedBox(height: 12),
+
+        // Редкость
+        const AchievFormRarity(),
+        const SizedBox(height: 12),
+
+        // Теги
+        const AchievFormTags(),
+      ],
     );
   }
 

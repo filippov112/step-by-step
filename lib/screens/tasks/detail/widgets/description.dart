@@ -1,43 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/tasks/detail/widgets/status.dart';
+import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
+import 'package:provider/provider.dart';
 
-Widget buildTaskInfo(
-  BuildContext context,
-  {
-    required bool done,
-    required DateTime? datetime,
-    required bool isOverdue,
-    required TaskPriority priority,
-    required TaskDifficulty difficulty,
-    required List<Tag> allTags,
-    required String description,
+class TaskDetailDesc extends StatelessWidget {
+  const TaskDetailDesc({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var description = context.select<TaskDetailModel, String>(
+      (model) => model.task.description,
+    );
+
+    return Text(description, style: Theme.of(context).textTheme.bodyLarge);
   }
-) {
-  return Padding(
-    padding: EdgeInsetsGeometry.all(16),
-    child: ListView(
-      children: [
-          
-        buildStatusSection(
-          context,
-          done: done, 
-          datetime: datetime, 
-          isOverdue: isOverdue, 
-          priority: priority, 
-          difficulty: difficulty, 
-          allTags: allTags
-        ),
-
-        const Divider(),
-
-        Text(
-          description,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-      ]
-    )
-  );
 }

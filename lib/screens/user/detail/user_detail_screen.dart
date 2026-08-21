@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/screens/user/detail/widgets/user_activity.dart';

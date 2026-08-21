@@ -6,11 +6,11 @@ import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/detail/widgets/description.dart';
-import 'package:life_game/screens/tasks/detail/widgets/header.dart';
+import 'package:life_game/screens/tasks/detail/widgets/title.dart';
+import 'package:life_game/screens/tasks/detail/widgets/status.dart';
 import 'package:life_game/screens/tasks/detail/widgets/subtasks.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
@@ -88,6 +88,18 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     var setDone = model.setDone;
     var deleteThisTask = model.deleteThisTask;
 
+
+    final taskInfo = Padding(
+    padding: EdgeInsetsGeometry.all(16),
+    child: ListView(
+      children: [
+        const TaskDetailStatus(),
+        const Divider(),
+        const TaskDetailDesc(),
+      ]
+    )
+    );
+
     return Scaffold(
       appBar: buildAppBar(
         'Задача',
@@ -97,11 +109,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Шапка
+
+          // Заголовок
           Padding(
             padding: const EdgeInsets.all(16),
-            child: buildHeader(title: title),
+            child: const TaskDetailTitle(),
           ),
+
           // Шапка списка подзадач
           buildSubtaskSection(
             context,
@@ -112,6 +126,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
 
           Divider(),
 
+          // Основной блок - подзадачи, либо описание
           Expanded(
             child: expController.isExpanded
                 ? buildSubtaskBlock(
@@ -124,16 +139,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
                     childrenCount: childrenCount,
                     childrenDoneCount: childrenDoneCount,
                   )
-                : buildTaskInfo(
-                    context,
-                    description: description,
-                    done: done,
-                    datetime: datetime,
-                    isOverdue: isOverdue,
-                    priority: priority,
-                    difficulty: difficulty,
-                    allTags: allTags,
-                  ),
+                : taskInfo,
           ),
         ],
       ),

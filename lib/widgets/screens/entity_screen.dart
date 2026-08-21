@@ -6,8 +6,9 @@ class EntityScreen extends StatelessWidget {
   final Iterable<Widget> children;
   final Iterable<Widget>? actions;
   final Widget? floatingButton;
-  final VoidCallback? deleteCallback, editCallback;
+  final VoidCallback? deleteCallback, editCallback, saveCallback;
   final String title;
+  final Key? formKey;
 
   const EntityScreen({
     super.key,
@@ -15,7 +16,9 @@ class EntityScreen extends StatelessWidget {
     required this.children,
     this.deleteCallback,
     this.editCallback,
+    this.saveCallback,
     this.actions,
+    this.formKey,
     this.floatingButton,
   });
 
@@ -38,6 +41,12 @@ class EntityScreen extends StatelessWidget {
               onPressed: deleteCallback,
               tooltip: 'Удалить',
             ),
+          if (saveCallback != null)
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: saveCallback,
+              tooltip: 'Сохранить',
+            ),
         ],
       ),
 
@@ -49,7 +58,18 @@ class EntityScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsetsGeometry.all(16),
-                  child: Column(
+                  child: formKey != null ? 
+
+                  Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children:  [...children],
+                    ),
+                  )
+                  
+                  : 
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [...children],
                   ),

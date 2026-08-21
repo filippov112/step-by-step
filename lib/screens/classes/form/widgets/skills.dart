@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/class_skill.dart';
 import 'package:life_game/models/skill.dart';
+import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/screens/classes/form/widgets/skill_dialog.dart';
 import 'package:life_game/screens/classes/form/widgets/skill_tile.dart';
+import 'package:provider/provider.dart';
 
-
-class SkillsSection extends StatelessWidget {
-
-  final List<ClassSkill> selectedSkills;
-  final Function(List<ClassSkill>) setSelectedSkills;
-  final List<Skill> skills;
-  final String classId;
-
-  const SkillsSection({
-    super.key,
-    required this.selectedSkills, 
-    required this.setSelectedSkills,
-    required this.skills,
-    required this.classId,
-  });
+class ClassFormSkills extends StatelessWidget {
+  const ClassFormSkills({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<ClassFormModel>();
+    final classId = context.select<ClassFormModel, String>(
+      (model) => model.record.id,
+    );
+    final skills = context.select<ClassFormModel, List<Skill>>(
+      (model) => model.allSkills,
+    );
+    final selectedSkills = context.select<ClassFormModel, List<ClassSkill>>(
+      (model) => model.selectedClassSkills,
+    );
+    final setSelectedSkills = model.setSelectedClassSkills;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,17 +30,14 @@ class SkillsSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'Навыки',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+            Text('Навыки', style: Theme.of(context).textTheme.titleMedium),
             IconButton(
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (context) => SkillDialog(
-                  onConfirm: (skls) => setSelectedSkills(skls), 
-                  classId: classId, 
+                builder: (context) => ClassFormSkillDialog(
+                  onConfirm: (skls) => setSelectedSkills(skls),
+                  classId: classId,
                   selectedSkills: selectedSkills,
                 ),
               ),
@@ -50,35 +47,30 @@ class SkillsSection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         SizedBox(
-          height:300,
-          child: 
-          ListView(children: [
-            if (selectedSkills.isEmpty)
-              Text(
-                'Навыки не добавлены',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).hintColor,
+          height: 300,
+          child: ListView(
+            children: [
+              if (selectedSkills.isEmpty)
+                Text(
+                  'Навыки не добавлены',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).hintColor,
+                  ),
                 ),
-              ),
-            ...selectedSkills.map((reward) {
+              ...selectedSkills.map((reward) {
+                Skill? skill;
+                skill = skills.firstWhere((skl) => skl.id == reward.skillId);
 
-              Skill? skill;
-              skill = skills.firstWhere((skl) => skl.id == reward.skillId);
-              
-              return SkillTile(
-                title: skill.title,
-                selected: true,
-                focused: false,
-              );
-            })
-          ],)
+                return ClassFormSkillTile(
+                  title: skill.title,
+                  selected: true,
+                  focused: false,
+                );
+              }),
+            ],
+          ),
         ),
       ],
     );
   }
-  
 }
-
-
-
-

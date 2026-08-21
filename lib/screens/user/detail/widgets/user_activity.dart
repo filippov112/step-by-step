@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/widgets/analysis/custom_activity_table.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
 
 // Виджет отображения активности пользователя
 class UserActivity extends StatefulWidget {

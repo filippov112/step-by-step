@@ -7,12 +7,12 @@ import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
 // Форма поиска и выбора навыков для связи с классом
-class SkillDialog extends StatefulWidget {
+class ClassFormSkillDialog extends StatefulWidget {
   final String classId;
   final List<ClassSkill> selectedSkills;
   final Function(List<ClassSkill>) onConfirm;
 
-  const SkillDialog({
+  const ClassFormSkillDialog({
     super.key,
     required this.classId,
     required this.selectedSkills,
@@ -20,10 +20,10 @@ class SkillDialog extends StatefulWidget {
   });
 
   @override
-  State<SkillDialog> createState() => _SkillDialogState();
+  State<ClassFormSkillDialog> createState() => _ClassFormSkillDialogState();
 }
 
-class _SkillDialogState extends State<SkillDialog> {
+class _ClassFormSkillDialogState extends State<ClassFormSkillDialog> {
   List<ClassSkill> _selected = [];
   Set<String> _selectedSkillsId = {};
   Skill? currentSkill;
@@ -90,8 +90,9 @@ class _SkillDialogState extends State<SkillDialog> {
 
   void _addClassSkill() {
     _removeClassSkill();
-    if (currentSkill == null || _selectedSkillsId.contains(currentSkill!.id))
+    if (currentSkill == null || _selectedSkillsId.contains(currentSkill!.id)) {
       return;
+    }
 
     setState(() {
       currentClassSkill = ClassSkill(
@@ -105,8 +106,9 @@ class _SkillDialogState extends State<SkillDialog> {
 
   void _removeClassSkill() {
     if (currentClassSkill == null ||
-        !_selectedSkillsId.contains(currentClassSkill!.skillId))
+        !_selectedSkillsId.contains(currentClassSkill!.skillId)) {
       return;
+    }
     setState(() {
       _selectedSkillsId.remove(currentClassSkill!.skillId);
       _selected.remove(currentClassSkill);
@@ -279,7 +281,7 @@ class SearchSkillsPanel extends StatelessWidget {
                             (rew) => rew.skillId == skill.id,
                           );
                         }
-                        return SkillTile(
+                        return ClassFormSkillTile(
                           title: skill.title,
                           selected: isSelected,
                           focused: currentRowIndex == index,
@@ -331,7 +333,7 @@ class SelectedClassSkillsPanel extends StatelessWidget {
                   (skl) => skl.id == cs.skillId,
                 );
 
-                return SkillTile(
+                return ClassFormSkillTile(
                   title: skill.title,
                   selected: true,
                   focused: currentRowIndex == index,

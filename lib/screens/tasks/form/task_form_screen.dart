@@ -17,7 +17,6 @@ import 'package:life_game/screens/tasks/form/widgets/priority.dart';
 import 'package:life_game/screens/tasks/form/widgets/status.dart';
 import 'package:life_game/screens/tasks/form/widgets/title.dart';
 import 'package:life_game/widgets/common/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskFormScreen extends StatefulWidget {

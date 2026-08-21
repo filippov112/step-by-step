@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
-class SkillTile extends StatelessWidget {
+class ClassFormSkillTile extends StatelessWidget {
 
   final String title;
   final bool selected;
   final bool focused;
   final VoidCallback? clickCallback;
 
-  const SkillTile({
+  const ClassFormSkillTile({
     super.key,
     required this.title,
     required this.selected,

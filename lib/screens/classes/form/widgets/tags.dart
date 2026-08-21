@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
+import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
-class AchievFormTags extends StatelessWidget {
-  const AchievFormTags({super.key});
+class ClassFormTags extends StatelessWidget {
+  const ClassFormTags({super.key});
 
   void _openTagSelector(
     BuildContext context,
@@ -25,8 +25,8 @@ class AchievFormTags extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<AchievementFormModel>();
-    final selectedTags = context.select<AchievementFormModel, List<Tag>>(
+    final model = context.read<ClassFormModel>();
+    final selectedTags = context.select<ClassFormModel, List<Tag>>(
       (model) => model.selectedTags,
     );
     final setSelectedTags = model.setSelectedTags;

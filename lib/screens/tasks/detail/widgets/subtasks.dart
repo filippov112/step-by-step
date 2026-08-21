@@ -19,9 +19,7 @@ Widget buildSubtaskSection(
         style: Theme.of(context).textTheme.titleMedium,
       ),
       leading: Icon(Icons.task_alt_outlined),
-      children: [ 
-        
-      ],
+      children: [],
     );
   }
 

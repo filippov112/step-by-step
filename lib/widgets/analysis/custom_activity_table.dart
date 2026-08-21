@@ -13,7 +13,7 @@ class CustomActivityTable extends StatelessWidget {
   final Color? minColor; // Минимальный цвет
   final Color? maxColor; // Максимальный цвет
   final int maxValue; // Верхняя граница значений
-  final void Function(DateTime date, int count)? onCellTap; // Колбек при нажатии на ячейку
+  final void Function(DateTime date)? onCellTap; // Колбек при нажатии на ячейку
   final bool showWeekLabels; // Отображать дни недели
   final bool showMonthLabels; // Отображать месяца
 
@@ -51,8 +51,8 @@ class CustomActivityTable extends StatelessWidget {
   /// Получаем все дни в диапазоне
   List<DateTime> _getDaysInRange(DateTime start, DateTime end) {
     final days = <DateTime>[];
-    var current = DateTime(start.year, start.month, start.day);
-    final endDate = DateTime(end.year, end.month, end.day);
+    var current = DateTime.fromMillisecondsSinceEpoch(start.millisecondsSinceEpoch);
+    final endDate = DateTime.fromMillisecondsSinceEpoch(end.millisecondsSinceEpoch);
     
     while (current.isBefore(endDate) || current.isAtSameMomentAs(endDate)) {
       days.add(current);
@@ -134,22 +134,22 @@ class CustomActivityTable extends StatelessWidget {
                   if (!isRealDay) {
                     return Expanded(child: SizedBox(),);
                   }
-                  final count = isRealDay ? (activities[day] ?? 0) : 0;
-                  final color = _getColorForCount(minC, maxC, count);
+                  final val = isRealDay ? (activities[day] ?? 0) : 0;
+                  final color = _getColorForCount(minC, maxC, val);
               
                   return Expanded(child:
                     GestureDetector(
                       onTap: isRealDay && onCellTap != null
-                          ? () => onCellTap!(day, count)
+                          ? () => onCellTap!(day)
                           : null,
                       child: Container(
                         margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
                         decoration: BoxDecoration(
                           color: isRealDay ? color : Colors.transparent,
                         ),
-                        child: isRealDay && count > 0
+                        child: isRealDay && val > 0
                             ? Tooltip(
-                                message: '$count задач - ${_formatDate(day)}',
+                                message: '${_formatDate(day)} - $val',
                                 child: Container(),
                               )
                             : null,

@@ -73,7 +73,7 @@ class SkillTile extends StatelessWidget {
                       padding: const EdgeInsetsGeometry.fromLTRB(12,12,0,12), 
                       child: CustomImageIcon(
                         skill.icon, 
-                        icon: Icons.star_border, 
+                        altIcon: Icons.star_border, 
                         color: skill.rang.color, 
                         width: 40, height: 40
                       ),

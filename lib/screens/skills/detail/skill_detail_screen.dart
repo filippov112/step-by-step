@@ -108,7 +108,7 @@ class _SkillDetailScreenState extends State<SkillDetailScreen> {
                   Center(
                     child: CustomImageIcon(
                       skill.icon,
-                      icon: Icons.star_border,
+                      altIcon: Icons.star_border,
                       width: 64,
                       height: 64,
                       color: skill.rang.color,

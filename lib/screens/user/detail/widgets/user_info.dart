@@ -13,7 +13,7 @@ class Userinfo extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var avaterWidget = CustomImageIcon(user.icon, 
-      icon: Icons.person,
+      altIcon: Icons.person,
       borderWidth: 2,
       width: 80,
       height: 80,

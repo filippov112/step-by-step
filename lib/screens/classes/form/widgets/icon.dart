@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/widgets/form/custom_icon_picker.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,7 @@ class ClassFormIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.read<ClassFormModel>();
-    var selectedIcon = context.select<ClassFormModel, String?>(
+    var selectedIcon = context.select<ClassFormModel, CustomImageData?>(
       (model) => model.selectedIcon,
     );
     var setIcon = model.setIcon;
@@ -17,7 +18,7 @@ class ClassFormIcon extends StatelessWidget {
     // Иконка
     return Center(
       child: CustomIconPicker(
-        iconPath: selectedIcon,
+        selectedIcon: selectedIcon,
         setIcon: setIcon,
         borderWidth: 3,
       ),

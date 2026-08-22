@@ -1,5 +1,6 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/services/file_storage_service.dart';
 import 'package:sqflite/sqflite.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -33,7 +34,7 @@ class Achievement {
   String description = "";
   AchievRar rarity = AchievRar.common;
   DateTime? date;
-  String? icon;
+  CustomImageData? icon;
 
   // ------------ Конструкторы ------------
   Achievement({
@@ -50,7 +51,7 @@ class Achievement {
     String description = "",
     AchievRar rarity = AchievRar.common,
     DateTime? date,
-    String? icon,
+    CustomImageData? icon,
   }) {
     final guid = const Uuid().v4();
     return Achievement(
@@ -71,7 +72,7 @@ class Achievement {
       cDescription: description,
       cRarity: rarity.index,
       cDate: date?.millisecondsSinceEpoch,
-      cIcon: icon,
+      cIcon: icon?.toJson(),
     };
   }
 
@@ -81,7 +82,7 @@ class Achievement {
     description = map[cDescription] ?? "";
     rarity = allAchievRar[map[cRarity] ?? 0];
     date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
-    icon = map[cIcon];
+    icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
   }
 }
 
@@ -133,16 +134,21 @@ class AchievementRepository {
     if (id != null) {
       var oldObject = await get(id);
       // Удаляем, если было
-      if (oldObject != null && oldObject.icon != null) {
-        await FileService.deleteOldFile(oldObject.icon);
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
       }
-    } 
+    }
     // Если обновление
     else if (obj != null) {
       var oldObject = await get(obj.id);
       // Удаляем, если было и изменилось
-      if (oldObject != null && oldObject.icon != null && oldObject.icon != obj.icon) {
-        await FileService.deleteOldFile(oldObject.icon);
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.imagePath != obj.icon?.imagePath &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
       }
     }
   }

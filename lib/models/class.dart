@@ -1,4 +1,6 @@
 import 'package:life_game/data/db.dart';
+import 'package:life_game/models/other/image.dart';
+import 'package:life_game/services/file_storage_service.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -25,7 +27,7 @@ class Class {
   String id = "";
   String title = ""; // Название
   String description = ""; // Описание
-  String? icon; // Иконка
+  CustomImageData? icon; // Иконка
   int experience = 0; // Кэш опыта
   int time = 0; // Кэш времени
 
@@ -41,7 +43,7 @@ class Class {
   factory Class.create({
     required String title,
     String? description,
-    String? icon,
+    CustomImageData? icon,
     int experience = 0,
     int time = 0
   }) {
@@ -61,7 +63,7 @@ class Class {
       cId: id,
       cTitle: title,
       cDescription: description,
-      cIcon: icon,
+      cIcon: icon?.toJson(),
       cExperience: experience,
       cTime: time
     };
@@ -71,7 +73,7 @@ class Class {
     id = map[cId];
     title = map[cTitle];
     description = map[cDescription];
-    icon = map[cIcon];
+    icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     experience = map[cExperience];
     time = map[cTime];
   }
@@ -104,6 +106,7 @@ class ClassRepository {
   }
 
   Future<int> update(Class classObj) async {
+    await deleteIconIfSetupNull(obj:classObj);
     return await db.update(
       Class.tn,
       classObj.toMap(),
@@ -113,10 +116,35 @@ class ClassRepository {
   }
 
   Future<int?> delete(String id) async {
+    await deleteIconIfSetupNull(id:id);
     return await db.delete(
       Class.tn,
       where: '${Class.cId} = ?',
       whereArgs: [id],
     );
+  }
+
+  Future deleteIconIfSetupNull({String? id, Class? obj}) async {
+    // Если удаление
+    if (id != null) {
+      var oldObject = await get(id);
+      // Удаляем, если было
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
+      }
+    }
+    // Если обновление
+    else if (obj != null) {
+      var oldObject = await get(obj.id);
+      // Удаляем, если было и изменилось
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.imagePath != obj.icon?.imagePath &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
+      }
+    }
   }
 }

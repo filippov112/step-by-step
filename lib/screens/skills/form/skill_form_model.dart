@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill_condition.dart';
@@ -17,7 +18,7 @@ class SkillFormModel extends ChangeNotifier {
   // Поля формы
   String _title = '';
   SkillRang _rang = SkillRang.F;
-  String? _iconPath;
+  CustomImageData? _icon;
   String? _f;
   String? _e;
   String? _d;
@@ -43,7 +44,7 @@ class SkillFormModel extends ChangeNotifier {
   // Геттеры
   String get title => _title;
   SkillRang get rang => _rang;
-  String? get iconPath => _iconPath;
+  CustomImageData? get icon => _icon;
   List<SkillCondition> get conditions => _conditions;
   List<Tag> get selectedTags => _selectedTags;
   List<Tag> get allTags => _allTags;
@@ -58,7 +59,7 @@ class SkillFormModel extends ChangeNotifier {
       _editingSkill = skill;
       _title = skill.title;
       _rang = skill.rang;
-      _iconPath = skill.icon;
+      _icon = skill.icon;
       _f = skill.f;
       _e = skill.e;
       _d = skill.d;
@@ -126,8 +127,8 @@ class SkillFormModel extends ChangeNotifier {
     notifyListeners();
   }
   
-  void setIconPath(String value) {
-    _iconPath = value;
+  void setIconPath(CustomImageData? value) {
+    _icon = value;
     notifyListeners();
   }
   
@@ -247,7 +248,7 @@ class SkillFormModel extends ChangeNotifier {
           rang: _rang,
           time: _editingSkill!.time,
           experience: _editingSkill!.experience,
-          icon: _iconPath,
+          icon: _icon,
           f: _f,
           e: _e,
           d: _d,
@@ -296,7 +297,7 @@ class SkillFormModel extends ChangeNotifier {
           rang: _rang,
           time: 0,
           experience: 0,
-          icon: _iconPath,
+          icon: _icon,
           f: _f,
           e: _e,
           d: _d,
@@ -339,8 +340,8 @@ class SkillFormModel extends ChangeNotifier {
     }
   }
 
-  void setIcon(String? iconPath) {
-    _iconPath = iconPath;
+  void setIcon(CustomImageData? value) {
+    _icon = value;
     notifyListeners();
   }
 }

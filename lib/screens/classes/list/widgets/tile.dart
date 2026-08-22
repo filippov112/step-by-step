@@ -67,7 +67,7 @@ class ClassTile extends StatelessWidget {
                       padding: const EdgeInsetsGeometry.fromLTRB(12,12,0,12), 
                       child: CustomImageIcon(
                         record.icon, 
-                        icon: Icons.school_outlined, 
+                        altIcon: Icons.school_outlined, 
                         // color: record.rarity.color, 
                         width: 40, height: 40
                       ),

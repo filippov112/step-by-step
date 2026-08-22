@@ -68,7 +68,7 @@ class AchievementTile extends StatelessWidget {
                       padding: const EdgeInsetsGeometry.fromLTRB(12,12,0,12), 
                       child: CustomImageIcon(
                         achi.icon, 
-                        icon: Icons.star_border, 
+                        altIcon: Icons.star_border, 
                         color: achi.rarity.color, 
                         width: 40, height: 40
                       ),

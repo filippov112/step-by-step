@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/screens/skills/form/skill_form_model.dart';
 import 'package:life_game/screens/skills/form/widgets/condition_dialog.dart';
@@ -61,8 +62,8 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final iconPath = context.select<SkillFormModel, String?>(
-      (model) => model.iconPath,
+    final iconPath = context.select<SkillFormModel, CustomImageData?>(
+      (model) => model.icon,
     );
     final setIcon = model?.setIcon ?? (_) {};
     final setTitle = model?.setTitle ?? (_) {};
@@ -96,7 +97,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
                       // Иконка
                       const SizedBox(height: 16),
                       CustomIconPicker(
-                        iconPath: iconPath,
+                        selectedIcon: iconPath,
                         setIcon: setIcon,
                         borderWidth: 3,
                         color: rang.color,

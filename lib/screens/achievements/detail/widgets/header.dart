@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
 import 'package:life_game/tools/format_date.dart';
@@ -17,7 +18,7 @@ class AchiHeader extends StatelessWidget {
     var title = context.select<AchievementDetailsModel, String>(
       (model) => model.achievement.title,
     );
-    var icon = context.select<AchievementDetailsModel, String?>(
+    var icon = context.select<AchievementDetailsModel, CustomImageData?>(
       (model) => model.achievement.icon,
     );
     var date = context.select<AchievementDetailsModel, DateTime?>(
@@ -36,7 +37,7 @@ class AchiHeader extends StatelessWidget {
           // Иконка
           CustomImageIcon(
             icon,
-            icon: Icons.emoji_events,
+            altIcon: Icons.emoji_events,
             width: 60,
             height: 60,
             color: rarity.color,

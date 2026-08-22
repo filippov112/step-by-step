@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_achievement.dart';
 
@@ -19,7 +20,7 @@ class AchievementFormModel extends ChangeNotifier {
 
   String selectedTitle = '';
   String selectedDescription = '';
-  String? selectedIcon;
+  CustomImageData? selectedIcon;
   DateTime? selectedDate;
   AchievRar selectedRarity = AchievRar.common;
 
@@ -65,8 +66,8 @@ class AchievementFormModel extends ChangeNotifier {
     selectedDescription = description;
     notifyListeners();
   }
-  void setIcon(String? iconPath) {
-    selectedIcon = iconPath;
+  void setIcon(CustomImageData? value) {
+    selectedIcon = value;
     notifyListeners();
   }
   void setDate(DateTime? date) {

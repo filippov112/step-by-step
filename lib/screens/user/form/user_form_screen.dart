@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/screens/home/home_model.dart';
 import 'package:life_game/widgets/form/custom_icon_picker.dart';
 import 'package:life_game/widgets/form/datetime_picker.dart';
@@ -58,7 +59,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final iconPath = context.select<UserFormModel, String?>(
+    final iconPath = context.select<UserFormModel, CustomImageData?>(
       (model) => model.newUser?.icon,
     );
     final dateBirth = context.select<UserFormModel, DateTime>(
@@ -74,7 +75,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
         // Аватар
         Center(
           child: CustomIconPicker(
-            iconPath: iconPath,
+            selectedIcon: iconPath,
             setIcon: setIcon,
             size: 100,
             radius: const BorderRadius.all(Radius.circular(50)),

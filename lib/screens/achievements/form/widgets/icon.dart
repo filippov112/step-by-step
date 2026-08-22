@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
 import 'package:life_game/widgets/form/custom_icon_picker.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +10,7 @@ class AchievFormIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIcon = context.select<AchievementFormModel, String?>(
+    final selectedIcon = context.select<AchievementFormModel, CustomImageData?>(
       (model) => model.selectedIcon,
     );
     final selectedRarity = context.select<AchievementFormModel, AchievRar>(
@@ -21,7 +22,7 @@ class AchievFormIcon extends StatelessWidget {
     // Иконка
     return Center(
       child: CustomIconPicker(
-        iconPath: selectedIcon,
+        selectedIcon: selectedIcon,
         setIcon: setIcon,
         borderWidth: 3,
         color: selectedRarity.color,

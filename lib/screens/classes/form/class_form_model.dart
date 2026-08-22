@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/class.dart';
 import 'package:life_game/models/class_skill.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_class.dart';
@@ -23,7 +24,7 @@ class ClassFormModel extends ChangeNotifier {
 
   String selectedTitle = '';
   String selectedDescription = '';
-  String? selectedIcon;
+  CustomImageData? selectedIcon;
   List<Tag> selectedTags = [];
   List<ClassSkill> _classSkills = [];
 
@@ -79,8 +80,8 @@ class ClassFormModel extends ChangeNotifier {
     selectedDescription = description;
     notifyListeners();
   }
-  void setIcon(String? iconPath) {
-    selectedIcon = iconPath;
+  void setIcon(CustomImageData? value) {
+    selectedIcon = value;
     notifyListeners();
   }
   void setSelectedTags(List<Tag> tags) {

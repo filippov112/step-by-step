@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 import 'package:life_game/models/user.dart';
 
 class UserFormModel extends ChangeNotifier {
@@ -12,8 +13,8 @@ class UserFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setIcon(String? iconPath) {
-    newUser?.icon = iconPath;
+  void setIcon(CustomImageData? value) {
+    newUser?.icon = value;
     notifyListeners();
   }
 

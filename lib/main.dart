@@ -18,6 +18,7 @@ import 'package:life_game/screens/tasks/list/task_list_model.dart';
 import 'package:life_game/screens/user/form/user_form_model.dart';
 import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/themes/solo_leveling_theme.dart';
+import 'package:life_game/widgets/screens/test.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
       title: 'Chaos Control',
       theme: SoloLevelingTheme.theme,
       home: HomeScreen()
+      // home: TestScreen()
     );
   }
 }

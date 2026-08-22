@@ -2,19 +2,20 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:life_game/models/other/image.dart';
 
 class CustomImageIcon extends StatelessWidget {
-  final String? path;
+  final CustomImageData? imageData;
   final BorderRadius radius;
   final double width;
   final double height;
   final Color? color;
-  final IconData icon;
+  final IconData? altIcon;
   final Color? borderColor;
   final double? borderWidth;
 
-  const CustomImageIcon(this.path, {super.key, 
-    required this.icon,
+  const CustomImageIcon(this.imageData, {super.key, 
+    this.altIcon,
     this.radius = const BorderRadius.all(Radius.circular(8)),
     this.width = 48,
     this.height = 48,
@@ -24,9 +25,9 @@ class CustomImageIcon extends StatelessWidget {
   });
 
   File? getFile() {
-    if (path == null || path!.isEmpty) return null;
+    if (imageData == null || !imageData!.isImage || imageData!.imagePath!.isEmpty ) return null;
     try {
-      return File(path!);
+      return File(imageData!.imagePath!);
     } catch (e) {
       return null;
     }
@@ -36,14 +37,16 @@ class CustomImageIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     
     final file = getFile();
-    final backColor = (color ?? Theme.of(context).dividerColor).withValues(alpha:0.15);
+    final backColor = (color ?? imageData?.color?.withValues(alpha:0.15) ?? Theme.of(context).dividerColor).withValues(alpha:0.15);
     final iconSize = min(width, height) * 0.6;
     final border = Border.all(
       color: borderColor ?? Theme.of(context).dividerColor, 
       width: borderWidth ?? 0
     );
 
-    return path == null || path!.isEmpty ?
+    return imageData == null ||
+                  (!imageData!.isIcon && !imageData!.isImage) ||
+                  imageData!.isIcon ?
       Container(
         width: width,
         height: height,
@@ -52,7 +55,7 @@ class CustomImageIcon extends StatelessWidget {
           color: backColor,
           border: border
         ),
-        child: Icon(icon, color: color, size: iconSize),
+        child: Icon(imageData?.icon() ?? altIcon ?? Icons.image, color: color ?? imageData?.color, size: iconSize),
       ) :
 
       (file == null ?

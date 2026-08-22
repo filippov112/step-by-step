@@ -4,7 +4,7 @@ import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
 import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 class DetailTaskCard extends StatelessWidget {

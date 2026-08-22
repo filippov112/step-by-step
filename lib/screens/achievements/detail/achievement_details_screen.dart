@@ -4,7 +4,7 @@ import 'package:life_game/screens/achievements/detail/achievement_details_model.
 import 'package:life_game/screens/achievements/detail/widgets/desc.dart';
 import 'package:life_game/screens/achievements/detail/widgets/header.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 class AchievementDetailScreen extends StatefulWidget {

@@ -4,7 +4,7 @@ import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_screen.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
-import 'package:life_game/widgets/dialogs/select_date_only.dart';
+import 'package:life_game/widgets/form/custom_icon_picker.dart';
+import 'package:life_game/widgets/form/datetime_picker.dart';
+import 'package:life_game/widgets/form/singleline_input.dart';
+import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 import 'user_form_model.dart';
 
@@ -24,6 +25,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
     model = context.read<UserFormModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model?.loadData(widget.isEdit);
+      nameController.text = model?.newUser?.name ?? '';
     });
   }
 
@@ -54,11 +56,6 @@ class _UserFormScreenState extends State<UserFormScreen> {
     }
   }
 
-  Future _selectDateBirth(BuildContext context, DateTime currentDate) async {
-    var selectedDate = await selectDateOnly(context, currentDate);
-    model?.setDateBirth(selectedDate);
-  }
-
   @override
   Widget build(BuildContext context) {
     final iconPath = context.select<UserFormModel, String?>(
@@ -68,60 +65,42 @@ class _UserFormScreenState extends State<UserFormScreen> {
       (model) => model.newUser?.dateBirth ?? DateTime(2000),
     );
     final setIcon = context.read<UserFormModel>().setIcon;
-    final name = context.select<UserFormModel, String>(
-      (model) => model.newUser?.name ?? '',
-    );
-    nameController.text = name;
 
-    var avatarWidget = CustomIconPicker(
-      iconPath: iconPath,
-      setIcon: setIcon,
-      size: 100,
-      radius: const BorderRadius.all(Radius.circular(50)),
-      borderWidth: 3,
-    );
-
-    var nameWidget = TextFormField(
-      controller: nameController,
-      decoration: InputDecoration(labelText: "Имя"),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Обязательное поле';
-        if (value.length < 3) return 'Минимум 3 символа';
-        return null; // ошибки нет
-      },
-    );
-
-    var dateBirthWidget = InkWell(
-      onTap: () => _selectDateBirth(context, dateBirth),
-      child: InputDecorator(
-        decoration: InputDecoration(labelText: 'Дедлайн'),
-        child: Text(DateFormat("dd.MM.yyyy").format(dateBirth)),
-      ),
-    );
-
-    var formWidget = Form(
-      key: formKey,
-      child: Column(
-        children: [
-          // Виджет для выбора аватара
-          avatarWidget,
-          const SizedBox(height: 20),
-          // Поле ввода имени
-          Padding(padding: const EdgeInsets.all(10.0), child: nameWidget),
-          Padding(padding: const EdgeInsets.all(10.0), child: dateBirthWidget),
-          const SizedBox(height: 20),
-          // Кнопка сохранения
-          ElevatedButton(
-            onPressed: () => _saveUser(context),
-            child: const Text('Сохранить профиль'),
+    return EntityScreen(
+      title: 'Пользователь',
+      formKey: formKey,
+      saveCallback: () => _saveUser(context),
+      children: [
+        // Аватар
+        Center(
+          child: CustomIconPicker(
+            iconPath: iconPath,
+            setIcon: setIcon,
+            size: 100,
+            radius: const BorderRadius.all(Radius.circular(50)),
+            borderWidth: 3,
           ),
-        ],
-      ),
-    );
+        ),
+        const SizedBox(height: 12),
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Создание пользователя')),
-      body: Padding(padding: const EdgeInsets.all(16.0), child: formWidget),
+        // Имя
+        SinglelineInput(
+          title: 'Имя',
+          controller: nameController,
+          requiredErrorText: 'Введите имя',
+          isRequired: true,
+        ),
+        const SizedBox(height: 12),
+
+        // Дата рождения
+        CustomDateTime(
+          callback: (v) => model?.setDateBirth(v),
+          value: dateBirth,
+          dateOnly: true,
+          title: 'Дата рождения',
+        ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }

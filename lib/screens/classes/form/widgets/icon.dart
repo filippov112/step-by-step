@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
-import 'package:life_game/widgets/dialogs/custom_icon_picker.dart';
+import 'package:life_game/widgets/form/custom_icon_picker.dart';
 import 'package:provider/provider.dart';
 
 class ClassFormIcon extends StatelessWidget {

@@ -1,39 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
-import 'package:life_game/widgets/common/custom_tile.dart';
-import 'package:life_game/widgets/dialogs/select_date_time.dart';
+import 'package:life_game/screens/tasks/form/task_form_model.dart';
+import 'package:life_game/widgets/form/datetime_picker.dart';
+import 'package:provider/provider.dart';
 
-Widget buildDateTimePicker( 
-  BuildContext context,
-  { 
-    DateTime? currentDatetime, 
-    required Function(DateTime?) setDateTime 
-  }) {
-    return CustomTile(
-      callback: () async {
-        final result = await selectDateTime(context, currentDatetime ?? DateTime.now());
-        if (result != null) {
-          setDateTime(result);
-        }
-      },
-      padding: 16,
-      borderRadius: 16,
-      children: [
-        const Icon(Icons.event),
-        const SizedBox(width: 16,),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const CustomText('Дата и время'),
-              CustomText(currentDatetime != null ?
-                '${currentDatetime.day}.${currentDatetime.month}.${currentDatetime.year} '
-                '${currentDatetime.hour}:${currentDatetime.minute.toString().padLeft(2, '0')}' : '',
-              ),
-            ],
-          ),
-        ),
-        if (currentDatetime != null) 
-          IconButton(onPressed: () => setDateTime(null), icon: Icon(Icons.close))
-    ]);
+class TaskFormDatetime extends StatelessWidget {
+  const TaskFormDatetime({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedDatetime = context.select<TaskFormModel, DateTime?>(
+      (model) => model.selectedDateTime,
+    );
+    final setDateTime = context.read<TaskFormModel>().setDateTime;
+
+    return CustomDateTime(callback: setDateTime, value: selectedDatetime, title: 'Дедлайн');
+  }
 }

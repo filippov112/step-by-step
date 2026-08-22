@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/class.dart';
 import 'package:life_game/screens/classes/form/widgets/icon.dart';
 import 'package:life_game/screens/classes/form/widgets/tags.dart';
-import 'package:life_game/widgets/common/multiline_input.dart';
-import 'package:life_game/widgets/common/singleline_input.dart';
+import 'package:life_game/widgets/form/multiline_input.dart';
+import 'package:life_game/widgets/form/singleline_input.dart';
 import 'package:life_game/screens/classes/form/class_form_model.dart';
 import 'package:life_game/screens/classes/form/widgets/skills.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 

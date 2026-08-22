@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/screens/skills/form/widgets/skill_condition_dialog.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
 class ConditionsListWidget extends StatelessWidget {

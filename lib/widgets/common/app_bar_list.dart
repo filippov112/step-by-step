@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
 

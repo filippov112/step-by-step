@@ -1,67 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/screens/user/detail/user_detail_model.dart';
 import 'package:life_game/widgets/analysis/custom_activity_table.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
+import 'package:provider/provider.dart';
 
 // Виджет отображения активности пользователя
-class UserActivity extends StatefulWidget {
-  final Map<DateTime, int> tasks;
-  final Map<DateTime, int> experiences;
-  final Map<DateTime, int> times;
-  final int maxExp;
-  final int maxTime;
-  final int deltaExp;
-  final int deltaTime;
-  final int maxTasksCount;
-  final DateTime firstDay;
-  final DateTime lastDay;
-
-  const UserActivity({
-    super.key,
-    required this.tasks,
-    required this.experiences,
-    required this.times,
-    required this.maxExp,
-    required this.maxTime,
-    required this.deltaExp,
-    required this.deltaTime,
-    required this.maxTasksCount,
-    required this.firstDay,
-    required this.lastDay,
-  });
+class UserDetailActivity extends StatefulWidget {
+  const UserDetailActivity({super.key});
 
   @override
-  State<UserActivity> createState() => _UserActivityState();
+  State<UserDetailActivity> createState() => _UserDetailActivityState();
 }
 
 enum UserActivityType { time, exp, tasks }
 
-class _UserActivityState extends State<UserActivity> {
+class _UserDetailActivityState extends State<UserDetailActivity> {
   UserActivityType selectedType = UserActivityType.tasks;
-
-  Map<DateTime, int> _getData() {
-    switch (selectedType) {
-      case UserActivityType.time:
-        return widget.times;
-      case UserActivityType.exp:
-        return widget.experiences;
-      default:
-        return widget.tasks;
-    }
-  }
-
-  int _getMaxValue() {
-    switch (selectedType) {
-      case UserActivityType.time:
-        return widget.maxTime;
-      case UserActivityType.exp:
-        return widget.maxExp;
-      default:
-        return widget.maxTasksCount;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final Map<DateTime, int> tasks = context
+        .select<UserDetailModel, Map<DateTime, int>>((model) => model.tasks);
+    final Map<DateTime, int> experiences = context
+        .select<UserDetailModel, Map<DateTime, int>>(
+          (model) => model.experiences,
+        );
+    final Map<DateTime, int> times = context
+        .select<UserDetailModel, Map<DateTime, int>>((model) => model.times);
+    final int maxExp = context.select<UserDetailModel, int>(
+      (model) => model.maxExp,
+    );
+    final int maxTime = context.select<UserDetailModel, int>(
+      (model) => model.maxTime,
+    );
+    final int maxTasksCount = context.select<UserDetailModel, int>(
+      (model) => model.maxTasksCount,
+    );
+    final DateTime firstDay = context.select<UserDetailModel, DateTime>(
+      (model) => model.firstDay,
+    );
+    final DateTime lastDay = context.select<UserDetailModel, DateTime>(
+      (model) => model.lastDay,
+    );
+
+    Map<DateTime, int> getData() {
+      switch (selectedType) {
+        case UserActivityType.time:
+          return times;
+        case UserActivityType.exp:
+          return experiences;
+        default:
+          return tasks;
+      }
+    }
+
+    int getMaxValue() {
+      switch (selectedType) {
+        case UserActivityType.time:
+          return maxTime;
+        case UserActivityType.exp:
+          return maxExp;
+        default:
+          return maxTasksCount;
+      }
+    }
+
     return CustomCardBlock(
       title: 'Активность',
       icon: Icons.speed,
@@ -107,10 +110,10 @@ class _UserActivityState extends State<UserActivity> {
       child: SizedBox(
         height: 150,
         child: CustomActivityTable(
-          activities: _getData(),
-          maxValue: _getMaxValue(),
-          startDate: widget.firstDay,
-          endDate: widget.lastDay,
+          activities: getData(),
+          maxValue: getMaxValue(),
+          startDate: firstDay,
+          endDate: lastDay,
           cellSpacing: 3,
           showMonthLabels: true,
           showWeekLabels: true,

@@ -3,23 +3,25 @@ import 'package:life_game/widgets/common/custom_text.dart';
 
 // Универсальный экран просмотра/редактирования сущности
 class EntityScreen extends StatelessWidget {
-  final Iterable<Widget> children;
+  final Iterable<Widget>? children;
   final Iterable<Widget>? actions;
   final Widget? floatingButton;
   final VoidCallback? deleteCallback, editCallback, saveCallback;
   final String title;
   final Key? formKey;
+  final Widget? child;
 
   const EntityScreen({
     super.key,
     required this.title,
-    required this.children,
+    this.children,
     this.deleteCallback,
     this.editCallback,
     this.saveCallback,
     this.actions,
     this.formKey,
     this.floatingButton,
+    this.child
   });
 
   @override
@@ -54,7 +56,9 @@ class EntityScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
-            child: ListView(
+            child: child ??
+            
+            ListView(
               children: [
                 Padding(
                   padding: EdgeInsetsGeometry.all(16),
@@ -64,14 +68,14 @@ class EntityScreen extends StatelessWidget {
                     key: formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children:  [...children],
+                      children:  [...?children],
                     ),
                   )
                   
                   : 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [...children],
+                    children: [...?children],
                   ),
                 ),
               ],

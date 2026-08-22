@@ -8,7 +8,7 @@ import 'package:life_game/screens/classes/detail/widgets/skills.dart';
 import 'package:life_game/screens/classes/detail/widgets/tags.dart';
 import 'package:life_game/screens/classes/detail/widgets/title.dart';
 import 'package:life_game/screens/classes/form/class_form_screen.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 

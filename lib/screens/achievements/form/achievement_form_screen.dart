@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/achievement.dart';
 import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
 import 'package:life_game/screens/achievements/form/widgets/date.dart';
-import 'package:life_game/widgets/common/multiline_input.dart';
+import 'package:life_game/widgets/form/multiline_input.dart';
 import 'package:life_game/screens/achievements/form/widgets/icon.dart';
 import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
 import 'package:life_game/screens/achievements/form/widgets/tags.dart';
-import 'package:life_game/widgets/common/singleline_input.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/form/singleline_input.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -91,8 +91,8 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
   Future _saveAchievement(Future<bool> Function() saveAchievement) async {
     if (!_formKey.currentState!.validate()) return;
-    model.setTitle(titleController?.text ?? '');
-    model.setDescription(descController?.text ?? '');
+    model.setTitle(titleController.text ?? '');
+    model.setDescription(descController.text ?? '');
     var result = await saveAchievement();
     if (mounted) {
       Navigator.pop(context, result);

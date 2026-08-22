@@ -32,8 +32,8 @@ class UserFormModel extends ChangeNotifier {
     }
   }
 
-  void setDateBirth(DateTime selectedDate) {
-    newUser?.dateBirth = selectedDate;
+  void setDateBirth(DateTime? selectedDate) {
+    newUser?.dateBirth = selectedDate ?? DateTime(2000);
     notifyListeners();
   }
 

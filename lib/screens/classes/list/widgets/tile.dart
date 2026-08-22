@@ -3,7 +3,7 @@ import 'package:life_game/models/class.dart';
 import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
 import 'package:life_game/screens/classes/detail/class_detail_screen.dart';
 import 'package:life_game/screens/classes/list/class_list_model.dart';
-import 'package:life_game/widgets/common/confirm_dialog.dart';
+import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:life_game/widgets/common/custom_image_icon.dart';
 import 'package:provider/provider.dart';
 

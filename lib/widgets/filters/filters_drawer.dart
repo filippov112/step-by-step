@@ -4,18 +4,13 @@ import 'package:flutter/material.dart';
 class FiltersDrawer extends StatefulWidget {
   final Iterable<Widget> filters;
   final Widget? buttons;
-  const FiltersDrawer({
-    super.key,
-    this.buttons,
-    required this.filters
-  });
+  const FiltersDrawer({super.key, this.buttons, required this.filters});
 
   @override
   State<FiltersDrawer> createState() => _FiltersDrawerState();
 }
 
 class _FiltersDrawerState extends State<FiltersDrawer> {
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -23,32 +18,22 @@ class _FiltersDrawerState extends State<FiltersDrawer> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding:EdgeInsetsGeometry.all(8), 
+            padding: EdgeInsetsGeometry.all(8),
             child: Row(
               children: [
                 IconButton(
-                  onPressed: () => Navigator.of(context).pop(), 
-                  icon: Icon(Icons.arrow_forward_ios)
-                )
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(Icons.arrow_forward_ios),
+                ),
               ],
             ),
           ),
-          Expanded(
-            child: ListView(
-            children: [...widget.filters],
-          )
-          ),
-          if (widget.buttons != null) 
-            Padding(
-              padding: EdgeInsetsGeometry.all(8), 
-              child: widget.buttons
-            )
-      ],)
+
+          Expanded(child: ListView(children: [...widget.filters])),
+          if (widget.buttons != null)
+            Padding(padding: EdgeInsetsGeometry.all(8), child: widget.buttons),
+        ],
+      ),
     );
   }
-
-  
-
-
-  
 }

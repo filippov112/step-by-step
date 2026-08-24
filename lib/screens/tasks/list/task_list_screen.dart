@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/screens/tasks/form/task_form_screen.dart';
 import 'package:life_game/screens/tasks/list/task_list_model.dart';
+import 'package:life_game/screens/tasks/list/widgets/date.dart';
 import 'package:life_game/screens/tasks/list/widgets/filter.dart';
 import 'package:life_game/screens/tasks/list/widgets/tile.dart';
 import 'package:life_game/widgets/common/custom_floating_action_button.dart';
@@ -38,9 +39,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var childrenCount = context.select<TaskListModel,Map<String,int>>((model) => model.childTasksCount);
-    var childrenDoneCount = context.select<TaskListModel,Map<String,int>>((model) => model.childDoneTasksCount);
-
     return Consumer<TaskListModel>(
       builder: (context, model, child) {
         return Scaffold(
@@ -62,12 +60,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 value: model.searchQuery,
                 clearCallback: model.clearSearch,
                 changeCallback: model.setSearchQuery,
-              )
+              ),
             ),
             deleteSelected: model.deleteSelectedTasks,
             clearSelection: model.clearSelection,
           ),
-          body: _buildBody(context, model, childrenCount, childrenDoneCount),
+          body: TaskListBody(),
           floatingActionButton: model.isSelectionMode
               ? null
               : CustomFloatingActionButton(
@@ -80,55 +78,57 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  Widget _buildBody(BuildContext context, TaskListModel model, Map<String,int> childrenCount, Map<String,int> childrenDoneCount) {
-    if (model.tasks.isEmpty) {
-      return EmptyListScreen(
-        title: 'Нет задач',
-        subtitle: 'Создайте свою первую задачу, нажав на кнопку +',
-        icon: Icons.task_alt_outlined,
-      );
-    }
-    if (model.hasActiveFilters && model.tasks.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
-            const SizedBox(height: 16),
-            Text(
-              'Нет задач по заданным фильтрам',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: model.clearAllFilters,
-              child: const Text('Сбросить фильтры'),
-            ),
-          ],
-        ),
-      );
-    }
-    return ListView.builder(
-      padding: const EdgeInsets.all(8),
-      itemCount: model.tasks.length,
-      itemBuilder: (context, index) {
-        final task = model.tasks[index];
-        return TaskCard(
-          model: model, 
-          task: task, 
-          childrenCount: childrenCount[task.id] ?? 0, 
-          childrenDoneCount: childrenDoneCount[task.id] ?? 0,
-        );
-      },
-    );
-  }
-
   void _openCreateForm() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const TaskFormScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const TaskFormScreen()),
     ).then((_) => context.read<TaskListModel>().loadTasks());
+  }
+}
+
+class TaskListBody extends StatelessWidget {
+  const TaskListBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final tasks = context.select<TaskListModel, List<Task>>(
+      (model) => model.tasks,
+    );
+    final childrenCount = context.select<TaskListModel, Map<String, int>>(
+      (model) => model.childTasksCount,
+    );
+    final childrenDoneCount = context.select<TaskListModel, Map<String, int>>(
+      (model) => model.childDoneTasksCount,
+    );
+    final selectDate = context.read<TaskListModel>().selectDate;
+    final selectedDate = context.select<TaskListModel, DateTime?>(
+      (model) => model.selectedDate,
+    );
+
+    return Column(
+      children: [
+        TaskListDate(selectDate: selectDate, selectedDate: selectedDate),
+        Expanded(
+          child: tasks.isEmpty
+              ? EmptyListScreen(
+                  title: 'Все задачи закрыты',
+                  subtitle: '',
+                  icon: Icons.task_alt_outlined,
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    return TaskCard(
+                      task: task,
+                      childrenCount: childrenCount[task.id] ?? 0,
+                      childrenDoneCount: childrenDoneCount[task.id] ?? 0,
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
   }
 }

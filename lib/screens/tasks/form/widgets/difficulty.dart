@@ -18,18 +18,22 @@ class TaskFormDifficulty extends StatelessWidget {
       children: [
         Text('Сложность', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: TaskDifficulty.values
-              .map(
-                (difficulty) => ChoiceChip(
-                  label: Text(difficulty.displayName),
-                  selected: selectedDifficulty == difficulty,
-                  onSelected: (_) => setDifficulty(difficulty),
-                ),
-              )
-              .toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: TaskDifficulty.values
+                .map(
+                  (difficulty) => Padding(
+                    padding: EdgeInsetsGeometry.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(difficulty.displayName),
+                      selected: selectedDifficulty == difficulty,
+                      onSelected: (_) => setDifficulty(difficulty),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     );

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
@@ -11,15 +9,12 @@ import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TaskCard extends StatelessWidget {
-
-  final TaskListModel model;
   final Task task;
   final int childrenCount;
   final int childrenDoneCount;
 
   const TaskCard({
     super.key, 
-    required this.model, 
     required this.task,
     this.childrenCount = 0, 
     this.childrenDoneCount = 0
@@ -27,7 +22,8 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    
+    final model = context.read<TaskListModel>();
     final isSelected = model.selectedIds.contains(task.id);
     final isOverdue = task.isOverdue;
     Color? containterColor = task.done
@@ -80,15 +76,19 @@ class TaskCard extends StatelessWidget {
                       value: isSelected,
                       onChanged: (_) => model.toggleSelectTask(task.id),
                     ) :
-                    Checkbox(
-                      value: task.done,
-                      onChanged: (_) => model.toggleTaskDone(task.id),
-                      fillColor: WidgetStateProperty.resolveWith((states) {
-                        if (states.contains(WidgetState.selected)) return checkFillColor;
-                        return Theme.of(context).dividerColor;
-                      }),
-                      checkColor: checkColor,
+                    Transform.scale(
+                      scale: 2,
+                      child: Checkbox(
+                        value: task.done,
+                        onChanged: (_) => model.toggleTaskDone(task.id),
+                        fillColor: WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.selected)) return checkFillColor;
+                          return Theme.of(context).dividerColor;
+                        }),
+                        checkColor: checkColor,
                     ),
+                  )
+                    
                 ),
                 
                 // Информация о задаче

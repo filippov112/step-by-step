@@ -57,7 +57,7 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
       formKey: _formKey,
       saveCallback: () => _saveAchievement(saveAchievement),
       deleteCallback: widget.achi == null
-          ? () {}
+          ? null
           : () => _delete(deleteAchievement),
       children: [
         // Иконка

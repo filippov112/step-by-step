@@ -32,7 +32,7 @@ class _SkillFiltersState extends State<SkillFilters> {
 
     // Ранг
     var priorityFilter = FilterSection(
-      title: 'Ранг',
+      title: 'Ранг (${filterRang.length})',
       icon: Icons.star_border,
       children: Wrap(
         spacing: 4,
@@ -53,7 +53,7 @@ class _SkillFiltersState extends State<SkillFilters> {
 
     // Теги
     var tagsFilter = FilterSection(
-      title: 'Теги',
+      title: 'Теги (${selectedTags.length})',
       icon: Icons.tag,
       children:
         Row(

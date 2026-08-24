@@ -20,7 +20,6 @@ import 'package:life_game/models/task.dart';
 import 'package:life_game/models/task_hierarchy.dart';
 import 'package:life_game/models/user.dart';
 import 'package:path/path.dart';
-// import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -39,7 +38,7 @@ class DB {
     if (kIsWeb) {
       databaseFactory = databaseFactoryFfiWeb;
     }
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       databaseFactory = databaseFactoryFfi;
     }
 

@@ -56,7 +56,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       title: 'Задача',
       formKey: _formKey,
       deleteCallback: widget.task == null
-          ? () {}
+          ? null
           : () => _deleteTask(deleteTask),
       saveCallback: () => _saveTask(saveTask),
       children: [
@@ -70,7 +70,11 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(header: 'Описание', setText: model.setDescription, controller: descController),
+        CustomMultilineTextInput(
+          header: 'Описание',
+          setText: model.setDescription,
+          controller: descController,
+        ),
         const SizedBox(height: 12),
 
         // Дата и время

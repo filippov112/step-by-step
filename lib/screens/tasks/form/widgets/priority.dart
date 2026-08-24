@@ -18,18 +18,22 @@ class TaskFormPriority extends StatelessWidget {
       children: [
         Text('Приоритет', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: TaskPriority.values
-              .map(
-                (priority) => ChoiceChip(
-                  label: Text(priority.displayName),
-                  selected: selectedPriority == priority,
-                  onSelected: (_) => setPriority(priority),
-                ),
-              )
-              .toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: TaskPriority.values
+                .map(
+                  (priority) => Padding(
+                    padding: EdgeInsetsGeometry.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(priority.displayName),
+                      selected: selectedPriority == priority,
+                      onSelected: (_) => setPriority(priority),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     );

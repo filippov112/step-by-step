@@ -29,7 +29,7 @@ class _ClassFiltersState extends State<ClassFilters> {
 
     // Теги
     var tagsFilter = FilterSection(
-      title: 'Теги',
+      title: 'Теги (${selectedTags.length})',
       icon: Icons.tag,
       children:
         Row(

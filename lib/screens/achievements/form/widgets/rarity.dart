@@ -20,18 +20,22 @@ class AchievFormRarity extends StatelessWidget {
       children: [
         Text('Редкость', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: AchievRar.values
-              .map(
-                (rarity) => ChoiceChip(
-                  label: Text(rarity.displayName),
-                  selected: selectedRarity == rarity,
-                  onSelected: (_) => setRarity(rarity),
-                ),
-              )
-              .toList(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: AchievRar.values
+                .map(
+                  (rarity) => Padding(
+                    padding: EdgeInsetsGeometry.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(rarity.displayName),
+                      selected: selectedRarity == rarity,
+                      onSelected: (_) => setRarity(rarity),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     ); //...

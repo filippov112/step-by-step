@@ -51,7 +51,7 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
     return EntityScreen(
       title: 'Класс',
       saveCallback: () => _save(save),
-      deleteCallback: widget.record == null ? () {} : () => _delete(delete),
+      deleteCallback: widget.record == null ? null : () => _delete(delete),
       formKey: _formKey,
       children: [
         // Иконка

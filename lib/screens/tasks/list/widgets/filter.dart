@@ -10,7 +10,6 @@ import 'package:life_game/widgets/filters/filters_drawer.dart';
 import 'package:life_game/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
-
 class TaskFilters extends StatefulWidget {
   const TaskFilters({super.key});
 
@@ -19,58 +18,105 @@ class TaskFilters extends StatefulWidget {
 }
 
 class _TaskFiltersState extends State<TaskFilters> {
-
   @override
   Widget build(BuildContext context) {
-
     final model = context.read<TaskListModel>();
-    var hasActiveFilters = context.select<TaskListModel,bool>((model) => model.hasActiveFilters);
-    var filterDifficulty = context.select<TaskListModel,Set<TaskDifficulty>>((model) => model.filterDifficulty);
-    var filterDone =  context.select<TaskListModel,bool>((model) => model.filterDone);
-    var filterUndone = context.select<TaskListModel,bool>((model) => model.filterUndone);
-    var filterPriority = context.select<TaskListModel,Set<TaskPriority>>((model) => model.filterPriority);
-    var selectedTags = context.select<TaskListModel,List<Tag>>((model) => model.selectedTags);
-    var sortField = context.select<TaskListModel,SortTaskField>((model) => model.sortField);
-    var sortAscending = context.select<TaskListModel,bool>((model) => model.sortAscending);
+    var hasActiveFilters = context.select<TaskListModel, bool>(
+      (model) => model.hasActiveFilters,
+    );
+    var filterDifficulty = context.select<TaskListModel, Set<TaskDifficulty>>(
+      (model) => model.filterDifficulty,
+    );
+    var filterDone = context.select<TaskListModel, bool>(
+      (model) => model.filterDone,
+    );
+    var filterUndone = context.select<TaskListModel, bool>(
+      (model) => model.filterUndone,
+    );
+    var filterPriority = context.select<TaskListModel, Set<TaskPriority>>(
+      (model) => model.filterPriority,
+    );
+    var selectedTags = context.select<TaskListModel, List<Tag>>(
+      (model) => model.selectedTags,
+    );
+    var sortField = context.select<TaskListModel, SortTaskField>(
+      (model) => model.sortField,
+    );
+    var sortAscending = context.select<TaskListModel, bool>(
+      (model) => model.sortAscending,
+    );
+    final currentDateFilter = context.select<TaskListModel, TaskDateFilterType>(
+      (model) => model.dateFilter,
+    );
+
+
+    var dateFilter = FilterSection(
+      title: 'Дата', 
+      icon: Icons.calendar_month,
+      children:Column(
+        children: [
+          
+        DropdownButtonFormField<TaskDateFilterType>(
+            items: [
+              const DropdownMenuItem(
+                value: TaskDateFilterType.date,
+                child: Text('По датам'),
+              ),
+              const DropdownMenuItem(
+                value: TaskDateFilterType.all,
+                child: Text('Все задачи'),
+              ),
+            ], 
+            initialValue: currentDateFilter, 
+            onChanged: (v) => model.setDateFilter(v ?? TaskDateFilterType.date),
+          ),
+      ],), 
+    );
 
     // Приоритет
     var priorityFilter = FilterSection(
-      title: 'Приоритет',
+      title: 'Приоритет (${filterPriority.length})',
       icon: Icons.priority_high,
-      children: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: [
-          ...TaskPriority.values.map((priority) =>
-            FilterChip(
-              label: Text(priority.displayName),
-              selected: filterPriority.contains(priority),
-              onSelected: (_) => model.setPriorityFilter(priority),
+      children: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ...TaskPriority.values.map(
+              (priority) => Padding(
+                padding: EdgeInsetsGeometry.only(right: 8),
+                child: FilterChip(
+                  label: Text(priority.displayName),
+                  selected: filterPriority.contains(priority),
+                  onSelected: (_) => model.setPriorityFilter(priority),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
     // Сложность
     var difficultyFilter = FilterSection(
-      title: 'Сложность',
+      title: 'Сложность (${filterDifficulty.length})',
       icon: Icons.build,
-      children: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        alignment: WrapAlignment.start,
-        children: [
-          ...TaskDifficulty.values.map((difficulty) =>
-            FilterChip(
-              
-              label: Text(difficulty.displayName),
-              selected: filterDifficulty.contains(difficulty),
-              onSelected: (_) => model.setDifficultyFilter(difficulty),
-              backgroundColor: Theme.of(context).cardColor,
+      children: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ...TaskDifficulty.values.map(
+              (difficulty) => Padding(
+                padding: EdgeInsetsGeometry.only(right: 8),
+                child: FilterChip(
+                  label: Text(difficulty.displayName),
+                  selected: filterDifficulty.contains(difficulty),
+                  onSelected: (_) => model.setDifficultyFilter(difficulty),
+                  backgroundColor: Theme.of(context).cardColor,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -78,98 +124,99 @@ class _TaskFiltersState extends State<TaskFilters> {
     var statusFilter = FilterSection(
       title: 'Статус',
       icon: Icons.done,
-      children: Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        alignment: WrapAlignment.start,
-        children: [
-          FilterChip(
-            label: const Text('Выполненные'),
-            selected: filterDone,
-            onSelected: (_) => model.toggleDoneFilter(),
-          ),
-          FilterChip(
-            label: const Text('Невыполненные'),
-            selected: filterUndone,
-            onSelected: (_) => model.toggleUndoneFilter(),
-          ),
-        ],
+      children: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsetsGeometry.only(right: 8),
+              child: FilterChip(
+                label: const Text('Выполненные'),
+                selected: filterDone,
+                onSelected: (_) => model.toggleDoneFilter(),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.only(right: 8),
+              child: FilterChip(
+                label: const Text('Невыполненные'),
+                selected: filterUndone,
+                onSelected: (_) => model.toggleUndoneFilter(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
     // Теги
     var tagsFilter = FilterSection(
-      title: 'Теги',
+      title: 'Теги (${selectedTags.length})',
       icon: Icons.tag,
-      children:
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  ...selectedTags.map((tag) =>
-                    TagChip(
-                      title: tag.title,
-                    ),
-                  ),
-                ],
-              ),
+      children: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                ...selectedTags.map((tag) => TagChip(title: tag.title)),
+              ],
             ),
-            SizedBox(width: 8,),
-            IconButton(
-              onPressed: () =>_openTagSelector(context),
-              icon: const Icon(Icons.add, size: 16),
-            ),
-          ],
-        )
+          ),
+          SizedBox(width: 8),
+          IconButton(
+            onPressed: () => _openTagSelector(context),
+            icon: const Icon(Icons.add, size: 16),
+          ),
+        ],
+      ),
     );
-    
+
     // Сортировка
     var sorting = FilterSection(
       title: 'Сортировка',
       icon: Icons.sort,
       children: Column(
-          children: [
-            _buildSortButton(
-              context,
-              sortField,
-              model.setSortField,
-              sortAscending,
-              SortTaskField.title,
-              'По названию',
-            ),
-            const SizedBox(height: 8),
-            _buildSortButton(
-              context,
-              sortField,
-              model.setSortField,
-              sortAscending,
-              SortTaskField.datetime,
-              'По дате',
-            ),
-            const SizedBox(height: 8),
-            _buildSortButton(
-              context,
-              sortField,
-              model.setSortField,
-              sortAscending,
-              SortTaskField.priority,
-              'По приоритету',
-            ),
-            const SizedBox(height: 8),
-            _buildSortButton(
-              context,
-              sortField,
-              model.setSortField,
-              sortAscending,
-              SortTaskField.difficulty,
-              'По сложности',
-            ),
-          ],
-        ),
+        children: [
+          _buildSortButton(
+            context,
+            sortField,
+            model.setSortField,
+            sortAscending,
+            SortTaskField.title,
+            'По названию',
+          ),
+          const SizedBox(height: 8),
+          _buildSortButton(
+            context,
+            sortField,
+            model.setSortField,
+            sortAscending,
+            SortTaskField.datetime,
+            'По дате',
+          ),
+          const SizedBox(height: 8),
+          _buildSortButton(
+            context,
+            sortField,
+            model.setSortField,
+            sortAscending,
+            SortTaskField.priority,
+            'По приоритету',
+          ),
+          const SizedBox(height: 8),
+          _buildSortButton(
+            context,
+            sortField,
+            model.setSortField,
+            sortAscending,
+            SortTaskField.difficulty,
+            'По сложности',
+          ),
+        ],
+      ),
     );
 
     return FiltersDrawer(
@@ -179,11 +226,12 @@ class _TaskFiltersState extends State<TaskFilters> {
         child: const Text('Сбросить все фильтры'),
       ),
       filters: [
-       priorityFilter,
-       difficultyFilter,
-       statusFilter,
-       tagsFilter,
-       sorting
+        dateFilter,
+        priorityFilter,
+        difficultyFilter,
+        statusFilter,
+        tagsFilter,
+        sorting,
       ],
     );
   }
@@ -196,11 +244,11 @@ class _TaskFiltersState extends State<TaskFilters> {
       builder: (context) => TagsFinder(
         selectedTags: model.selectedTags,
         onConfirm: model.setTagsFilter,
-        type: TagType.task
+        type: TagType.task,
       ),
     );
   }
-  
+
   Widget _buildSortButton(
     BuildContext context,
     SortTaskField sortField,
@@ -234,6 +282,3 @@ class _TaskFiltersState extends State<TaskFilters> {
     );
   }
 }
-
-
-

@@ -6,3 +6,9 @@ String _getMonthName(int month) {
                   'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   return months[month - 1];
 }
+
+String getShortMonthName(int month) {
+  const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 
+                  'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  return months[month - 1];
+}

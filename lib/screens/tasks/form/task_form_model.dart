@@ -14,13 +14,13 @@ class TaskFormModel extends ChangeNotifier {
   // -------------- Fields ----------------
   Task task = Task.create(title: '', description: '');
   String? parentId;
-  final tagTaskRepo = TagTaskRepository();
-  final rewardRepo = TaskRewardRepository();
-  final skillRepo = SkillRepository();
-  final classRepo = ClassRepository();
-  final taskRepo = TaskRepository();
-  final tagRepo = TagRepository();
-  final hierRepo = TaskHierarchyRepository();
+  final _tagTaskRepo = TagTaskRepository();
+  final _rewardRepo = TaskRewardRepository();
+  final _skillRepo = SkillRepository();
+  final _classRepo = ClassRepository();
+  final _taskRepo = TaskRepository();
+  final _tagRepo = TagRepository();
+  final _hierRepo = TaskHierarchyRepository();
 
   List<TagTask> _tagTasks = [];
   List<TaskReward> _rewards = [];
@@ -64,11 +64,11 @@ class TaskFormModel extends ChangeNotifier {
   }
 
   Future _loadTaskTags() async {
-    _tagTasks = (await tagTaskRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
+    _tagTasks = (await _tagTaskRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
     final tags = <Tag>[];
 
     for (final tt in _tagTasks) {
-      final tag = await tagRepo.get(tt.tagId);
+      final tag = await _tagRepo.get(tt.tagId);
       if (tag != null) {
         tags.add(tag);
       }
@@ -78,28 +78,28 @@ class TaskFormModel extends ChangeNotifier {
   }
 
   Future _loadRewards() async {
-    _rewards = (await rewardRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
+    _rewards = (await _rewardRepo.getAll()).where((tt) => tt.taskId == task.id).toList();
     selectedRewards = _rewards.where((e) => true).toList();
     notifyListeners();
   }
 
   Future _loadSkills() async {
-    allSkills = await skillRepo.getAll();
+    allSkills = await _skillRepo.getAll();
     notifyListeners();
   }
   Future _loadClasses() async {
-    allClasses = await classRepo.getAll();
+    allClasses = await _classRepo.getAll();
     notifyListeners();
   }
 
   // -------------------- Commands ------------------------
 
-  void setTitle(String title) {
-    selectedTitle = title;
+  void setTitle(String? title) {
+    selectedTitle = title ?? '';
     notifyListeners();
   }
-  void setDescription(String description) {
-    selectedDescription = description;
+  void setDescription(String? description) {
+    selectedDescription = description ?? '';
     notifyListeners();
   }
   void setDone(bool done) {
@@ -132,7 +132,7 @@ class TaskFormModel extends ChangeNotifier {
   Future deleteTask() async {
     if (isEditing) {
       try {
-        await taskRepo.delete(task.id);
+        await _taskRepo.delete(task.id);
       } catch (e) {
         print(e);
       }
@@ -148,11 +148,11 @@ class TaskFormModel extends ChangeNotifier {
     task.difficulty = selectedDifficulty;
     try {
       if (isEditing) {
-        await taskRepo.update(task);
+        await _taskRepo.update(task);
       } else {
-        await taskRepo.insert(task);
+        await _taskRepo.insert(task);
         if (parentId != null) {
-          await hierRepo.insertBatch([TaskHierarchy(parentId: parentId!, childId: task.id)]);
+          await _hierRepo.insertBatch([TaskHierarchy(parentId: parentId!, childId: task.id)]);
         }
       }
       await _saveTags();
@@ -172,14 +172,14 @@ class TaskFormModel extends ChangeNotifier {
     final tagsToAdd = newTagIds.difference(existingTagIds);
 
     for (final tagId in tagsToRemove) {
-      await tagTaskRepo.delete(task.id, tagId);
+      await _tagTaskRepo.delete(task.id, tagId);
     }
     for (final tagId in tagsToAdd) {
       final tagTask = TagTask.create(
         taskId: task.id,
         tagId: tagId,
       );
-      await tagTaskRepo.insert(tagTask);
+      await _tagTaskRepo.insert(tagTask);
     }
   }
 
@@ -191,17 +191,17 @@ class TaskFormModel extends ChangeNotifier {
     final rewardsToUpdate = newRewardsId.difference(rewardsToAdd);
 
     for (final rewardId in rewardsToRemove) {
-      await rewardRepo.delete(rewardId);
+      await _rewardRepo.delete(rewardId);
     }
     for (final rewardId in rewardsToAdd) {
       var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
       reward.date = task.done ? task.datetime : null;
-      await rewardRepo.insert(reward);
+      await _rewardRepo.insert(reward);
     }
     for (final rewardId in rewardsToUpdate) {
       var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
       reward.date = task.done ? task.datetime : null;
-      await rewardRepo.update(reward);
+      await _rewardRepo.update(reward);
     }
   }
 }

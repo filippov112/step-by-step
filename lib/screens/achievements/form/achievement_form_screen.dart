@@ -56,7 +56,9 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
       title: 'Достижение',
       formKey: _formKey,
       saveCallback: () => _saveAchievement(saveAchievement),
-      deleteCallback: widget.achi == null ? () {} : () => _delete(deleteAchievement),
+      deleteCallback: widget.achi == null
+          ? () {}
+          : () => _delete(deleteAchievement),
       children: [
         // Иконка
         const AchievFormIcon(),
@@ -64,15 +66,19 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
         // Название
         SinglelineInput(
-          isRequired: true,
           requiredErrorText: 'Введите название',
-          title: 'Название',
+          header: 'Название',
           controller: titleController,
+          setText: model.setTitle,
         ),
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(title: 'Описание', controller: descController),
+        CustomMultilineTextInput(
+          header: 'Описание',
+          controller: descController,
+          setText: model.setDescription,
+        ),
         const SizedBox(height: 12),
 
         // Дата
@@ -91,8 +97,6 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
 
   Future _saveAchievement(Future<bool> Function() saveAchievement) async {
     if (!_formKey.currentState!.validate()) return;
-    model.setTitle(titleController.text ?? '');
-    model.setDescription(descController.text ?? '');
     var result = await saveAchievement();
     if (mounted) {
       Navigator.pop(context, result);

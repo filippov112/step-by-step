@@ -7,10 +7,10 @@ import 'package:life_game/models/tag.dart';
 import 'package:life_game/models/tag_skill.dart';
 
 class SkillFormModel extends ChangeNotifier {
-  final SkillRepository _skillRepo = SkillRepository();
-  final SkillConditionRepository _conditionRepo = SkillConditionRepository();
-  final TagRepository _tagRepo = TagRepository();
-  final TagSkillRepository _tagSkillRepo = TagSkillRepository();
+  final _skillRepo = SkillRepository();
+  final _conditionRepo = SkillConditionRepository();
+  final _tagRepo = TagRepository();
+  final _tagSkillRepo = TagSkillRepository();
   
   // Редактируемый навык
   Skill? _editingSkill;
@@ -31,11 +31,10 @@ class SkillFormModel extends ChangeNotifier {
   String? _ex;
   
   // Условия
-  List<SkillCondition> _conditions = [];
+  List<SkillCondition> _selectedConditions = [];
   
   // Теги
   List<Tag> _selectedTags = [];
-  List<Tag> _allTags = [];
   
   bool _isLoading = false;
   bool _isSaving = false;
@@ -45,16 +44,15 @@ class SkillFormModel extends ChangeNotifier {
   String get title => _title;
   SkillRang get rang => _rang;
   CustomImageData? get icon => _icon;
-  List<SkillCondition> get conditions => _conditions;
+  List<SkillCondition> get selectedConditions => _selectedConditions;
   List<Tag> get selectedTags => _selectedTags;
-  List<Tag> get allTags => _allTags;
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
   String? get error => _error;
   bool get isEditing => _editingSkill != null;
   
   // Инициализация для редактирования
-  Future<void> loadSkillForEditing(Skill skill) async {
+  Future<void> loadData(Skill skill) async {
     try {
       _editingSkill = skill;
       _title = skill.title;
@@ -75,21 +73,23 @@ class SkillFormModel extends ChangeNotifier {
 
       // Загружаем условия
       final allConditions = await _conditionRepo.getAll();
-      _conditions = allConditions.where((c) => c.skillId == skill.id).toList();
-      _conditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+      _selectedConditions = allConditions.where((c) => c.skillId == skill.id).toList();
+      _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
       notifyListeners();
-
-      // Загружаем теги
-      await _loadTags();
       
       // Загружаем выбранные теги для навыка
       final allTagSkills = await _tagSkillRepo.getAll();
-      final skillTagIds = allTagSkills
-          .where((ts) => ts.skillId == skill.id)
-          .map((ts) => ts.tagId)
-          .toList();
       
-      _selectedTags = _allTags.where((tag) => skillTagIds.contains(tag.id)).toList();
+      _selectedTags.clear();
+      final _ = allTagSkills
+          .where((ts) => ts.skillId == skill.id)
+          .map((ts) async {
+            final tag = await _tagRepo.get(ts.tagId);
+            if (tag != null) {
+              _selectedTags.add(tag);
+            }
+            return ts.tagId;
+          });
     } catch (e) {
       _error = 'Ошибка загрузки данных: $e';
     } finally {
@@ -98,37 +98,14 @@ class SkillFormModel extends ChangeNotifier {
     }
   }
   
-  // Загрузка всех тегов
-  Future<void> _loadTags() async {
-    try {
-      _allTags = await _tagRepo.getAll();
-      _allTags.sort((a, b) => a.title.compareTo(b.title));
-    } catch (e) {
-      _error = 'Ошибка загрузки тегов: $e';
-    } finally {
-      notifyListeners();
-    }
-  }
-  
-  // Загрузка тегов для нового навыка
-  Future<void> loadTags() async {
-    await _loadTags();
-    notifyListeners();
-  }
-  
   // Обновление полей
-  void setTitle(String value) {
-    _title = value;
+  void setTitle(String? value) {
+    _title = value ?? '';
     notifyListeners();
   }
   
   void setRang(SkillRang value) {
     _rang = value;
-    notifyListeners();
-  }
-  
-  void setIconPath(CustomImageData? value) {
-    _icon = value;
     notifyListeners();
   }
   
@@ -193,37 +170,6 @@ class SkillFormModel extends ChangeNotifier {
     }
   }
   
-  // Управление условиями
-  void addCondition(SkillCondition condition) {
-    _conditions.add(condition);
-    _conditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-    notifyListeners();
-  }
-  
-  void updateCondition(int index, SkillCondition condition) {
-    _conditions[index] = condition;
-    _conditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-    notifyListeners();
-  }
-  
-  void removeCondition(int index) {
-    _conditions.removeAt(index);
-    notifyListeners();
-  }
-  
-  // Управление тегами
-  void toggleTag(Tag tag) {
-    if (_selectedTags.contains(tag)) {
-      _selectedTags.remove(tag);
-    } else {
-      _selectedTags.add(tag);
-    }
-    notifyListeners();
-  }
-  
-  bool isTagSelected(Tag tag) {
-    return _selectedTags.contains(tag);
-  }
   
   // Сохранение навыка
   Future<bool> saveSkill() async {
@@ -269,7 +215,7 @@ class SkillFormModel extends ChangeNotifier {
           await _conditionRepo.delete(condition.id);
         }
         
-        for (var condition in _conditions) {
+        for (var condition in _selectedConditions) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -312,7 +258,7 @@ class SkillFormModel extends ChangeNotifier {
         await _skillRepo.insert(skill);
         
         // Сохраняем условия
-        for (var condition in _conditions) {
+        for (var condition in _selectedConditions) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -342,6 +288,28 @@ class SkillFormModel extends ChangeNotifier {
 
   void setIcon(CustomImageData? value) {
     _icon = value;
+    notifyListeners();
+  }
+
+  void setSelectedTags(List<Tag> tags) {
+    _selectedTags = tags;
+    notifyListeners();
+  }
+
+  void addCondition(SkillCondition condition) {
+    _selectedConditions.add(condition);
+    _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    notifyListeners();
+  }
+  
+  void updateCondition(int index, SkillCondition condition) {
+    _selectedConditions[index] = condition;
+    _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    notifyListeners();
+  }
+  
+  void removeCondition(int index) {
+    _selectedConditions.removeAt(index);
     notifyListeners();
   }
 }

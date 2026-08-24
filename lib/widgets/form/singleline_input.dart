@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
 class SinglelineInput extends StatelessWidget {
-  final String title;
-  final bool isRequired;
-  final String requiredErrorText;
+  final String header;
+  final String? requiredErrorText;
   final TextEditingController controller;
-  const SinglelineInput({super.key, required this.title, required this.controller, this.isRequired = false,
-  required this.requiredErrorText});
+  final Function(String?) setText;
+
+  const SinglelineInput({
+    super.key,
+    required this.header,
+    required this.controller,
+    this.requiredErrorText,
+    required this.setText
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: title,
+        labelText: header,
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.title),
       ),
+      onChanged: setText,
       validator: (value) {
-        if (!isRequired) return null;
+        if (requiredErrorText == null) return null;
 
-        if ( value == null || value.isEmpty) {
+        if (value == null || value.isEmpty) {
           return requiredErrorText;
         }
         return null;

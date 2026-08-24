@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
@@ -159,6 +160,7 @@ class _AchievementFiltersState extends State<AchievementFilters> {
       builder: (context) => TagsFinder(
         selectedTags: model.selectedTags,
         onConfirm: model.setTagsFilter,
+        type: TagType.achievement
       ),
     );
   }

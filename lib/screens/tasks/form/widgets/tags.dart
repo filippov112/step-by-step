@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/tasks/form/task_form_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
@@ -19,6 +20,7 @@ class TaskFormTags extends StatelessWidget {
       builder: (context) => TagsFinder(
         selectedTags: selectedTags,
         onConfirm: (tags) => setSelectedTags(tags),
+        type: TagType.task
       ),
     );
   }

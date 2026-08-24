@@ -72,12 +72,12 @@ class ClassFormModel extends ChangeNotifier {
 
   // -------------------- Commands ------------------------
 
-  void setTitle(String title) {
-    selectedTitle = title;
+  void setTitle(String? title) {
+    selectedTitle = title ?? '';
     notifyListeners();
   }
-  void setDescription(String description) {
-    selectedDescription = description;
+  void setDescription(String? description) {
+    selectedDescription = description ?? '';
     notifyListeners();
   }
   void setIcon(CustomImageData? value) {

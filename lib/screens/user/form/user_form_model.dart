@@ -38,8 +38,8 @@ class UserFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setName(String name) {
-    newUser?.name = name;
+  void setName(String? name) {
+    newUser?.name = name ?? '';
     notifyListeners();
   }
 }

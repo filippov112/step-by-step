@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:life_game/models/skill_condition.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 
-class ConditionDialog extends StatefulWidget {
+class SkillFormConditionDialog extends StatefulWidget {
   final SkillCondition? existingCondition;
   final int? editIndex;
   
-  const ConditionDialog({
+  const SkillFormConditionDialog({
     super.key,
     this.existingCondition,
     this.editIndex,
   });
 
   @override
-  State<ConditionDialog> createState() => _ConditionDialogState();
+  State<SkillFormConditionDialog> createState() => _SkillFormConditionDialogState();
 }
 
-class _ConditionDialogState extends State<ConditionDialog> {
+class _SkillFormConditionDialogState extends State<SkillFormConditionDialog> {
   late SkillRang _selectedRang;
   late TextEditingController _descriptionController;
   late DateTime? _selectedDate;

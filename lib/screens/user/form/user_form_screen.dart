@@ -39,7 +39,6 @@ class _UserFormScreenState extends State<UserFormScreen> {
   Future _saveUser(BuildContext context) async {
     final form = formKey.currentState;
     if (form == null || !form.validate()) return;
-    model?.setName(nameController.text);
 
     String? error = await model?.saveUser();
     if (error != null && context.mounted) {
@@ -66,6 +65,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
       (model) => model.newUser?.dateBirth ?? DateTime(2000),
     );
     final setIcon = context.read<UserFormModel>().setIcon;
+    final setName = context.read<UserFormModel>().setName;
 
     return EntityScreen(
       title: 'Пользователь',
@@ -86,10 +86,10 @@ class _UserFormScreenState extends State<UserFormScreen> {
 
         // Имя
         SinglelineInput(
-          title: 'Имя',
+          header: 'Имя',
           controller: nameController,
           requiredErrorText: 'Введите имя',
-          isRequired: true,
+          setText: setName,
         ),
         const SizedBox(height: 12),
 

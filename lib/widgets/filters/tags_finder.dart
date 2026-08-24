@@ -1,15 +1,17 @@
-// lib/widgets/tag_selector_modal.dart
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
 
 // Форма поиска и выбора тегов для фильтров и форм связанных с тегами сущностей (достижения, навыки, задачи)
 class TagsFinder extends StatefulWidget {
+  final TagType type;
   final List<Tag> selectedTags;
   final Function(List<Tag>) onConfirm;
 
   const TagsFinder({
     super.key,
+    required this.type,
     required this.selectedTags,
     required this.onConfirm,
   });
@@ -22,7 +24,7 @@ class _TagsFinderState extends State<TagsFinder> {
   List<Tag> _selectedTags = [];
   String _searchQuery = '';
   List<Tag> _filteredTags = [];
-  final TagRepository _tagRepo = TagRepository();
+  final _tagRepo = TagRepository();
   @override
   void initState() {
     super.initState();
@@ -31,7 +33,10 @@ class _TagsFinderState extends State<TagsFinder> {
   }
 
   Future<List<Tag>> _getAllTags() async {
-    return await _tagRepo.getAll();
+    if (widget.type != TagType.common) {
+      return [ ...await _tagRepo.getByType(widget.type), ...await _tagRepo.getByType(TagType.common)];
+    }
+    return await _tagRepo.getByType(TagType.common);
   }
 
   Future _applyFilter() async {

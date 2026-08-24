@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/skills/list/skill_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
@@ -138,6 +139,7 @@ class _SkillFiltersState extends State<SkillFilters> {
       builder: (context) => TagsFinder(
         selectedTags: model.selectedTags,
         onConfirm: model.setTagsFilter,
+        type: TagType.skill
       ),
     );
   }

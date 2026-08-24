@@ -51,7 +51,7 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
     return EntityScreen(
       title: 'Класс',
       saveCallback: () => _save(save),
-      deleteCallback:  widget.record == null ? () {} :  () => _delete(delete),
+      deleteCallback: widget.record == null ? () {} : () => _delete(delete),
       formKey: _formKey,
       children: [
         // Иконка
@@ -60,15 +60,19 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
         // Название
         SinglelineInput(
-          isRequired: true,
           requiredErrorText: 'Введите название',
-          title: 'Название',
+          header: 'Название',
           controller: titleController,
+          setText: model.setTitle,
         ),
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(title: 'Описание', controller: descController),
+        CustomMultilineTextInput(
+          header: 'Описание',
+          controller: descController,
+          setText: model.setDescription,
+        ),
         const SizedBox(height: 12),
 
         // Теги
@@ -83,9 +87,6 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
 
   Future _save(Future<bool> Function() save) async {
     if (!_formKey.currentState!.validate()) return;
-
-    model.setTitle(titleController.text);
-    model.setDescription(descController.text);
     var result = await save();
     if (mounted) {
       Navigator.pop(context, result);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
 import 'package:life_game/models/tag.dart';
@@ -195,6 +196,7 @@ class _TaskFiltersState extends State<TaskFilters> {
       builder: (context) => TagsFinder(
         selectedTags: model.selectedTags,
         onConfirm: model.setTagsFilter,
+        type: TagType.task
       ),
     );
   }

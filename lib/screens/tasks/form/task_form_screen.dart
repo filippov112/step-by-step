@@ -62,15 +62,15 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       children: [
         // Название
         SinglelineInput(
-          isRequired: true,
           requiredErrorText: 'Введите название',
-          title: 'Название',
+          header: 'Название',
+          setText: model.setTitle,
           controller: titleController,
         ),
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(title: 'Описание', controller: descController),
+        CustomMultilineTextInput(header: 'Описание', setText: model.setDescription, controller: descController),
         const SizedBox(height: 12),
 
         // Дата и время
@@ -103,8 +103,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     if (!mounted || _formKey.currentState == null) return;
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    model.setTitle(titleController.text);
-    model.setDescription(descController.text);
     var result = await saveTask();
     if (mounted) {
       Navigator.pop(context, result);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/models/enums/tag_type.dart';
 import 'package:life_game/models/tag.dart';
 import 'package:life_game/screens/classes/list/class_list_model.dart';
 import 'package:life_game/widgets/common/tag_chip.dart';
@@ -95,6 +96,7 @@ class _ClassFiltersState extends State<ClassFilters> {
       builder: (context) => TagsFinder(
         selectedTags: model.selectedTags,
         onConfirm: model.setTagsFilter,
+        type: TagType.class_
       ),
     );
   }

@@ -81,6 +81,10 @@ class TagRepository {
     List<Map<String, Object?>> maps = await db.query(Tag.tn);
     return maps.map((m) => Tag.fromMap(m)).toList();
   }
+  Future<List<Tag>> getByType(TagType type) async {
+    List<Map> maps = await db.query(Tag.tn, where: '${Tag.cType} = ?', whereArgs: [type.index]);
+    return maps.map((m) => Tag.fromMap(m)).toList();
+  }
 
   Future<Tag> insert(Tag tag) async {
     await db.insert(Tag.tn, tag.toMap());

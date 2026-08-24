@@ -4,12 +4,12 @@ import 'package:life_game/models/enums/skill_rang.dart';
 
 class SkillFormConditionDialog extends StatefulWidget {
   final SkillCondition? existingCondition;
-  final int? editIndex;
+  final Function(SkillCondition) saveCallback;
   
   const SkillFormConditionDialog({
     super.key,
     this.existingCondition,
-    this.editIndex,
+    required this.saveCallback,
   });
 
   @override
@@ -39,6 +39,18 @@ class _SkillFormConditionDialogState extends State<SkillFormConditionDialog> {
   void dispose() {
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  void _onSave() {
+    final condition = SkillCondition(
+      id: widget.existingCondition?.id ?? '',
+      rang: _selectedRang,
+      skillId: widget.existingCondition?.skillId ?? '',
+      description: _descriptionController.text.trim(),
+      date: _selectedDate,
+    );
+    widget.saveCallback.call(condition);
+    Navigator.pop(context);
   }
 
   @override
@@ -147,19 +159,7 @@ class _SkillFormConditionDialogState extends State<SkillFormConditionDialog> {
               Expanded(
                 flex: 1, 
                 child: IconButton(
-                  onPressed: () {
-                    final condition = SkillCondition(
-                      id: widget.existingCondition?.id ?? '',
-                      rang: _selectedRang,
-                      skillId: widget.existingCondition?.skillId ?? '',
-                      description: _descriptionController.text.trim(),
-                      date: _selectedDate,
-                    );
-                    Navigator.pop(context, {
-                      'condition': condition,
-                      'editIndex': widget.editIndex,
-                    });
-                  },
+                  onPressed: _onSave,
                   icon: const Icon(Icons.save),
                 ),
               ),

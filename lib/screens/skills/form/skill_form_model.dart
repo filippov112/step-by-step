@@ -31,7 +31,7 @@ class SkillFormModel extends ChangeNotifier {
   String? _ex;
   
   // Условия
-  List<SkillCondition> _selectedConditions = [];
+  ValueNotifier<List<SkillCondition>> selectedConditions = ValueNotifier([]);
   
   // Теги
   List<Tag> _selectedTags = [];
@@ -44,7 +44,6 @@ class SkillFormModel extends ChangeNotifier {
   String get title => _title;
   SkillRang get rang => _rang;
   CustomImageData? get icon => _icon;
-  List<SkillCondition> get selectedConditions => _selectedConditions;
   List<Tag> get selectedTags => _selectedTags;
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
@@ -73,8 +72,9 @@ class SkillFormModel extends ChangeNotifier {
 
       // Загружаем условия
       final allConditions = await _conditionRepo.getAll();
-      _selectedConditions = allConditions.where((c) => c.skillId == skill.id).toList();
-      _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+      final selectedCond = allConditions.where((c) => c.skillId == skill.id).toList();
+      selectedCond.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+      selectedConditions.value = selectedCond;
       notifyListeners();
       
       // Загружаем выбранные теги для навыка
@@ -215,7 +215,7 @@ class SkillFormModel extends ChangeNotifier {
           await _conditionRepo.delete(condition.id);
         }
         
-        for (var condition in _selectedConditions) {
+        for (var condition in selectedConditions.value) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -258,7 +258,7 @@ class SkillFormModel extends ChangeNotifier {
         await _skillRepo.insert(skill);
         
         // Сохраняем условия
-        for (var condition in _selectedConditions) {
+        for (var condition in selectedConditions.value) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -297,19 +297,25 @@ class SkillFormModel extends ChangeNotifier {
   }
 
   void addCondition(SkillCondition condition) {
-    _selectedConditions.add(condition);
-    _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    final conds = selectedConditions.value.toList();
+    conds.add(condition);
+    conds.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    selectedConditions.value = conds;
     notifyListeners();
   }
   
   void updateCondition(int index, SkillCondition condition) {
-    _selectedConditions[index] = condition;
-    _selectedConditions.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    final conds = selectedConditions.value.toList();
+    conds[index] = condition;
+    conds.sort((a, b) => a.rang.index.compareTo(b.rang.index));
+    selectedConditions.value = conds;
     notifyListeners();
   }
   
   void removeCondition(int index) {
-    _selectedConditions.removeAt(index);
+    final conds = selectedConditions.value.toList();
+    conds.removeAt(index);
+    selectedConditions.value = conds;
     notifyListeners();
   }
 }

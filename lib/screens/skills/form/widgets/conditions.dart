@@ -22,66 +22,67 @@ class _SkillFormConditionsState extends State<SkillFormConditions> {
     final updateCondition = model.updateCondition;
     final removeCondition = model.removeCondition;
 
-    return ValueListenableBuilder(
-      valueListenable: model.selectedConditions,
-      builder: (context, conditions, child) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const CustomText(
-                'Условия прокачки',
-                expanded: true,
-                size: 18,
-                weight: FontWeight.bold,
-              ),
-              IconButton(
-                onPressed: () => _showAddConditionDialog(context, addCondition),
-                icon: const Icon(Icons.add, size: 18),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (conditions.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Theme.of(context).dividerColor),
-              ),
-              child: Center(
-                child: CustomText(
-                  'Нет добавленных условий',
-                  color: Theme.of(context).dividerColor,
-                ),
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: conditions.length,
-              itemBuilder: (context, index) {
-                final condition = conditions[index];
-                return SkillFormConditionTile(
-                  condition: condition,
-                  editCallback: () => _showEditConditionDialog(
-                    context,
-                    index,
-                    condition,
-                    updateCondition,
-                  ),
-                  deleteCallback: () =>
-                      _confirmDelete(context, index, removeCondition),
-                );
-              },
+    final conditions = context.select<SkillFormModel, List<SkillCondition>>(
+      (m) => m.selectedConditions,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const CustomText(
+              'Условия прокачки',
+              expanded: true,
+              size: 18,
+              weight: FontWeight.bold,
             ),
-        ],
-      ),
+            IconButton(
+              onPressed: () => _showAddConditionDialog(context, addCondition),
+              icon: const Icon(Icons.add, size: 18),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (conditions.isEmpty)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Theme.of(context).dividerColor),
+            ),
+            child: Center(
+              child: CustomText(
+                'Нет добавленных условий',
+                color: Theme.of(context).dividerColor,
+              ),
+            ),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: conditions.length,
+            itemBuilder: (context, index) {
+              final condition = conditions[index];
+              return SkillFormConditionTile(
+                condition: condition,
+                editCallback: () => _showEditConditionDialog(
+                  context,
+                  index,
+                  condition,
+                  updateCondition,
+                ),
+                deleteCallback: () =>
+                    _confirmDelete(context, index, removeCondition),
+              );
+            },
+          ),
+      ],
     );
   }
 
-  void _showAddConditionDialog(
+  Future _showAddConditionDialog(
     BuildContext context,
     Function(SkillCondition) setCondition,
   ) async {
@@ -92,13 +93,13 @@ class _SkillFormConditionsState extends State<SkillFormConditions> {
     );
   }
 
-  void _showEditConditionDialog(
+  Future _showEditConditionDialog(
     BuildContext context,
     int index,
     SkillCondition condition,
     Function(int, SkillCondition) updateCondition,
-  ) {
-    showDialog<Map<String, dynamic>>(
+  ) async {
+    await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => SkillFormConditionDialog(
         existingCondition: condition,

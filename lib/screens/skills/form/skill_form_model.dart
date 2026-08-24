@@ -11,10 +11,10 @@ class SkillFormModel extends ChangeNotifier {
   final _conditionRepo = SkillConditionRepository();
   final _tagRepo = TagRepository();
   final _tagSkillRepo = TagSkillRepository();
-  
+
   // Редактируемый навык
   Skill? _editingSkill;
-  
+
   // Поля формы
   String _title = '';
   SkillRang _rang = SkillRang.F;
@@ -29,17 +29,17 @@ class SkillFormModel extends ChangeNotifier {
   String? _ss;
   String? _sss;
   String? _ex;
-  
+
   // Условия
-  ValueNotifier<List<SkillCondition>> selectedConditions = ValueNotifier([]);
+  List<SkillCondition> selectedConditions = [];
   
   // Теги
   List<Tag> _selectedTags = [];
-  
+
   bool _isLoading = false;
   bool _isSaving = false;
   String? _error;
-  
+
   // Геттеры
   String get title => _title;
   SkillRang get rang => _rang;
@@ -49,7 +49,7 @@ class SkillFormModel extends ChangeNotifier {
   bool get isSaving => _isSaving;
   String? get error => _error;
   bool get isEditing => _editingSkill != null;
-  
+
   // Инициализация для редактирования
   Future<void> loadData(Skill skill) async {
     try {
@@ -72,24 +72,26 @@ class SkillFormModel extends ChangeNotifier {
 
       // Загружаем условия
       final allConditions = await _conditionRepo.getAll();
-      final selectedCond = allConditions.where((c) => c.skillId == skill.id).toList();
+      final selectedCond = allConditions
+          .where((c) => c.skillId == skill.id)
+          .toList();
       selectedCond.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-      selectedConditions.value = selectedCond;
+      selectedConditions = selectedCond;
       notifyListeners();
-      
+
       // Загружаем выбранные теги для навыка
       final allTagSkills = await _tagSkillRepo.getAll();
-      
+
       _selectedTags.clear();
-      final _ = allTagSkills
-          .where((ts) => ts.skillId == skill.id)
-          .map((ts) async {
-            final tag = await _tagRepo.get(ts.tagId);
-            if (tag != null) {
-              _selectedTags.add(tag);
-            }
-            return ts.tagId;
-          });
+      final _ = allTagSkills.where((ts) => ts.skillId == skill.id).map((
+        ts,
+      ) async {
+        final tag = await _tagRepo.get(ts.tagId);
+        if (tag != null) {
+          _selectedTags.add(tag);
+        }
+        return ts.tagId;
+      });
     } catch (e) {
       _error = 'Ошибка загрузки данных: $e';
     } finally {
@@ -97,18 +99,18 @@ class SkillFormModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   // Обновление полей
   void setTitle(String? value) {
     _title = value ?? '';
     notifyListeners();
   }
-  
+
   void setRang(SkillRang value) {
     _rang = value;
     notifyListeners();
   }
-  
+
   void setDescription(SkillRang rang, String value) {
     switch (rang) {
       case SkillRang.F:
@@ -144,7 +146,7 @@ class SkillFormModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   String? getDescriptionForRang(SkillRang rang) {
     switch (rang) {
       case SkillRang.F:
@@ -169,8 +171,7 @@ class SkillFormModel extends ChangeNotifier {
         return _ex;
     }
   }
-  
-  
+
   // Сохранение навыка
   Future<bool> saveSkill() async {
     if (_title.trim().isEmpty) {
@@ -178,14 +179,14 @@ class SkillFormModel extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-    
+
     _isSaving = true;
     _error = null;
     notifyListeners();
-    
+
     try {
       Skill skill;
-      
+
       if (isEditing) {
         // Обновляем существующий навык
         skill = Skill(
@@ -207,15 +208,17 @@ class SkillFormModel extends ChangeNotifier {
           ex: _ex,
         );
         await _skillRepo.update(skill);
-        
+
         // Обновляем условия (удаляем старые и добавляем новые)
         final oldConditions = await _conditionRepo.getAll();
-        final skillOldConditions = oldConditions.where((c) => c.skillId == skill.id);
+        final skillOldConditions = oldConditions.where(
+          (c) => c.skillId == skill.id,
+        );
         for (var condition in skillOldConditions) {
           await _conditionRepo.delete(condition.id);
         }
-        
-        for (var condition in selectedConditions.value) {
+
+        for (var condition in selectedConditions) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -224,14 +227,16 @@ class SkillFormModel extends ChangeNotifier {
           );
           await _conditionRepo.insert(newCondition);
         }
-        
+
         // Обновляем теги
         final oldTagSkills = await _tagSkillRepo.getAll();
-        final skillOldTagSkills = oldTagSkills.where((ts) => ts.skillId == skill.id);
+        final skillOldTagSkills = oldTagSkills.where(
+          (ts) => ts.skillId == skill.id,
+        );
         for (var ts in skillOldTagSkills) {
           await _tagSkillRepo.delete(ts.skillId, ts.tagId);
         }
-        
+
         for (var tag in _selectedTags) {
           final tagSkill = TagSkill.create(skillId: skill.id, tagId: tag.id);
           await _tagSkillRepo.insert(tagSkill);
@@ -256,9 +261,9 @@ class SkillFormModel extends ChangeNotifier {
           ex: _ex,
         );
         await _skillRepo.insert(skill);
-        
+
         // Сохраняем условия
-        for (var condition in selectedConditions.value) {
+        for (var condition in selectedConditions) {
           final newCondition = SkillCondition.create(
             rang: condition.rang,
             skillId: skill.id,
@@ -267,14 +272,14 @@ class SkillFormModel extends ChangeNotifier {
           );
           await _conditionRepo.insert(newCondition);
         }
-        
+
         // Сохраняем теги
         for (var tag in _selectedTags) {
           final tagSkill = TagSkill.create(skillId: skill.id, tagId: tag.id);
           await _tagSkillRepo.insert(tagSkill);
         }
       }
-      
+
       _isSaving = false;
       notifyListeners();
       return true;
@@ -297,25 +302,25 @@ class SkillFormModel extends ChangeNotifier {
   }
 
   void addCondition(SkillCondition condition) {
-    final conds = selectedConditions.value.toList();
+    final conds = selectedConditions.toList();
     conds.add(condition);
     conds.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-    selectedConditions.value = conds;
+    selectedConditions = conds;
     notifyListeners();
   }
-  
+
   void updateCondition(int index, SkillCondition condition) {
-    final conds = selectedConditions.value.toList();
+    final conds = selectedConditions.toList();
     conds[index] = condition;
     conds.sort((a, b) => a.rang.index.compareTo(b.rang.index));
-    selectedConditions.value = conds;
+    selectedConditions = conds;
     notifyListeners();
   }
-  
+
   void removeCondition(int index) {
-    final conds = selectedConditions.value.toList();
+    final conds = selectedConditions.toList();
     conds.removeAt(index);
-    selectedConditions.value = conds;
+    selectedConditions = conds;
     notifyListeners();
   }
 }

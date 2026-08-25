@@ -13,7 +13,6 @@ import 'package:life_game/widgets/common/empty_list_screen.dart';
 import 'package:life_game/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
-
 class TagListScreen extends StatefulWidget {
   const TagListScreen({super.key});
 
@@ -31,7 +30,6 @@ class _TagListScreenState extends State<TagListScreen> {
     super.dispose();
   }
 
-
   Future _showAddDialog() async {
     var model = context.read<TagListModel>();
     var insertTag = model.insertTag;
@@ -42,9 +40,9 @@ class _TagListScreenState extends State<TagListScreen> {
     if (result != null) {
       await insertTag.call(result);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Тег добавлен')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Тег добавлен')));
       }
     }
   }
@@ -56,13 +54,13 @@ class _TagListScreenState extends State<TagListScreen> {
       context: context,
       builder: (context) => TagEditDialog(tag: tag),
     );
-    
+
     if (result != null) {
       await updateTag.call(result);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Тег обновлен')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Тег обновлен')));
       }
     }
   }
@@ -73,16 +71,17 @@ class _TagListScreenState extends State<TagListScreen> {
     var deleteSelected = model.deleteSelected;
     await deleteSelected.call();
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Удалено $count тегов')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Удалено $count тегов')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    var shouldClearSearchController = context.select<TagListModel,bool>((model) => model.shouldClearSearchController);
+    var shouldClearSearchController = context.select<TagListModel, bool>(
+      (model) => model.shouldClearSearchController,
+    );
     if (shouldClearSearchController) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _searchController.clear();
@@ -90,51 +89,71 @@ class _TagListScreenState extends State<TagListScreen> {
       });
     }
 
-    var allTags = context.select<TagListModel,List<Tag>>((model) => model.allTags);
-    var filteredTags = context.select<TagListModel,List<Tag>>((model) => model.filteredTags);
-    var selectedIds = context.select<TagListModel,Set<String>>((model) => model.selectedIds);
+    var allTags = context.select<TagListModel, List<Tag>>(
+      (model) => model.allTags,
+    );
+    var filteredTags = context.select<TagListModel, List<Tag>>(
+      (model) => model.filteredTags,
+    );
+    var selectedIds = context.select<TagListModel, Set<String>>(
+      (model) => model.selectedIds,
+    );
 
-    var isSelectionMode = context.select<TagListModel,bool>((model) => model.isSelectionMode);
+    var isSelectionMode = context.select<TagListModel, bool>(
+      (model) => model.isSelectionMode,
+    );
     var selectAll = context.read<TagListModel>().selectAll;
     var clearSelection = context.read<TagListModel>().clearSelection;
 
     var updateSearch = context.read<TagListModel>().updateSearch;
-    
+
     return FutureBuilder(
       future: context.read<TagListModel>().loadTags(),
-      builder:(BuildContext context, AsyncSnapshot snapshot) {
-
-        PreferredSizeWidget appBar = buildMainAppBar(
-          context, 
-          isSelectionMode: isSelectionMode, 
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        PreferredSizeWidget appBar = ListAppBar(
           title: 'Теги',
-          selectAll: selectAll, 
-          selectedIds: selectedIds, 
-          filteredList: filteredTags, 
-          deleteSelected: _deleteSelected, 
-          clearSelection: clearSelection,
+          selectionParams: SelectionParams(
+            isSelectionMode: isSelectionMode,
+            selectAll: selectAll,
+            selectedItemsCount: selectedIds.length,
+            allItemsCount: filteredTags.length,
+            deleteSelected: _deleteSelected,
+            clearSelection: clearSelection,
+          ),
           searchWidget: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: SearchString(
-              placeholder: 'Поиск тегов...', 
-              controller: _searchController, 
-              value: searchQuery, 
-              clearCallback: () { updateSearch.call(''); searchQuery = '';}, 
-              changeCallback: (val) { updateSearch.call(val); searchQuery = val;}
-            )
+              placeholder: 'Поиск тегов...',
+              controller: _searchController,
+              value: searchQuery,
+              clearCallback: () {
+                updateSearch.call('');
+                searchQuery = '';
+              },
+              changeCallback: (val) {
+                updateSearch.call(val);
+                searchQuery = val;
+              },
+            ),
           ),
-          isRootWidgetTree:false
         );
-        
-        var statusFilterValue = context.select<TagListModel,List<TagType>?>((model) => model.selectedTypeFilter);
+
+        var statusFilterValue = context.select<TagListModel, List<TagType>?>(
+          (model) => model.selectedTypeFilter,
+        );
         var setTypeFilter = context.read<TagListModel>().setTypeFilter;
 
         var tagTypeFilter = Padding(
-          padding: EdgeInsetsGeometry.fromLTRB(16,0,16,0), 
+          padding: EdgeInsetsGeometry.fromLTRB(16, 0, 16, 0),
           child: DropdownButtonFormField<List<TagType>>(
             items: [
               const DropdownMenuItem(
-                value: [TagType.common, TagType.skill, TagType.achievement, TagType.task],
+                value: [
+                  TagType.common,
+                  TagType.skill,
+                  TagType.achievement,
+                  TagType.task,
+                ],
                 child: Text('Все типы'),
               ),
               const DropdownMenuItem(
@@ -153,20 +172,22 @@ class _TagListScreenState extends State<TagListScreen> {
                 value: [TagType.task],
                 child: Text('Задачи'),
               ),
-            ], 
-            initialValue: statusFilterValue, 
+            ],
+            initialValue: statusFilterValue,
             onChanged: setTypeFilter,
           ),
         );
 
-        List<Widget> filters = [tagTypeFilter, ];
+        List<Widget> filters = [tagTypeFilter];
 
         Widget buildBody() {
           if (allTags.isEmpty || filteredTags.isEmpty) {
             return EmptyListScreen(
-              title: "Теги не найдены", 
-              subtitle: allTags.isEmpty ? "Создайте свой первый тэг" : "Попробуйте изменить параметры поиска", 
-              icon: Icons.tag
+              title: "Теги не найдены",
+              subtitle: allTags.isEmpty
+                  ? "Создайте свой первый тэг"
+                  : "Попробуйте изменить параметры поиска",
+              icon: Icons.tag,
             );
           }
           return ListView.builder(
@@ -175,14 +196,14 @@ class _TagListScreenState extends State<TagListScreen> {
             itemBuilder: (context, index) {
               final tag = filteredTags[index];
               final isSelected = selectedIds.contains(tag.id);
-              
+
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 4),
                 child: TagTile(
-                  isSelected: isSelected, 
-                  tag: tag, 
+                  isSelected: isSelected,
+                  tag: tag,
                   showEditDialog: _showEditDialog,
-                )
+                ),
               );
             },
           );
@@ -191,12 +212,15 @@ class _TagListScreenState extends State<TagListScreen> {
         return Scaffold(
           drawer: MainMenuDrawer(),
           appBar: appBar,
-          endDrawer: FiltersDrawer(filters: filters,),
+          endDrawer: FiltersDrawer(filters: filters),
           body: buildBody(),
-          floatingActionButton: CustomFloatingActionButton(openFormCreate: _showAddDialog, tooltip: "Добавить тег"),
+          floatingActionButton: CustomFloatingActionButton(
+            openFormCreate: _showAddDialog,
+            tooltip: "Добавить тег",
+          ),
           bottomNavigationBar: const MainBottomMenu(),
         );
-      }
+      },
     );
   }
 }

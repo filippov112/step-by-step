@@ -44,14 +44,16 @@ class _TaskListScreenState extends State<TaskListScreen> {
         return Scaffold(
           endDrawer: TaskFilters(),
           drawer: const MainMenuDrawer(),
-          appBar: buildMainAppBar<Task>(
-            context,
+          appBar: ListAppBar(
             title: 'Задачи',
-            isRootWidgetTree: true,
-            isSelectionMode: model.isSelectionMode,
-            selectAll: model.toggleSelectAll,
-            selectedIds: model.selectedIds,
-            filteredList: model.tasks,
+            selectionParams: SelectionParams(
+              isSelectionMode:model.isSelectionMode , 
+              selectAll:model.toggleSelectAll , 
+              selectedItemsCount:model.selectedIds.length , 
+              allItemsCount:model.tasks.length, 
+              deleteSelected:model.deleteSelectedTasks, 
+              clearSelection:model.clearSelection
+            ),
             searchWidget: PreferredSize(
               preferredSize: const Size.fromHeight(60),
               child: SearchString(
@@ -62,8 +64,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 changeCallback: model.setSearchQuery,
               ),
             ),
-            deleteSelected: model.deleteSelectedTasks,
-            clearSelection: model.clearSelection,
           ),
           body: TaskListBody(),
           floatingActionButton: model.isSelectionMode

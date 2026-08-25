@@ -12,7 +12,6 @@ import 'package:life_game/screens/home/widgets/bottom_menu.dart';
 import 'package:life_game/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
-
 class ClassListScreen extends StatefulWidget {
   const ClassListScreen({super.key});
 
@@ -37,47 +36,45 @@ class _ClassListScreenState extends State<ClassListScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ClassListModel>(
       builder: (context, model, child) {
         return Scaffold(
-
-          appBar: buildMainAppBar<Class>(
-              context,
-              title: 'Классы',
-              isRootWidgetTree: false,
+          appBar: ListAppBar(
+            title: 'Классы',
+            selectionParams: SelectionParams(
               isSelectionMode: model.isSelectionMode,
               selectAll: model.toggleSelectAll,
-              selectedIds: model.selectedIds,
-              filteredList: model.records,
-              searchWidget: PreferredSize(
-                preferredSize: const Size.fromHeight(60),
-                child: SearchString(
-                  placeholder: 'Поиск классов...',
-                  controller: _searchController,
-                  value: model.searchQuery,
-                  clearCallback: model.clearSearch,
-                  changeCallback: model.setSearchQuery,
-                )
-              ),
+              selectedItemsCount: model.selectedIds.length,
+              allItemsCount: model.records.length,
               deleteSelected: model.deleteAllSelected,
               clearSelection: model.clearSelection,
             ),
+            searchWidget: PreferredSize(
+              preferredSize: const Size.fromHeight(60),
+              child: SearchString(
+                placeholder: 'Поиск классов...',
+                controller: _searchController,
+                value: model.searchQuery,
+                clearCallback: model.clearSearch,
+                changeCallback: model.setSearchQuery,
+              ),
+            ),
+          ),
           body: _buildBody(context, model),
           floatingActionButton: model.isSelectionMode
-            ? null
-            : CustomFloatingActionButton(
-                openFormCreate: _openCreateForm,
-                tooltip: 'Создать класс',
-              ),
-        
+              ? null
+              : CustomFloatingActionButton(
+                  openFormCreate: _openCreateForm,
+                  tooltip: 'Создать класс',
+                ),
+
           endDrawer: ClassFilters(),
           drawer: const MainMenuDrawer(),
           bottomNavigationBar: const MainBottomMenu(),
         );
-      }
+      },
     );
   }
 
@@ -94,7 +91,11 @@ class _ClassListScreenState extends State<ClassListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
+            Icon(
+              Icons.filter_alt_off,
+              size: 64,
+              color: Theme.of(context).hintColor,
+            ),
             const SizedBox(height: 16),
             Text(
               'Нет классов по заданным фильтрам',
@@ -114,10 +115,7 @@ class _ClassListScreenState extends State<ClassListScreen> {
       itemCount: model.records.length,
       itemBuilder: (context, index) {
         final record = model.records[index];
-        return ClassTile(
-          model: model, 
-          record: record, 
-        );
+        return ClassTile(model: model, record: record);
       },
     );
   }
@@ -125,9 +123,9 @@ class _ClassListScreenState extends State<ClassListScreen> {
   void _openCreateForm() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ClassFormScreen(),
-      ),
-    ).then((_) { if (context.mounted) context.read<ClassListModel>().loadData(); });
+      MaterialPageRoute(builder: (context) => ClassFormScreen()),
+    ).then((_) {
+      if (context.mounted) context.read<ClassListModel>().loadData();
+    });
   }
 }

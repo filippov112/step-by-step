@@ -94,8 +94,9 @@ class TaskListModel extends ChangeNotifier {
   }
 
   // Фильтры
-  void selectDate(DateTime date) {
+  Future selectDate(DateTime date) async {
     selectedDate = date;
+    await _applyFiltersAndSort();
     notifyListeners();
   }
 

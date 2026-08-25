@@ -58,16 +58,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
     return Scaffold(
       drawer: MainMenuDrawer(),
-      appBar: buildMainAppBar<User>(
-        context,
+      appBar: ListAppBar(
         title: 'Профиль',
-        isRootWidgetTree: true,
-        isSelectionMode: false,
-        selectAll: () {},
-        selectedIds: [],
-        filteredList: [],
-        deleteSelected: () {},
-        clearSelection: () {},
         actions: [
           Consumer<UserFormModel>(
             builder: (context, viewModel, child) {

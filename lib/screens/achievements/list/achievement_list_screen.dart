@@ -44,14 +44,16 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
       builder: (context, model, child) {
         return Scaffold(
 
-          appBar: buildMainAppBar<Achievement>(
-              context,
+          appBar: ListAppBar(
               title: 'Достижения',
-              isRootWidgetTree: true,
-              isSelectionMode: model.isSelectionMode,
-              selectAll: model.toggleSelectAll,
-              selectedIds: model.selectedIds,
-              filteredList: model.achievements,
+              selectionParams: SelectionParams(
+                isSelectionMode: model.isSelectionMode,
+                selectAll: model.toggleSelectAll,
+                selectedItemsCount: model.selectedIds.length,
+                allItemsCount: model.achievements.length,
+                deleteSelected: model.deleteSelectedAchievements,
+                clearSelection: model.clearSelection,
+              ),
               searchWidget: PreferredSize(
                 preferredSize: const Size.fromHeight(60),
                 child: SearchString(
@@ -62,8 +64,6 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
                   changeCallback: model.setSearchQuery,
                 )
               ),
-              deleteSelected: model.deleteSelectedAchievements,
-              clearSelection: model.clearSelection,
             ),
           body: _buildBody(context, model),
           floatingActionButton: model.isSelectionMode

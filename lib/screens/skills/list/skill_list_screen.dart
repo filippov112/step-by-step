@@ -42,14 +42,16 @@ class _SkillListScreenState extends State<SkillListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildMainAppBar<Skill>(
-          context,
+      appBar: ListAppBar(
           title: 'Навыки',
-          isRootWidgetTree: true,
-          isSelectionMode: model.isSelectionMode,
-          selectAll: model.toggleSelectAll,
-          selectedIds: model.selectedIds,
-          filteredList: model.skills,
+          selectionParams: SelectionParams(
+              isSelectionMode:model.isSelectionMode , 
+              selectAll:model.toggleSelectAll , 
+              selectedItemsCount:model.selectedIds.length , 
+              allItemsCount:model.skills.length, 
+              deleteSelected:model.deleteSelectedSkills, 
+              clearSelection:model.clearSelection
+            ),
           searchWidget: PreferredSize(
             preferredSize: const Size.fromHeight(60),
             child: SearchString(
@@ -60,8 +62,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
               changeCallback: model.setSearchQuery,
             )
           ),
-          deleteSelected: model.deleteSelectedSkills,
-          clearSelection: model.clearSelection,
         ),
       body: _buildBody(context, model),
       floatingActionButton: model.isSelectionMode

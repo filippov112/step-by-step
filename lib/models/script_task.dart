@@ -2,6 +2,7 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/script.dart';
 import 'package:life_game/models/task.dart';
+import 'package:life_game/tools/datetime.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 class ScriptTask {
@@ -37,12 +38,12 @@ class ScriptTask {
   factory ScriptTask.create({
     required String scriptId,
     required String taskId,
-    DateTime? date,
+    required DateTime date,
   }) {
     return ScriptTask(
       scriptId: scriptId,
       taskId: taskId,
-      date: date ?? DateTime.now(),
+      date: date,
     );
   }
 
@@ -51,14 +52,14 @@ class ScriptTask {
     return {
       cScriptId: scriptId,
       cTaskId: taskId,
-      cDate: date.millisecondsSinceEpoch,
+      cDate: DateTool.datetimeToDays(date),
     };
   }
 
   ScriptTask.fromMap(Map map) {
     scriptId = map[cScriptId];
     taskId = map[cTaskId];
-    date = DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    date = DateTool.joinDateTime(date: map[cDate]) ?? DateTime.now();
   }
 }
 

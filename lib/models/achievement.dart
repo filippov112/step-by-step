@@ -2,6 +2,7 @@ import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/achiev_rar.dart';
 import 'package:life_game/models/other/image.dart';
 import 'package:life_game/services/file_storage_service.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:sqflite/sqflite.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
@@ -71,7 +72,7 @@ class Achievement {
       cTitle: title,
       cDescription: description,
       cRarity: rarity.index,
-      cDate: date?.millisecondsSinceEpoch,
+      cDate: DateTool.datetimeToDays(date),
       cIcon: icon?.toJson(),
     };
   }
@@ -81,7 +82,7 @@ class Achievement {
     title = map[cTitle];
     description = map[cDescription] ?? "";
     rarity = allAchievRar[map[cRarity] ?? 0];
-    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    date = DateTool.joinDateTime(date: map[cDate]);
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
   }
 }

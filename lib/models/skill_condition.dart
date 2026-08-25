@@ -1,6 +1,7 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/skill_rang.dart';
 import 'package:life_game/models/skill.dart';
+import 'package:life_game/tools/datetime.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
@@ -64,7 +65,7 @@ class SkillCondition {
       cRang: rang.index,
       cSkillId: skillId,
       cDescription: description,
-      cDate: date?.millisecondsSinceEpoch,
+      cDate: DateTool.datetimeToDays(date),
     };
   }
 
@@ -73,7 +74,7 @@ class SkillCondition {
     rang = SkillRang.values[map[cRang]];
     skillId = map[cSkillId];
     description = map[cDescription] ?? "";
-    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate]);
+    date = DateTool.joinDateTime(date: map[cDate]);
   }
 }
 

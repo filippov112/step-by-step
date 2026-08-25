@@ -5,6 +5,7 @@ import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/task.dart';
 import 'package:life_game/models/user.dart';
 import 'package:life_game/services/exp_calculator.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -84,7 +85,7 @@ class TaskReward {
       cSkillId: skillId,
       cTaskId: taskId,
       cClassId: classId,
-      cDate: date == null ? date : date!.millisecondsSinceEpoch ~/ (24 * 60 * 60 * 1000),
+      cDate: DateTool.datetimeToDays(date),
       cExperience: experience,
       cTime: time,
     };
@@ -95,7 +96,7 @@ class TaskReward {
     skillId = map[cSkillId];
     taskId = map[cTaskId];
     classId = map[cClassId];
-    date = map[cDate] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDate] * (24 * 60 * 60 * 1000));
+    date = DateTool.joinDateTime(date: map[cDate]);
     experience = map[cExperience] ?? 0;
     time = map[cTime] ?? 0;
   }

@@ -2,6 +2,7 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/other/image.dart';
 import 'package:life_game/services/file_storage_service.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:life_game/tools/get_age_string.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -47,7 +48,7 @@ class User {
     var map = <String, Object?>{
       cName: name,
       cIcon: icon?.toJson() ,
-      cBirthDate: dateBirth.millisecondsSinceEpoch ~/ (24 * 60 * 60 * 1000),
+      cBirthDate: DateTool.datetimeToDays(dateBirth),
       cExperience: experience,
       cTime: time,
     };
@@ -61,9 +62,7 @@ class User {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
-    dateBirth = DateTime.fromMillisecondsSinceEpoch(
-      map[cBirthDate] * (24 * 60 * 60 * 1000),
-    );
+    dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
     experience = map[cExperience];
     time = map[cTime];
   }

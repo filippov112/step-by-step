@@ -1,37 +1,12 @@
-// File: lib/repositories/analytics_repository.dart
-
 import 'package:life_game/data/db.dart';
+import 'package:life_game/models/task.dart';
 import 'package:life_game/models/task_reward.dart';
 import 'package:life_game/models/class.dart';
 import 'package:life_game/models/skill.dart';
 import 'package:life_game/models/class_skill.dart';
+import 'package:life_game/services/analytics/dto_exp_time.dart';
+import 'package:life_game/services/analytics/dto_tasks.dart';
 import 'package:sqflite/sqflite.dart';
-
-/// Модель для агрегированных данных по дате
-class DailyAggregate {
-  final int date;
-  final int totalTime;
-  final int totalExperience;
-  final int taskCount;
-  
-  DateTime get dateTime => DateTime.fromMillisecondsSinceEpoch(date * (24 * 60 * 60 * 1000));
-  
-  DailyAggregate({
-    required this.date,
-    required this.totalTime,
-    required this.totalExperience,
-    required this.taskCount,
-  });
-  
-  factory DailyAggregate.fromMap(Map<String, dynamic> map) {
-    return DailyAggregate(
-      date: map[TaskReward.cDate] as int,
-      totalTime: map['total_time'] as int? ?? 0,
-      totalExperience: map['total_experience'] as int? ?? 0,
-      taskCount: map['task_count'] as int? ?? 0,
-    );
-  }
-}
 
 /// Репозиторий для аналитических запросов
 class AnalyticsRepository {
@@ -40,7 +15,7 @@ class AnalyticsRepository {
   // ================ БАЗОВЫЕ ЗАПРОСЫ ================
 
   /// Получить агрегированные данные по дням
-  Future<List<DailyAggregate>> getDailyAggregates({
+  Future<List<DtoExpTime>> getDailyExpTime({
     int? startDate,
     int? endDate,
     String? skillId,
@@ -48,43 +23,78 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
+
     if (skillId != null) {
       conditions.add('${TaskReward.cSkillId} = ?');
       args.add(skillId);
     }
-    
+
     if (classId != null) {
       conditions.add('${TaskReward.cClassId} = ?');
       args.add(classId);
     }
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       SELECT 
         ${TaskReward.cDate},
-        COALESCE(SUM(${TaskReward.cTime}), 0) AS total_time,
-        COALESCE(SUM(${TaskReward.cExperience}), 0) AS total_experience,
-        COUNT(${TaskReward.cId}) AS task_count
+        COALESCE(SUM(${TaskReward.cTime}), 0) AS ${DtoExpTime.cTime},
+        COALESCE(SUM(${TaskReward.cExperience}), 0) AS ${DtoExpTime.cExp}
       FROM ${TaskReward.tn}
       $whereClause
       GROUP BY ${TaskReward.cDate}
       ORDER BY ${TaskReward.cDate} DESC
     ''';
-    
+
     final result = await db.rawQuery(query, args);
-    return result.map((row) => DailyAggregate.fromMap(row)).toList();
+    return result.map((row) => DtoExpTime.fromMap(row)).toList();
+  }
+
+  /// Получить агрегированные данные по дням
+  Future<List<DtoTasks>> getDailyTasks({int? startDate, int? endDate}) async {
+    final conditions = <String>[];
+    final args = <dynamic>[];
+
+    if (startDate != null) {
+      conditions.add('${Task.cDate} >= ?');
+      args.add(startDate);
+    }
+    if (endDate != null) {
+      conditions.add('${Task.cDate} <= ?');
+      args.add(endDate);
+    }
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
+      SELECT 
+        ${Task.cDate},
+        COUNT(${Task.cId}) AS ${DtoTasks.cTasks}
+      FROM ${Task.tn}
+      $whereClause
+      GROUP BY ${Task.cDate}
+      ORDER BY ${Task.cDate} DESC
+    ''';
+
+    final result = await db.rawQuery(query, args);
+    return result.map((row) => DtoTasks.fromMap(row)).toList();
   }
 
   /// Получить прогресс по дням (кумулятивные суммы)
@@ -94,20 +104,23 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       WITH daily_totals AS (
         SELECT 
           ${TaskReward.cDate},
@@ -126,38 +139,44 @@ class AnalyticsRepository {
       FROM daily_totals
       ORDER BY ${TaskReward.cDate}
     ''';
-    
+
     return await db.rawQuery(query, args);
   }
 
   // ================ АНАЛИТИКА ПО НАВЫКАМ ================
 
   /// Получить аналитику по навыкам
-  Future<List<Map<String, dynamic>>> getSkillAnalytics({ int? startDate, int? endDate, String? skillId 
+  Future<List<Map<String, dynamic>>> getSkillAnalytics({
+    int? startDate,
+    int? endDate,
+    String? skillId,
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('r.${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('r.${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
+
     if (skillId != null) {
       conditions.add('r.${TaskReward.cSkillId} = ?');
       args.add(skillId);
     }
-    
+
     conditions.add('r.${TaskReward.cSkillId} IS NOT NULL');
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       SELECT 
         s.${Skill.cId} AS skill_id,
         s.${Skill.cTitle} AS skill_title,
@@ -170,7 +189,7 @@ class AnalyticsRepository {
       GROUP BY s.${Skill.cId}
       ORDER BY total_experience DESC
     ''';
-    
+
     return await db.rawQuery(query, args);
   }
 
@@ -182,27 +201,30 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('r.${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('r.${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
+
     if (skillId != null) {
       conditions.add('r.${TaskReward.cSkillId} = ?');
       args.add(skillId);
     }
-    
+
     conditions.add('r.${TaskReward.cSkillId} IS NOT NULL');
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       SELECT 
         r.${TaskReward.cDate},
         s.${Skill.cId} AS skill_id,
@@ -216,7 +238,7 @@ class AnalyticsRepository {
       GROUP BY r.${TaskReward.cDate}, s.${Skill.cId}
       ORDER BY r.${TaskReward.cDate} DESC, total_experience DESC
     ''';
-    
+
     return await db.rawQuery(query, args);
   }
 
@@ -230,34 +252,35 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     // ВНИМАНИЕ: В CTE нельзя использовать параметры в WHERE,
     // поэтому добавляем условия в основной запрос
-    
+
     final dateCondition = <String>[];
     final dateArgs = <dynamic>[];
-    
+
     if (startDate != null) {
       dateCondition.add('date >= ?');
       dateArgs.add(startDate);
     }
-    
+
     if (endDate != null) {
       dateCondition.add('date <= ?');
       dateArgs.add(endDate);
     }
-    
+
     String classCondition = '';
     if (classId != null) {
       classCondition = 'AND class_id = ?';
       dateArgs.add(classId);
     }
-    
-    final dateWhere = dateCondition.isNotEmpty 
-        ? 'AND ${dateCondition.join(' AND ')}' 
+
+    final dateWhere = dateCondition.isNotEmpty
+        ? 'AND ${dateCondition.join(' AND ')}'
         : '';
-    
-    final query = '''
+
+    final query =
+        '''
       WITH class_rewards_union AS (
         SELECT 
           c.${Class.cId} AS class_id,
@@ -301,7 +324,7 @@ class AnalyticsRepository {
       GROUP BY class_id
       ORDER BY total_experience DESC
     ''';
-    
+
     return await db.rawQuery(query, dateArgs);
   }
 
@@ -311,32 +334,32 @@ class AnalyticsRepository {
     int? endDate,
     String? classId,
   }) async {
-    
     // Добавляем условия в основной запрос после CTE
     final dateCondition = <String>[];
     final dateArgs = <dynamic>[];
-    
+
     if (startDate != null) {
       dateCondition.add('date >= ?');
       dateArgs.add(startDate);
     }
-    
+
     if (endDate != null) {
       dateCondition.add('date <= ?');
       dateArgs.add(endDate);
     }
-    
+
     String classCondition = '';
     if (classId != null) {
       classCondition = 'AND class_id = ?';
       dateArgs.add(classId);
     }
-    
-    final dateWhere = dateCondition.isNotEmpty 
-        ? 'AND ${dateCondition.join(' AND ')}' 
+
+    final dateWhere = dateCondition.isNotEmpty
+        ? 'AND ${dateCondition.join(' AND ')}'
         : '';
-    
-    final query = '''
+
+    final query =
+        '''
       WITH class_rewards_union AS (
         SELECT 
           c.${Class.cId} AS class_id,
@@ -379,7 +402,7 @@ class AnalyticsRepository {
       GROUP BY class_id, date
       ORDER BY date DESC, total_experience DESC
     ''';
-    
+
     return await db.rawQuery(query, dateArgs);
   }
 
@@ -391,23 +414,24 @@ class AnalyticsRepository {
   }) async {
     final args = <dynamic>[];
     final conditions = <String>[];
-    
+
     if (startDate != null) {
       conditions.add('r.${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('r.${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
-    final whereClause = conditions.isNotEmpty 
-        ? 'AND ${conditions.join(' AND ')}' 
+
+    final whereClause = conditions.isNotEmpty
+        ? 'AND ${conditions.join(' AND ')}'
         : '';
-    
+
     // Добавляем условия и для основного запроса, и для подзапросов
-    final query = '''
+    final query =
+        '''
       WITH class_total AS (
         SELECT 
           c.${Class.cId} AS class_id,
@@ -475,7 +499,14 @@ class AnalyticsRepository {
       FROM class_total ct
       CROSS JOIN direct_class dc
     ''';
-    var finalArgs = <dynamic>[classId, ...args, classId, ...args, classId, ...args];
+    var finalArgs = <dynamic>[
+      classId,
+      ...args,
+      classId,
+      ...args,
+      classId,
+      ...args,
+    ];
     final result = await db.rawQuery(query, finalArgs);
     return result.isNotEmpty ? result.first : {};
   }
@@ -491,30 +522,33 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
+
     if (skillId != null) {
       conditions.add('${TaskReward.cSkillId} = ?');
       args.add(skillId);
     }
-    
+
     if (classId != null) {
       conditions.add('${TaskReward.cClassId} = ?');
       args.add(classId);
     }
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       SELECT 
         COALESCE(SUM(${TaskReward.cTime}), 0) AS total_time,
         COALESCE(SUM(${TaskReward.cExperience}), 0) AS total_experience,
@@ -524,7 +558,7 @@ class AnalyticsRepository {
       FROM ${TaskReward.tn}
       $whereClause
     ''';
-    
+
     final result = await db.rawQuery(query, args);
     if (result.isEmpty) {
       return {
@@ -535,7 +569,7 @@ class AnalyticsRepository {
         'class_tasks': 0,
       };
     }
-    
+
     final row = result.first;
     return {
       'total_time': (row['total_time'] as int?) ?? 0,
@@ -546,45 +580,6 @@ class AnalyticsRepository {
     };
   }
 
-  /// Получить топ-5 дней по опыту
-  Future<List<DailyAggregate>> getTopDaysByExperience({
-    int limit = 5,
-    int? startDate,
-    int? endDate,
-  }) async {
-    final conditions = <String>[];
-    final args = <dynamic>[];
-    
-    if (startDate != null) {
-      conditions.add('${TaskReward.cDate} >= ?');
-      args.add(startDate);
-    }
-    
-    if (endDate != null) {
-      conditions.add('${TaskReward.cDate} <= ?');
-      args.add(endDate);
-    }
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
-      SELECT 
-        ${TaskReward.cDate},
-        COALESCE(SUM(${TaskReward.cTime}), 0) AS total_time,
-        COALESCE(SUM(${TaskReward.cExperience}), 0) AS total_experience,
-        COUNT(${TaskReward.cId}) AS task_count
-      FROM ${TaskReward.tn}
-      $whereClause
-      GROUP BY ${TaskReward.cDate}
-      ORDER BY total_experience DESC
-      LIMIT ?
-    ''';
-    
-    args.add(limit);
-    final result = await db.rawQuery(query, args);
-    return result.map((row) => DailyAggregate.fromMap(row)).toList();
-  }
-
   /// Получить распределение наград по типам
   Future<Map<String, dynamic>> getRewardDistribution({
     int? startDate,
@@ -592,20 +587,23 @@ class AnalyticsRepository {
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
-    
+
     if (startDate != null) {
       conditions.add('${TaskReward.cDate} >= ?');
       args.add(startDate);
     }
-    
+
     if (endDate != null) {
       conditions.add('${TaskReward.cDate} <= ?');
       args.add(endDate);
     }
-    
-    final whereClause = conditions.isNotEmpty ? 'WHERE ${conditions.join(' AND ')}' : '';
-    
-    final query = '''
+
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+
+    final query =
+        '''
       SELECT 
         COUNT(*) AS total_count,
         COUNT(CASE WHEN ${TaskReward.cSkillId} IS NOT NULL AND ${TaskReward.cClassId} IS NULL THEN 1 END) AS skill_only_count,
@@ -616,7 +614,7 @@ class AnalyticsRepository {
       FROM ${TaskReward.tn}
       $whereClause
     ''';
-    
+
     final result = await db.rawQuery(query, args);
     return result.isNotEmpty ? result.first : {};
   }

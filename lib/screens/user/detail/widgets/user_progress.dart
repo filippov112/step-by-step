@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:life_game/widgets/analysis/custom_progress_bar.dart';
 import 'package:life_game/widgets/analysis/custom_linear_chart.dart';
 import 'package:life_game/widgets/common/custom_card_block.dart';
@@ -121,8 +122,8 @@ class _UserProgressState extends State<UserProgress> {
               ),
               child: CustomLinearChart(
                 sortedData: [widget.data],
-                minV: widget.firstDay.millisecondsSinceEpoch.toDouble(),
-                maxV: widget.lastDay.millisecondsSinceEpoch.toDouble(),
+                minV: (DateTool.datetimeToDays(widget.firstDay) ?? 0).toDouble(),
+                maxV: (DateTool.datetimeToDays(widget.lastDay) ?? 0).toDouble(),
                 colors: [Theme.of(context).focusColor],
               ),
             ),

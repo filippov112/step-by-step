@@ -1,9 +1,11 @@
 import 'package:life_game/data/db.dart';
 import 'package:life_game/models/enums/task_difficulty.dart';
 import 'package:life_game/models/enums/task_priority.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
+
+
 // Задача
 class Task {
 
@@ -14,7 +16,8 @@ class Task {
   static const cId = "_id";
   static const cTitle = "_title";
   static const cDesc = "_description";
-  static const cDateTime = "_datetime";
+  static const cDate = "_date";
+  static const cTime = "_time";
   static const cDone = "_done";
   static const cPriority = "_priority";
   static const cDifficulty = "_difficulty";
@@ -23,7 +26,8 @@ class Task {
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cDesc TEXT NOT NULL, 
-          $cDateTime INTEGER,
+          $cDate INTEGER,
+          $cTime INTEGER,
           $cDone INTEGER,
           $cPriority INTEGER,
           $cDifficulty INTEGER
@@ -81,7 +85,8 @@ class Task {
       cId: id,
       cTitle: title,
       cDesc: description,
-      cDateTime: datetime == null ? null : datetime!.millisecondsSinceEpoch ~/ 60000,
+      cDate: DateTool.datetimeToDays(datetime),
+      cTime: DateTool.datetimeToTimeMinutes(datetime),
       cDone: done ? 1 : 0,
       cPriority: priority.index,
       cDifficulty: difficulty.index
@@ -92,7 +97,7 @@ class Task {
     id = map[cId];
     title = map[cTitle];
     description = map[cDesc];
-    datetime = map[cDateTime] == null ? null : DateTime.fromMillisecondsSinceEpoch(map[cDateTime] * 60000);
+    datetime = DateTool.joinDateTime(date:map[cDate], time:map[cTime]);
     done = map[cDone] == 1;
     priority = allTaskPriorities[map[cPriority]];
     difficulty = allTaskDifficulties[map[cDifficulty]];

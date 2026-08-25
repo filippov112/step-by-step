@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:life_game/tools/datetime.dart';
 import 'package:life_game/widgets/common/custom_text.dart';
 
 
@@ -51,12 +52,14 @@ class CustomActivityTable extends StatelessWidget {
   /// Получаем все дни в диапазоне
   List<DateTime> _getDaysInRange(DateTime start, DateTime end) {
     final days = <DateTime>[];
-    var current = DateTime.fromMillisecondsSinceEpoch(start.millisecondsSinceEpoch);
-    final endDate = DateTime.fromMillisecondsSinceEpoch(end.millisecondsSinceEpoch);
+    int current = DateTool.datetimeToDays(start) ?? 0;
+    int endDate = DateTool.datetimeToDays(end) ?? 0;
     
-    while (current.isBefore(endDate) || current.isAtSameMomentAs(endDate)) {
-      days.add(current);
-      current = current.add(const Duration(days: 1));
+    while (current < endDate || current == endDate) {
+      final day = DateTool.joinDateTime(date: current);
+      current++;
+      if (day == null) continue;
+      days.add(day);
     }
     return days;
   }
@@ -123,6 +126,9 @@ class CustomActivityTable extends StatelessWidget {
     var minC = minColor ?? Theme.of(context).dividerColor;
     var maxC = maxColor ?? Theme.of(context).focusColor;
 
+    final startDateDays = DateTool.datetimeToDays(startDate) ?? 0;
+    final endDateDays = DateTool.datetimeToDays(endDate) ?? 0;
+    
     return weeks.map((week) {
           return Expanded(
             child: Column(
@@ -130,9 +136,10 @@ class CustomActivityTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [ 
                 ...week.map((day) {
+                  final dayDays = DateTool.datetimeToDays(day) ?? 0;
                   final isRealDay = 
-                    day.millisecondsSinceEpoch >= startDate.millisecondsSinceEpoch && 
-                    day.millisecondsSinceEpoch <= endDate.millisecondsSinceEpoch;
+                    dayDays >= startDateDays && 
+                    dayDays <= endDateDays;
                   final val = isRealDay ? (activities[day] ?? 0) : 0;
                   final color = _getColorForCount(minC, maxC, val);
               
@@ -164,7 +171,7 @@ class CustomActivityTable extends StatelessWidget {
 
   /// Определяем цвет
   Color _getColorForCount(Color minC, Color maxV, int v) {
-    var t = maxValue == 0 || maxValue <= v ? 0.0 : v.toDouble() / maxValue;
+    var t = maxValue == 0 || maxValue < v ? 0.0 : v.toDouble() / maxValue;
     return Color.from(
       alpha: 1, 
       red: lerpDouble(minC.r, maxV.r, t) ?? 0, 

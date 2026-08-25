@@ -65,9 +65,7 @@ class _SkillFormScreenState extends State<SkillFormScreen> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.skill != null) {
-        model.loadData(widget.skill!);
-      }
+      model.loadData(widget.skill);
     });
   }
 

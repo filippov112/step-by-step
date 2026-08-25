@@ -13,7 +13,7 @@ class SkillFormModel extends ChangeNotifier {
   final _tagSkillRepo = TagSkillRepository();
 
   // Редактируемый навык
-  Skill? _editingSkill;
+  Skill? _skill;
 
   // Поля формы
   String _title = '';
@@ -48,32 +48,33 @@ class SkillFormModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
   String? get error => _error;
-  bool get isEditing => _editingSkill != null;
+  bool isEditing = false;
 
   // Инициализация для редактирования
-  Future<void> loadData(Skill skill) async {
+  Future<void> loadData(Skill? skill) async {
     try {
-      _editingSkill = skill;
-      _title = skill.title;
-      _rang = skill.rang;
-      _icon = skill.icon;
-      _f = skill.f;
-      _e = skill.e;
-      _d = skill.d;
-      _c = skill.c;
-      _b = skill.b;
-      _a = skill.a;
-      _s = skill.s;
-      _ss = skill.ss;
-      _sss = skill.sss;
-      _ex = skill.ex;
+      isEditing = skill != null;
+      _skill = skill ?? Skill.create(title: '');
+      _title = _skill!.title;
+      _rang = _skill!.rang;
+      _icon = _skill!.icon;
+      _f = _skill!.f;
+      _e = _skill!.e;
+      _d = _skill!.d;
+      _c = _skill!.c;
+      _b = _skill!.b;
+      _a = _skill!.a;
+      _s = _skill!.s;
+      _ss = _skill!.ss;
+      _sss = _skill!.sss;
+      _ex = _skill!.ex;
       _isLoading = true;
       notifyListeners();
 
       // Загружаем условия
       final allConditions = await _conditionRepo.getAll();
       final selectedCond = allConditions
-          .where((c) => c.skillId == skill.id)
+          .where((c) => c.skillId == _skill!.id)
           .toList();
       selectedCond.sort((a, b) => a.rang.index.compareTo(b.rang.index));
       selectedConditions = selectedCond;
@@ -83,7 +84,7 @@ class SkillFormModel extends ChangeNotifier {
       final allTagSkills = await _tagSkillRepo.getAll();
 
       _selectedTags.clear();
-      final _ = allTagSkills.where((ts) => ts.skillId == skill.id).map((
+      final _ = allTagSkills.where((ts) => ts.skillId == _skill!.id).map((
         ts,
       ) async {
         final tag = await _tagRepo.get(ts.tagId);
@@ -190,11 +191,11 @@ class SkillFormModel extends ChangeNotifier {
       if (isEditing) {
         // Обновляем существующий навык
         skill = Skill(
-          id: _editingSkill!.id,
+          id: _skill!.id,
           title: _title.trim(),
           rang: _rang,
-          time: _editingSkill!.time,
-          experience: _editingSkill!.experience,
+          time: _skill!.time,
+          experience: _skill!.experience,
           icon: _icon,
           f: _f,
           e: _e,

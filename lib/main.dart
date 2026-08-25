@@ -18,7 +18,7 @@ import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
 import 'package:chaos_control/screens/user/form/user_form_model.dart';
 import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
-// import 'package:chaos_control/widgets/screens/test.dart';
+import 'package:chaos_control/widgets/screens/test.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

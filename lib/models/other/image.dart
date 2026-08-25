@@ -15,6 +15,7 @@ class CustomImageData {
 
   bool get isIcon => iconCode != null && iconFamily != null;
   bool get isImage => imagePath != null && imagePath!.isNotEmpty;
+  // ignore: non_const_argument_for_const_parameter
   IconData? icon() => isIcon ? IconData(iconCode!, fontFamily: iconFamily) : null;
 
   CustomImageData({

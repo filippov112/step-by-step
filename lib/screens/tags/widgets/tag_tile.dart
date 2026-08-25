@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/screens/tags/widgets/tag_type_chip.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/tags/tag_list_model.dart';
+import 'package:chaos_control/screens/tags/widgets/tag_type_chip.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class TagTile extends StatelessWidget {

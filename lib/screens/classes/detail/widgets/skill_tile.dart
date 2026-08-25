@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/skill.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill.dart';
 
 class ClassDetailSkillTile extends StatelessWidget {
   final Skill skill;

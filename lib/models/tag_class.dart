@@ -1,6 +1,6 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/tag.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/tag.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Привязка тега к классу

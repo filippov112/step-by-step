@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_screen.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/screens/achievements/list/achievement_list_model.dart';
+import 'package:chaos_control/screens/achievements/detail/achievement_details_model.dart';
+import 'package:chaos_control/screens/achievements/detail/achievement_details_screen.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:provider/provider.dart';
 
 class AchievementTile extends StatelessWidget {

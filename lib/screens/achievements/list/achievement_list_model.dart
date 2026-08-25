@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_achievement.dart';
+import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_achievement.dart';
 
 
 enum SortAchievementField { title, datetime, rarity }

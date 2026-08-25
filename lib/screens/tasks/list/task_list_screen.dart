@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/screens/tasks/list/widgets/date.dart';
-import 'package:life_game/screens/tasks/list/widgets/filter.dart';
-import 'package:life_game/screens/tasks/list/widgets/tile.dart';
-import 'package:life_game/widgets/common/custom_floating_action_button.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
-import 'package:life_game/widgets/common/search_string.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_screen.dart';
+import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
+import 'package:chaos_control/screens/tasks/list/widgets/date.dart';
+import 'package:chaos_control/screens/tasks/list/widgets/filter.dart';
+import 'package:chaos_control/screens/tasks/list/widgets/tile.dart';
+import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/widgets/common/search_string.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -22,12 +22,13 @@ class TaskListScreen extends StatefulWidget {
 
 class _TaskListScreenState extends State<TaskListScreen> {
   final TextEditingController _searchController = TextEditingController();
-
+  late TaskListModel model;
   @override
   void initState() {
     super.initState();
+    model = context.read<TaskListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskListModel>().loadTasks();
+      model.loadTasks();
     });
   }
 
@@ -82,7 +83,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TaskFormScreen()),
-    ).then((_) => context.read<TaskListModel>().loadTasks());
+    ).then((_) => model.loadTasks());
   }
 }
 

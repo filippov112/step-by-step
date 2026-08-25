@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_class.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_class.dart';
 
 
 enum SortClassField { title }

@@ -1,4 +1,4 @@
-name: life_game
+name: chaos_control
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -31,8 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   sqflite: ^2.4.3
   path: ^1.9.1
@@ -46,6 +44,7 @@ dependencies:
   provider: ^6.1.5+1
   snap_chart: ^1.1.1
   chartify: ^1.0.2
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:

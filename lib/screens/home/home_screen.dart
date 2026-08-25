@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/screens/user/form/user_form_screen.dart';
-import 'package:life_game/screens/home/widgets/modules.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/screens/home/home_model.dart';
+import 'package:chaos_control/screens/user/form/user_form_screen.dart';
+import 'package:chaos_control/screens/home/widgets/modules.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {

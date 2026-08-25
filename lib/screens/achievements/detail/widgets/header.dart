@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
-import 'package:life_game/tools/format_date.dart';
-import 'package:life_game/widgets/common/custom_card_block.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
+import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/achievements/detail/achievement_details_model.dart';
+import 'package:chaos_control/tools/format_date.dart';
+import 'package:chaos_control/widgets/common/custom_card_block.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class AchiHeader extends StatelessWidget {

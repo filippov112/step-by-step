@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/widgets/common/custom_card_block.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/widgets/common/custom_card_block.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 
 // Шапка: аватар, имя, возраст
 class Userinfo extends StatelessWidget {

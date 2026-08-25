@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/screens/skills/form/skill_form_model.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/screens/skills/form/skill_form_model.dart';
 import 'package:provider/provider.dart';
 
 class SkillFormRang extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/tools/datetime.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/enums/task_difficulty.dart';
+import 'package:chaos_control/models/enums/task_priority.dart';
+import 'package:chaos_control/tools/datetime.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 

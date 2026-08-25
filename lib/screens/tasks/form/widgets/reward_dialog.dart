@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/task_reward.dart';
-import 'package:life_game/screens/tasks/form/task_form_model.dart';
-import 'package:life_game/screens/tasks/form/widgets/reward_tile.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/task_reward.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/reward_tile.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
 import 'package:provider/provider.dart';
 
 // Форма поиска и выбора наград за задачи в виде опыта и времени

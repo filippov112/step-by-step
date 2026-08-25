@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 
 class ClassFormSkillTile extends StatelessWidget {
 

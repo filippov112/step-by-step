@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
-import 'package:life_game/screens/tasks/detail/task_detail_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/models/enums/task_difficulty.dart';
+import 'package:chaos_control/models/enums/task_priority.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/screens/tasks/detail/task_detail_model.dart';
+import 'package:chaos_control/screens/tasks/detail/task_detail_screen.dart';
+import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TaskCard extends StatelessWidget {

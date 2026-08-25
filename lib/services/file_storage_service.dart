@@ -21,7 +21,7 @@ class FileService {
       
       return newFile.path;
     } catch (e) {
-      print('Ошибка сохранения иконки достижения: $e');
+      // print('Ошибка сохранения иконки достижения: $e');
       return null;
     }
   }
@@ -35,7 +35,7 @@ class FileService {
         await file.delete();
       }
     } catch (e) {
-      print('Ошибка удаления файла: $e');
+      // print('Ошибка удаления файла: $e');
     }
   }
   
@@ -55,7 +55,7 @@ class FileService {
       }
       return null;
     } catch (e) {
-      print('Ошибка выбора изображения: $e');
+      // print('Ошибка выбора изображения: $e');
       return null;
     }
   }

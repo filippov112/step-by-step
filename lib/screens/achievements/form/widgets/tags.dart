@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/tag_type.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
-import 'package:life_game/widgets/filters/tags_finder.dart';
+import 'package:chaos_control/models/enums/tag_type.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/achievements/form/achievement_form_model.dart';
+import 'package:chaos_control/widgets/common/tag_chip.dart';
+import 'package:chaos_control/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
 class AchievFormTags extends StatelessWidget {

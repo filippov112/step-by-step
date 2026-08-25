@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/screens/classes/form/class_form_model.dart';
-import 'package:life_game/screens/classes/form/widgets/skill_dialog.dart';
-import 'package:life_game/screens/classes/form/widgets/skill_tile.dart';
+import 'package:chaos_control/models/class_skill.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/screens/classes/form/class_form_model.dart';
+import 'package:chaos_control/screens/classes/form/widgets/skill_dialog.dart';
+import 'package:chaos_control/screens/classes/form/widgets/skill_tile.dart';
 import 'package:provider/provider.dart';
 
 class ClassFormSkills extends StatelessWidget {

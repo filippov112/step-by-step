@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_task.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task_hierarchy.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_task.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/task_hierarchy.dart';
 
 class TaskDetailModel extends ChangeNotifier {
   final TaskRepository _taskRepo = TaskRepository();

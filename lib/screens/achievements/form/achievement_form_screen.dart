@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
-import 'package:life_game/screens/achievements/form/widgets/date.dart';
-import 'package:life_game/widgets/form/multiline_input.dart';
-import 'package:life_game/screens/achievements/form/widgets/icon.dart';
-import 'package:life_game/screens/achievements/form/widgets/rarity.dart';
-import 'package:life_game/screens/achievements/form/widgets/tags.dart';
-import 'package:life_game/widgets/form/singleline_input.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/screens/achievements/form/achievement_form_model.dart';
+import 'package:chaos_control/screens/achievements/form/widgets/date.dart';
+import 'package:chaos_control/widgets/form/multiline_input.dart';
+import 'package:chaos_control/screens/achievements/form/widgets/icon.dart';
+import 'package:chaos_control/screens/achievements/form/widgets/rarity.dart';
+import 'package:chaos_control/screens/achievements/form/widgets/tags.dart';
+import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class AchievementFormScreen extends StatefulWidget {
@@ -103,12 +103,16 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     }
   }
 
+  void _close() {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   Future _delete(Future Function() deleteAchievement) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteAchievement();
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      _close();
     }
   }
 }

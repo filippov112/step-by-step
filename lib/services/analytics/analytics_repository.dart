@@ -1,11 +1,11 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task_reward.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/services/analytics/dto_exp_time.dart';
-import 'package:life_game/services/analytics/dto_tasks.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/task_reward.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/class_skill.dart';
+import 'package:chaos_control/services/analytics/dto_exp_time.dart';
+import 'package:chaos_control/services/analytics/dto_tasks.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Репозиторий для аналитических запросов
@@ -250,11 +250,6 @@ class AnalyticsRepository {
     int? endDate,
     String? classId,
   }) async {
-    final conditions = <String>[];
-    final args = <dynamic>[];
-
-    // ВНИМАНИЕ: В CTE нельзя использовать параметры в WHERE,
-    // поэтому добавляем условия в основной запрос
 
     final dateCondition = <String>[];
     final dateArgs = <dynamic>[];

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/user/detail/user_detail_model.dart';
-import 'package:life_game/widgets/analysis/custom_activity_table.dart';
-import 'package:life_game/widgets/common/custom_card_block.dart';
+import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
+import 'package:chaos_control/widgets/analysis/custom_activity_table.dart';
+import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:provider/provider.dart';
 
 // Виджет отображения активности пользователя

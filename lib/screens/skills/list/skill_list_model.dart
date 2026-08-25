@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_skill.dart';
-import 'package:life_game/screens/skills/list/widgets/filters.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_skill.dart';
+import 'package:chaos_control/screens/skills/list/widgets/filters.dart';
 
 
 class SkillListModel extends ChangeNotifier {

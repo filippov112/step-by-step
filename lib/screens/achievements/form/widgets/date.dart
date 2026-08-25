@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
-import 'package:life_game/widgets/form/datetime_picker.dart';
+import 'package:chaos_control/screens/achievements/form/achievement_form_model.dart';
+import 'package:chaos_control/widgets/form/datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 class AchievFormDate extends StatelessWidget {

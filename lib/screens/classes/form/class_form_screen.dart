@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/screens/classes/form/widgets/icon.dart';
-import 'package:life_game/screens/classes/form/widgets/tags.dart';
-import 'package:life_game/widgets/form/multiline_input.dart';
-import 'package:life_game/widgets/form/singleline_input.dart';
-import 'package:life_game/screens/classes/form/class_form_model.dart';
-import 'package:life_game/screens/classes/form/widgets/skills.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/screens/classes/form/widgets/icon.dart';
+import 'package:chaos_control/screens/classes/form/widgets/tags.dart';
+import 'package:chaos_control/widgets/form/multiline_input.dart';
+import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/screens/classes/form/class_form_model.dart';
+import 'package:chaos_control/screens/classes/form/widgets/skills.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class ClassFormScreen extends StatefulWidget {
@@ -93,12 +93,16 @@ class _ClassFormScreenState extends State<ClassFormScreen> {
     }
   }
 
+  void _close() {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   Future _delete(Future Function() delete) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
       await delete();
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      _close();
     }
   }
 }

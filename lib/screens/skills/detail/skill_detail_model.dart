@@ -1,8 +1,8 @@
 // lib/screens/skills/skill_detail_view_model.dart
 import 'package:flutter/material.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/skill_condition.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/skill_condition.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
 
 class SkillDetailModel extends ChangeNotifier {
   final SkillRepository _skillRepo = SkillRepository();

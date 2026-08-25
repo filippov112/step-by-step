@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/skill_condition.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill_condition.dart';
 
 class SkillFormConditionTile extends StatelessWidget {
   final SkillCondition condition;

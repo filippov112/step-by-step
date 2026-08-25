@@ -1,5 +1,5 @@
-import 'package:life_game/models/task_reward.dart';
-import 'package:life_game/tools/datetime.dart';
+import 'package:chaos_control/models/task_reward.dart';
+import 'package:chaos_control/tools/datetime.dart';
 
 /// Модель для агрегированных данных по дате
 class DtoExpTime {

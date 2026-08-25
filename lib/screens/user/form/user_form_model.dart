@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/models/user.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/models/user.dart';
 
 class UserFormModel extends ChangeNotifier {
   final UserRepository _userRepo = UserRepository();

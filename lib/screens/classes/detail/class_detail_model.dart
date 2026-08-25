@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_class.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/class_skill.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_class.dart';
 
 class ClassDetailModel extends ChangeNotifier {
   final _classRepo = ClassRepository();

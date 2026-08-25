@@ -1,5 +1,5 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/class.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/class.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 // Иерархия классов

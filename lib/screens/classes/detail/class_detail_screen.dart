@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/screens/classes/detail/class_detail_model.dart';
-import 'package:life_game/screens/classes/detail/widgets/desc.dart';
-import 'package:life_game/screens/classes/detail/widgets/icon.dart';
-import 'package:life_game/screens/classes/detail/widgets/progress.dart';
-import 'package:life_game/screens/classes/detail/widgets/skills.dart';
-import 'package:life_game/screens/classes/detail/widgets/tags.dart';
-import 'package:life_game/screens/classes/detail/widgets/title.dart';
-import 'package:life_game/screens/classes/form/class_form_screen.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/screens/classes/detail/class_detail_model.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/desc.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/icon.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/progress.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/skills.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/tags.dart';
+import 'package:chaos_control/screens/classes/detail/widgets/title.dart';
+import 'package:chaos_control/screens/classes/form/class_form_screen.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class ClassDetailScreen extends StatefulWidget {
@@ -78,20 +78,23 @@ class _ClassDetailScreenState extends State<ClassDetailScreen> {
     ).then((_) async {
       if (context.mounted) {
         var checkExist = await model.checkExist();
-        if (!checkExist && context.mounted) {
-          Navigator.pop(context);
-          return;
+        if (!checkExist) {
+          _close();
         }
       }
     });
   }
 
+  void _close() {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   Future _deleteThis(Future Function() deleteThis) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteThis();
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      _close();
     }
   }
 }

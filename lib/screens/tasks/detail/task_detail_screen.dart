@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
-import 'package:life_game/screens/tasks/detail/widgets/description.dart';
-import 'package:life_game/screens/tasks/detail/widgets/title.dart';
-import 'package:life_game/screens/tasks/detail/widgets/status.dart';
-import 'package:life_game/screens/tasks/detail/widgets/subtasks.dart';
-import 'package:life_game/screens/tasks/form/task_form_screen.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/screens/tasks/detail/task_detail_model.dart';
+import 'package:chaos_control/screens/tasks/detail/widgets/description.dart';
+import 'package:chaos_control/screens/tasks/detail/widgets/title.dart';
+import 'package:chaos_control/screens/tasks/detail/widgets/status.dart';
+import 'package:chaos_control/screens/tasks/detail/widgets/subtasks.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_screen.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailsScreen extends StatefulWidget {
@@ -129,8 +129,8 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     ).then((_) async {
       if (context.mounted) {
         var checkExistTask = await model.checkExist();
-        if (!checkExistTask && context.mounted) {
-          Navigator.pop(context);
+        if (!checkExistTask) {
+          _close();
           return;
         }
         model.loadSubtasks();
@@ -141,9 +141,13 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
   Future _deleteThisTask(Future Function() deleteTask) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteTask();
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      _close();
+    }
+  }
+
+  void _close() {
+    if (context.mounted) {
+      Navigator.pop(context);
     }
   }
 }

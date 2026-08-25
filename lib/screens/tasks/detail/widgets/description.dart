@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
+import 'package:chaos_control/screens/tasks/detail/task_detail_model.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailDesc extends StatelessWidget {

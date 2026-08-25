@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/screens/classes/detail/class_detail_model.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/screens/classes/detail/class_detail_model.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:provider/provider.dart';
 
 class ClassDetailIcon extends StatelessWidget {

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/screens/tasks/form/task_form_model.dart';
-import 'package:life_game/screens/tasks/form/widgets/rewards.dart';
-import 'package:life_game/screens/tasks/form/widgets/tags.dart';
-import 'package:life_game/screens/tasks/form/widgets/datetime.dart';
-import 'package:life_game/screens/tasks/form/widgets/difficulty.dart';
-import 'package:life_game/screens/tasks/form/widgets/priority.dart';
-import 'package:life_game/screens/tasks/form/widgets/status.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/form/multiline_input.dart';
-import 'package:life_game/widgets/form/singleline_input.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/rewards.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/tags.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/datetime.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/difficulty.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/priority.dart';
+import 'package:chaos_control/screens/tasks/form/widgets/status.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/form/multiline_input.dart';
+import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class TaskFormScreen extends StatefulWidget {
@@ -113,12 +113,16 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     }
   }
 
+  void _close() {
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   Future _deleteTask(Future Function() deleteTask) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
       await deleteTask();
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      _close();
     }
   }
 }

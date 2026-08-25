@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/screens/user/detail/user_detail_model.dart';
-import 'package:life_game/screens/user/detail/widgets/experience.dart';
-import 'package:life_game/screens/user/detail/widgets/time.dart';
-import 'package:life_game/screens/user/detail/widgets/user_activity.dart';
-import 'package:life_game/screens/user/detail/widgets/user_info.dart';
-import 'package:life_game/screens/user/form/user_form_model.dart';
-import 'package:life_game/screens/user/form/user_form_screen.dart';
-import 'package:life_game/widgets/filters/filter_section.dart';
-import 'package:life_game/widgets/filters/filters_drawer.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
+import 'package:chaos_control/screens/user/detail/widgets/experience.dart';
+import 'package:chaos_control/screens/user/detail/widgets/time.dart';
+import 'package:chaos_control/screens/user/detail/widgets/user_activity.dart';
+import 'package:chaos_control/screens/user/detail/widgets/user_info.dart';
+import 'package:chaos_control/screens/user/form/user_form_model.dart';
+import 'package:chaos_control/screens/user/form/user_form_screen.dart';
+import 'package:chaos_control/widgets/filters/filter_section.dart';
+import 'package:chaos_control/widgets/filters/filters_drawer.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 class UserDetailScreen extends StatefulWidget {

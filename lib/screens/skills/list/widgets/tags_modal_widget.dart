@@ -1,6 +1,6 @@
 // lib/screens/skills/widgets/tags_modal_widget.dart
 import 'package:flutter/material.dart';
-import 'package:life_game/models/tag.dart';
+import 'package:chaos_control/models/tag.dart';
 
 class TagsModalWidget extends StatefulWidget {
   final List<Tag> allTags;

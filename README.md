@@ -1,4 +1,4 @@
-# life_game
+# chaos_control
 
 A new Flutter project.
 

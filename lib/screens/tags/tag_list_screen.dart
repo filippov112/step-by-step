@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/tag_type.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/tags/tag_list_model.dart';
-import 'package:life_game/widgets/filters/filters_drawer.dart';
-import 'package:life_game/screens/tags/widgets/tag_tile.dart';
-import 'package:life_game/screens/tags/widgets/tag_edit.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
-import 'package:life_game/widgets/common/custom_floating_action_button.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
-import 'package:life_game/widgets/common/search_string.dart';
+import 'package:chaos_control/models/enums/tag_type.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/tags/tag_list_model.dart';
+import 'package:chaos_control/widgets/filters/filters_drawer.dart';
+import 'package:chaos_control/screens/tags/widgets/tag_tile.dart';
+import 'package:chaos_control/screens/tags/widgets/tag_edit.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
 class TagListScreen extends StatefulWidget {

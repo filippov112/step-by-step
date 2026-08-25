@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_model.dart';
-import 'package:life_game/widgets/form/custom_icon_picker.dart';
+import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/screens/achievements/form/achievement_form_model.dart';
+import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
 import 'package:provider/provider.dart';
 
 class AchievFormIcon extends StatelessWidget {

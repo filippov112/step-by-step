@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 
 // AppBar для экранов-списков
 class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -67,31 +67,33 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
           ];
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          height: kToolbarHeight + (searchWidget?.preferredSize.height ?? 0),
-          child: AppBar(
-            title: titleWidget,
-            actions: [
-              ...?selectionActions,
-              ...?actions,
-              // Фильтры
-              Builder(
-                builder: (context) => IconButton(
-                  icon: const Icon(Icons.filter_list),
-                  tooltip: 'Фильтры',
-                  onPressed: Scaffold.of(context).openEndDrawer,
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: kToolbarHeight + (searchWidget?.preferredSize.height ?? 0),
+            child: AppBar(
+              title: titleWidget,
+              actions: [
+                ...?selectionActions,
+                ...?actions,
+                // Фильтры
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    tooltip: 'Фильтры',
+                    onPressed: Scaffold.of(context).openEndDrawer,
+                  ),
                 ),
-              ),
-            ],
-            bottom: searchWidget,
+              ],
+              bottom: searchWidget,
+            ),
           ),
-        ),
 
-        if (tabs != null) Container(child: tabs),
-      ],
+          if (tabs != null) Container(child: tabs),
+        ],
+      ),
     );
   }
 

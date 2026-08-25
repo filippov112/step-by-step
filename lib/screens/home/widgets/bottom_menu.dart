@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/screens/home/widgets/modules.dart';
+import 'package:chaos_control/screens/home/home_model.dart';
+import 'package:chaos_control/screens/home/widgets/modules.dart';
 import 'package:provider/provider.dart';
 
 // Нижняя панель меню основных вкладок приложения

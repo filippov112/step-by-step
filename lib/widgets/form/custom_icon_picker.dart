@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/services/file_storage_service.dart';
-import 'package:life_game/widgets/dialogs/icons/icons_finder_dialog.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/services/file_storage_service.dart';
+import 'package:chaos_control/widgets/dialogs/icons/icons_finder_dialog.dart';
 
 class CustomIconPicker extends StatelessWidget {
   final iconService = IconsFinderService();

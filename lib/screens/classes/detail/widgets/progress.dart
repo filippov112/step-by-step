@@ -1,9 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:life_game/screens/classes/detail/class_detail_model.dart';
-import 'package:life_game/services/exp_calculator.dart';
+import 'package:chaos_control/screens/classes/detail/class_detail_model.dart';
+import 'package:chaos_control/services/exp_calculator.dart';
 
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class ClassDetailProgress extends StatelessWidget {

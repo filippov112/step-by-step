@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/enums/tag_type.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
-import 'package:life_game/widgets/filters/filter_section.dart';
-import 'package:life_game/widgets/filters/filters_drawer.dart';
-import 'package:life_game/widgets/filters/tags_finder.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/enums/tag_type.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/skills/list/skill_list_model.dart';
+import 'package:chaos_control/widgets/common/tag_chip.dart';
+import 'package:chaos_control/widgets/filters/filter_section.dart';
+import 'package:chaos_control/widgets/filters/filters_drawer.dart';
+import 'package:chaos_control/widgets/filters/tags_finder.dart';
 import 'package:provider/provider.dart';
 
 enum SortSkillField { title, rang, level }

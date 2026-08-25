@@ -1,11 +1,11 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/services/exp_calculator.dart';
-import 'package:life_game/tools/datetime.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/class_skill.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/services/exp_calculator.dart';
+import 'package:chaos_control/tools/datetime.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -191,7 +191,7 @@ class TaskRewardRepository {
     skill?.experience += deltaExp;
     if (skill == null) return;
     await skillRepo.update(skill);
-    ExpCalculator.RecalcLevelSkill(skill);
+    ExpCalculator.recalcLevelSkill(skill);
 
     List<ClassSkill> classSkills = await classSkillRepo.getBySkillId(skill.id);
     for (var cs in classSkills) {
@@ -244,7 +244,7 @@ class TaskRewardRepository {
     cls.experience += deltaExp;
     cls.time += deltaTime;
     await classRepo.update(cls);
-    ExpCalculator.RecalcLevelClass(cls);
+    ExpCalculator.recalcLevelClass(cls);
   }
   // Добавить дельту к пользователю
   Future _updateUser(int deltaExp, int deltaTime) async {
@@ -253,7 +253,7 @@ class TaskRewardRepository {
     user?.time += deltaTime;
     if (user == null) return;
     await userRepo.update(user);
-    ExpCalculator.RecalcLevelUser(user);
+    ExpCalculator.recalcLevelUser(user);
   }
 }
 

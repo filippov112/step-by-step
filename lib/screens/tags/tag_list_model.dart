@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/tag_type.dart';
-import 'package:life_game/models/tag.dart';
+import 'package:chaos_control/models/enums/tag_type.dart';
+import 'package:chaos_control/models/tag.dart';
 
 class TagListModel extends ChangeNotifier {
   final TagRepository _repository = TagRepository();

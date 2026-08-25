@@ -1,7 +1,7 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/tools/datetime.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/tools/datetime.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';

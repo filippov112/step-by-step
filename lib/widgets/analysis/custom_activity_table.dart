@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:life_game/tools/datetime.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/tools/datetime.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 
 
 // Виджет активности за период

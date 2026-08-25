@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/screens/classes/detail/class_detail_model.dart';
-import 'package:life_game/widgets/common/tag_chip.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/screens/classes/detail/class_detail_model.dart';
+import 'package:chaos_control/widgets/common/tag_chip.dart';
 import 'package:provider/provider.dart';
 
 class ClassDetailTags extends StatelessWidget {

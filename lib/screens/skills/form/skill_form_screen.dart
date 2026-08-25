@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/screens/skills/form/skill_form_model.dart';
-import 'package:life_game/screens/skills/form/widgets/conditions.dart';
-import 'package:life_game/screens/skills/form/widgets/description.dart';
-import 'package:life_game/screens/skills/form/widgets/icon.dart';
-import 'package:life_game/screens/skills/form/widgets/rang.dart';
-import 'package:life_game/screens/skills/form/widgets/tags.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/form/singleline_input.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/screens/skills/form/skill_form_model.dart';
+import 'package:chaos_control/screens/skills/form/widgets/conditions.dart';
+import 'package:chaos_control/screens/skills/form/widgets/description.dart';
+import 'package:chaos_control/screens/skills/form/widgets/icon.dart';
+import 'package:chaos_control/screens/skills/form/widgets/rang.dart';
+import 'package:chaos_control/screens/skills/form/widgets/tags.dart';
+import 'package:chaos_control/screens/skills/list/skill_list_model.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
 
 class SkillFormScreen extends StatefulWidget {
   final Skill? skill;

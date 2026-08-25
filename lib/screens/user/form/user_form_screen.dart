@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/screens/home/home_model.dart';
-import 'package:life_game/widgets/form/custom_icon_picker.dart';
-import 'package:life_game/widgets/form/datetime_picker.dart';
-import 'package:life_game/widgets/form/singleline_input.dart';
-import 'package:life_game/widgets/screens/entity_screen.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/screens/home/home_model.dart';
+import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
+import 'package:chaos_control/widgets/form/datetime_picker.dart';
+import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 import 'user_form_model.dart';
 

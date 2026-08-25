@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/achievements/list/achievement_list_screen.dart';
-import 'package:life_game/screens/classes/list/class_list_screen.dart';
-import 'package:life_game/screens/settings/setting_list_screen.dart';
-import 'package:life_game/screens/skills/list/skill_list_screen.dart';
-import 'package:life_game/screens/tags/tag_list_screen.dart';
-import 'package:life_game/screens/tasks/list/task_list_screen.dart';
-import 'package:life_game/screens/user/detail/user_detail_screen.dart';
+import 'package:chaos_control/screens/achievements/list/achievement_list_screen.dart';
+import 'package:chaos_control/screens/classes/list/class_list_screen.dart';
+import 'package:chaos_control/screens/settings/setting_list_screen.dart';
+import 'package:chaos_control/screens/skills/list/skill_list_screen.dart';
+import 'package:chaos_control/screens/tags/tag_list_screen.dart';
+import 'package:chaos_control/screens/tasks/list/task_list_screen.dart';
+import 'package:chaos_control/screens/user/detail/user_detail_screen.dart';
 
 enum AppModule {
   profile,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/tasks/detail/task_detail_model.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/screens/tasks/detail/task_detail_model.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailTitle extends StatelessWidget {

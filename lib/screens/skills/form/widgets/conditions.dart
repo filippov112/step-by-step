@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/skill_condition.dart';
-import 'package:life_game/screens/skills/form/skill_form_model.dart';
-import 'package:life_game/screens/skills/form/widgets/condition_tile.dart';
-import 'package:life_game/screens/skills/form/widgets/condition_single_dialog.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/models/skill_condition.dart';
+import 'package:chaos_control/screens/skills/form/skill_form_model.dart';
+import 'package:chaos_control/screens/skills/form/widgets/condition_tile.dart';
+import 'package:chaos_control/screens/skills/form/widgets/condition_single_dialog.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class SkillFormConditions extends StatefulWidget {

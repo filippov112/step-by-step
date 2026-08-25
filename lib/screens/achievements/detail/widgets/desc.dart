@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/achievements/detail/achievement_details_model.dart';
-import 'package:life_game/widgets/common/custom_card_block.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/screens/achievements/detail/achievement_details_model.dart';
+import 'package:chaos_control/widgets/common/custom_card_block.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class AchiDescription extends StatelessWidget {

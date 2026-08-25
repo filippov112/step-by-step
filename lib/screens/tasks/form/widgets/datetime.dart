@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/tasks/form/task_form_model.dart';
-import 'package:life_game/widgets/form/datetime_picker.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
+import 'package:chaos_control/widgets/form/datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 class TaskFormDatetime extends StatelessWidget {

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/screens/achievements/list/achievement_list_model.dart';
-import 'package:life_game/screens/achievements/form/achievement_form_screen.dart';
-import 'package:life_game/screens/achievements/list/widgets/filters.dart';
-import 'package:life_game/screens/achievements/list/widgets/tile.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
-import 'package:life_game/widgets/common/custom_floating_action_button.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
-import 'package:life_game/widgets/common/search_string.dart';
+import 'package:chaos_control/screens/achievements/list/achievement_list_model.dart';
+import 'package:chaos_control/screens/achievements/form/achievement_form_screen.dart';
+import 'package:chaos_control/screens/achievements/list/widgets/filters.dart';
+import 'package:chaos_control/screens/achievements/list/widgets/tile.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
 
@@ -22,12 +21,13 @@ class AchievementListScreen extends StatefulWidget {
 
 class _AchievementListScreenState extends State<AchievementListScreen> {
   final TextEditingController _searchController = TextEditingController();
-
+  late AchievementListModel model;
   @override
   void initState() {
     super.initState();
+    model = context.read<AchievementListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AchievementListModel>().loadAchievements();
+      model.loadAchievements();
     });
   }
 
@@ -128,6 +128,6 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
       MaterialPageRoute(
         builder: (context) => AchievementFormScreen(),
       ),
-    ).then((_) { if (context.mounted) context.read<AchievementListModel>().loadAchievements(); });
+    ).then((_) { if (context.mounted) model.loadAchievements(); });
   }
 }

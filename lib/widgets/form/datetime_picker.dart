@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
-import 'package:life_game/widgets/common/custom_tile.dart';
-import 'package:life_game/widgets/dialogs/select_date_only.dart';
-import 'package:life_game/widgets/dialogs/select_date_time.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/common/custom_tile.dart';
+import 'package:chaos_control/widgets/dialogs/select_date_only.dart';
+import 'package:chaos_control/widgets/dialogs/select_date_time.dart';
 
 class CustomDateTime extends StatelessWidget {
   final DateTime? value;

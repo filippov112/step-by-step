@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/class_skill.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_class.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/class_skill.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_class.dart';
 
 
 class ClassFormModel extends ChangeNotifier {
@@ -100,7 +100,7 @@ class ClassFormModel extends ChangeNotifier {
       try {
         await _classRepo.delete(record.id);
       } catch (e) {
-        print(e);
+        // print(e);
       }
     }
   }
@@ -119,7 +119,7 @@ class ClassFormModel extends ChangeNotifier {
       await _saveSkills();
     }
     catch (e) {
-      print(e);
+      // print(e);
       return false;
     }
     return true;

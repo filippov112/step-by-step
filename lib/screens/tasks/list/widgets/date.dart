@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/screens/tasks/list/task_list_model.dart';
-import 'package:life_game/tools/format_date.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
+import 'package:chaos_control/tools/format_date.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class TaskListDate extends StatelessWidget {

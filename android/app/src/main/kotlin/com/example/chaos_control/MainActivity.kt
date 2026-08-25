@@ -1,4 +1,4 @@
-package com.example.life_game
+package com.example.chaos_control
 
 import io.flutter.embedding.android.FlutterActivity
 

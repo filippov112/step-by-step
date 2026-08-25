@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
-import 'package:life_game/screens/skills/detail/skill_detail_screen.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
-import 'package:life_game/services/exp_calculator.dart';
-import 'package:life_game/widgets/dialogs/confirm_dialog.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/screens/skills/detail/skill_detail_model.dart';
+import 'package:chaos_control/screens/skills/detail/skill_detail_screen.dart';
+import 'package:chaos_control/screens/skills/list/skill_list_model.dart';
+import 'package:chaos_control/services/exp_calculator.dart';
+import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/screens/tasks/form/task_form_model.dart';
+import 'package:chaos_control/models/enums/task_priority.dart';
+import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
 import 'package:provider/provider.dart';
 
 class TaskFormPriority extends StatelessWidget {

@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/services/analytics/analytics_repository.dart';
-import 'package:life_game/services/analytics/dto_exp_time.dart';
-import 'package:life_game/services/analytics/dto_tasks.dart';
-import 'package:life_game/tools/datetime.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/services/analytics/analytics_repository.dart';
+import 'package:chaos_control/services/analytics/dto_exp_time.dart';
+import 'package:chaos_control/services/analytics/dto_tasks.dart';
+import 'package:chaos_control/tools/datetime.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 enum StatPeriod { threeMonth, oneMonth, oneWeek }

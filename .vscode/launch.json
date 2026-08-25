@@ -4,25 +4,20 @@
     // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
         {
-            "name": "Flutter",
-            "type": "dart",
-            "request": "launch",
-            "program": "lib/main.dart"
-        },
-        {
-            "name": "life_game",
+            "name": "chaos_control",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "life_game (profile mode)",
+            "name": "chaos_control (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "life_game (release mode)",
+            "name": "chaos_control (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

@@ -1,14 +1,14 @@
 // lib/screens/skills/skill_detail_screen.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:life_game/models/skill_condition.dart';
-import 'package:life_game/screens/skills/detail/skill_detail_model.dart';
-import 'package:life_game/screens/skills/form/skill_form_screen.dart';
-import 'package:life_game/services/exp_calculator.dart';
-import 'package:life_game/widgets/common/custom_image_icon.dart';
-import 'package:life_game/widgets/common/custom_text.dart';
+import 'package:chaos_control/models/skill_condition.dart';
+import 'package:chaos_control/screens/skills/detail/skill_detail_model.dart';
+import 'package:chaos_control/screens/skills/form/skill_form_screen.dart';
+import 'package:chaos_control/services/exp_calculator.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/models/enums/skill_rang.dart';
+import 'package:chaos_control/models/enums/skill_rang.dart';
 
 class SkillDetailScreen extends StatefulWidget {
   final String skillId;

@@ -1,7 +1,7 @@
 
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/user.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/user.dart';
 
 class ExpCalculator {
   static int level_1 = 100;
@@ -32,15 +32,15 @@ class ExpCalculator {
   }
 
 
-  static void RecalcLevelSkill(Skill skill) {
+  static void recalcLevelSkill(Skill skill) {
     
   }
 
-  static void RecalcLevelClass(Class cls) {
+  static void recalcLevelClass(Class cls) {
     
   }
 
-  static void RecalcLevelUser(User user) {
+  static void recalcLevelUser(User user) {
     
   }
 }

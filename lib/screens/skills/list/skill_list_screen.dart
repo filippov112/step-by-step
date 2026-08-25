@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/screens/skills/form/skill_form_screen.dart';
-import 'package:life_game/screens/skills/list/skill_list_model.dart';
-import 'package:life_game/screens/skills/list/widgets/filters.dart';
-import 'package:life_game/screens/skills/list/widgets/skill_tile.dart';
-import 'package:life_game/widgets/common/custom_floating_action_button.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
-import 'package:life_game/widgets/common/search_string.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/screens/skills/form/skill_form_screen.dart';
+import 'package:chaos_control/screens/skills/list/skill_list_model.dart';
+import 'package:chaos_control/screens/skills/list/widgets/filters.dart';
+import 'package:chaos_control/screens/skills/list/widgets/skill_tile.dart';
+import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/widgets/common/search_string.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
 import 'package:provider/provider.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
 
 class SkillListScreen extends StatefulWidget {
   const SkillListScreen({super.key});
@@ -125,6 +124,6 @@ class _SkillListScreenState extends State<SkillListScreen> {
       MaterialPageRoute(
         builder: (context) => const SkillFormScreen(),
       ),
-    ).then((_) { if (context.mounted) context.read<SkillListModel>().loadSkills(); });
+    ).then((_) { if (context.mounted) model.loadSkills(); });
   }
 }

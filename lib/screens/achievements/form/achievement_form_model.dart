@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/enums/achiev_rar.dart';
-import 'package:life_game/models/other/image.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_achievement.dart';
+import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_achievement.dart';
 
 
 class AchievementFormModel extends ChangeNotifier {
@@ -90,7 +90,7 @@ class AchievementFormModel extends ChangeNotifier {
       try {
         await achiRepo.delete(achievement.id);
       } catch (e) {
-        print(e);
+        // print(e);
       }
     }
   }
@@ -110,7 +110,7 @@ class AchievementFormModel extends ChangeNotifier {
       await _saveTags();
     }
     catch (e) {
-      print(e);
+      // print(e);
       return false;
     }
     return true;

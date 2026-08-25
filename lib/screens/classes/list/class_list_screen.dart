@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/screens/classes/form/class_form_screen.dart';
-import 'package:life_game/screens/classes/list/class_list_model.dart';
-import 'package:life_game/screens/classes/list/widgets/filters.dart';
-import 'package:life_game/screens/classes/list/widgets/tile.dart';
-import 'package:life_game/widgets/common/app_bar_list.dart';
-import 'package:life_game/widgets/common/custom_floating_action_button.dart';
-import 'package:life_game/widgets/common/empty_list_screen.dart';
-import 'package:life_game/widgets/common/search_string.dart';
-import 'package:life_game/screens/home/widgets/bottom_menu.dart';
-import 'package:life_game/screens/home/widgets/left_menu.dart';
+import 'package:chaos_control/screens/classes/form/class_form_screen.dart';
+import 'package:chaos_control/screens/classes/list/class_list_model.dart';
+import 'package:chaos_control/screens/classes/list/widgets/filters.dart';
+import 'package:chaos_control/screens/classes/list/widgets/tile.dart';
+import 'package:chaos_control/widgets/common/app_bar_list.dart';
+import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
+import 'package:chaos_control/widgets/common/empty_list_screen.dart';
+import 'package:chaos_control/widgets/common/search_string.dart';
+import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
+import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 class ClassListScreen extends StatefulWidget {
@@ -21,12 +20,14 @@ class ClassListScreen extends StatefulWidget {
 
 class _ClassListScreenState extends State<ClassListScreen> {
   final TextEditingController _searchController = TextEditingController();
+  late ClassListModel model;
 
   @override
   void initState() {
     super.initState();
+    model = context.read<ClassListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ClassListModel>().loadData();
+      model.loadData();
     });
   }
 
@@ -125,7 +126,7 @@ class _ClassListScreenState extends State<ClassListScreen> {
       context,
       MaterialPageRoute(builder: (context) => ClassFormScreen()),
     ).then((_) {
-      if (context.mounted) context.read<ClassListModel>().loadData();
+      if (context.mounted) model.loadData();
     });
   }
 }

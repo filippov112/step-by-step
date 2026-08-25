@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/class.dart';
-import 'package:life_game/models/enums/task_difficulty.dart';
-import 'package:life_game/models/enums/task_priority.dart';
-import 'package:life_game/models/skill.dart';
-import 'package:life_game/models/tag.dart';
-import 'package:life_game/models/tag_task.dart';
-import 'package:life_game/models/task.dart';
-import 'package:life_game/models/task_hierarchy.dart';
-import 'package:life_game/models/task_reward.dart';
+import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/enums/task_difficulty.dart';
+import 'package:chaos_control/models/enums/task_priority.dart';
+import 'package:chaos_control/models/skill.dart';
+import 'package:chaos_control/models/tag.dart';
+import 'package:chaos_control/models/tag_task.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/task_hierarchy.dart';
+import 'package:chaos_control/models/task_reward.dart';
 
 class TaskFormModel extends ChangeNotifier {
 
@@ -134,7 +134,7 @@ class TaskFormModel extends ChangeNotifier {
       try {
         await _taskRepo.delete(task.id);
       } catch (e) {
-        print(e);
+        // print(e);
       }
     }
   }
@@ -159,7 +159,7 @@ class TaskFormModel extends ChangeNotifier {
       await _saveRewards();
     }
     catch (e) {
-      print(e);
+      // print(e);
       return false;
     }
     return true;

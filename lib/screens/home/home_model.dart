@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:life_game/models/user.dart';
-import 'package:life_game/screens/home/widgets/modules.dart';
+import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/screens/home/widgets/modules.dart';
 
 class HomeModel extends ChangeNotifier {
   User? user;

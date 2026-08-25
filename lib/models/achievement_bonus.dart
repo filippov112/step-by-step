@@ -1,7 +1,7 @@
-import 'package:life_game/data/db.dart';
-import 'package:life_game/models/achievement.dart';
-import 'package:life_game/models/characteristic.dart';
-import 'package:life_game/models/enums/bonus_type.dart';
+import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/models/characteristic.dart';
+import 'package:chaos_control/models/enums/bonus_type.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';

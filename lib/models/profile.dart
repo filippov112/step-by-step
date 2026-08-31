@@ -14,8 +14,7 @@ class Profile {
   static const cName = "_name";
   static const cIcon = "_icon";
   static const cBirthDate = "_dbirth";
-  static const cTime = "_time";
-  static const cExperience = "_exp";
+  static const cEfforts = "_efforts";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -23,16 +22,14 @@ class Profile {
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
           $cBirthDate INTEGER,
-          $cTime INTEGER,
-          $cExperience INTEGER
+          $cEfforts INTEGER
         )''';
 
   int? id;
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
   DateTime dateBirth = DateTime(2000); // Дата рождения
-  int time = 0; // Кэш времени
-  int experience = 0; // Кэш опыта
+  int efforts = 0; // Кэш усилий
 
   String get age => getDateIntervalString(dateBirth, DateTime.now());
 
@@ -40,8 +37,7 @@ class Profile {
     this.name = "",
     this.icon,
     required this.dateBirth,
-    this.experience = 0,
-    this.time = 0,
+    this.efforts = 0,
   });
 
   Map<String, Object?> toMap() {
@@ -49,8 +45,7 @@ class Profile {
       cName: name,
       cIcon: icon?.toJson() ,
       cBirthDate: DateTool.datetimeToDays(dateBirth),
-      cExperience: experience,
-      cTime: time,
+      cEfforts: efforts,
     };
     if (id != null) {
       map[cId] = id;
@@ -63,8 +58,7 @@ class Profile {
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
-    experience = map[cExperience];
-    time = map[cTime];
+    efforts = map[cEfforts];
   }
 }
 

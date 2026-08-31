@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/screens/achievements/detail/achievement_details_model.dart';
-import 'package:chaos_control/screens/achievements/form/achievement_form_model.dart';
-import 'package:chaos_control/screens/achievements/list/achievement_list_model.dart';
-import 'package:chaos_control/screens/classes/detail/class_detail_model.dart';
-import 'package:chaos_control/screens/classes/form/class_form_model.dart';
-import 'package:chaos_control/screens/classes/list/class_list_model.dart';
+import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
+import 'package:chaos_control/screens/landmarks/form/achievement_form_model.dart';
+import 'package:chaos_control/screens/landmarks/list/achievement_list_model.dart';
+import 'package:chaos_control/screens/projects/detail/class_detail_model.dart';
+import 'package:chaos_control/screens/projects/form/class_form_model.dart';
+import 'package:chaos_control/screens/projects/list/class_list_model.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/home_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_model.dart';
-import 'package:chaos_control/screens/skills/form/skill_form_model.dart';
-import 'package:chaos_control/screens/skills/list/skill_list_model.dart';
-import 'package:chaos_control/screens/skills/detail/skill_detail_model.dart';
-import 'package:chaos_control/screens/tags/tag_list_model.dart';
-import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
-import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
+import 'package:chaos_control/screens/walls/form/task_form_model.dart';
+import 'package:chaos_control/screens/walls/list/task_list_model.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
-import 'package:chaos_control/widgets/screens/test.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -41,14 +36,6 @@ void main() async {
         // User
         ChangeNotifierProvider<ProfileFormModel>(create: (_) { return ProfileFormModel(); }),
         ChangeNotifierProvider<ProfileDetailModel>(create: (_) { return ProfileDetailModel(); }),
-        
-        // Tags
-        ChangeNotifierProvider<TagListModel>(create: (_) { return TagListModel(); }),
-
-        // Skills
-        ChangeNotifierProvider<SkillFormModel>(create: (_) { return SkillFormModel(); }),
-        ChangeNotifierProvider<SkillDetailModel>(create: (_) { return SkillDetailModel(); }),
-        ChangeNotifierProvider<SkillListModel>(create: (_) { return SkillListModel(); }),
         
         // Settings
         ChangeNotifierProvider<SettingListModel>(create: (_) { return SettingListModel(); }),

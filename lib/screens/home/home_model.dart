@@ -4,7 +4,7 @@ import 'package:chaos_control/screens/home/widgets/modules.dart';
 
 class HomeModel extends ChangeNotifier {
   Profile? user;
-  AppModule currentModule = AppModule.tasks;
+  AppModule currentModule = AppModule.walls;
   bool get userIsExist => user != null;
 
   final ProfileRepository _userRepo = ProfileRepository();

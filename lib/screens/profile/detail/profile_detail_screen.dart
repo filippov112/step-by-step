@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/experience.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/time.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/spirit.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/info.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
@@ -106,16 +105,15 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                // Карточка
                 ProfileInfo(user: user),
 
+                // Опыт
+                const ProfileDetailSpirit(),
+                
                 // Активность
                 const ProfileDetailActivity(),
-
-                // Опыт
-                const ProfileDetailExp(),
-
-                // Время
-                const ProfileDetailTime(),
               ],
             ),
           ),

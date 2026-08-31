@@ -27,4 +27,10 @@ class DateTool {
     }
     return result;
   }
+
+  // Сегодняшнее число
+  static DateTime today() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
 }

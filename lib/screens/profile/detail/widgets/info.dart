@@ -30,7 +30,7 @@ class ProfileInfo extends StatelessWidget {
 
     var ageWidget = Row(
       children: [
-        const Icon(Icons.watch_later_sharp, size: 16),
+        const Icon(Icons.monitor_heart, size: 16),
         const SizedBox(width: 6),
         CustomText(
           user.age,

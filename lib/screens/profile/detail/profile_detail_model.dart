@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
 import 'package:chaos_control/services/analytics/dto_exp_time.dart';
-import 'package:chaos_control/services/analytics/dto_tasks.dart';
 import 'package:chaos_control/tools/datetime.dart';
 import 'package:snap_chart/snap_chart.dart';
 
@@ -13,14 +12,12 @@ class ProfileDetailModel extends ChangeNotifier {
   final _userRepo = ProfileRepository();
   final _analRepo = AnalyticsRepository();
 
-  Map<DateTime, int> tasks = {}, experiences = {}, times = {};
-  int maxExp = 0;
-  int maxTime = 0;
-  int maxTasksCount = 0;
+  Map<DateTime, int> efforts = {};
+  int maxEff = 0;
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
   Profile? user;
-  List<SnapSpot> progressExpData = [], progressTimeData = [];
-  int deltaExp = 0, deltaTime = 0;
+  List<SnapSpot> progressEffortData = [];
+  int deltaEfforts = 0;
 
   StatPeriod selectedPeriod = StatPeriod.oneMonth;
 
@@ -65,61 +62,34 @@ class ProfileDetailModel extends ChangeNotifier {
       startDate: DateTool.datetimeToDays(firstDay),
       endDate: DateTool.datetimeToDays(lastDay),
     );
-    List<DtoTasks> daysDataTasks = await _analRepo.getDailyTasks(
-      startDate: DateTool.datetimeToDays(firstDay),
-      endDate: DateTool.datetimeToDays(lastDay),
-    );
 
-    tasks = {};
-    experiences = {};
-    times = {};
-    progressExpData = [];
-    progressTimeData = [];
-    deltaExp = 0;
-    deltaTime = 0;
+    efforts = {};
+    progressEffortData = [];
+    deltaEfforts = 0;
 
-    for (var day in daysDataTasks) {
-      if (day.dateTime == null) continue;
-      tasks[day.dateTime!] = day.countTasks;
-      maxTasksCount = max(maxTasksCount, day.countTasks);
-    }
     for (var day in daysData) {
       if (day.dateTime == null) continue;
-      experiences[day.dateTime!] = day.totalExperience;
-      times[day.dateTime!] = day.totalTime;
-      maxExp = max(maxExp, day.totalExperience);
-      maxTime = max(maxTime, day.totalTime);
-      deltaExp += day.totalExperience;
-      deltaTime += day.totalTime;
+      efforts[day.dateTime!] = day.totalExperience;
+      maxEff = max(maxEff, day.totalExperience);
+      deltaEfforts += day.totalExperience;
     }
 
     int dayIndex = DateTool.datetimeToDays(lastDay) ?? 0;
     int firstDayIndex = DateTool.datetimeToDays(firstDay) ?? 0;
-    var summaExp = user!.experience;
-    var summaTime = user!.time;
+    var summaEff = user!.efforts;
     while (dayIndex >= firstDayIndex) {
-      progressTimeData.add(
-        SnapSpot(
-          dayIndex.toDouble(),
-          summaTime.toDouble(),
-        ),
-      );
       final dayDateTime = DateTool.joinDateTime(date: dayIndex);
-      if (times.keys.contains(dayDateTime)) {
-        summaTime -= times[dayDateTime] ?? 0;
-      }
-      progressExpData.add(
+      progressEffortData.add(
         SnapSpot(
           dayIndex.toDouble(),
-          summaExp.toDouble(),
+          summaEff.toDouble(),
         ),
       );
-      if (experiences.keys.contains(dayDateTime)) {
-        summaExp -= experiences[dayDateTime] ?? 0;
+      if (efforts.keys.contains(dayDateTime)) {
+        summaEff -= efforts[dayDateTime] ?? 0;
       }
       dayIndex--;
     }
-
     notifyListeners();
   }
 }

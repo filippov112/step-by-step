@@ -1,32 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/achievements/list/achievement_list_screen.dart';
-import 'package:chaos_control/screens/classes/list/class_list_screen.dart';
+import 'package:chaos_control/screens/landmarks/list/achievement_list_screen.dart';
+import 'package:chaos_control/screens/projects/list/class_list_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_screen.dart';
-import 'package:chaos_control/screens/skills/list/skill_list_screen.dart';
-import 'package:chaos_control/screens/tags/tag_list_screen.dart';
-import 'package:chaos_control/screens/tasks/list/task_list_screen.dart';
+import 'package:chaos_control/screens/walls/list/task_list_screen.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
   profile,
-  tasks,
-  skills,
-  achievements,
-  classes,
-  scripts,
-  templates,
-  resources,
-  tags,
+  walls,
+  landmarks,
+  projects,
   log,
-  rewards,
   settings,
 }
 
 List<AppModule> bottomMenuList = [
   AppModule.profile,
-  AppModule.tasks,
-  AppModule.skills,
-  AppModule.achievements,
+  AppModule.walls,
+  AppModule.projects,
+  AppModule.landmarks,
 ];
 
 extension AppModuleExt on AppModule {
@@ -39,29 +31,17 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return ProfileDetailScreen();
-      case AppModule.tasks:
+      case AppModule.walls:
         return TaskListScreen();
-      case AppModule.skills:
-        return SkillListScreen();
-      case AppModule.achievements:
+      case AppModule.landmarks:
         return AchievementListScreen();
-      case AppModule.classes:
+      case AppModule.projects:
         return ClassListScreen();
-      case AppModule.tags:
-        return TagListScreen();
       case AppModule.settings:
         return SettingListScreen();
 
-      case AppModule.scripts:
-        return TagListScreen();
-      case AppModule.templates:
-        return TagListScreen();
-      case AppModule.resources:
-        return TagListScreen();
       case AppModule.log:
-        return TagListScreen();
-      case AppModule.rewards:
-        return TagListScreen();
+        return SettingListScreen();
     }
   }
 
@@ -69,26 +49,14 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return 'Профиль';
-      case AppModule.tasks:
-        return 'Задачи';
-      case AppModule.skills:
-        return 'Навыки';
-      case AppModule.achievements:
-        return 'Достижения';
-      case AppModule.classes:
-        return 'Классы';
-      case AppModule.scripts:
-        return 'Скрипты';
-      case AppModule.templates:
-        return 'Шаблоны';
-      case AppModule.resources:
-        return 'Ресурсы';
-      case AppModule.tags:
-        return 'Теги';
+      case AppModule.walls:
+        return 'Стены';
+      case AppModule.landmarks:
+        return 'Смыслы';
+      case AppModule.projects:
+        return 'Проекты';
       case AppModule.log:
         return 'Логи';
-      case AppModule.rewards:
-        return 'Награды';
       case AppModule.settings:
         return 'Настройки';
     }
@@ -98,26 +66,14 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return Icons.portrait;
-      case AppModule.tasks:
-        return Icons.task_alt;
-      case AppModule.skills:
-        return Icons.star_border;
-      case AppModule.achievements:
+      case AppModule.walls:
+        return Icons.fort;
+      case AppModule.landmarks:
         return Icons.diamond;
-      case AppModule.classes:
-        return Icons.school_outlined;
-      case AppModule.scripts:
-        return Icons.repeat;
-      case AppModule.templates:
-        return Icons.copy;
-      case AppModule.resources:
-        return Icons.monetization_on;
-      case AppModule.tags:
-        return Icons.tag;
+      case AppModule.projects:
+        return Icons.work;
       case AppModule.log:
         return Icons.timelapse;
-      case AppModule.rewards:
-        return Icons.add;
       case AppModule.settings:
         return Icons.settings;
     }

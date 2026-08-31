@@ -1,9 +1,8 @@
 
 import 'package:chaos_control/models/class.dart';
-import 'package:chaos_control/models/skill.dart';
 import 'package:chaos_control/models/profile.dart';
 
-class ExpCalculator {
+class SpiritCalculator {
   static int level_1 = 100;
   static int time_1 = 100;
 
@@ -31,10 +30,6 @@ class ExpCalculator {
     return (level, exptime - sum, req);
   }
 
-
-  static void recalcLevelSkill(Skill skill) {
-    
-  }
 
   static void recalcLevelClass(Class cls) {
     

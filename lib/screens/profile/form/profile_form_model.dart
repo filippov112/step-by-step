@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/other/image.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 
-class UserFormModel extends ChangeNotifier {
-  final UserRepository _userRepo = UserRepository();
-  User? newUser;
+class ProfileFormModel extends ChangeNotifier {
+  final ProfileRepository _userRepo = ProfileRepository();
+  Profile? newUser;
   bool _isEdit = false;
 
   Future loadData(bool isEdit) async {
-    newUser = (await _userRepo.get()) ?? User(dateBirth: DateTime(2000));
+    newUser = (await _userRepo.get()) ?? Profile(dateBirth: DateTime(2000));
     _isEdit = isEdit;
     notifyListeners();
   }

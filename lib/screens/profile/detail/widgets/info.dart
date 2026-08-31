@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 
 // Шапка: аватар, имя, возраст
-class Userinfo extends StatelessWidget {
-  final User user;
-  const Userinfo({super.key, required this.user});
+class ProfileInfo extends StatelessWidget {
+  final Profile user;
+  const ProfileInfo({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {

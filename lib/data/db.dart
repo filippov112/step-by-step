@@ -18,7 +18,7 @@ import 'package:chaos_control/models/skill_condition.dart';
 import 'package:chaos_control/models/tag.dart';
 import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/models/task_hierarchy.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
@@ -47,7 +47,7 @@ class DB {
 
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Class.init);
-      await db.execute(User.init);
+      await db.execute(Profile.init);
       await db.execute(Task.init);
       await db.execute(Skill.init);
       await db.execute(Achievement.init);

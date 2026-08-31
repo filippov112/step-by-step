@@ -3,7 +3,7 @@ import 'package:chaos_control/models/class.dart';
 import 'package:chaos_control/models/class_skill.dart';
 import 'package:chaos_control/models/skill.dart';
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/exp_calculator.dart';
 import 'package:chaos_control/tools/datetime.dart';
 import 'package:uuid/uuid.dart';
@@ -124,7 +124,7 @@ class TaskRewardRepository {
   final skillRepo = SkillRepository();
   final classSkillRepo = ClassSkillRepository();
   final classRepo = ClassRepository();
-  final userRepo = UserRepository();
+  final userRepo = ProfileRepository();
   
   Future<List<TaskReward>> getAll() async {
     List<Map<String, Object?>> maps = await db.query(TaskReward.tn);

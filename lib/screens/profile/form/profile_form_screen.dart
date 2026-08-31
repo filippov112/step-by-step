@@ -6,24 +6,24 @@ import 'package:chaos_control/widgets/form/datetime_picker.dart';
 import 'package:chaos_control/widgets/form/singleline_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
-import 'user_form_model.dart';
+import 'profile_form_model.dart';
 
-class UserFormScreen extends StatefulWidget {
+class ProfileFormScreen extends StatefulWidget {
   final bool isEdit;
-  const UserFormScreen({super.key, this.isEdit = false});
+  const ProfileFormScreen({super.key, this.isEdit = false});
   @override
-  State<StatefulWidget> createState() => _UserFormScreenState();
+  State<StatefulWidget> createState() => _ProfileFormScreenState();
 }
 
-class _UserFormScreenState extends State<UserFormScreen> {
+class _ProfileFormScreenState extends State<ProfileFormScreen> {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  UserFormModel? model;
+  ProfileFormModel? model;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<UserFormModel>();
+    model = context.read<ProfileFormModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model?.loadData(widget.isEdit);
       nameController.text = model?.newUser?.name ?? '';
@@ -58,14 +58,14 @@ class _UserFormScreenState extends State<UserFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final iconPath = context.select<UserFormModel, CustomImageData?>(
+    final iconPath = context.select<ProfileFormModel, CustomImageData?>(
       (model) => model.newUser?.icon,
     );
-    final dateBirth = context.select<UserFormModel, DateTime>(
+    final dateBirth = context.select<ProfileFormModel, DateTime>(
       (model) => model.newUser?.dateBirth ?? DateTime(2000),
     );
-    final setIcon = context.read<UserFormModel>().setIcon;
-    final setName = context.read<UserFormModel>().setName;
+    final setIcon = context.read<ProfileFormModel>().setIcon;
+    final setName = context.read<ProfileFormModel>().setName;
 
     return EntityScreen(
       title: 'Пользователь',

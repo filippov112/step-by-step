@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/user.dart';
-import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
-import 'package:chaos_control/screens/user/detail/widgets/experience.dart';
-import 'package:chaos_control/screens/user/detail/widgets/time.dart';
-import 'package:chaos_control/screens/user/detail/widgets/user_activity.dart';
-import 'package:chaos_control/screens/user/detail/widgets/user_info.dart';
-import 'package:chaos_control/screens/user/form/user_form_model.dart';
-import 'package:chaos_control/screens/user/form/user_form_screen.dart';
+import 'package:chaos_control/models/profile.dart';
+import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/experience.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/time.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/info.dart';
+import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
+import 'package:chaos_control/screens/profile/form/profile_form_screen.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
 import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:chaos_control/widgets/common/app_bar_list.dart';
@@ -14,20 +14,20 @@ import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
 import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
-class UserDetailScreen extends StatefulWidget {
-  const UserDetailScreen({super.key});
+class ProfileDetailScreen extends StatefulWidget {
+  const ProfileDetailScreen({super.key});
 
   @override
-  State<UserDetailScreen> createState() => _UserDetailScreenState();
+  State<ProfileDetailScreen> createState() => _ProfileDetailScreenState();
 }
 
-class _UserDetailScreenState extends State<UserDetailScreen> {
-  UserDetailModel? model;
+class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
+  ProfileDetailModel? model;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<UserDetailModel>();
+    model = context.read<ProfileDetailModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model?.loadData();
     });
@@ -37,7 +37,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     if (model?.user == null) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => UserFormScreen(isEdit: true)),
+      MaterialPageRoute(builder: (context) => ProfileFormScreen(isEdit: true)),
     ).then((result) async {
       await model?.loadData();
     });
@@ -46,13 +46,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final user =
-        context.select<UserDetailModel, User?>((model) => model.user) ??
-        User(dateBirth: DateTime(2000));
+        context.select<ProfileDetailModel, Profile?>((model) => model.user) ??
+        Profile(dateBirth: DateTime(2000));
 
 
     final StatPeriod selectedPeriod = context
-        .select<UserDetailModel, StatPeriod>((model) => model.selectedPeriod);
-    final setPeriodFilter = context.read<UserDetailModel>().setPeriodFilter;
+        .select<ProfileDetailModel, StatPeriod>((model) => model.selectedPeriod);
+    final setPeriodFilter = context.read<ProfileDetailModel>().setPeriodFilter;
 
 
 
@@ -61,7 +61,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
       appBar: ListAppBar(
         title: 'Профиль',
         actions: [
-          Consumer<UserFormModel>(
+          Consumer<ProfileFormModel>(
             builder: (context, viewModel, child) {
               return IconButton(
                 icon: const Icon(Icons.edit),
@@ -106,16 +106,16 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Userinfo(user: user),
+                ProfileInfo(user: user),
 
                 // Активность
-                const UserDetailActivity(),
+                const ProfileDetailActivity(),
 
                 // Опыт
-                const UserDetailExp(),
+                const ProfileDetailExp(),
 
                 // Время
-                const UserDetailTime(),
+                const ProfileDetailTime(),
               ],
             ),
           ),

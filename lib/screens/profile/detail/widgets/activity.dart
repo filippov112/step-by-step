@@ -1,53 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
+import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/widgets/analysis/custom_activity_table.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:provider/provider.dart';
 
 // Виджет отображения активности пользователя
-class UserDetailActivity extends StatefulWidget {
-  const UserDetailActivity({super.key});
+class ProfileDetailActivity extends StatefulWidget {
+  const ProfileDetailActivity({super.key});
 
   @override
-  State<UserDetailActivity> createState() => _UserDetailActivityState();
+  State<ProfileDetailActivity> createState() => _ProfileDetailActivityState();
 }
 
-enum UserActivityType { time, exp, tasks }
+enum ProfileActivityType { time, exp, tasks }
 
-class _UserDetailActivityState extends State<UserDetailActivity> {
-  UserActivityType selectedType = UserActivityType.tasks;
+class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
+  ProfileActivityType selectedType = ProfileActivityType.tasks;
 
   @override
   Widget build(BuildContext context) {
     final Map<DateTime, int> tasks = context
-        .select<UserDetailModel, Map<DateTime, int>>((model) => model.tasks);
+        .select<ProfileDetailModel, Map<DateTime, int>>((model) => model.tasks);
     final Map<DateTime, int> experiences = context
-        .select<UserDetailModel, Map<DateTime, int>>(
+        .select<ProfileDetailModel, Map<DateTime, int>>(
           (model) => model.experiences,
         );
     final Map<DateTime, int> times = context
-        .select<UserDetailModel, Map<DateTime, int>>((model) => model.times);
-    final int maxExp = context.select<UserDetailModel, int>(
+        .select<ProfileDetailModel, Map<DateTime, int>>((model) => model.times);
+    final int maxExp = context.select<ProfileDetailModel, int>(
       (model) => model.maxExp,
     );
-    final int maxTime = context.select<UserDetailModel, int>(
+    final int maxTime = context.select<ProfileDetailModel, int>(
       (model) => model.maxTime,
     );
-    final int maxTasksCount = context.select<UserDetailModel, int>(
+    final int maxTasksCount = context.select<ProfileDetailModel, int>(
       (model) => model.maxTasksCount,
     );
-    final DateTime firstDay = context.select<UserDetailModel, DateTime>(
+    final DateTime firstDay = context.select<ProfileDetailModel, DateTime>(
       (model) => model.firstDay,
     );
-    final DateTime lastDay = context.select<UserDetailModel, DateTime>(
+    final DateTime lastDay = context.select<ProfileDetailModel, DateTime>(
       (model) => model.lastDay,
     );
 
     Map<DateTime, int> getData() {
       switch (selectedType) {
-        case UserActivityType.time:
+        case ProfileActivityType.time:
           return times;
-        case UserActivityType.exp:
+        case ProfileActivityType.exp:
           return experiences;
         default:
           return tasks;
@@ -56,9 +56,9 @@ class _UserDetailActivityState extends State<UserDetailActivity> {
 
     int getMaxValue() {
       switch (selectedType) {
-        case UserActivityType.time:
+        case ProfileActivityType.time:
           return maxTime;
-        case UserActivityType.exp:
+        case ProfileActivityType.exp:
           return maxExp;
         default:
           return maxTasksCount;
@@ -75,33 +75,33 @@ class _UserDetailActivityState extends State<UserDetailActivity> {
           Padding(
             padding: EdgeInsetsGeometry.only(left: 8),
             child: IconButton(
-              color: selectedType == UserActivityType.tasks
+              color: selectedType == ProfileActivityType.tasks
                   ? Theme.of(context).focusColor
                   : Theme.of(context).dividerColor,
               onPressed: () =>
-                  setState(() => selectedType = UserActivityType.tasks),
+                  setState(() => selectedType = ProfileActivityType.tasks),
               icon: Icon(Icons.task_alt_outlined),
             ),
           ),
           Padding(
             padding: EdgeInsetsGeometry.only(left: 8),
             child: IconButton(
-              color: selectedType == UserActivityType.exp
+              color: selectedType == ProfileActivityType.exp
                   ? Theme.of(context).focusColor
                   : Theme.of(context).dividerColor,
               onPressed: () =>
-                  setState(() => selectedType = UserActivityType.exp),
+                  setState(() => selectedType = ProfileActivityType.exp),
               icon: Icon(Icons.wb_incandescent),
             ),
           ),
           Padding(
             padding: EdgeInsetsGeometry.only(left: 8),
             child: IconButton(
-              color: selectedType == UserActivityType.time
+              color: selectedType == ProfileActivityType.time
                   ? Theme.of(context).focusColor
                   : Theme.of(context).dividerColor,
               onPressed: () =>
-                  setState(() => selectedType = UserActivityType.time),
+                  setState(() => selectedType = ProfileActivityType.time),
               icon: Icon(Icons.schedule_outlined),
             ),
           ),

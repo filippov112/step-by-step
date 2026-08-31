@@ -1,7 +1,7 @@
 
 import 'package:chaos_control/models/class.dart';
 import 'package:chaos_control/models/skill.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 
 class ExpCalculator {
   static int level_1 = 100;
@@ -40,7 +40,7 @@ class ExpCalculator {
     
   }
 
-  static void recalcLevelUser(User user) {
+  static void recalcLevelUser(Profile user) {
     
   }
 }

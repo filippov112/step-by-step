@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/user.dart';
+import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
 import 'package:chaos_control/services/analytics/dto_exp_time.dart';
 import 'package:chaos_control/services/analytics/dto_tasks.dart';
@@ -9,8 +9,8 @@ import 'package:snap_chart/snap_chart.dart';
 
 enum StatPeriod { threeMonth, oneMonth, oneWeek }
 
-class UserDetailModel extends ChangeNotifier {
-  final _userRepo = UserRepository();
+class ProfileDetailModel extends ChangeNotifier {
+  final _userRepo = ProfileRepository();
   final _analRepo = AnalyticsRepository();
 
   Map<DateTime, int> tasks = {}, experiences = {}, times = {};
@@ -18,7 +18,7 @@ class UserDetailModel extends ChangeNotifier {
   int maxTime = 0;
   int maxTasksCount = 0;
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
-  User? user;
+  Profile? user;
   List<SnapSpot> progressExpData = [], progressTimeData = [];
   int deltaExp = 0, deltaTime = 0;
 

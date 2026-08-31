@@ -5,7 +5,7 @@ import 'package:chaos_control/screens/settings/setting_list_screen.dart';
 import 'package:chaos_control/screens/skills/list/skill_list_screen.dart';
 import 'package:chaos_control/screens/tags/tag_list_screen.dart';
 import 'package:chaos_control/screens/tasks/list/task_list_screen.dart';
-import 'package:chaos_control/screens/user/detail/user_detail_screen.dart';
+import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
   profile,
@@ -38,7 +38,7 @@ extension AppModuleExt on AppModule {
   Widget get widget {
     switch (this) {
       case AppModule.profile:
-        return UserDetailScreen();
+        return ProfileDetailScreen();
       case AppModule.tasks:
         return TaskListScreen();
       case AppModule.skills:

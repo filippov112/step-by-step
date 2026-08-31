@@ -15,8 +15,8 @@ import 'package:chaos_control/screens/skills/detail/skill_detail_model.dart';
 import 'package:chaos_control/screens/tags/tag_list_model.dart';
 import 'package:chaos_control/screens/tasks/form/task_form_model.dart';
 import 'package:chaos_control/screens/tasks/list/task_list_model.dart';
-import 'package:chaos_control/screens/user/form/user_form_model.dart';
-import 'package:chaos_control/screens/user/detail/user_detail_model.dart';
+import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
+import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
 import 'package:chaos_control/widgets/screens/test.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +39,8 @@ void main() async {
         ChangeNotifierProvider<TaskListModel>(create: (_) { return TaskListModel(); }),
         
         // User
-        ChangeNotifierProvider<UserFormModel>(create: (_) { return UserFormModel(); }),
-        ChangeNotifierProvider<UserDetailModel>(create: (_) { return UserDetailModel(); }),
+        ChangeNotifierProvider<ProfileFormModel>(create: (_) { return ProfileFormModel(); }),
+        ChangeNotifierProvider<ProfileDetailModel>(create: (_) { return ProfileDetailModel(); }),
         
         // Tags
         ChangeNotifierProvider<TagListModel>(create: (_) { return TagListModel(); }),

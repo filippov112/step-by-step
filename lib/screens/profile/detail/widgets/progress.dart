@@ -7,7 +7,7 @@ import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 // Виджет отображения динамики аккумуляции опыта / времени
-class UserProgress extends StatefulWidget {
+class ProfileProgress extends StatefulWidget {
   final int level;
   final DateTime firstDay;
   final DateTime lastDay;
@@ -19,7 +19,7 @@ class UserProgress extends StatefulWidget {
   final double nextLevel;
   final IconData icon;
 
-  const UserProgress({
+  const ProfileProgress({
     super.key,
     required this.level, // Уровень
     required this.title, // Заголовок
@@ -33,10 +33,10 @@ class UserProgress extends StatefulWidget {
   });
 
   @override
-  State<UserProgress> createState() => _UserProgressState();
+  State<ProfileProgress> createState() => _ProfileProgressState();
 }
 
-class _UserProgressState extends State<UserProgress> {
+class _ProfileProgressState extends State<ProfileProgress> {
   bool isExpanded = false;
 
   double getPercent(double val, double max) {

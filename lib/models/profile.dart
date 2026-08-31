@@ -7,7 +7,7 @@ import 'package:chaos_control/tools/get_age_string.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Пользователь
-class User {
+class Profile {
   static const tn = "profiles";
 
   static const cId = "_id";
@@ -36,7 +36,7 @@ class User {
 
   String get age => getDateIntervalString(dateBirth, DateTime.now());
 
-  User({
+  Profile({
     this.name = "",
     this.icon,
     required this.dateBirth,
@@ -58,7 +58,7 @@ class User {
     return map;
   }
 
-  User.fromMap(Map map) {
+  Profile.fromMap(Map map) {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
@@ -69,48 +69,48 @@ class User {
 }
 
 // Базовый репозиторий пользователей
-class UserRepository {
+class ProfileRepository {
   Database db = DB.db!;
 
-  Future<User> insert(User tsk) async {
-    tsk.id = await db.insert(User.tn, tsk.toMap());
+  Future<Profile> insert(Profile tsk) async {
+    tsk.id = await db.insert(Profile.tn, tsk.toMap());
     return tsk;
   }
 
-  Future<List<int>> insertBatch(Iterable<User> models) async {
+  Future<List<int>> insertBatch(Iterable<Profile> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (User m in models) {
-        res.add(await txn.insert(User.tn, m.toMap()));
+      for (Profile m in models) {
+        res.add(await txn.insert(Profile.tn, m.toMap()));
       }
     });
     return res;
   }
 
-  Future<User?> get() async {
-    List<Map> maps = await db.query(User.tn);
+  Future<Profile?> get() async {
+    List<Map> maps = await db.query(Profile.tn);
     if (maps.isNotEmpty) {
-      return User.fromMap(maps.first as Map<String, Object?>);
+      return Profile.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
   Future<int?> delete(int id) async {
     await deleteIconIfSetupNull(id: id);
-    return await db.delete(User.tn, where: '${User.cId} = ?', whereArgs: [id]);
+    return await db.delete(Profile.tn, where: '${Profile.cId} = ?', whereArgs: [id]);
   }
 
-  Future<int?> update(User usr) async {
+  Future<int?> update(Profile usr) async {
     await deleteIconIfSetupNull(obj: usr);
     return await db.update(
-      User.tn,
+      Profile.tn,
       usr.toMap(),
-      where: '${User.cId} = ?',
+      where: '${Profile.cId} = ?',
       whereArgs: [usr.id],
     );
   }
 
-  Future deleteIconIfSetupNull({int? id, User? obj}) async {
+  Future deleteIconIfSetupNull({int? id, Profile? obj}) async {
     // Если удаление
     if (id != null) {
       var oldObject = await get();

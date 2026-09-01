@@ -1,3 +1,4 @@
+import 'package:chaos_control/widgets/form/checkbox.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
@@ -18,12 +19,26 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
   Widget build(BuildContext context) {
 
     final model = context.read<ProjectListModel>();
-    var hasActiveFilters = context.select<ProjectListModel,bool>((model) => model.hasActiveFilters);
-    var sortField = context.select<ProjectListModel,SortProjectField>((model) => model.sortField);
-    var sortAscending = context.select<ProjectListModel,bool>((model) => model.sortAscending);
+    final hasActiveFilters = context.select<ProjectListModel,bool>((model) => model.hasActiveFilters);
+    
+    final hiddenFilterValue = context.select<ProjectListModel,bool>((m) => m.showHiddenFilter);
+    
+    final sortField = context.select<ProjectListModel,SortProjectField>((model) => model.sortField);
+    final sortAscending = context.select<ProjectListModel,bool>((model) => model.sortAscending);
+
+
+    final hiddenFilter = FilterSection(
+      title: 'Скрытые проекты',
+      icon: Icons.remove_red_eye,
+      children: CustomCheckbox(
+        initValue: hiddenFilterValue, 
+        setValue: model.setHiddenFilter, 
+        label: 'Отображать скрытые'
+      )
+    );
 
     // Сортировка
-    var sorting = FilterSection(
+    final sorting = FilterSection(
       title: 'Сортировка',
       icon: Icons.sort,
       children: Column(
@@ -47,7 +62,8 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
         child: const Text('Сбросить все фильтры'),
       ),
       filters: [
-       sorting
+        hiddenFilter,
+        sorting
       ],
     );
   }

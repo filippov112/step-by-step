@@ -28,7 +28,7 @@ class CustomTreeTile<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     Color? containterColor = Theme.of(
       context,
-    ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
+    ).colorScheme.surfaceContainerHighest.withValues(alpha: record.isFolder ? 0.3 : 0.9);
     Gradient? containterBorderColor = record.color == null
         ? null
         : LinearGradient(
@@ -83,7 +83,7 @@ class CustomTreeTile<T> extends StatelessWidget {
                           child: CustomImageIcon(
                             record.customIconData,
                             altIcon: customAltIcon,
-                            // color: record.rarity.color,
+                            color: record.color,
                             width: 40,
                             height: 40,
                           ),

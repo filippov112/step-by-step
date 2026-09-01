@@ -38,7 +38,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
     model = context.read<ProjectFormModel>();
     titleController = TextEditingController(text: widget.project?.title);
     targetController = TextEditingController(text: widget.project?.target);
-    groupController = TextEditingController(text: widget.project?.group ?? '/');
+    groupController = TextEditingController(text: widget.project?.group);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.setClass(widget.project);
     });

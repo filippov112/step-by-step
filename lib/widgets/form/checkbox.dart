@@ -21,9 +21,10 @@ class CustomCheckbox extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         onTap: () => setValue(!initValue),
         child: Row(
+          mainAxisSize: MainAxisSize.max,
           children: [
             Checkbox(value: initValue, onChanged: (v) => setValue(v ?? false)),
-            CustomText(label),
+            CustomText(label, expanded: true,),
           ],
         ),
       ),

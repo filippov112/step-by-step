@@ -53,8 +53,9 @@ class CustomTreeList<T> extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CustomText(currentAddress ?? ''),
+        CustomText(currentAddress ?? '', padding: EdgeInsets.symmetric(horizontal: 16)),
         Expanded(
           child:
               emptyMessage ??

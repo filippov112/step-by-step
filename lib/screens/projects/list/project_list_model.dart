@@ -32,12 +32,13 @@ class ProjectListModel extends ChangeNotifier {
   Set<String> get selectedIds => _selectedIds;
   String get searchQuery => _searchQuery;
   
+  bool showHiddenFilter = false;
   SortProjectField get sortField => _sortField;
   bool get sortAscending => _sortAscending;
   
   
   bool get hasActiveFilters {
-    return _searchQuery.isNotEmpty;
+    return showHiddenFilter || _searchQuery.isNotEmpty;
   }
   
   // Загрузка данных
@@ -53,6 +54,7 @@ class ProjectListModel extends ChangeNotifier {
         address: e.group,
         object: e,
         name: e.title,
+        customIconData: e.icon
       ),
     )
     .toList();
@@ -76,8 +78,16 @@ class ProjectListModel extends ChangeNotifier {
   }
   
   // Фильтры
+
+  Future setHiddenFilter(bool value) async {
+    showHiddenFilter = value;
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+
   void clearAllFilters() {
     _searchQuery = '';
+    showHiddenFilter = false;
     _applyFiltersAndSort();
     notifyListeners();
   }
@@ -106,6 +116,9 @@ class ProjectListModel extends ChangeNotifier {
       ).toList();
     }
     // Фильтры
+    if (!showHiddenFilter) {
+      result = result.where((e) => !e.hidden).toList();
+    }
     // Сортировка
     switch (_sortField) {
       case SortProjectField.title:

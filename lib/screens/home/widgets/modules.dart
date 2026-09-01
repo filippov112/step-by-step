@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/landmarks/list/achievement_list_screen.dart';
-import 'package:chaos_control/screens/projects/list/class_list_screen.dart';
+import 'package:chaos_control/screens/projects/list/project_list_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_screen.dart';
 import 'package:chaos_control/screens/walls/list/task_list_screen.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
@@ -36,7 +36,7 @@ extension AppModuleExt on AppModule {
       case AppModule.landmarks:
         return AchievementListScreen();
       case AppModule.projects:
-        return ClassListScreen();
+        return ProjectListScreen();
       case AppModule.settings:
         return SettingListScreen();
 

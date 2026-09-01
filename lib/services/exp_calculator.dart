@@ -1,5 +1,5 @@
 
-import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/profile.dart';
 
 class SpiritCalculator {
@@ -31,7 +31,7 @@ class SpiritCalculator {
   }
 
 
-  static void recalcLevelClass(Class cls) {
+  static void recalcLevelClass(Project cls) {
     
   }
 

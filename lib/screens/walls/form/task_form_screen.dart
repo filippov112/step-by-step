@@ -6,8 +6,7 @@ import 'package:chaos_control/screens/walls/form/widgets/difficulty.dart';
 import 'package:chaos_control/screens/walls/form/widgets/priority.dart';
 import 'package:chaos_control/screens/walls/form/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
-import 'package:chaos_control/widgets/form/multiline_input.dart';
-import 'package:chaos_control/widgets/form/singleline_input.dart';
+import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -59,18 +58,20 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       saveCallback: () => _saveTask(saveTask),
       children: [
         // Название
-        SinglelineInput(
+        CustomTextInput(
           requiredErrorText: 'Введите название',
           header: 'Название',
           setText: model.setTitle,
+          icon: Icons.title,
           controller: titleController,
         ),
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(
+        CustomTextInput(
           header: 'Описание',
           setText: model.setDescription,
+          icon: Icons.description,
           controller: descController,
         ),
         const SizedBox(height: 12),

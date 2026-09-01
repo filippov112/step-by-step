@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/projects/list/class_list_model.dart';
+import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
 import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
 
-class ClassFilters extends StatefulWidget {
-  const ClassFilters({super.key});
+class ProjectListFilters extends StatefulWidget {
+  const ProjectListFilters({super.key});
 
   @override
-  State<ClassFilters> createState() => _ClassFiltersState();
+  State<ProjectListFilters> createState() => _ProjectListFiltersState();
 }
 
-class _ClassFiltersState extends State<ClassFilters> {
+class _ProjectListFiltersState extends State<ProjectListFilters> {
 
   @override
   Widget build(BuildContext context) {
 
-    final model = context.read<ClassListModel>();
-    var hasActiveFilters = context.select<ClassListModel,bool>((model) => model.hasActiveFilters);
-    var sortField = context.select<ClassListModel,SortClassField>((model) => model.sortField);
-    var sortAscending = context.select<ClassListModel,bool>((model) => model.sortAscending);
+    final model = context.read<ProjectListModel>();
+    var hasActiveFilters = context.select<ProjectListModel,bool>((model) => model.hasActiveFilters);
+    var sortField = context.select<ProjectListModel,SortProjectField>((model) => model.sortField);
+    var sortAscending = context.select<ProjectListModel,bool>((model) => model.sortAscending);
 
     // Сортировка
     var sorting = FilterSection(
@@ -33,7 +33,7 @@ class _ClassFiltersState extends State<ClassFilters> {
               sortField,
               model.setSortField,
               sortAscending,
-              SortClassField.title,
+              SortProjectField.title,
               'По названию',
             ),
           ],
@@ -55,10 +55,10 @@ class _ClassFiltersState extends State<ClassFilters> {
   
   Widget _buildSortButton(
     BuildContext context,
-    SortClassField sortField,
-    Function(SortClassField) setSortField,
+    SortProjectField sortField,
+    Function(SortProjectField) setSortField,
     bool sortAscending,
-    SortClassField field,
+    SortProjectField field,
     String label,
   ) {
     final isActive = sortField == field;

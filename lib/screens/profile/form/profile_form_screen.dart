@@ -1,9 +1,9 @@
+import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
 import 'package:chaos_control/widgets/form/datetime_picker.dart';
-import 'package:chaos_control/widgets/form/singleline_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 import 'profile_form_model.dart';
@@ -85,7 +85,8 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
         const SizedBox(height: 12),
 
         // Имя
-        SinglelineInput(
+        CustomTextInput(
+          icon: Icons.title,
           header: 'Имя',
           controller: nameController,
           requiredErrorText: 'Введите имя',

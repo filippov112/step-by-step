@@ -1,71 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/class.dart';
-import 'package:chaos_control/screens/projects/detail/class_detail_model.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/desc.dart';
+import 'package:chaos_control/models/project.dart';
+import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
+import 'package:chaos_control/screens/projects/detail/widgets/target.dart';
 import 'package:chaos_control/screens/projects/detail/widgets/icon.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/progress.dart';
 import 'package:chaos_control/screens/projects/detail/widgets/title.dart';
-import 'package:chaos_control/screens/projects/form/class_form_screen.dart';
+import 'package:chaos_control/screens/projects/form/project_form_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class ClassDetailScreen extends StatefulWidget {
-  final Class record;
-  const ClassDetailScreen({super.key, required this.record});
+class ProjectDetailScreen extends StatefulWidget {
+  final Project project;
+  const ProjectDetailScreen({super.key, required this.project});
 
   @override
-  State<ClassDetailScreen> createState() => _ClassDetailScreenState();
+  State<ProjectDetailScreen> createState() => _ProjectDetailScreenState();
 }
 
-class _ClassDetailScreenState extends State<ClassDetailScreen> {
-  late ClassDetailModel model;
+class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
+  late ProjectDetailModel model;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<ClassDetailModel>();
+    model = context.read<ProjectDetailModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setClass(widget.record);
+      model.setClass(widget.project);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var record = context.select<ClassDetailModel, Class>(
-      (model) => model.record,
+    var record = context.select<ProjectDetailModel, Project>(
+      (model) => model.project,
     );
 
     var deleteThis = model.deleteThis;
 
     return EntityScreen(
-      title: 'Класс',
+      title: 'Проект',
       editCallback: () => _edit(model, record),
       deleteCallback: () => _deleteThis(deleteThis),
       children: [
         // Иконка
-        const ClassDetailIcon(),
+        const ProjectDetailIcon(),
         const SizedBox(height: 12),
 
         // Заголовок
-        const ClassDetailTitle(),
+        const ProjectDetailTitle(),
         const SizedBox(height: 16),
 
-        // Прогресс
-        const ClassDetailProgress(),
-        const SizedBox(height: 12),
 
         // Описание
-        const ClassDetailDesc(),
+        const ProjectDetailTarget(),
         const SizedBox(height: 12),
       ],
     );
   }
 
-  void _edit(ClassDetailModel model, Class cls) async {
+  void _edit(ProjectDetailModel model, Project cls) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ClassFormScreen(record: cls)),
+      MaterialPageRoute(builder: (context) => ProjectFormScreen(project: cls)),
     ).then((_) async {
       if (context.mounted) {
         var checkExist = await model.checkExist();

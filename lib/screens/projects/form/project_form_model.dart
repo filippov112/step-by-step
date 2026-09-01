@@ -1,28 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/other/image.dart';
 
 
-class ClassFormModel extends ChangeNotifier {
+class ProjectFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  Class record = Class.create(title: '');
-  final _classRepo = ClassRepository();
+  Project record = Project.create(title: '');
+  final _classRepo = ProjectRepository();
   
-  List<Class> records = [];
+  List<Project> records = [];
   String selectedTitle = '';
-  String selectedDescription = '';
+  String selectedTarget = '';
+  String selectedGroup = '';
+  bool selectedHidden = false;
   CustomImageData? selectedIcon;
   bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
-  void setClass(Class? cls) {
+  void setClass(Project? cls) {
     isEditing = cls != null;
-    record = cls ?? Class.create(title: '');
+    record = cls ?? Project.create(title: '');
     selectedIcon = record.icon;
     selectedTitle = record.title;
-    selectedDescription = record.description;
+    selectedTarget = record.target;
+    selectedGroup = record.group;
+    selectedHidden = record.hidden;
     notifyListeners();
   }
 
@@ -34,13 +38,27 @@ class ClassFormModel extends ChangeNotifier {
     selectedTitle = title ?? '';
     notifyListeners();
   }
-  void setDescription(String? description) {
-    selectedDescription = description ?? '';
+  void setTarget(String? target) {
+    selectedTarget = target ?? '';
+    notifyListeners();
+  }
+  void setGroup(String? group) {
+    selectedGroup = group ?? '';
+    notifyListeners();
+  }
+  void setHidden(bool hidden) {
+    selectedHidden = hidden;
     notifyListeners();
   }
   void setIcon(CustomImageData? value) {
     selectedIcon = value;
     notifyListeners();
+  }
+  String? groupValidator(String? text) {
+    if (text == null || text.isEmpty) return null;
+    var parts = text.split('/');
+    if (parts.any((e) => e.isEmpty)) return 'Части группы не могут быть пустыми';
+    return null;
   }
 
   // ---------- CRUD ---------------------
@@ -57,8 +75,10 @@ class ClassFormModel extends ChangeNotifier {
 
   Future<bool> save() async {
     record.title = selectedTitle;
-    record.description = selectedDescription;
+    record.target = selectedTarget;
     record.icon = selectedIcon;
+    record.group = selectedGroup;
+    record.hidden = selectedHidden;
     try {
       if (isEditing) {
         await _classRepo.update(record);

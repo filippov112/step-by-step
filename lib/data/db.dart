@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:chaos_control/models/achievement.dart';
-import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/wall_reward.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/models/profile.dart';
@@ -31,7 +31,7 @@ class DB {
       onCreate: (Database db, int version) async {
 
       await db.execute('PRAGMA foreign_keys = ON;');
-      await db.execute(Class.init);
+      await db.execute(Project.init);
       await db.execute(Profile.init);
       await db.execute(Wall.init);
       await db.execute(Achievement.init);

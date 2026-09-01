@@ -1,5 +1,5 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/exp_calculator.dart';
@@ -89,7 +89,7 @@ extension RewardCopyWith on Reward {
 // Базовый репозиторий наград
 class RewardRepository {
   Database db = DB.db!;
-  final classRepo = ClassRepository();
+  final classRepo = ProjectRepository();
   final userRepo = ProfileRepository();
   
   Future<List<Reward>> getAll() async {

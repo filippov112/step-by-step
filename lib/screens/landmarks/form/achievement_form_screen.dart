@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/achievement.dart';
 import 'package:chaos_control/screens/landmarks/form/achievement_form_model.dart';
 import 'package:chaos_control/screens/landmarks/form/widgets/date.dart';
-import 'package:chaos_control/widgets/form/multiline_input.dart';
+import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/screens/landmarks/form/widgets/icon.dart';
 import 'package:chaos_control/screens/landmarks/form/widgets/rarity.dart';
-import 'package:chaos_control/widgets/form/singleline_input.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
@@ -64,18 +63,20 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
         const SizedBox(height: 12),
 
         // Название
-        SinglelineInput(
+        CustomTextInput(
           requiredErrorText: 'Введите название',
           header: 'Название',
+          icon: Icons.title,
           controller: titleController,
           setText: model.setTitle,
         ),
         const SizedBox(height: 12),
 
         // Описание
-        CustomMultilineTextInput(
+        CustomTextInput(
           header: 'Описание',
           controller: descController,
+          icon: Icons.description,
           setText: model.setDescription,
         ),
         const SizedBox(height: 12),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/projects/detail/class_detail_model.dart';
+import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
-class ClassDetailTitle extends StatelessWidget {
-  const ClassDetailTitle({super.key});
+class ProjectDetailTitle extends StatelessWidget {
+  const ProjectDetailTitle({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var title = context.select<ClassDetailModel, String>(
-      (model) => model.record.title,
+    var title = context.select<ProjectDetailModel, String>(
+      (model) => model.project.title,
     );
 
     return CustomText(

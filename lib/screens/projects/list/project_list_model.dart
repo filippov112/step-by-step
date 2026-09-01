@@ -1,20 +1,25 @@
+import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
+import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/class.dart';
+import 'package:chaos_control/models/project.dart';
 
 
-enum SortClassField { title }
+enum SortProjectField { title }
 
-class ClassListModel extends ChangeNotifier {
-  final ClassRepository _classRepo = ClassRepository();
+class ProjectListModel extends ChangeNotifier {
+  final ProjectRepository _classRepo = ProjectRepository();
 
-  List<Class> _records = [];
-  List<Class> _filteredRecords = [];
+  List<Project> _projects = [];
+  List<Project> _filteredProjects = [];
+  List<TreeRecord<Project>> visualList = [];
+
+  final treeListModel = CustomTreeListModel<Project>();
   
   // Состояние фильтрации
   String _searchQuery = '';
 
   // Состояние сортировки
-  SortClassField _sortField = SortClassField.title;
+  SortProjectField _sortField = SortProjectField.title;
   bool _sortAscending = true;
   
   // Режим выделения
@@ -22,12 +27,12 @@ class ClassListModel extends ChangeNotifier {
   Set<String> _selectedIds = {};
   
   // Геттеры
-  List<Class> get records => _filteredRecords;
+  List<Project> get projects => _filteredProjects;
   bool get isSelectionMode => _isSelectionMode;
   Set<String> get selectedIds => _selectedIds;
   String get searchQuery => _searchQuery;
   
-  SortClassField get sortField => _sortField;
+  SortProjectField get sortField => _sortField;
   bool get sortAscending => _sortAscending;
   
   
@@ -37,8 +42,23 @@ class ClassListModel extends ChangeNotifier {
   
   // Загрузка данных
   Future loadData() async {
-    _records = await _classRepo.getAll();
+    _projects = await _classRepo.getAll();
     await _applyFiltersAndSort();
+    notifyListeners();
+  }
+
+  List<TreeRecord<Project>> transformRecords() => _filteredProjects
+    .map(
+      (e) => TreeRecord<Project>(
+        address: e.group,
+        object: e,
+        name: e.title,
+      ),
+    )
+    .toList();
+  
+  Future openFolder(TreeRecord<Project>? folder) async {
+    visualList = treeListModel.openFolder(list: transformRecords(), folder: folder);
     notifyListeners();
   }
   
@@ -63,7 +83,7 @@ class ClassListModel extends ChangeNotifier {
   }
   
   // Сортировка
-  Future setSortField(SortClassField field) async {
+  Future setSortField(SortProjectField field) async {
     if (_sortField == field) {
       _sortAscending = !_sortAscending;
     } else {
@@ -76,33 +96,37 @@ class ClassListModel extends ChangeNotifier {
   
   // Основная логика фильтрации и сортировки
   Future _applyFiltersAndSort() async {
-    var result = List<Class>.from(_records);
+    var result = List<Project>.from(_projects);
     // Поиск
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
       result = result.where((t) =>
         t.title.toLowerCase().contains(query) ||
-        t.description.toLowerCase().contains(query)
+        t.target.toLowerCase().contains(query)
       ).toList();
     }
     // Фильтры
     // Сортировка
     switch (_sortField) {
-      case SortClassField.title:
+      case SortProjectField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
         break;
     }
     if (!_sortAscending) {
       result = result.reversed.toList();
     }
-    _filteredRecords = result;
+    _filteredProjects = result;
+    visualList = treeListModel.openFolder(
+      list: transformRecords(), 
+      folder: treeListModel.currentFolder
+    );
   }
   
-  Future update(Class cls) async {
+  Future update(Project cls) async {
     await _classRepo.update(cls);
-    final index = _records.indexWhere((t) => t.id == cls.id);
+    final index = _projects.indexWhere((t) => t.id == cls.id);
     if (index != -1) {
-      _records[index] = cls;
+      _projects[index] = cls;
     }
     await _applyFiltersAndSort();
     notifyListeners();
@@ -110,7 +134,7 @@ class ClassListModel extends ChangeNotifier {
 
   Future delete(String id) async {
     await _classRepo.delete(id);
-    _records.removeWhere((t) => t.id == id);
+    _projects.removeWhere((t) => t.id == id);
     _selectedIds.remove(id);
     _applyFiltersAndSort();
     notifyListeners();
@@ -119,7 +143,7 @@ class ClassListModel extends ChangeNotifier {
   Future deleteAllSelected() async {
     for (final id in _selectedIds) {
       await _classRepo.delete(id);
-      _records.removeWhere((t) => t.id == id);
+      _projects.removeWhere((t) => t.id == id);
     }
     _selectedIds.clear();
     _isSelectionMode = false;
@@ -137,10 +161,10 @@ class ClassListModel extends ChangeNotifier {
   }
   
   void toggleSelectAll() {
-    if (_selectedIds.length == _filteredRecords.length) {
+    if (_selectedIds.length == _filteredProjects.length) {
       _selectedIds.clear();
     } else {
-      _selectedIds = _filteredRecords.map((t) => t.id).toSet();
+      _selectedIds = _filteredProjects.map((t) => t.id).toSet();
     }
     notifyListeners();
   }

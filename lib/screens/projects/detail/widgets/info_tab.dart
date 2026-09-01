@@ -3,8 +3,8 @@ import 'package:chaos_control/screens/projects/detail/project_detail_model.dart'
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
-class ProjectDetailTarget extends StatelessWidget {
-  const ProjectDetailTarget({super.key});
+class ProjectDetailInfoTab extends StatelessWidget {
+  const ProjectDetailInfoTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +14,7 @@ class ProjectDetailTarget extends StatelessWidget {
 
     if (description.isNotEmpty) {
       return Container(
-        height: 150,
-        padding: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.all(12),
         child: ListView(
           children: [
             CustomText(

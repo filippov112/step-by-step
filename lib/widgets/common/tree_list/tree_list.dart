@@ -13,7 +13,7 @@ class CustomTreeList<T> extends StatelessWidget {
   final Function(T?) openRecordCallback;
   final Function(TreeRecord<T>) openFolderCallback;
   final List<TreeRecord<T>> visualList;
-  final String? currentAddress;
+  final String currentAddress;
   final bool isSelectionMode;
 
   const CustomTreeList({
@@ -55,7 +55,8 @@ class CustomTreeList<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CustomText(currentAddress ?? '', padding: EdgeInsets.symmetric(horizontal: 16)),
+        if (currentAddress.isNotEmpty) 
+          CustomText(currentAddress, padding: EdgeInsets.symmetric(horizontal: 16)),
         Expanded(
           child:
               emptyMessage ??

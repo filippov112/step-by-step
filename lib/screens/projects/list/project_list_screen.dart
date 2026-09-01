@@ -45,7 +45,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         .select<ProjectListModel, List<TreeRecord<Project>>>(
           (m) => m.visualList,
         );
-    final currentAddress = context.select<ProjectListModel, String?>(
+    final currentAddress = context.select<ProjectListModel, String>(
       (m) => m.treeListModel.currentAddress,
     );
 

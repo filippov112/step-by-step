@@ -24,11 +24,28 @@ class CustomTreeTile<T> extends StatelessWidget {
     required this.customAltIcon,
   });
 
+  void _onTap() {
+    if (isSelectionMode) {
+      selectCallback?.call();
+    } else {
+      openCallback?.call();
+    }
+  }
+
+  void _onLongPress() {
+    if (!isSelectionMode) {
+      selectModeCallback?.call();
+      selectCallback?.call();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Color? containterColor = Theme.of(
-      context,
-    ).colorScheme.surfaceContainerHighest.withValues(alpha: record.isFolder ? 0.3 : 0.9);
+    final bRadius = const BorderRadius.all(Radius.circular(16));
+    Color? containterColor = Theme.of(context)
+        .colorScheme
+        .surfaceContainerHighest
+        .withValues(alpha: record.isFolder ? 0.3 : 0.9);
     Gradient? containterBorderColor = record.color == null
         ? null
         : LinearGradient(
@@ -38,29 +55,54 @@ class CustomTreeTile<T> extends StatelessWidget {
           );
     Color titleColor = Theme.of(context).colorScheme.onPrimary;
 
-    return isSelectionMode && record.isFolder && record.children == null ? SizedBox() : Padding(
+    // Иконка
+    final iconWidget = Padding(
+      padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
+      child: CustomImageIcon(
+        record.customIconData,
+        altIcon: customAltIcon,
+        color: record.color,
+        width: 40,
+        height: 40,
+      ),
+    );
+
+    // Чекбокс выделения записи
+    final selectCheckboxWidget = Checkbox(
+      value: isSelected,
+      onChanged: (_) => selectCallback?.call(),
+    );
+
+    // Название
+    final titleWidget = CustomText(
+      record.name ?? '',
+      padding: EdgeInsets.only(right: 8),
+      expanded: true,
+      overflow: TextOverflow.ellipsis,
+      weight: record.isFolder ? FontWeight.w500 : FontWeight.normal,
+      color: titleColor,
+    );
+
+    // Кнопка удаления
+    final deleteButtonWidget = IconButton(
+      icon: const Icon(Icons.delete_outline, size: 16),
+      onPressed: deleteCallback,
+      tooltip: 'Удалить',
+    );
+
+    // Итоговая карточка
+    final card = Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
         decoration: BoxDecoration(
           gradient: containterBorderColor,
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: bRadius,
           color: containterColor,
         ),
         child: InkWell(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          onTap: () {
-            if (isSelectionMode) {
-              selectCallback?.call();
-            } else {
-              openCallback?.call();
-            }
-          },
-          onLongPress: () {
-            if (!isSelectionMode) {
-              selectModeCallback?.call();
-              selectCallback?.call();
-            }
-          },
+          borderRadius: bRadius,
+          onTap: _onTap,
+          onLongPress: _onLongPress,
           child: Padding(
             padding: const EdgeInsets.all(0),
             child: Row(
@@ -68,45 +110,15 @@ class CustomTreeTile<T> extends StatelessWidget {
                 // Чекбокс для выделения или статуса
                 Padding(
                   padding: EdgeInsetsGeometry.only(right: 12),
-                  child: isSelectionMode
-                      ? Checkbox(
-                          value: isSelected,
-                          onChanged: (_) => selectCallback?.call(),
-                        )
-                      : Padding(
-                          padding: const EdgeInsetsGeometry.fromLTRB(
-                            12,
-                            12,
-                            0,
-                            12,
-                          ),
-                          child: CustomImageIcon(
-                            record.customIconData,
-                            altIcon: customAltIcon,
-                            color: record.color,
-                            width: 40,
-                            height: 40,
-                          ),
-                        ),
+                  child: isSelectionMode ? selectCheckboxWidget : iconWidget,
                 ),
 
                 // Информация
-                Expanded(
-                  child: CustomText(
-                    record.name ?? '',
-                    overflow: TextOverflow.ellipsis,
-                    weight: record.isFolder ? FontWeight.w500 : FontWeight.normal,
-                    color: titleColor,
-                  ),
-                ),
+                titleWidget,
 
                 if (isSelectionMode) ...{
                   SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 16),
-                    onPressed: deleteCallback,
-                    tooltip: 'Удалить',
-                  ),
+                  deleteButtonWidget,
                 },
               ],
             ),
@@ -114,5 +126,9 @@ class CustomTreeTile<T> extends StatelessWidget {
         ),
       ),
     );
+
+    return isSelectionMode && record.isFolder && record.children == null
+        ? SizedBox()
+        : card;
   }
 }

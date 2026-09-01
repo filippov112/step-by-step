@@ -1,9 +1,9 @@
+import 'package:chaos_control/screens/projects/detail/widgets/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/target.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/icon.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/title.dart';
+import 'package:chaos_control/screens/projects/detail/widgets/info_tab.dart';
+import 'package:chaos_control/screens/projects/detail/widgets/header.dart';
 import 'package:chaos_control/screens/projects/form/project_form_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
@@ -17,16 +17,25 @@ class ProjectDetailScreen extends StatefulWidget {
   State<ProjectDetailScreen> createState() => _ProjectDetailScreenState();
 }
 
-class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
+class _ProjectDetailScreenState extends State<ProjectDetailScreen>
+    with SingleTickerProviderStateMixin {
   late ProjectDetailModel model;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     model = context.read<ProjectDetailModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.setClass(widget.project);
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,20 +50,15 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
       title: 'Проект',
       editCallback: () => _edit(model, record),
       deleteCallback: () => _deleteThis(deleteThis),
-      children: [
-        // Иконка
-        const ProjectDetailIcon(),
-        const SizedBox(height: 12),
+      child: Column(
+        children: [
+          // Шапка
+          const ProjectDetailHeader(),
 
-        // Заголовок
-        const ProjectDetailTitle(),
-        const SizedBox(height: 16),
-
-
-        // Описание
-        const ProjectDetailTarget(),
-        const SizedBox(height: 12),
-      ],
+          // Панель вкладок
+          ProjectDetailTabs(controller: _tabController),
+        ],
+      ),
     );
   }
 

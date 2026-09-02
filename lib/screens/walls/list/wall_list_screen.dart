@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/form/task_form_screen.dart';
-import 'package:chaos_control/screens/walls/list/task_list_model.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/screens/walls/list/widgets/date.dart';
 import 'package:chaos_control/screens/walls/list/widgets/filter.dart';
 import 'package:chaos_control/screens/walls/list/widgets/tile.dart';
@@ -13,20 +13,20 @@ import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
 import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
-class TaskListScreen extends StatefulWidget {
-  const TaskListScreen({super.key});
+class WallListScreen extends StatefulWidget {
+  const WallListScreen({super.key});
 
   @override
-  State<TaskListScreen> createState() => _TaskListScreenState();
+  State<WallListScreen> createState() => _WallListScreenState();
 }
 
-class _TaskListScreenState extends State<TaskListScreen> {
+class _WallListScreenState extends State<WallListScreen> {
   final TextEditingController _searchController = TextEditingController();
-  late TaskListModel model;
+  late WallListModel model;
   @override
   void initState() {
     super.initState();
-    model = context.read<TaskListModel>();
+    model = context.read<WallListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.loadTasks();
     });
@@ -40,7 +40,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TaskListModel>(
+    return Consumer<WallListModel>(
       builder: (context, model, child) {
         return Scaffold(
           endDrawer: TaskFilters(),
@@ -51,7 +51,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               isSelectionMode:model.isSelectionMode , 
               selectAll:model.toggleSelectAll , 
               selectedItemsCount:model.selectedIds.length , 
-              allItemsCount:model.tasks.length, 
+              allItemsCount:model.filteredWalls.length, 
               deleteSelected:model.deleteSelectedTasks, 
               clearSelection:model.clearSelection
             ),
@@ -92,11 +92,11 @@ class TaskListBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = context.select<TaskListModel, List<Wall>>(
-      (model) => model.tasks,
+    final tasks = context.select<WallListModel, List<Wall>>(
+      (model) => model.filteredWalls,
     );
-    final selectDate = context.read<TaskListModel>().selectDate;
-    final selectedDate = context.select<TaskListModel, DateTime?>(
+    final selectDate = context.read<WallListModel>().selectDate;
+    final selectedDate = context.select<WallListModel, DateTime?>(
       (model) => model.selectedDate,
     );
 
@@ -115,8 +115,8 @@ class TaskListBody extends StatelessWidget {
                   itemCount: tasks.length,
                   itemBuilder: (context, index) {
                     final task = tasks[index];
-                    return TaskCard(
-                      task: task,
+                    return WallListTile(
+                      wall: task,
                     );
                   },
                 ),

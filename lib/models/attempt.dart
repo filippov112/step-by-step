@@ -8,48 +8,61 @@ import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
 
-// Награда
-class Reward {
+// Попытка
+class Attempt {
   // ------------ Схема ------------
-  static const tn = "rewards";
+  static const tn = "attempts";
   
   static const cId = "_id";
-  static const cTaskId = "_task_id";
+  static const cWallId = "_wall_id";
+  static const cSuccess = "_success";
+  static const cDescription = "_description";
   static const cDate = "_date";
   static const cEfforts = "_efforts";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
-          $cTaskId TEXT,
+          $cWallId TEXT,
+          $cSuccess INTEGER,
+          $cDescription TEXT,
           $cDate INTEGER,
           $cEfforts INTEGER,
-          FOREIGN KEY ($cTaskId) REFERENCES ${Wall.tn}(${Wall.cId}) ON DELETE CASCADE
+          FOREIGN KEY ($cWallId) REFERENCES ${Wall.tn}(${Wall.cId}) ON DELETE CASCADE
         );
         ''';
 
   // ------------ Поля ------------
   String id = "";
-  String? taskId;
-  DateTime? date;
-  int efforts = 0;
+  String? wallId; // Стена
+  int success = 0; // Процент успеха
+  String description = ""; // Описание
+  DateTime? date; // Дата
+  int efforts = 0; // Кол-во усилий
 
   // ------------ Конструкторы ------------
-  Reward({
+
+  Attempt({
     required this.id,
-    this.taskId,
-    this.date,
+    required this.wallId,
+    required this.success,
+    required this.description,
+    required this.date,
     required this.efforts,
   });
 
-  factory Reward.create({
-    String? taskId,
+  factory Attempt.create({
+    String? wallId,
+    int success = 0,
+    String? description,
     DateTime? date,
     int efforts = 0,
   }) {
     final guid = const Uuid().v4();
-    return Reward(
+    return Attempt(
       id: guid,
-      taskId: taskId,
+      wallId: wallId,
+      success: success,
+      description: description ?? '',
       date: date,
       efforts: efforts,
     );
@@ -59,26 +72,32 @@ class Reward {
   Map<String, Object?> toMap() {
     return {
       cId: id,
-      cTaskId: taskId,
+      cWallId: wallId,
+      cSuccess: success,
+      cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cEfforts: efforts,
     };
   }
 
-  Reward.fromMap(Map map) {
+  Attempt.fromMap(Map map) {
     id = map[cId];
-    taskId = map[cTaskId];
+    wallId = map[cWallId];
+    success = map[cSuccess];
+    description = map[cDescription];
     date = DateTool.joinDateTime(date: map[cDate]);
     efforts = map[cEfforts] ?? 0;
   }
 }
 
-extension RewardCopyWith on Reward {
-  Reward copyWith({
-    String? taskId,
+extension RewardCopyWith on Attempt {
+  Attempt copyWith({
+    String? wallId,
   }) {
-    return Reward(
-      taskId: taskId ?? this.taskId,
+    return Attempt(
+      wallId: wallId ?? this.wallId,
+      success: success,
+      description: description,
       id: id,
       date: date,
       efforts: efforts,
@@ -86,39 +105,39 @@ extension RewardCopyWith on Reward {
   }
 }
 
-// Базовый репозиторий наград
-class RewardRepository {
+// Базовый репозиторий
+class AttemptRepository {
   Database db = DB.db!;
   final classRepo = ProjectRepository();
   final userRepo = ProfileRepository();
   
-  Future<List<Reward>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(Reward.tn);
-    return maps.map((m) => Reward.fromMap(m)).toList();
+  Future<List<Attempt>> getAll() async {
+    List<Map<String, Object?>> maps = await db.query(Attempt.tn);
+    return maps.map((m) => Attempt.fromMap(m)).toList();
   }
 
-  Future<Reward?> get(String id) async {
-    List<Map> maps = await db.query(Reward.tn, where: '${Reward.cId} = ?', whereArgs: [id]);
+  Future<Attempt?> get(String id) async {
+    List<Map> maps = await db.query(Attempt.tn, where: '${Attempt.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
-      return Reward.fromMap(maps.first as Map<String, Object?>);
+      return Attempt.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
   // ----------- Изменения ----------------
 
-  Future<Reward> insert(Reward rw) async {
+  Future<Attempt> insert(Attempt rw) async {
     await _updateProfile(TransactionType.add, rw);
-    await db.insert(Reward.tn, rw.toMap());
+    await db.insert(Attempt.tn, rw.toMap());
     return rw;
   }
 
-  Future<List<int>> insertBatch(Iterable<Reward> models) async {
+  Future<List<int>> insertBatch(Iterable<Attempt> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (Reward m in models) {
+      for (Attempt m in models) {
         await _updateProfile(TransactionType.add, m);
-        res.add(await txn.insert(Reward.tn, m.toMap()));
+        res.add(await txn.insert(Attempt.tn, m.toMap()));
       }
     });
     return res;
@@ -128,19 +147,19 @@ class RewardRepository {
     var rw = await get(id);
     if (rw == null) return;
     await _updateProfile(TransactionType.remove, rw);
-    await db.delete(Reward.tn, where: '${Reward.cId} = ?', whereArgs: [id]);
+    await db.delete(Attempt.tn, where: '${Attempt.cId} = ?', whereArgs: [id]);
   }
 
-  Future update(Reward rw) async {
+  Future update(Attempt rw) async {
     await _updateProfile(TransactionType.update, rw);
-    return await db.update(Reward.tn, rw.toMap(),
-        where: '${Reward.cId} = ?', whereArgs: [rw.id]);
+    return await db.update(Attempt.tn, rw.toMap(),
+        where: '${Attempt.cId} = ?', whereArgs: [rw.id]);
   }
 
   // ---------------------------------------
 
   // Рассчитать дельту
-  Future<int> _getDelta(TransactionType type, Reward rw) async {
+  Future<int> _getDelta(TransactionType type, Attempt rw) async {
     int result = 0;
     switch (type) {
       case TransactionType.update: {
@@ -158,7 +177,7 @@ class RewardRepository {
   }
 
   // Добавить дельту к пользователю
-  Future _updateProfile(TransactionType type, Reward rw) async {
+  Future _updateProfile(TransactionType type, Attempt rw) async {
     var deltaEfforts = await _getDelta(type, rw);
     var user = await userRepo.get();
     user?.efforts += deltaEfforts;

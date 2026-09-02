@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/wall_reward.dart';
+import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/screens/walls/form/widgets/reward_tile.dart';
 import 'package:chaos_control/widgets/common/empty_list_screen.dart';
 
 // Форма поиска и выбора наград за задачи в виде опыта и времени
 class RewardDialog extends StatefulWidget {
   final String taskId;
-  final List<Reward> selectedRewards;
-  final Function(List<Reward>) onConfirm;
+  final List<Attempt> selectedRewards;
+  final Function(List<Attempt>) onConfirm;
 
   const RewardDialog({
     super.key,
@@ -21,8 +21,8 @@ class RewardDialog extends StatefulWidget {
 }
 
 class _RewardDialogState extends State<RewardDialog> {
-  List<Reward> _selected = [];
-  Reward? currentReward;
+  List<Attempt> _selected = [];
+  Attempt? currentReward;
   int? currentRowIndexRewards;
   
   var expController = TextEditingController();
@@ -39,7 +39,7 @@ class _RewardDialogState extends State<RewardDialog> {
     super.dispose();
   }
 
-  void _selectReward(Reward reward, int index) {
+  void _selectReward(Attempt reward, int index) {
     setState(() {
       currentRowIndexRewards = index;
       currentReward = reward;
@@ -54,8 +54,8 @@ class _RewardDialogState extends State<RewardDialog> {
     var exp = expController.text.isEmpty ? 0 : int.parse(expController.text);
 
     setState(() {
-      currentReward = Reward.create(
-        taskId: widget.taskId, 
+      currentReward = Attempt.create(
+        wallId: widget.taskId, 
         efforts: exp, 
       );
       _selected.add(currentReward!);
@@ -139,8 +139,8 @@ class _RewardDialogState extends State<RewardDialog> {
 
 class SelectedRewardsPanel extends StatelessWidget {
   final int? currentRowIndex;
-  final List<Reward> rewards;
-  final Function(Reward, int) clickCallback;
+  final List<Attempt> rewards;
+  final Function(Attempt, int) clickCallback;
 
   const SelectedRewardsPanel({
     super.key,
@@ -164,7 +164,7 @@ class SelectedRewardsPanel extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8),
         itemCount: rewards.length,
         itemBuilder: (context, index) {
-          Reward reward = rewards[index];
+          Attempt reward = rewards[index];
           
           return RewardTile(
             isClass: true,

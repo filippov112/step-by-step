@@ -8,7 +8,7 @@ class WallDetailDesc extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var description = context.select<WallDetailModel, String>(
-      (model) => model.wall.description,
+      (model) => model.wall.target,
     );
 
     return Text(description, style: Theme.of(context).textTheme.bodyLarge);

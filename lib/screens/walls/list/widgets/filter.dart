@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
-import 'package:chaos_control/models/enums/wall_priority.dart';
-import 'package:chaos_control/screens/walls/list/task_list_model.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
 import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
@@ -16,29 +15,26 @@ class TaskFilters extends StatefulWidget {
 class _TaskFiltersState extends State<TaskFilters> {
   @override
   Widget build(BuildContext context) {
-    final model = context.read<TaskListModel>();
-    var hasActiveFilters = context.select<TaskListModel, bool>(
+    final model = context.read<WallListModel>();
+    var hasActiveFilters = context.select<WallListModel, bool>(
       (model) => model.hasActiveFilters,
     );
-    var filterDifficulty = context.select<TaskListModel, Set<WallDiff>>(
+    var filterDifficulty = context.select<WallListModel, Set<WallDiff>>(
       (model) => model.filterDifficulty,
     );
-    var filterDone = context.select<TaskListModel, bool>(
+    var filterDone = context.select<WallListModel, bool>(
       (model) => model.filterDone,
     );
-    var filterUndone = context.select<TaskListModel, bool>(
+    var filterUndone = context.select<WallListModel, bool>(
       (model) => model.filterUndone,
     );
-    var filterPriority = context.select<TaskListModel, Set<WallPriority>>(
-      (model) => model.filterPriority,
-    );
-    var sortField = context.select<TaskListModel, SortTaskField>(
+    var sortField = context.select<WallListModel, SortTaskField>(
       (model) => model.sortField,
     );
-    var sortAscending = context.select<TaskListModel, bool>(
+    var sortAscending = context.select<WallListModel, bool>(
       (model) => model.sortAscending,
     );
-    final currentDateFilter = context.select<TaskListModel, TaskDateFilterType>(
+    final currentDateFilter = context.select<WallListModel, WallDateFilterType>(
       (model) => model.dateFilter,
     );
 
@@ -49,45 +45,23 @@ class _TaskFiltersState extends State<TaskFilters> {
       children:Column(
         children: [
           
-        DropdownButtonFormField<TaskDateFilterType>(
+        DropdownButtonFormField<WallDateFilterType>(
             items: [
               const DropdownMenuItem(
-                value: TaskDateFilterType.date,
+                value: WallDateFilterType.date,
                 child: Text('По датам'),
               ),
               const DropdownMenuItem(
-                value: TaskDateFilterType.all,
+                value: WallDateFilterType.all,
                 child: Text('Все задачи'),
               ),
             ], 
             initialValue: currentDateFilter, 
-            onChanged: (v) => model.setDateFilter(v ?? TaskDateFilterType.date),
+            onChanged: (v) => model.setDateFilter(v ?? WallDateFilterType.date),
           ),
       ],), 
     );
 
-    // Приоритет
-    var priorityFilter = FilterSection(
-      title: 'Приоритет (${filterPriority.length})',
-      icon: Icons.priority_high,
-      children: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            ...WallPriority.values.map(
-              (priority) => Padding(
-                padding: EdgeInsetsGeometry.only(right: 8),
-                child: FilterChip(
-                  label: Text(priority.displayName),
-                  selected: filterPriority.contains(priority),
-                  onSelected: (_) => model.setPriorityFilter(priority),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
 
     // Сложность
     var difficultyFilter = FilterSection(
@@ -163,15 +137,6 @@ class _TaskFiltersState extends State<TaskFilters> {
             sortField,
             model.setSortField,
             sortAscending,
-            SortTaskField.priority,
-            'По приоритету',
-          ),
-          const SizedBox(height: 8),
-          _buildSortButton(
-            context,
-            sortField,
-            model.setSortField,
-            sortAscending,
             SortTaskField.difficulty,
             'По сложности',
           ),
@@ -187,7 +152,6 @@ class _TaskFiltersState extends State<TaskFilters> {
       ),
       filters: [
         dateFilter,
-        priorityFilter,
         difficultyFilter,
         statusFilter,
         sorting,

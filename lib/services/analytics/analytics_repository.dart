@@ -1,5 +1,5 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/wall_reward.dart';
+import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/services/analytics/dto_exp_time.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,12 +20,12 @@ class AnalyticsRepository {
     final args = <dynamic>[];
 
     if (startDate != null) {
-      conditions.add('${Reward.cDate} >= ?');
+      conditions.add('${Attempt.cDate} >= ?');
       args.add(startDate);
     }
 
     if (endDate != null) {
-      conditions.add('${Reward.cDate} <= ?');
+      conditions.add('${Attempt.cDate} <= ?');
       args.add(endDate);
     }
 
@@ -36,12 +36,12 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT 
-        ${Reward.cDate},
-        COALESCE(SUM(${Reward.cEfforts}), 0) AS ${DtoExpTime.cExp}
-      FROM ${Reward.tn}
+        ${Attempt.cDate},
+        COALESCE(SUM(${Attempt.cEfforts}), 0) AS ${DtoExpTime.cExp}
+      FROM ${Attempt.tn}
       $whereClause
-      GROUP BY ${Reward.cDate}
-      ORDER BY ${Reward.cDate} DESC
+      GROUP BY ${Attempt.cDate}
+      ORDER BY ${Attempt.cDate} DESC
     ''';
 
     final result = await db.rawQuery(query, args);

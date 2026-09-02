@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/wall_reward.dart';
+import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/screens/walls/form/task_form_model.dart';
 import 'package:chaos_control/screens/walls/form/widgets/reward_dialog.dart';
 import 'package:chaos_control/screens/walls/form/widgets/reward_tile.dart';
@@ -13,7 +13,7 @@ class TaskFormRewards extends StatelessWidget {
     final taskId = context.select<TaskFormModel, String>(
       (model) => model.task.id,
     );
-    final selectedRewards = context.select<TaskFormModel, List<Reward>>(
+    final selectedRewards = context.select<TaskFormModel, List<Attempt>>(
       (model) => model.selectedRewards,
     );
     final setSelectedRewards = context.read<TaskFormModel>().setSelectedRewards;

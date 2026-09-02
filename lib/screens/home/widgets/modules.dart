@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/landmarks/list/achievement_list_screen.dart';
 import 'package:chaos_control/screens/projects/list/project_list_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_screen.dart';
-import 'package:chaos_control/screens/walls/list/task_list_screen.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_screen.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
@@ -32,7 +32,7 @@ extension AppModuleExt on AppModule {
       case AppModule.profile:
         return ProfileDetailScreen();
       case AppModule.walls:
-        return TaskListScreen();
+        return WallListScreen();
       case AppModule.landmarks:
         return AchievementListScreen();
       case AppModule.projects:

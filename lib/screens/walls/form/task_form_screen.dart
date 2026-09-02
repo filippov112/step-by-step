@@ -3,7 +3,6 @@ import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/form/task_form_model.dart';
 import 'package:chaos_control/screens/walls/form/widgets/rewards.dart';
 import 'package:chaos_control/screens/walls/form/widgets/difficulty.dart';
-import 'package:chaos_control/screens/walls/form/widgets/priority.dart';
 import 'package:chaos_control/screens/walls/form/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
@@ -31,7 +30,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     super.initState();
     model = context.read<TaskFormModel>();
     titleController = TextEditingController(text: widget.task?.title);
-    descController = TextEditingController(text: widget.task?.description);
+    descController = TextEditingController(text: widget.task?.target);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.setTask(widget.task, widget.parent);
     });
@@ -78,10 +77,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
 
         // Статус
         const TaskFormStatus(),
-        const SizedBox(height: 12),
-
-        // Приоритет
-        const TaskFormPriority(),
         const SizedBox(height: 12),
 
         // Сложность

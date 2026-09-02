@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/walls/list/task_list_model.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/tools/format_date.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +16,7 @@ class TaskListDate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFilter = context.select<TaskListModel,TaskDateFilterType>((model) => model.dateFilter);
+    final dateFilter = context.select<WallListModel,WallDateFilterType>((model) => model.dateFilter);
     final current = selectedDate ?? DateTime.now();
     final datePre1 = current.subtract(const Duration(days: 1));
     final datePre2 = current.subtract(const Duration(days: 2));
@@ -24,7 +24,7 @@ class TaskListDate extends StatelessWidget {
     final datePost1 = current.add(const Duration(days: 1));
     final datePost2 = current.add(const Duration(days: 2));
 
-    return dateFilter == TaskDateFilterType.date ?
+    return dateFilter == WallDateFilterType.date ?
     Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

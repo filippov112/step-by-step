@@ -1,24 +1,23 @@
 import 'package:chaos_control/models/enums/wall_status.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
-import 'package:chaos_control/models/enums/wall_priority.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_screen.dart';
-import 'package:chaos_control/screens/walls/list/task_list_model.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
-class TaskCard extends StatelessWidget {
-  final Wall task;
+class WallListTile extends StatelessWidget {
+  final Wall wall;
 
-  const TaskCard({super.key, required this.task});
+  const WallListTile({super.key, required this.wall});
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<TaskListModel>();
-    final isSelected = model.selectedIds.contains(task.id);
-    Color? containterColor = task.status == WallStatus.destroyed
+    final model = context.read<WallListModel>();
+    final isSelected = model.selectedIds.contains(wall.id);
+    Color? containterColor = wall.status == WallStatus.destroyed
         ? Theme.of(
             context,
           ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
@@ -27,21 +26,21 @@ class TaskCard extends StatelessWidget {
           ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
     Gradient containterBorderColor = LinearGradient(
       transform: GradientRotation(0.7),
-      colors: [task.priority.color.withValues(alpha: 0.5), containterColor],
+      colors: [wall.difficulty.color.withValues(alpha: 0.5), containterColor],
       stops: [0, 0.2],
     );
 
-    Color difficultyForeColor = task.status == WallStatus.destroyed
-        ? task.difficulty.color.withValues(alpha: 0.2)
-        : task.difficulty.color;
-    Color difficultyBackColor = task.status == WallStatus.destroyed
-        ? task.difficulty.color.withValues(alpha: 0.06)
-        : task.difficulty.color.withValues(alpha: 0.2);
+    Color difficultyForeColor = wall.status == WallStatus.destroyed
+        ? wall.difficulty.color.withValues(alpha: 0.2)
+        : wall.difficulty.color;
+    Color difficultyBackColor = wall.status == WallStatus.destroyed
+        ? wall.difficulty.color.withValues(alpha: 0.06)
+        : wall.difficulty.color.withValues(alpha: 0.2);
     Color? checkColor = Theme.of(context).focusColor.withAlpha(100);
-    Color checkFillColor = task.status == WallStatus.destroyed
+    Color checkFillColor = wall.status == WallStatus.destroyed
         ? Theme.of(context).focusColor.withValues(alpha: 0.3)
         : Theme.of(context).focusColor;
-    Color titleColor = task.status == WallStatus.destroyed
+    Color titleColor = wall.status == WallStatus.destroyed
         ? Theme.of(context).focusColor.withAlpha(100)
         : Theme.of(context).focusColor;
 
@@ -57,15 +56,15 @@ class TaskCard extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(16)),
           onTap: () {
             if (model.isSelectionMode) {
-              model.toggleSelectTask(task.id);
+              model.toggleSelectTask(wall.id);
             } else {
-              _openDetails(context, model, task);
+              _openDetails(context, model, wall);
             }
           },
           onLongPress: () {
             if (!model.isSelectionMode) {
               model.toggleSelectionMode();
-              model.toggleSelectTask(task.id);
+              model.toggleSelectTask(wall.id);
             }
           },
           child: Padding(
@@ -78,13 +77,13 @@ class TaskCard extends StatelessWidget {
                   child: model.isSelectionMode
                       ? Checkbox(
                           value: isSelected,
-                          onChanged: (_) => model.toggleSelectTask(task.id),
+                          onChanged: (_) => model.toggleSelectTask(wall.id),
                         )
                       : Transform.scale(
                           scale: 2,
                           child: Checkbox(
-                            value: task.status == WallStatus.destroyed,
-                            onChanged: (_) => model.toggleTaskDone(task.id),
+                            value: wall.status == WallStatus.destroyed,
+                            onChanged: (_) => model.toggleTaskDone(wall.id),
                             fillColor: WidgetStateProperty.resolveWith((
                               states,
                             ) {
@@ -101,7 +100,7 @@ class TaskCard extends StatelessWidget {
                 // Информация о задаче
                 Expanded(
                   child: Text(
-                    task.title,
+                    wall.title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
@@ -116,7 +115,7 @@ class TaskCard extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.delete_outline, size: 16),
                     onPressed: () =>
-                        _deleteTask(context, task, model.deleteTask),
+                        _deleteTask(context, wall, model.deleteTask),
                     tooltip: 'Удалить',
                   ),
                 },
@@ -150,7 +149,7 @@ class TaskCard extends StatelessWidget {
 
   Future _openDetails(
     BuildContext context,
-    TaskListModel model,
+    WallListModel model,
     Wall task,
   ) async {
     await Navigator.push(

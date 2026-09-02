@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:chaos_control/models/achievement.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/models/wall_reward.dart';
+import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:path/path.dart';
@@ -35,7 +35,7 @@ class DB {
       await db.execute(Profile.init);
       await db.execute(Wall.init);
       await db.execute(Achievement.init);
-      await db.execute(Reward.init);        // зависит от Task, Skill
+      await db.execute(Attempt.init);        // зависит от Task, Skill
     });
   }
 

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 
 class WallDetailModel extends ChangeNotifier {
-  final TaskRepository _taskRepo = TaskRepository();
+  final WallRepository _taskRepo = WallRepository();
 
-  Wall wall = Wall.create(title: '', description: '');
+  Wall wall = Wall.create(title: '', target: '');
   
   Map<String,int> childTasksCount = {};
   Map<String,int> childDoneTasksCount = {};

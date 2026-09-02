@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/wall_reward.dart';
+import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/tools/datetime.dart';
 
 /// Модель для агрегированных данных по дате
@@ -17,7 +17,7 @@ class DtoExpTime {
 
   factory DtoExpTime.fromMap(Map<String, dynamic> map) {
     return DtoExpTime(
-      date: map[Reward.cDate] as int,
+      date: map[Attempt.cDate] as int,
       totalExperience: map[cExp] as int? ?? 0,
     );
   }

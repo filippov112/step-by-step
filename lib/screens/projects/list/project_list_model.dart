@@ -17,6 +17,7 @@ class ProjectListModel extends ChangeNotifier {
   
   // Состояние фильтрации
   String searchQuery = '';
+  bool visibilitySearch = false;
   bool showHiddenFilter = false;
   bool groupFilter = true;
 
@@ -69,7 +70,10 @@ class ProjectListModel extends ChangeNotifier {
   }
   
   // Фильтры
-
+  void setVisibilitySearch(bool value) {
+    visibilitySearch = value;
+    notifyListeners();
+  }
   Future setHiddenFilter(bool value) async {
     showHiddenFilter = value;
     _applyFiltersAndSort();

@@ -5,7 +5,9 @@ import 'package:chaos_control/widgets/common/custom_text.dart';
 // AppBar для экранов-списков
 class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
   final TabBar? tabs;
-  final PreferredSizeWidget? searchWidget;
+  final Widget? searchWidget;
+  final bool? visibilitySearch;
+  final Function(bool)? setVisibilitySearch;
   final SelectionParams? selectionParams;
   final List<Widget>? actions;
   final String title;
@@ -14,6 +16,8 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.searchWidget,
+    this.visibilitySearch,
+    this.setVisibilitySearch,
     this.selectionParams,
     this.actions,
     this.tabs,
@@ -34,6 +38,12 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
             'Выбрано: ${selectionParams!.selectedItemsCount}',
             size: 18,
           );
+
+    final searchField =
+        (visibilitySearch != null && visibilitySearch == true) ||
+            visibilitySearch == null
+        ? searchWidget
+        : null;
 
     final Iterable<Widget>? selectionActions = selectionParams == null
         ? null
@@ -72,25 +82,40 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: kToolbarHeight + (searchWidget?.preferredSize.height ?? 0),
+            height: kToolbarHeight,
             child: AppBar(
-              title: titleWidget,
+              title: searchField ?? titleWidget,
               actions: [
                 ...?selectionActions,
                 ...?actions,
-                // Фильтры
-                Builder(
-                  builder: (context) => IconButton(
-                    icon: const Icon(Icons.filter_list),
-                    tooltip: 'Фильтры',
-                    onPressed: Scaffold.of(context).openEndDrawer,
+
+                // Поиск
+                if (selectionParams?.isSelectionMode != true &&
+                  searchWidget != null &&
+                  visibilitySearch != null &&
+                  setVisibilitySearch != null) ...{
+                  
+                  IconButton(
+                    color: visibilitySearch == true
+                        ? Theme.of(context).disabledColor
+                        : Theme.of(context).focusColor,
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Поиск',
+                    onPressed: () => setVisibilitySearch!(!visibilitySearch!),
                   ),
-                ),
+                },
+                // Фильтры
+                if (selectionParams?.isSelectionMode != true)
+                  Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      tooltip: 'Фильтры',
+                      onPressed: Scaffold.of(context).openEndDrawer,
+                    ),
+                  ),
               ],
-              bottom: searchWidget,
             ),
           ),
-
           if (tabs != null) Container(child: tabs),
         ],
       ),
@@ -101,10 +126,7 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize {
     final double appBarHeight = kToolbarHeight;
     final double tabBarHeight = tabs == null ? 0 : tabs!.preferredSize.height;
-    final double searchHeight = searchWidget == null
-        ? 0
-        : searchWidget!.preferredSize.height;
-    return Size.fromHeight(appBarHeight + tabBarHeight + searchHeight);
+    return Size.fromHeight(appBarHeight + tabBarHeight);
   }
 }
 

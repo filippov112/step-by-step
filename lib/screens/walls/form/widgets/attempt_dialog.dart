@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/attempt.dart';
-import 'package:chaos_control/screens/walls/form/widgets/reward_tile.dart';
+import 'package:chaos_control/screens/walls/form/widgets/attempt_tile.dart';
 import 'package:chaos_control/widgets/common/empty_list_screen.dart';
 
 // Форма поиска и выбора наград за задачи в виде опыта и времени
-class RewardDialog extends StatefulWidget {
+class AttemptDialog extends StatefulWidget {
   final String taskId;
   final List<Attempt> selectedRewards;
   final Function(List<Attempt>) onConfirm;
 
-  const RewardDialog({
+  const AttemptDialog({
     super.key,
     required this.taskId,
     required this.selectedRewards,
@@ -17,10 +17,10 @@ class RewardDialog extends StatefulWidget {
   });
 
   @override
-  State<RewardDialog> createState() => _RewardDialogState();
+  State<AttemptDialog> createState() => _AttemptDialogState();
 }
 
-class _RewardDialogState extends State<RewardDialog> {
+class _AttemptDialogState extends State<AttemptDialog> {
   List<Attempt> _selected = [];
   Attempt? currentReward;
   int? currentRowIndexRewards;
@@ -166,7 +166,7 @@ class SelectedRewardsPanel extends StatelessWidget {
         itemBuilder: (context, index) {
           Attempt reward = rewards[index];
           
-          return RewardTile(
+          return AttemptTile(
             isClass: true,
             title: '', 
             exp: reward.efforts, 

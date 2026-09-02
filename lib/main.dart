@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
@@ -9,7 +10,7 @@ import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/home_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_model.dart';
-import 'package:chaos_control/screens/walls/form/task_form_model.dart';
+import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
 import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
@@ -29,8 +30,8 @@ void main() async {
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
 
         // Tasks
-        ChangeNotifierProvider<TaskFormModel>(create: (_) { return TaskFormModel(); }),
-        // ChangeNotifierProvider<TaskDetailModel>(create: (_) { return TaskDetailModel(); }),
+        ChangeNotifierProvider<WallFormModel>(create: (_) { return WallFormModel(); }),
+        ChangeNotifierProvider<WallDetailModel>(create: (_) { return WallDetailModel(); }),
         ChangeNotifierProvider<WallListModel>(create: (_) { return WallListModel(); }),
         
         // User

@@ -1,32 +1,32 @@
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/widgets/filters/sort_button.dart';
 import 'package:chaos_control/widgets/form/checkbox.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
 import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
 
-class ProjectListFilters extends StatefulWidget {
-  const ProjectListFilters({super.key});
+class WallListFilters extends StatefulWidget {
+  const WallListFilters({super.key});
 
   @override
-  State<ProjectListFilters> createState() => _ProjectListFiltersState();
+  State<WallListFilters> createState() => _WallListFiltersState();
 }
 
-class _ProjectListFiltersState extends State<ProjectListFilters> {
+class _WallListFiltersState extends State<WallListFilters> {
 
   @override
   Widget build(BuildContext context) {
 
-    final model = context.read<ProjectListModel>();
-    final hasActiveFilters = context.select<ProjectListModel,bool>((model) => model.hasActiveFilters);
+    final model = context.read<WallListModel>();
+    final hasActiveFilters = context.select<WallListModel,bool>((model) => model.hasActiveFilters);
     
-    final hiddenFilterValue = context.select<ProjectListModel,bool>((m) => m.showHiddenFilter);
-    final groupFilterValue = context.select<ProjectListModel,bool>((m) => m.groupFilter);
+    final favoriteFilterValue = context.select<WallListModel,bool>((m) => m.favoriteFilter);
+    final groupFilterValue = context.select<WallListModel,bool>((m) => m.groupFilter);
     
-    final sortField = context.select<ProjectListModel,SortProjectField>((model) => model.sortField);
-    final sortAscending = context.select<ProjectListModel,bool>((model) => model.sortAscending);
+    final sortField = context.select<WallListModel,SortWallField>((model) => model.sortField);
+    final sortAscending = context.select<WallListModel,bool>((model) => model.sortAscending);
 
     final groupFilter = FilterSection(
       title: 'Группировка',
@@ -38,13 +38,13 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
       )
     );
     
-    final hiddenFilter = FilterSection(
-      title: 'Скрытые проекты',
-      icon: Icons.remove_red_eye,
+    final favoriteFilter = FilterSection(
+      title: 'Избранное',
+      icon: Icons.center_focus_weak_rounded,
       children: CustomCheckbox(
-        initValue: hiddenFilterValue, 
-        setValue: model.setHiddenFilter, 
-        label: 'Отображать скрытые'
+        initValue: favoriteFilterValue, 
+        setValue: model.setFavoriteFilter, 
+        label: 'Только избранные'
       )
     );
 
@@ -54,11 +54,11 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
       icon: Icons.sort,
       children: Column(
           children: [
-            SortButton<SortProjectField>(
+            SortButton<SortWallField>(
               sortField: sortField,
               setSortField: model.setSortField,
               sortAscending: sortAscending,
-              field: SortProjectField.title,
+              field: SortWallField.title,
               label: 'По названию',
             ),
           ],
@@ -73,9 +73,12 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
       ),
       filters: [
         groupFilter,
-        hiddenFilter,
+        favoriteFilter,
         sorting
       ],
     );
   }
 }
+
+
+

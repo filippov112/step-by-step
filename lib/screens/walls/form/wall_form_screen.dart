@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/screens/walls/form/task_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/rewards.dart';
+import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
+import 'package:chaos_control/screens/walls/form/widgets/attempts.dart';
 import 'package:chaos_control/screens/walls/form/widgets/difficulty.dart';
 import 'package:chaos_control/screens/walls/form/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
@@ -9,30 +9,30 @@ import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class TaskFormScreen extends StatefulWidget {
-  final Wall? task;
+class WallFormScreen extends StatefulWidget {
+  final Wall? wall;
   final Wall? parent;
 
-  const TaskFormScreen({super.key, this.task, this.parent});
+  const WallFormScreen({super.key, this.wall, this.parent});
 
   @override
-  State<TaskFormScreen> createState() => _TaskFormScreenState();
+  State<WallFormScreen> createState() => _WallFormScreenState();
 }
 
-class _TaskFormScreenState extends State<TaskFormScreen> {
+class _WallFormScreenState extends State<WallFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  late TaskFormModel model;
+  late WallFormModel model;
   late TextEditingController titleController;
   late TextEditingController descController;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<TaskFormModel>();
-    titleController = TextEditingController(text: widget.task?.title);
-    descController = TextEditingController(text: widget.task?.target);
+    model = context.read<WallFormModel>();
+    titleController = TextEditingController(text: widget.wall?.title);
+    descController = TextEditingController(text: widget.wall?.target);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setTask(widget.task, widget.parent);
+      model.setTask(widget.wall, widget.parent);
     });
   }
 
@@ -51,7 +51,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     return EntityScreen(
       title: 'Задача',
       formKey: _formKey,
-      deleteCallback: widget.task == null
+      deleteCallback: widget.wall == null
           ? null
           : () => _deleteTask(deleteTask),
       saveCallback: () => _saveTask(saveTask),
@@ -76,7 +76,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         const SizedBox(height: 12),
 
         // Статус
-        const TaskFormStatus(),
+        const WallFormStatus(),
         const SizedBox(height: 12),
 
         // Сложность
@@ -84,7 +84,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         const SizedBox(height: 12),
 
         // Награды
-        const TaskFormRewards(),
+        const WallFormAttempts(),
       ],
     );
   }

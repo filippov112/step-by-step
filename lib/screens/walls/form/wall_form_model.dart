@@ -5,10 +5,10 @@ import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/models/attempt.dart';
 
-class TaskFormModel extends ChangeNotifier {
+class WallFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  Wall task = Wall.create(title: '', target: '');
+  Wall wall = Wall.create(title: '', target: '');
   String? parentId;
   final _rewardRepo = AttemptRepository();
   final _taskRepo = WallRepository();
@@ -29,11 +29,11 @@ class TaskFormModel extends ChangeNotifier {
   void setTask(Wall? t, Wall? parent) {
     isEditing = t != null;
     parentId = parent?.id;
-    task = t ?? Wall.create(title: '', target: '');
-    selectedDifficulty = task.difficulty;
-    selectedTitle = task.title;
-    selectedDescription = task.target;
-    selectedStatus = task.status;
+    wall = t ?? Wall.create(title: '', target: '');
+    selectedDifficulty = wall.difficulty;
+    selectedTitle = wall.title;
+    selectedDescription = wall.target;
+    selectedStatus = wall.status;
     notifyListeners();
     loadData();
   }
@@ -43,7 +43,7 @@ class TaskFormModel extends ChangeNotifier {
   }
 
   Future _loadRewards() async {
-    _rewards = (await _rewardRepo.getAll()).where((tt) => tt.wallId == task.id).toList();
+    _rewards = (await _rewardRepo.getAll()).where((tt) => tt.wallId == wall.id).toList();
     selectedRewards = _rewards.where((e) => true).toList();
     notifyListeners();
   }
@@ -78,7 +78,7 @@ class TaskFormModel extends ChangeNotifier {
   Future deleteTask() async {
     if (isEditing) {
       try {
-        await _taskRepo.delete(task.id);
+        await _taskRepo.delete(wall.id);
       } catch (e) {
         // print(e);
       }
@@ -86,15 +86,15 @@ class TaskFormModel extends ChangeNotifier {
   }
 
   Future<bool> saveTask() async {
-    task.title = selectedTitle;
-    task.target = selectedDescription;
-    task.status = selectedStatus;
-    task.difficulty = selectedDifficulty;
+    wall.title = selectedTitle;
+    wall.target = selectedDescription;
+    wall.status = selectedStatus;
+    wall.difficulty = selectedDifficulty;
     try {
       if (isEditing) {
-        await _taskRepo.update(task);
+        await _taskRepo.update(wall);
       } else {
-        await _taskRepo.insert(task);
+        await _taskRepo.insert(wall);
       }
       await _saveRewards();
     }

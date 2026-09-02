@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/attempt.dart';
-import 'package:chaos_control/screens/walls/form/task_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/reward_dialog.dart';
-import 'package:chaos_control/screens/walls/form/widgets/reward_tile.dart';
+import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
+import 'package:chaos_control/screens/walls/form/widgets/attempt_dialog.dart';
+import 'package:chaos_control/screens/walls/form/widgets/attempt_tile.dart';
 import 'package:provider/provider.dart';
 
-class TaskFormRewards extends StatelessWidget {
-  const TaskFormRewards({super.key});
+class WallFormAttempts extends StatelessWidget {
+  const WallFormAttempts({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final taskId = context.select<TaskFormModel, String>(
-      (model) => model.task.id,
+    final taskId = context.select<WallFormModel, String>(
+      (model) => model.wall.id,
     );
-    final selectedRewards = context.select<TaskFormModel, List<Attempt>>(
+    final selectedRewards = context.select<WallFormModel, List<Attempt>>(
       (model) => model.selectedRewards,
     );
-    final setSelectedRewards = context.read<TaskFormModel>().setSelectedRewards;
+    final setSelectedRewards = context.read<WallFormModel>().setSelectedRewards;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +30,7 @@ class TaskFormRewards extends StatelessWidget {
               onPressed: () => showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (context) => RewardDialog(
+                builder: (context) => AttemptDialog(
                   onConfirm: (rewards) => setSelectedRewards(rewards),
                   taskId: taskId,
                   selectedRewards: selectedRewards,
@@ -52,7 +52,7 @@ class TaskFormRewards extends StatelessWidget {
               ...selectedRewards.map((reward) {
                 
 
-                return RewardTile(
+                return AttemptTile(
                   isClass: true,
                   title: '',
                   exp: reward.efforts,

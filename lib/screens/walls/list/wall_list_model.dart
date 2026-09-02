@@ -1,122 +1,98 @@
-import 'package:chaos_control/models/enums/wall_status.dart';
+import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
+import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/models/enums/wall_difficulty.dart';
 
-enum SortTaskField { title, difficulty }
-enum WallDateFilterType { date, all }
+enum SortWallField { title, difficulty }
 
 class WallListModel extends ChangeNotifier {
-  final WallRepository _wallRepo = WallRepository();
+  final _wallRepo = WallRepository();
 
-  List<Wall> _allWalls = [];
-  List<Wall> filteredWalls = [];
+  List<Wall> _walls = [];
+  List<Wall> _filteredWalls = [];
+  List<TreeRecord<Wall>> visualList = [];
 
+  final treeListModel = CustomTreeListModel<Wall>();
+  
   // Состояние фильтрации
   String searchQuery = '';
-  final Set<WallDiff> filterDifficulty = <WallDiff>{};
-  bool filterDone = false;
-  bool filterUndone = true;
-  WallDateFilterType dateFilter = WallDateFilterType.date;
-  DateTime? selectedDate;
+  bool visibilitySearch = false;
+  bool favoriteFilter = true;
+  bool groupFilter = false;
 
   // Состояние сортировки
-  SortTaskField sortField = SortTaskField.title;
+  SortWallField sortField = SortWallField.title;
   bool sortAscending = true;
-
+  
   // Режим выделения
   bool isSelectionMode = false;
   Set<String> selectedIds = {};
   
   bool get hasActiveFilters {
-    return searchQuery.isNotEmpty ||
-        filterDifficulty.isNotEmpty ||
-        filterDone ||
-        !filterUndone ||
-        dateFilter != WallDateFilterType.date;
+    return !favoriteFilter || searchQuery.isNotEmpty;
   }
-
+  
   // Загрузка данных
-  Future<void> loadTasks() async {
-    _allWalls = await _wallRepo.getAll();
-    selectedDate = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
+  Future loadData() async {
+    _walls = await _wallRepo.getAll();
     await _applyFiltersAndSort();
     notifyListeners();
   }
 
+  List<TreeRecord<Wall>> transformRecords() => _filteredWalls
+    .map(
+      (e) => TreeRecord<Wall>(
+        address: e.group,
+        object: e,
+        name: e.title,
+      ),
+    )
+    .toList();
+  
+  Future openFolder(TreeRecord<Wall>? folder) async {
+    visualList = treeListModel.openFolder(list: transformRecords(), folder: folder);
+    notifyListeners();
+  }
+  
   // Поиск
   Future setSearchQuery(String query) async {
     searchQuery = query;
     await _applyFiltersAndSort();
     notifyListeners();
   }
-
+  
   Future clearSearch() async {
     searchQuery = '';
     await _applyFiltersAndSort();
     notifyListeners();
   }
-
+  
   // Фильтры
-  Future selectDate(DateTime date) async {
-    selectedDate = date;
-    await _applyFiltersAndSort();
+  void setVisibilitySearch(bool value) {
+    visibilitySearch = value;
     notifyListeners();
   }
-
-  Future setDifficultyFilter(WallDiff difficulty) async {
-    if (filterDifficulty.contains(difficulty)) {
-      filterDifficulty.remove(difficulty);
-    } else {
-      filterDifficulty.add(difficulty);
-    }
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-
-  Future toggleDoneFilter() async {
-    filterDone = !filterDone;
-    if (filterDone) filterUndone = false;
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-
-  Future setDateFilter(WallDateFilterType value) async {
-    if (value == dateFilter) return;
-    dateFilter = value;
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-
-  Future toggleUndoneFilter() async {
-    filterUndone = !filterUndone;
-    if (filterUndone) filterDone = false;
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-
-
-  void clearAllFilters() {
-    searchQuery = '';
-    filterDifficulty.clear();
-    filterDone = false;
-    filterUndone = true;
-    dateFilter = WallDateFilterType.date;
-    selectedDate = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-    );
+  Future setFavoriteFilter(bool value) async {
+    favoriteFilter = value;
     _applyFiltersAndSort();
     notifyListeners();
   }
 
+  Future setGroupFilter(bool value) async {
+    groupFilter = value;
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+
+  void clearAllFilters() {
+    searchQuery = '';
+    favoriteFilter = true;
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+  
   // Сортировка
-  Future setSortField(SortTaskField field) async {
+  Future setSortField(SortWallField field) async {
     if (sortField == field) {
       sortAscending = !sortAscending;
     } else {
@@ -126,88 +102,69 @@ class WallListModel extends ChangeNotifier {
     await _applyFiltersAndSort();
     notifyListeners();
   }
-
+  
   // Основная логика фильтрации и сортировки
   Future _applyFiltersAndSort() async {
-    var result = List<Wall>.from(_allWalls);
+    var result = List<Wall>.from(_walls);
     // Поиск
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
-      result = result
-          .where(
-            (t) =>
-                t.title.toLowerCase().contains(query) ||
-                t.target.toLowerCase().contains(query),
-          )
-          .toList();
+      result = result.where((t) =>
+        t.title.toLowerCase().contains(query) ||
+        t.target.toLowerCase().contains(query)
+      ).toList();
     }
-    
-    // Фильтры по приоритету и сложности
-    if (filterDifficulty.isNotEmpty) {
-      result = result
-          .where((t) => filterDifficulty.contains(t.difficulty))
-          .toList();
+    // Фильтры
+    if (favoriteFilter) {
+      result = result.where((e) => e.favorite).toList();
     }
-    // Фильтр по статусу
-    if (filterDone) {
-      result = result.where((t) => t.status == WallStatus.destroyed).toList();
-    }
-    if (filterUndone) {
-      result = result.where((t) => t.status != WallStatus.destroyed).toList();
-    }
-   
     // Сортировка
     switch (sortField) {
-      case SortTaskField.title:
+      case SortWallField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
-        break;
-      case SortTaskField.difficulty:
-        result.sort((a, b) => a.difficulty.index.compareTo(b.difficulty.index));
-        break;
+      case SortWallField.difficulty:
+        result.sort((a, b) => a.difficulty.index - b.difficulty.index);
     }
     if (!sortAscending) {
       result = result.reversed.toList();
     }
-    filteredWalls = result;
+    _filteredWalls = result;
+    visualList = treeListModel.openFolder(
+      list: transformRecords(), 
+      folder: treeListModel.currentFolder,
+      groupFilter: groupFilter
+    );
   }
-
-  Future updateTask(Wall task) async {
-    await _wallRepo.update(task);
-    final index = _allWalls.indexWhere((t) => t.id == task.id);
+  
+  Future update(Wall wll) async {
+    await _wallRepo.update(wll);
+    final index = _walls.indexWhere((t) => t.id == wll.id);
     if (index != -1) {
-      _allWalls[index] = task;
+      _walls[index] = wll;
     }
     await _applyFiltersAndSort();
     notifyListeners();
   }
 
-  Future deleteTask(String id) async {
+  Future delete(String id) async {
     await _wallRepo.delete(id);
-    _allWalls.removeWhere((t) => t.id == id);
+    _walls.removeWhere((t) => t.id == id);
     selectedIds.remove(id);
     _applyFiltersAndSort();
     notifyListeners();
   }
-
-  Future deleteSelectedTasks() async {
+  
+  Future deleteAllSelected() async {
     for (final id in selectedIds) {
       await _wallRepo.delete(id);
-      _allWalls.removeWhere((t) => t.id == id);
+      _walls.removeWhere((t) => t.id == id);
     }
     selectedIds.clear();
     isSelectionMode = false;
     await _applyFiltersAndSort();
     notifyListeners();
   }
-
-  Future<void> toggleTaskDone(String id) async {
-    final task = _allWalls.firstWhere((t) => t.id == id);
-    final updated = task.copyWith(
-      status: task.status,
-    );
-    await updateTask(updated);
-  }
-
+  
   // Режим выделения
   void toggleSelectionMode() {
     isSelectionMode = !isSelectionMode;
@@ -216,17 +173,17 @@ class WallListModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+  
   void toggleSelectAll() {
-    if (selectedIds.length == filteredWalls.length) {
+    if (selectedIds.length == _filteredWalls.length) {
       selectedIds.clear();
     } else {
-      selectedIds = filteredWalls.map((t) => t.id).toSet();
+      selectedIds = _filteredWalls.map((t) => t.id).toSet();
     }
     notifyListeners();
   }
-
-  void toggleSelectTask(String id) {
+  
+  void toggleSelect(String id) {
     if (selectedIds.contains(id)) {
       selectedIds.remove(id);
     } else {
@@ -234,7 +191,7 @@ class WallListModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+  
   void clearSelection() {
     selectedIds.clear();
     isSelectionMode = false;

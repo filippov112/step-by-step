@@ -5,7 +5,7 @@ import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:chaos_control/screens/walls/detail/widgets/description.dart';
 import 'package:chaos_control/screens/walls/detail/widgets/title.dart';
 import 'package:chaos_control/screens/walls/detail/widgets/status.dart';
-import 'package:chaos_control/screens/walls/form/task_form_screen.dart';
+import 'package:chaos_control/screens/walls/form/wall_form_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
@@ -81,7 +81,7 @@ class _WallDetailsScreenState extends State<WallDetailsScreen> {
   void _edit(WallDetailModel model, Wall task) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TaskFormScreen(task: task)),
+      MaterialPageRoute(builder: (context) => WallFormScreen(wall: task)),
     ).then((_) async {
       if (context.mounted) {
         var checkExist = await model.checkExist();

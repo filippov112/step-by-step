@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 
-class RewardTile extends StatelessWidget {
+class AttemptTile extends StatelessWidget {
 
   final String title;
   final bool isClass;
@@ -11,7 +11,7 @@ class RewardTile extends StatelessWidget {
   final bool focused;
   final VoidCallback? clickCallback;
 
-  const RewardTile({
+  const AttemptTile({
     super.key,
     required this.title,
     required this.isClass,

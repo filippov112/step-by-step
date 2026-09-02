@@ -15,6 +15,7 @@ class CustomTreeList<T> extends StatelessWidget {
   final List<TreeRecord<T>> visualList;
   final String currentAddress;
   final bool isSelectionMode;
+  final Widget? floatingButton;
 
   const CustomTreeList({
     super.key,
@@ -31,6 +32,7 @@ class CustomTreeList<T> extends StatelessWidget {
     required this.openFolderCallback,
     required this.isSelectedCallback,
     this.isSelectionMode = false,
+    this.floatingButton
   });
 
   @override
@@ -58,7 +60,7 @@ class CustomTreeList<T> extends StatelessWidget {
         if (currentAddress.isNotEmpty) 
           CustomText(currentAddress, padding: EdgeInsets.symmetric(horizontal: 16)),
         Expanded(
-          child:
+          child: Stack(children: [
               emptyMessage ??
               ListView.builder(
                 padding: const EdgeInsets.all(8),
@@ -98,8 +100,18 @@ class CustomTreeList<T> extends StatelessWidget {
                     isSelectionMode: isSelectionMode,
                     customAltIcon: record.isFolder ? Icons.folder : tileIcon,
                   );
-                },
+                }
               ),
+          
+            if (floatingButton != null) 
+              Positioned(
+                right: 20,
+                bottom: 20,
+                child: floatingButton!
+              )
+          ],)
+              
+              
         ),
       ],
     );

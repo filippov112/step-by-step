@@ -1,6 +1,7 @@
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_screen.dart';
 import 'package:chaos_control/screens/projects/list/project_list_model.dart';
+import 'package:chaos_control/screens/projects/list/widgets/add_button.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,9 @@ class ProjectListList extends StatelessWidget {
         isSelectedCallback: (project) =>
             project != null && model.selectedIds.contains(project.id),
         isSelectionMode: isSelectionMode,
+        floatingButton: isSelectionMode
+          ? null
+          : const ProjectListAddButton(),
       );
   }
 }

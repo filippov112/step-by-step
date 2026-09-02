@@ -3,7 +3,19 @@ import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
-class CustomTreeTile<T> extends StatelessWidget {
+abstract class TreeTileFabric<T, X> {
+  X create({
+    TreeRecord<T> record,
+    VoidCallback? openCallback,
+      selectCallback,
+      deleteCallback,
+      selectModeCallback,
+    bool isSelected, isSelectionMode,
+    IconData customAltIcon
+  });
+}
+
+class DefaultTreeTile<T> extends StatelessWidget {
   final TreeRecord<T> record;
   final VoidCallback? openCallback,
       selectCallback,
@@ -12,13 +24,13 @@ class CustomTreeTile<T> extends StatelessWidget {
   final bool isSelected, isSelectionMode;
   final IconData customAltIcon;
 
-  const CustomTreeTile({
+  const DefaultTreeTile({
     super.key,
     required this.record,
-    required this.openCallback,
-    required this.selectCallback,
-    required this.selectModeCallback,
-    required this.deleteCallback,
+    this.openCallback,
+    this.selectCallback,
+    this.selectModeCallback,
+    this.deleteCallback,
     required this.isSelected,
     required this.isSelectionMode,
     required this.customAltIcon,

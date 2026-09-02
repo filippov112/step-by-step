@@ -16,6 +16,7 @@ class CustomTreeList<T> extends StatelessWidget {
   final String currentAddress;
   final bool isSelectionMode;
   final Widget? floatingButton;
+  final TreeTileFabric? tileFabric;
 
   const CustomTreeList({
     super.key,
@@ -32,7 +33,8 @@ class CustomTreeList<T> extends StatelessWidget {
     required this.openFolderCallback,
     required this.isSelectedCallback,
     this.isSelectionMode = false,
-    this.floatingButton
+    this.floatingButton,
+    this.tileFabric
   });
 
   @override
@@ -68,20 +70,17 @@ class CustomTreeList<T> extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final record = visualList[index];
 
-                  return CustomTreeTile(
-                    record: record,
-                    openCallback: record.isFolder
+                  final cOpen = record.isFolder
                         ? () => openFolderCallback(record)
-                        : () => openRecordCallback(record.object),
-                    selectCallback: record.isFolder
+                        : () => openRecordCallback(record.object);
+                  final cSelect = record.isFolder
                         ? () {
                             for (var child in record.children ?? []) {
                               selectCallback?.call(child.object);
                             }
                           }
-                        : () => selectCallback?.call(record.object),
-                    selectModeCallback: selectModeCallback,
-                    deleteCallback: record.isFolder
+                        : () => selectCallback?.call(record.object);
+                  final cDelete = record.isFolder
                         ? () async {
                             if (await showConfirmDialog(context) == true) {
                               for (var child in record.children ?? []) {
@@ -93,13 +92,31 @@ class CustomTreeList<T> extends StatelessWidget {
                             if (await showConfirmDialog(context) == true) {
                               deleteCallback?.call(record.object);
                             }
-                          },
-                    isSelected: record.isFolder
+                          };
+                  final isSelected = record.isFolder
                         ? isManySelected(record.children ?? [])
-                        : isSelectedCallback?.call(record.object),
+                        : isSelectedCallback?.call(record.object);
+                  final customAltIcon = record.isFolder ? Icons.folder : tileIcon;
+
+                  return tileFabric == null ? DefaultTreeTile(
+                    record: record,
+                    openCallback: cOpen,
+                    selectCallback: cSelect,
+                    selectModeCallback: selectModeCallback,
+                    deleteCallback: cDelete,
+                    isSelected: isSelected,
                     isSelectionMode: isSelectionMode,
-                    customAltIcon: record.isFolder ? Icons.folder : tileIcon,
-                  );
+                    customAltIcon: customAltIcon,
+                  ) : 
+                  tileFabric!.create(
+                    record: record,
+                    openCallback: cOpen,
+                    selectCallback: cSelect,
+                    selectModeCallback: selectModeCallback,
+                    deleteCallback: cDelete,
+                    isSelected: isSelected,
+                    isSelectionMode: isSelectionMode,
+                    customAltIcon: customAltIcon,);
                 }
               ),
           

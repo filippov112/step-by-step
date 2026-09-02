@@ -1,5 +1,7 @@
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_screen.dart';
+import 'package:chaos_control/screens/projects/list/widgets/appbar.dart';
+import 'package:chaos_control/screens/projects/list/widgets/list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -41,53 +43,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final projects = context
-        .select<ProjectListModel, List<TreeRecord<Project>>>(
-          (m) => m.visualList,
-        );
-    final currentAddress = context.select<ProjectListModel, String>(
-      (m) => m.treeListModel.currentAddress,
-    );
+    
 
     return Scaffold(
-      appBar: ListAppBar(
-        title: 'Классы',
-        selectionParams: SelectionParams(
-          isSelectionMode: model.isSelectionMode,
-          selectAll: model.toggleSelectAll,
-          selectedItemsCount: model.selectedIds.length,
-          allItemsCount: projects.length,
-          deleteSelected: model.deleteAllSelected,
-          clearSelection: model.clearSelection,
-        ),
-        searchWidget: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: SearchString(
-            placeholder: 'Поиск проектов...',
-            controller: _searchController,
-            value: model.searchQuery,
-            clearCallback: model.clearSearch,
-            changeCallback: model.setSearchQuery,
-          ),
-        ),
-      ),
-
-      body: CustomTreeList<Project>(
-        clearFilters: model.hasActiveFilters ? model.clearAllFilters : null,
-        emptyTitle: 'Проекты не найдены',
-        currentAddress: currentAddress,
-        visualList: projects,
-        tileIcon: Icons.star,
-        openRecordCallback: _open,
-        openFolderCallback: model.openFolder,
-
-        deleteCallback: (project) => _delete(context, project, model.delete),
-        selectCallback: (project) => model.toggleSelect(project?.id ?? ''),
-        selectModeCallback: model.toggleSelectionMode,
-        isSelectedCallback: (project) =>
-            project != null && model.selectedIds.contains(project.id),
-        isSelectionMode: model.isSelectionMode,
-      ),
+      appBar: ProjectListAppbar(searchController: _searchController),
+      body: const ProjectListList(),
 
       floatingActionButton: model.isSelectionMode
           ? null
@@ -102,25 +62,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     );
   }
 
-  Future<void> _delete(
-    BuildContext context,
-    Project? record,
-    Future Function(String) deleteCallback,
-  ) async {
-    if (record == null) return;
-    await deleteCallback(record.id);
-  }
-
-  Future _open(Project? record) async {
-    if (record == null) return;
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProjectDetailScreen(project: record),
-      ),
-    );
-    if (context.mounted) model.loadData();
-  }
+  
 
   void _create() {
     Navigator.push(

@@ -9,7 +9,7 @@ class TaskFormDifficulty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedDifficulty = context.select<WallFormModel, WallDiff>(
-      (model) => model.selectedDifficulty,
+      (model) => model.difficulty,
     );
     final setDifficulty = context.read<WallFormModel>().setDifficulty;
 

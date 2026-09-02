@@ -1,7 +1,6 @@
 import 'package:chaos_control/models/enums/wall_status.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 class WallFormStatus extends StatelessWidget {
@@ -9,24 +8,32 @@ class WallFormStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedDone = context.select<WallFormModel, WallStatus>(
-      (model) => model.selectedStatus,
+    final status = context.select<WallFormModel, WallStatus>(
+      (model) => model.status,
     );
-    final setDone = context.read<WallFormModel>().setStatus;
+    final setStatus = context.read<WallFormModel>().setStatus;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: selectedDone == WallStatus.destroyed,
-              onChanged: (val) => setDone(val ?? false),
-            ),
-
-            const CustomText('Выполнена'),
-          ],
+        Text('Статус', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: WallStatus.values
+                .map(
+                  (value) => Padding(
+                    padding: EdgeInsetsGeometry.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(value.name),
+                      selected: status == value,
+                      onSelected: (_) => setStatus(value),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
         ),
       ],
     );

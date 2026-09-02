@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/attempts.dart';
 import 'package:chaos_control/screens/walls/form/widgets/difficulty.dart';
 import 'package:chaos_control/screens/walls/form/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
@@ -32,7 +31,7 @@ class _WallFormScreenState extends State<WallFormScreen> {
     titleController = TextEditingController(text: widget.wall?.title);
     descController = TextEditingController(text: widget.wall?.target);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setTask(widget.wall, widget.parent);
+      model.setWall(widget.wall);
     });
   }
 
@@ -45,8 +44,8 @@ class _WallFormScreenState extends State<WallFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final saveTask = model.saveTask;
-    final deleteTask = model.deleteTask;
+    final saveTask = model.save;
+    final deleteTask = model.delete;
 
     return EntityScreen(
       title: 'Задача',
@@ -69,7 +68,7 @@ class _WallFormScreenState extends State<WallFormScreen> {
         // Описание
         CustomTextInput(
           header: 'Описание',
-          setText: model.setDescription,
+          setText: model.setTarget,
           icon: Icons.description,
           controller: descController,
         ),
@@ -83,8 +82,6 @@ class _WallFormScreenState extends State<WallFormScreen> {
         const TaskFormDifficulty(),
         const SizedBox(height: 12),
 
-        // Награды
-        const WallFormAttempts(),
       ],
     );
   }

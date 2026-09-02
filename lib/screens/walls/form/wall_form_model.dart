@@ -1,4 +1,5 @@
 import 'package:chaos_control/models/enums/wall_status.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/tools/datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
@@ -9,121 +10,113 @@ class WallFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
   Wall wall = Wall.create(title: '', target: '');
-  String? parentId;
-  final _rewardRepo = AttemptRepository();
-  final _taskRepo = WallRepository();
+  
+  final _wallRepo = WallRepository();
 
-  List<Attempt> _rewards = [];
-
-  String selectedTitle = '';
-  String selectedDescription = '';
-  WallDiff selectedDifficulty = WallDiff.F;
-  WallStatus selectedStatus = WallStatus.breaking;
-
-  List<Attempt> selectedRewards = [];
+  String title = '';
+  String group = '';
+  String target = '';
+  bool favorite = false;
+  DateTime created = DateTool.today();
+  DateTime? destroyed;
+  WallDiff difficulty = WallDiff.F;
+  WallStatus status = WallStatus.breaking;
+  String? projectId;
 
   bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
-  void setTask(Wall? t, Wall? parent) {
-    isEditing = t != null;
-    parentId = parent?.id;
-    wall = t ?? Wall.create(title: '', target: '');
-    selectedDifficulty = wall.difficulty;
-    selectedTitle = wall.title;
-    selectedDescription = wall.target;
-    selectedStatus = wall.status;
-    notifyListeners();
-    loadData();
-  }
-
-  Future loadData() async {
-    await _loadRewards();
-  }
-
-  Future _loadRewards() async {
-    _rewards = (await _rewardRepo.getAll()).where((tt) => tt.wallId == wall.id).toList();
-    selectedRewards = _rewards.where((e) => true).toList();
+  void setWall(Wall? wll) {
+    isEditing = wll != null;
+    wall = wll ?? Wall.create(title: '', target: '');
+    
+    title = wall.title;
+    target = wall.target;
+    group = wall.group;
+    favorite = wall.favorite;
+    created = wall.created;
+    destroyed = wall.destroyed;
+    difficulty = wall.difficulty;
+    status = wall.status;
+    projectId = wall.projectId;
+    
     notifyListeners();
   }
-
-  
 
   // -------------------- Commands ------------------------
 
-  void setTitle(String? title) {
-    selectedTitle = title ?? '';
+  void setTitle(String? value) {
+    title = value ?? '';
     notifyListeners();
   }
-  void setDescription(String? description) {
-    selectedDescription = description ?? '';
+  void setTarget(String? value) {
+    target = value ?? '';
     notifyListeners();
   }
-  void setStatus(bool done) {
-    selectedStatus = done ? WallStatus.destroyed : WallStatus.breaking;
+  void setGroup(String? value) {
+    group = value ?? '';
     notifyListeners();
   }
-  void setDifficulty(WallDiff difficulty) {
-    selectedDifficulty = difficulty;
+  void setFavorite(bool value) {
+    favorite = value;
     notifyListeners();
   }
-  void setSelectedRewards(List<Attempt> rewards) {
-    selectedRewards = rewards;
+  void setStatus(WallStatus value) {
+    status = value;
+    notifyListeners();
+  }
+  void setCreated(DateTime value) {
+    created = value;
+    notifyListeners();
+  }
+  void setDestroyed(DateTime? value) {
+    destroyed = value;
+    notifyListeners();
+  }
+  void setDifficulty(WallDiff value) {
+    difficulty = value;
+    notifyListeners();
+  }
+  void setProject(String? value) {
+    projectId = value;
     notifyListeners();
   }
 
   // ---------- CRUD ---------------------
 
-  Future deleteTask() async {
+  Future delete() async {
     if (isEditing) {
       try {
-        await _taskRepo.delete(wall.id);
+        await _wallRepo.delete(wall.id);
       } catch (e) {
         // print(e);
       }
     }
   }
 
-  Future<bool> saveTask() async {
-    wall.title = selectedTitle;
-    wall.target = selectedDescription;
-    wall.status = selectedStatus;
-    wall.difficulty = selectedDifficulty;
+  Future<bool> save() async {
+    wall.title = title;
+    wall.target = target;
+    wall.group = group;
+    wall.favorite = favorite;
+    wall.status = status;
+    wall.created = created;
+    wall.destroyed = destroyed;
+    wall.difficulty = difficulty;
+    wall.projectId = projectId;
+    
     try {
       if (isEditing) {
-        await _taskRepo.update(wall);
+        await _wallRepo.update(wall);
       } else {
-        await _taskRepo.insert(wall);
+        await _wallRepo.insert(wall);
       }
-      await _saveRewards();
     }
     catch (e) {
       // print(e);
       return false;
     }
     return true;
-  }
-
-  Future _saveRewards() async {
-    final existingRewardsId = _rewards.map((r) => r.id).toSet();
-    final newRewardsId = selectedRewards.map((r) => r.id).toSet();
-    final rewardsToRemove = existingRewardsId.difference(newRewardsId);
-    final rewardsToAdd = newRewardsId.difference(existingRewardsId);
-    final rewardsToUpdate = newRewardsId.difference(rewardsToAdd);
-
-    for (final rewardId in rewardsToRemove) {
-      await _rewardRepo.delete(rewardId);
-    }
-    for (final rewardId in rewardsToAdd) {
-      var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
-      reward.date = DateTool.today();
-      await _rewardRepo.insert(reward);
-    }
-    for (final rewardId in rewardsToUpdate) {
-      var reward = selectedRewards.firstWhere((r) => r.id == rewardId);
-      reward.date = DateTool.today();
-      await _rewardRepo.update(reward);
-    }
   }
 }

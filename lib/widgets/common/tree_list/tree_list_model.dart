@@ -5,14 +5,19 @@ class CustomTreeListModel<T> {
   String currentAddress = '';
   TreeRecord<T>? currentFolder;
 
-  List<TreeRecord<T>> openFolder({required List<TreeRecord<T>> list, TreeRecord<T>? folder}) {
+  List<TreeRecord<T>> openFolder({required List<TreeRecord<T>> list, TreeRecord<T>? folder, bool groupFilter = true}) {
+    if (!groupFilter) {
+      currentAddress = '';
+      currentFolder = null;
+      return list;
+    }
     currentFolder = folder;
     if (folder != null) {
       currentAddress = folder.address.isEmpty ? '' : folder.address;
     } else {
       currentAddress = '';
     }
-    return [?_backRecord(), ..._getFolders(list), ..._getRecords(list)];
+    return [?_backRecord(), ..._getFolders(list), ..._getChildRecords(list)];
   }
 
   TreeRecord<T>? _backRecord() {
@@ -27,11 +32,11 @@ class CustomTreeListModel<T> {
   }
 
   // Дочерние записи
-  List<TreeRecord<T>> _getRecords(List<TreeRecord<T>> list) {
+  List<TreeRecord<T>> _getChildRecords(List<TreeRecord<T>> list) {
     List<TreeRecord<T>> records = [];
     
     // Оставляем только записи текущего каталога
-    List<TreeRecord<T>> filteredList = list.where((e) => e.address == currentAddress).toList();;
+    List<TreeRecord<T>> filteredList = list.where((e) => e.address == currentAddress).toList();
     for (var record in filteredList) {
       records.add(record);
     }

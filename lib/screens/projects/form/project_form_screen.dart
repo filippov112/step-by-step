@@ -1,6 +1,4 @@
 import 'package:chaos_control/screens/projects/form/widgets/hidden.dart';
-import 'package:chaos_control/widgets/common/custom_card_block.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/form/widgets/icon.dart';

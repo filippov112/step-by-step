@@ -16,29 +16,20 @@ class ProjectListModel extends ChangeNotifier {
   final treeListModel = CustomTreeListModel<Project>();
   
   // Состояние фильтрации
-  String _searchQuery = '';
+  String searchQuery = '';
+  bool showHiddenFilter = false;
+  bool groupFilter = true;
 
   // Состояние сортировки
-  SortProjectField _sortField = SortProjectField.title;
-  bool _sortAscending = true;
+  SortProjectField sortField = SortProjectField.title;
+  bool sortAscending = true;
   
   // Режим выделения
-  bool _isSelectionMode = false;
-  Set<String> _selectedIds = {};
-  
-  // Геттеры
-  List<Project> get projects => _filteredProjects;
-  bool get isSelectionMode => _isSelectionMode;
-  Set<String> get selectedIds => _selectedIds;
-  String get searchQuery => _searchQuery;
-  
-  bool showHiddenFilter = false;
-  SortProjectField get sortField => _sortField;
-  bool get sortAscending => _sortAscending;
-  
+  bool isSelectionMode = false;
+  Set<String> selectedIds = {};
   
   bool get hasActiveFilters {
-    return showHiddenFilter || _searchQuery.isNotEmpty;
+    return showHiddenFilter || searchQuery.isNotEmpty;
   }
   
   // Загрузка данных
@@ -66,13 +57,13 @@ class ProjectListModel extends ChangeNotifier {
   
   // Поиск
   Future setSearchQuery(String query) async {
-    _searchQuery = query;
+    searchQuery = query;
     await _applyFiltersAndSort();
     notifyListeners();
   }
   
   Future clearSearch() async {
-    _searchQuery = '';
+    searchQuery = '';
     await _applyFiltersAndSort();
     notifyListeners();
   }
@@ -85,8 +76,14 @@ class ProjectListModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future setGroupFilter(bool value) async {
+    groupFilter = value;
+    _applyFiltersAndSort();
+    notifyListeners();
+  }
+
   void clearAllFilters() {
-    _searchQuery = '';
+    searchQuery = '';
     showHiddenFilter = false;
     _applyFiltersAndSort();
     notifyListeners();
@@ -94,11 +91,11 @@ class ProjectListModel extends ChangeNotifier {
   
   // Сортировка
   Future setSortField(SortProjectField field) async {
-    if (_sortField == field) {
-      _sortAscending = !_sortAscending;
+    if (sortField == field) {
+      sortAscending = !sortAscending;
     } else {
-      _sortField = field;
-      _sortAscending = true;
+      sortField = field;
+      sortAscending = true;
     }
     await _applyFiltersAndSort();
     notifyListeners();
@@ -108,8 +105,8 @@ class ProjectListModel extends ChangeNotifier {
   Future _applyFiltersAndSort() async {
     var result = List<Project>.from(_projects);
     // Поиск
-    if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
+    if (searchQuery.isNotEmpty) {
+      final query = searchQuery.toLowerCase();
       result = result.where((t) =>
         t.title.toLowerCase().contains(query) ||
         t.target.toLowerCase().contains(query)
@@ -120,18 +117,19 @@ class ProjectListModel extends ChangeNotifier {
       result = result.where((e) => !e.hidden).toList();
     }
     // Сортировка
-    switch (_sortField) {
+    switch (sortField) {
       case SortProjectField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
         break;
     }
-    if (!_sortAscending) {
+    if (!sortAscending) {
       result = result.reversed.toList();
     }
     _filteredProjects = result;
     visualList = treeListModel.openFolder(
       list: transformRecords(), 
-      folder: treeListModel.currentFolder
+      folder: treeListModel.currentFolder,
+      groupFilter: groupFilter
     );
   }
   
@@ -148,52 +146,52 @@ class ProjectListModel extends ChangeNotifier {
   Future delete(String id) async {
     await _classRepo.delete(id);
     _projects.removeWhere((t) => t.id == id);
-    _selectedIds.remove(id);
+    selectedIds.remove(id);
     _applyFiltersAndSort();
     notifyListeners();
   }
   
   Future deleteAllSelected() async {
-    for (final id in _selectedIds) {
+    for (final id in selectedIds) {
       await _classRepo.delete(id);
       _projects.removeWhere((t) => t.id == id);
     }
-    _selectedIds.clear();
-    _isSelectionMode = false;
+    selectedIds.clear();
+    isSelectionMode = false;
     await _applyFiltersAndSort();
     notifyListeners();
   }
   
   // Режим выделения
   void toggleSelectionMode() {
-    _isSelectionMode = !_isSelectionMode;
-    if (!_isSelectionMode) {
-      _selectedIds.clear();
+    isSelectionMode = !isSelectionMode;
+    if (!isSelectionMode) {
+      selectedIds.clear();
     }
     notifyListeners();
   }
   
   void toggleSelectAll() {
-    if (_selectedIds.length == _filteredProjects.length) {
-      _selectedIds.clear();
+    if (selectedIds.length == _filteredProjects.length) {
+      selectedIds.clear();
     } else {
-      _selectedIds = _filteredProjects.map((t) => t.id).toSet();
+      selectedIds = _filteredProjects.map((t) => t.id).toSet();
     }
     notifyListeners();
   }
   
   void toggleSelect(String id) {
-    if (_selectedIds.contains(id)) {
-      _selectedIds.remove(id);
+    if (selectedIds.contains(id)) {
+      selectedIds.remove(id);
     } else {
-      _selectedIds.add(id);
+      selectedIds.add(id);
     }
     notifyListeners();
   }
   
   void clearSelection() {
-    _selectedIds.clear();
-    _isSelectionMode = false;
+    selectedIds.clear();
+    isSelectionMode = false;
     notifyListeners();
   }
 }

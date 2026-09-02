@@ -22,11 +22,21 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
     final hasActiveFilters = context.select<ProjectListModel,bool>((model) => model.hasActiveFilters);
     
     final hiddenFilterValue = context.select<ProjectListModel,bool>((m) => m.showHiddenFilter);
+    final groupFilterValue = context.select<ProjectListModel,bool>((m) => m.groupFilter);
     
     final sortField = context.select<ProjectListModel,SortProjectField>((model) => model.sortField);
     final sortAscending = context.select<ProjectListModel,bool>((model) => model.sortAscending);
 
-
+    final groupFilter = FilterSection(
+      title: 'Группировка',
+      icon: Icons.folder,
+      children: CustomCheckbox(
+        initValue: groupFilterValue, 
+        setValue: model.setGroupFilter, 
+        label: 'Объединять в группы'
+      )
+    );
+    
     final hiddenFilter = FilterSection(
       title: 'Скрытые проекты',
       icon: Icons.remove_red_eye,
@@ -62,6 +72,7 @@ class _ProjectListFiltersState extends State<ProjectListFilters> {
         child: const Text('Сбросить все фильтры'),
       ),
       filters: [
+        groupFilter,
         hiddenFilter,
         sorting
       ],

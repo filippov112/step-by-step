@@ -2,7 +2,6 @@ import 'package:chaos_control/screens/projects/detail/widgets/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/info_tab.dart';
 import 'package:chaos_control/screens/projects/detail/widgets/header.dart';
 import 'package:chaos_control/screens/projects/form/project_form_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';

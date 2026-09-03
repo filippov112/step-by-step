@@ -22,7 +22,6 @@ class _WallListFiltersState extends State<WallListFilters> {
     final model = context.read<WallListModel>();
     final hasActiveFilters = context.select<WallListModel,bool>((model) => model.hasActiveFilters);
     
-    final favoriteFilterValue = context.select<WallListModel,bool>((m) => m.favoriteFilter);
     final groupFilterValue = context.select<WallListModel,bool>((m) => m.groupFilter);
     
     final sortField = context.select<WallListModel,SortWallField>((model) => model.sortField);
@@ -38,16 +37,6 @@ class _WallListFiltersState extends State<WallListFilters> {
       )
     );
     
-    final favoriteFilter = FilterSection(
-      title: 'Избранное',
-      icon: Icons.center_focus_weak_rounded,
-      children: CustomCheckbox(
-        initValue: favoriteFilterValue, 
-        setValue: model.setFavoriteFilter, 
-        label: 'Только избранные'
-      )
-    );
-
     // Сортировка
     final sorting = FilterSection(
       title: 'Сортировка',
@@ -73,7 +62,6 @@ class _WallListFiltersState extends State<WallListFilters> {
       ),
       filters: [
         groupFilter,
-        favoriteFilter,
         sorting
       ],
     );

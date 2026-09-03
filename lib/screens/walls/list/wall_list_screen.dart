@@ -1,4 +1,5 @@
 import 'package:chaos_control/screens/walls/list/widgets/appbar.dart';
+import 'package:chaos_control/screens/walls/list/widgets/bottom_filter.dart';
 import 'package:chaos_control/screens/walls/list/widgets/filters.dart';
 import 'package:chaos_control/screens/walls/list/widgets/list.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,12 @@ class _WallListScreenState extends State<WallListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: WallListAppbar(searchController: _searchController),
-      body: const WallListList(),
+      body: Column(
+          children: [
+            Expanded(child: const WallListList()),
+            const WallListBottomFilters(),
+          ],
+        ),
       endDrawer: const WallListFilters(),
       drawer: const MainMenuDrawer(),
       bottomNavigationBar: const MainBottomMenu(),

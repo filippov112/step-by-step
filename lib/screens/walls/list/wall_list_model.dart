@@ -1,5 +1,6 @@
 import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
+import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,13 @@ enum SortWallField { title, difficulty }
 class WallListModel extends ChangeNotifier {
   final _wallRepo = WallRepository();
   final _attemptRepo = AttemptRepository();
+  final _projectRepo = ProjectRepository();
 
   List<Wall> _walls = [];
   List<Wall> _filteredWalls = [];
   Map<String,int> attempts = {};
   List<TreeRecord<Wall>> visualList = [];
+  List<Project> projects = [];
 
   final treeListModel = CustomTreeListModel<Wall>();
   
@@ -22,6 +25,7 @@ class WallListModel extends ChangeNotifier {
   String searchQuery = '';
   bool visibilitySearch = false;
   bool favoriteFilter = true;
+  Project? projectFilter;
   bool groupFilter = false;
 
   // Состояние сортировки
@@ -40,8 +44,13 @@ class WallListModel extends ChangeNotifier {
   Future loadData() async {
     _walls = await _wallRepo.getAll();
     await _loadAttempts();
+    await _loadProjects();
     await _applyFiltersAndSort();
     notifyListeners();
+  }
+
+  Future _loadProjects() async {
+    projects = (await _projectRepo.getAll()).where((e) => !e.hidden).toList();
   }
 
   Future _loadAttempts() async {
@@ -93,20 +102,25 @@ class WallListModel extends ChangeNotifier {
   }
   Future setFavoriteFilter(bool value) async {
     favoriteFilter = value;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+  Future setProjectFilter(Project? value) async {
+    projectFilter = value;
+    await _applyFiltersAndSort();
     notifyListeners();
   }
 
   Future setGroupFilter(bool value) async {
     groupFilter = value;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
 
-  void clearAllFilters() {
+  Future clearAllFilters() async {
     searchQuery = '';
     favoriteFilter = true;
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   
@@ -134,6 +148,9 @@ class WallListModel extends ChangeNotifier {
       ).toList();
     }
     // Фильтры
+    if (projectFilter != null) {
+      result = result.where((e) => e.projectId == projectFilter!.id).toList();
+    }
     if (favoriteFilter) {
       result = result.where((e) => e.favorite).toList();
     }
@@ -169,7 +186,7 @@ class WallListModel extends ChangeNotifier {
     await _wallRepo.delete(id);
     _walls.removeWhere((t) => t.id == id);
     selectedIds.remove(id);
-    _applyFiltersAndSort();
+    await _applyFiltersAndSort();
     notifyListeners();
   }
   

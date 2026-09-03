@@ -1,3 +1,5 @@
+import 'package:chaos_control/models/attempt.dart';
+import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +9,11 @@ enum SortWallField { title, difficulty }
 
 class WallListModel extends ChangeNotifier {
   final _wallRepo = WallRepository();
+  final _attemptRepo = AttemptRepository();
 
   List<Wall> _walls = [];
   List<Wall> _filteredWalls = [];
+  Map<String,int> attempts = {};
   List<TreeRecord<Wall>> visualList = [];
 
   final treeListModel = CustomTreeListModel<Wall>();
@@ -35,8 +39,22 @@ class WallListModel extends ChangeNotifier {
   // Загрузка данных
   Future loadData() async {
     _walls = await _wallRepo.getAll();
+    await _loadAttempts();
     await _applyFiltersAndSort();
     notifyListeners();
+  }
+
+  Future _loadAttempts() async {
+    final list = await _attemptRepo.getAll();
+    final result = <String,int>{};
+    for(var at in list) {
+      if (!result.containsKey(at.id)) {
+        result[at.id] = 1;
+      } else {
+        result[at.id] = (result[at.id] ?? 0) + 1;
+      }
+    }
+    attempts = result;
   }
 
   List<TreeRecord<Wall>> transformRecords() => _filteredWalls
@@ -45,6 +63,7 @@ class WallListModel extends ChangeNotifier {
         address: e.group,
         object: e,
         name: e.title,
+        color: e.difficulty.color
       ),
     )
     .toList();

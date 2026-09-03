@@ -89,8 +89,9 @@ class DefaultTreeTile<T> extends StatelessWidget {
     // Название
     final titleWidget = CustomText(
       record.name ?? '',
-      padding: EdgeInsets.only(right: 8),
+      size: 17,
       expanded: true,
+      padding: const EdgeInsets.all(12),
       overflow: TextOverflow.ellipsis,
       weight: record.isFolder ? FontWeight.w500 : FontWeight.normal,
       color: titleColor,
@@ -120,18 +121,16 @@ class DefaultTreeTile<T> extends StatelessWidget {
             padding: const EdgeInsets.all(0),
             child: Row(
               children: [
+                
                 // Чекбокс для выделения или статуса
-                Padding(
-                  padding: EdgeInsetsGeometry.only(right: 12),
-                  child: isSelectionMode ? selectCheckboxWidget : iconWidget,
-                ),
-
+                isSelectionMode ? selectCheckboxWidget : iconWidget,
+                
                 // Информация
                 titleWidget,
 
                 if (isSelectionMode) ...{
-                  SizedBox(width: 8),
                   deleteButtonWidget,
+                  SizedBox(width: 12),
                 },
               ],
             ),

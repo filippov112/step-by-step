@@ -13,7 +13,6 @@ class TreeRecord<T> {
   final Color? color;
   final CustomImageData? customIconData;
 
-  final bool isSelected, isSelectionMode;
 
   TreeRecord({
     required this.address,
@@ -23,7 +22,5 @@ class TreeRecord<T> {
     this.children,
     this.color,
     this.customIconData,
-    this.isSelected = false,
-    this.isSelectionMode = false,
   });
 }

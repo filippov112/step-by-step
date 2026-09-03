@@ -1,8 +1,12 @@
+import 'package:chaos_control/models/enums/wall_status.dart';
 import 'package:chaos_control/models/wall.dart';
+import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
+import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class WallTreeFabric implements TreeTileFabric<Wall, WallTreeTile> {
   @override
@@ -65,6 +69,10 @@ class WallTreeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bRadius = const BorderRadius.all(Radius.circular(16));
+    final attempts = context.select<WallListModel, Map<String, int>>(
+      (m) => m.attempts,
+    );
+
     Color? containterColor = Theme.of(context)
         .colorScheme
         .surfaceContainerHighest
@@ -77,6 +85,7 @@ class WallTreeTile extends StatelessWidget {
             stops: [0, 0.2],
           );
     Color titleColor = Theme.of(context).colorScheme.onPrimary;
+    Color focusColor = Theme.of(context).focusColor;
 
     // Чекбокс выделения записи
     final selectCheckboxWidget = Checkbox(
@@ -87,12 +96,40 @@ class WallTreeTile extends StatelessWidget {
     // Название
     final titleWidget = CustomText(
       record.name ?? '',
-      padding: EdgeInsets.only(right: 8),
-      expanded: true,
+      size: 17,
+      padding: EdgeInsets.only(
+        top: 12,
+        left: 12,
+        right: 12,
+        bottom: record.isFolder ? 12 : 3,
+      ),
       overflow: TextOverflow.ellipsis,
       weight: record.isFolder ? FontWeight.w500 : FontWeight.normal,
       color: titleColor,
     );
+
+    // Попытки
+    final attemptsWidget = record.isFolder || record.object == null
+        ? null
+        : Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(record.object?.status.icon, color: record.object?.status.color, size: 14),
+                const SizedBox(width: 8,),
+                Expanded(
+                  child: CustomText(
+                    'Попытки: ${attempts[record.object?.id] ?? 0}',
+                    size: 12,
+                    padding: EdgeInsets.only(bottom:3),
+                    overflow: TextOverflow.ellipsis,
+                    color: record.object?.status.color,
+                  ),
+                ),
+              ],
+            ),
+          );
 
     // Кнопка удаления
     final deleteButtonWidget = IconButton(
@@ -100,6 +137,20 @@ class WallTreeTile extends StatelessWidget {
       onPressed: deleteCallback,
       tooltip: 'Удалить',
     );
+
+    // Иконка
+    final folderIconWidget = !record.isFolder
+        ? null
+        : Padding(
+            padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
+            child: CustomImageIcon(
+              record.customIconData,
+              altIcon: Icons.folder,
+              color: focusColor,
+              width: 40,
+              height: 40,
+            ),
+          );
 
     // Итоговая карточка
     final card = Padding(
@@ -119,18 +170,22 @@ class WallTreeTile extends StatelessWidget {
             child: Row(
               children: [
                 // Чекбокс для выделения или статуса
-                if (isSelectionMode)
-                  Padding(
-                    padding: EdgeInsetsGeometry.only(right: 12),
-                    child: selectCheckboxWidget,
-                  ),
+                if (isSelectionMode) selectCheckboxWidget,
+
+                // Иконка каталога
+                if (!isSelectionMode) ?folderIconWidget,
 
                 // Информация
-                titleWidget,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [titleWidget, ?attemptsWidget],
+                  ),
+                ),
 
                 if (isSelectionMode) ...{
-                  SizedBox(width: 8),
                   deleteButtonWidget,
+                  SizedBox(width: 12),
                 },
               ],
             ),

@@ -88,6 +88,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
         ),
         const SizedBox(height: 12),
 
+        // Скрытый
         const ProjectFormHidden()
       ],
     );

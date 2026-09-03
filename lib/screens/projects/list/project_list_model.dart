@@ -170,14 +170,14 @@ class ProjectListModel extends ChangeNotifier {
   void toggleSelectionMode() {
     isSelectionMode = !isSelectionMode;
     if (!isSelectionMode) {
-      selectedIds.clear();
+      selectedIds = {};
     }
     notifyListeners();
   }
   
   void toggleSelectAll() {
     if (selectedIds.length == _filteredProjects.length) {
-      selectedIds.clear();
+      selectedIds = {};
     } else {
       selectedIds = _filteredProjects.map((t) => t.id).toSet();
     }
@@ -185,16 +185,18 @@ class ProjectListModel extends ChangeNotifier {
   }
   
   void toggleSelect(String id) {
-    if (selectedIds.contains(id)) {
-      selectedIds.remove(id);
+    final selectedIdsCopy = selectedIds.toSet();
+    if (selectedIdsCopy.contains(id)) {
+      selectedIdsCopy.remove(id);
     } else {
-      selectedIds.add(id);
+      selectedIdsCopy.add(id);
     }
+    selectedIds = selectedIdsCopy;
     notifyListeners();
   }
   
   void clearSelection() {
-    selectedIds.clear();
+    selectedIds = {};
     isSelectionMode = false;
     notifyListeners();
   }

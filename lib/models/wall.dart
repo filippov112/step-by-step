@@ -48,7 +48,7 @@ class Wall {
   String target = ""; // Цель
   bool favorite = false; // Избранное
   WallStatus status = WallStatus.breaking; // Статус
-  DateTime created = DateTime.now(); // Дата создания
+  DateTime? created = DateTime.now(); // Дата создания
   DateTime? destroyed; // Дата разрушения
   WallDiff difficulty = WallDiff.F; // Сложность
   String? projectId; // Связанный проект
@@ -122,7 +122,7 @@ class Wall {
     group = map[cGroup];
     favorite = map[cFavorite] == 1;
     status = WallStatus.values[map[cStatus]];
-    created = DateTool.joinDateTime(date: map[cCreated]) ?? DateTool.today();
+    created = DateTool.joinDateTime(date: map[cCreated]);
     destroyed = DateTool.joinDateTime(date: map[cDestroyed]);
     difficulty = WallDiff.values[map[cDifficulty]];
     projectId = map[cProjectId];

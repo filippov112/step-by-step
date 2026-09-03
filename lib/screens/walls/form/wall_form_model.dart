@@ -17,7 +17,7 @@ class WallFormModel extends ChangeNotifier {
   String group = '';
   String target = '';
   bool favorite = false;
-  DateTime created = DateTool.today();
+  DateTime? created = DateTool.today();
   DateTime? destroyed;
   WallDiff difficulty = WallDiff.F;
   WallStatus status = WallStatus.breaking;
@@ -66,7 +66,7 @@ class WallFormModel extends ChangeNotifier {
     status = value;
     notifyListeners();
   }
-  void setCreated(DateTime value) {
+  void setCreated(DateTime? value) {
     created = value;
     notifyListeners();
   }
@@ -81,6 +81,12 @@ class WallFormModel extends ChangeNotifier {
   void setProject(String? value) {
     projectId = value;
     notifyListeners();
+  }
+  String? groupValidator(String? text) {
+    if (text == null || text.isEmpty) return null;
+    var parts = text.split('/');
+    if (parts.any((e) => e.isEmpty)) return 'Части группы не могут быть пустыми';
+    return null;
   }
 
   // ---------- CRUD ---------------------

@@ -44,20 +44,21 @@ class ProjectListList extends StatelessWidget {
     );
     final isSelectionMode = context.select<ProjectListModel,bool>((m) => m.isSelectionMode);
     final hasActiveFilters = context.select<ProjectListModel,bool>((m) => m.hasActiveFilters);
+    final selectedIds = context.select<ProjectListModel, Set<String>>((m) => m.selectedIds);
 
     return CustomTreeList<Project>(
         clearFilters: hasActiveFilters ? model.clearAllFilters : null,
         emptyTitle: 'Проекты не найдены',
         currentAddress: currentAddress,
         visualList: projects,
-        tileIcon: Icons.star,
+        tileIcon: Icons.workspaces,
         openRecordCallback: (project) => _open(context, project, model.loadData),
         openFolderCallback: model.openFolder,
         deleteCallback: (project) => _delete(context, project, model.delete),
         selectCallback: (project) => model.toggleSelect(project?.id ?? ''),
         selectModeCallback: model.toggleSelectionMode,
         isSelectedCallback: (project) =>
-            project != null && model.selectedIds.contains(project.id),
+            project != null && selectedIds.contains(project.id),
         isSelectionMode: isSelectionMode,
         floatingButton: isSelectionMode
           ? null

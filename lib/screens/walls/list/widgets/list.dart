@@ -2,6 +2,7 @@ import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_screen.dart';
 import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/screens/walls/list/widgets/add_button.dart';
+import 'package:chaos_control/screens/walls/list/widgets/tile.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class WallListList extends StatelessWidget {
     final hasActiveFilters = context.select<WallListModel, bool>(
       (m) => m.hasActiveFilters,
     );
+    final selectedIds = context.select<WallListModel, Set<String>>((m) => m.selectedIds);
 
     return CustomTreeList<Wall>(
       clearFilters: hasActiveFilters ? model.clearAllFilters : null,
@@ -58,9 +60,10 @@ class WallListList extends StatelessWidget {
       selectCallback: (wll) => model.toggleSelect(wll?.id ?? ''),
       selectModeCallback: model.toggleSelectionMode,
       isSelectedCallback: (wll) =>
-          wll != null && model.selectedIds.contains(wll.id),
+          wll != null && selectedIds.contains(wll.id),
       isSelectionMode: isSelectionMode,
       floatingButton: isSelectionMode ? null : const WallListAddButton(),
+      tileFabric: WallTreeFabric(),
     );
   }
 }

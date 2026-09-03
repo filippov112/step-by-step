@@ -9,7 +9,8 @@ class CustomTreeList<T> extends StatelessWidget {
   final String? emptyTitle, emptySubtitle;
   final IconData tileIcon;
   final VoidCallback? clearFilters, selectModeCallback;
-  final Function(T?)? deleteCallback, selectCallback, isSelectedCallback;
+  final Function(T?)? deleteCallback, selectCallback;
+  final bool Function(T?)? isSelectedCallback;
   final Function(T?) openRecordCallback;
   final Function(TreeRecord<T>) openFolderCallback;
   final List<TreeRecord<T>> visualList;
@@ -49,9 +50,9 @@ class CustomTreeList<T> extends StatelessWidget {
         : null;
 
     bool isManySelected(List<TreeRecord<T>> children) {
-      if (children.isEmpty) return false;
+      if (children.isEmpty || isSelectedCallback == null) return false;
       for (var child in children) {
-        if(!isSelectedCallback?.call(child.object)) return false;
+        if(isSelectedCallback?.call(child.object) == false) return false;
       }
       return true;
     }
@@ -95,7 +96,7 @@ class CustomTreeList<T> extends StatelessWidget {
                           };
                   final isSelected = record.isFolder
                         ? isManySelected(record.children ?? [])
-                        : isSelectedCallback?.call(record.object);
+                        : isSelectedCallback?.call(record.object) == true;
                   final customAltIcon = record.isFolder ? Icons.folder : tileIcon;
 
                   return tileFabric == null ? DefaultTreeTile(

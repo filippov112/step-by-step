@@ -71,7 +71,7 @@ extension AppModuleExt on AppModule {
       case AppModule.landmarks:
         return Icons.diamond;
       case AppModule.projects:
-        return Icons.work;
+        return Icons.workspaces;
       case AppModule.log:
         return Icons.timelapse;
       case AppModule.settings:

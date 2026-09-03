@@ -1,3 +1,5 @@
+import 'package:chaos_control/screens/walls/form/widgets/dates.dart';
+import 'package:chaos_control/screens/walls/form/widgets/favorite.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
@@ -21,15 +23,15 @@ class WallFormScreen extends StatefulWidget {
 class _WallFormScreenState extends State<WallFormScreen> {
   final _formKey = GlobalKey<FormState>();
   late WallFormModel model;
-  late TextEditingController titleController;
-  late TextEditingController descController;
+  late TextEditingController titleController, groupController, targetController;
 
   @override
   void initState() {
     super.initState();
     model = context.read<WallFormModel>();
     titleController = TextEditingController(text: widget.wall?.title);
-    descController = TextEditingController(text: widget.wall?.target);
+    targetController = TextEditingController(text: widget.wall?.target);
+    groupController = TextEditingController(text: widget.wall?.group);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model.setWall(widget.wall);
     });
@@ -38,7 +40,8 @@ class _WallFormScreenState extends State<WallFormScreen> {
   @override
   void dispose() {
     titleController.dispose();
-    descController.dispose();
+    targetController.dispose();
+    groupController.dispose();
     super.dispose();
   }
 
@@ -48,13 +51,14 @@ class _WallFormScreenState extends State<WallFormScreen> {
     final deleteTask = model.delete;
 
     return EntityScreen(
-      title: 'Задача',
+      title: 'Стена',
       formKey: _formKey,
       deleteCallback: widget.wall == null
           ? null
           : () => _deleteTask(deleteTask),
       saveCallback: () => _saveTask(saveTask),
       children: [
+
         // Название
         CustomTextInput(
           requiredErrorText: 'Введите название',
@@ -65,12 +69,24 @@ class _WallFormScreenState extends State<WallFormScreen> {
         ),
         const SizedBox(height: 12),
 
-        // Описание
+        // Группа
         CustomTextInput(
-          header: 'Описание',
+          header: 'Группа',
+          controller: groupController,
+          icon: Icons.folder,
+          setText: model.setGroup,
+          lines:1,
+          customValidator: model.groupValidator,
+        ),
+        const SizedBox(height: 12),
+
+        // Цель
+        CustomTextInput(
+          header: 'Цель',
           setText: model.setTarget,
-          icon: Icons.description,
-          controller: descController,
+          icon: Icons.center_focus_weak_rounded,
+          controller: targetController,
+          lines: 4,
         ),
         const SizedBox(height: 12),
 
@@ -82,6 +98,12 @@ class _WallFormScreenState extends State<WallFormScreen> {
         const TaskFormDifficulty(),
         const SizedBox(height: 12),
 
+        // Даты создания и разрушения
+        const WallFormDates(),
+        const SizedBox(height: 12),
+
+        // Избранная
+        const WallFormFavorite()
       ],
     );
   }

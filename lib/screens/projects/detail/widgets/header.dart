@@ -20,7 +20,7 @@ class ProjectDetailHeader extends StatelessWidget {
 
     final iconWidget = CustomImageIcon(
       icon,
-      altIcon: Icons.star,
+      altIcon: Icons.workspaces,
       width: 60,
       height: 60,
       // color: rarity.color,

@@ -1,31 +1,42 @@
-import 'package:chaos_control/widgets/common/custom_image_icon.dart';
+import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
+import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
 import 'package:flutter/material.dart';
 
-abstract class TreeTileFabric<T, X> {
-  X create({
-    required TreeRecord<T> record,
+class WallTreeFabric implements TreeTileFabric<Wall, WallTreeTile> {
+  @override
+  WallTreeTile create({
+    required TreeRecord<Wall> record,
     VoidCallback? openCallback,
     VoidCallback? selectCallback,
     VoidCallback? deleteCallback,
     VoidCallback? selectModeCallback,
-    bool? isSelected, 
+    bool? isSelected,
     bool? isSelectionMode,
-    IconData? customAltIcon
-  });
+    IconData? customAltIcon,
+  }) {
+    return WallTreeTile(
+      record: record,
+      isSelected: isSelected ?? false,
+      isSelectionMode: isSelectionMode ?? false,
+      openCallback: openCallback,
+      selectCallback: selectCallback,
+      selectModeCallback: selectModeCallback,
+      deleteCallback: deleteCallback,
+    );
+  }
 }
 
-class DefaultTreeTile<T> extends StatelessWidget {
-  final TreeRecord<T> record;
+class WallTreeTile extends StatelessWidget {
+  final TreeRecord<Wall> record;
   final VoidCallback? openCallback,
       selectCallback,
       deleteCallback,
       selectModeCallback;
   final bool isSelected, isSelectionMode;
-  final IconData customAltIcon;
 
-  const DefaultTreeTile({
+  const WallTreeTile({
     super.key,
     required this.record,
     this.openCallback,
@@ -34,7 +45,6 @@ class DefaultTreeTile<T> extends StatelessWidget {
     this.deleteCallback,
     required this.isSelected,
     required this.isSelectionMode,
-    required this.customAltIcon,
   });
 
   void _onTap() {
@@ -67,18 +77,6 @@ class DefaultTreeTile<T> extends StatelessWidget {
             stops: [0, 0.2],
           );
     Color titleColor = Theme.of(context).colorScheme.onPrimary;
-
-    // Иконка
-    final iconWidget = Padding(
-      padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
-      child: CustomImageIcon(
-        record.customIconData,
-        altIcon: customAltIcon,
-        color: record.color,
-        width: 40,
-        height: 40,
-      ),
-    );
 
     // Чекбокс выделения записи
     final selectCheckboxWidget = Checkbox(
@@ -121,10 +119,11 @@ class DefaultTreeTile<T> extends StatelessWidget {
             child: Row(
               children: [
                 // Чекбокс для выделения или статуса
-                Padding(
-                  padding: EdgeInsetsGeometry.only(right: 12),
-                  child: isSelectionMode ? selectCheckboxWidget : iconWidget,
-                ),
+                if (isSelectionMode)
+                  Padding(
+                    padding: EdgeInsetsGeometry.only(right: 12),
+                    child: selectCheckboxWidget,
+                  ),
 
                 // Информация
                 titleWidget,

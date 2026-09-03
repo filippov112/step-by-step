@@ -59,14 +59,25 @@ class MenuItemTile extends StatelessWidget {
     final isSelected = currentRoute == module;
     final selectModule = context.read<HomeModel>().selectModule;
 
+    final focusColor = Theme.of(context).focusColor;
+    final cardColor = Theme.of(context).cardColor;
+
     return ListTile(
       tileColor: isSelected
-          ? Theme.of(context).focusColor
-          : Theme.of(context).cardColor,
-      leading: Icon(icon),
+          ? focusColor
+          : cardColor,
+      leading: Icon(
+        icon,
+        color: isSelected
+            ? cardColor
+            : focusColor,
+      ),
       title: Text(
         title,
         style: TextStyle(
+          color: isSelected
+            ? cardColor
+            : focusColor,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

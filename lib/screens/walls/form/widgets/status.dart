@@ -14,26 +14,35 @@ class WallFormStatus extends StatelessWidget {
     final setStatus = context.read<WallFormModel>().setStatus;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text('Статус', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: WallStatus.values
-                .map(
-                  (value) => Padding(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: WallStatus.values
+              .map(
+                (value) => Expanded(
+                  child: Padding(
                     padding: EdgeInsetsGeometry.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(value.name),
-                      selected: status == value,
-                      onSelected: (_) => setStatus(value),
+                    child: InkWell(
+                      onTap: () => setStatus(value),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        color: status == value
+                            ? value.color
+                            : value.color.withAlpha(50),
+                        child: Icon(
+                          value.icon,
+                          color: status == value
+                              ? Theme.of(context).canvasColor
+                              : value.color,
+                        ),
+                      ),
                     ),
                   ),
-                )
-                .toList(),
-          ),
+                ),
+              )
+              .toList(),
         ),
       ],
     );

@@ -4,7 +4,6 @@ import 'package:chaos_control/tools/datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/models/attempt.dart';
 
 class WallFormModel extends ChangeNotifier {
 
@@ -12,6 +11,9 @@ class WallFormModel extends ChangeNotifier {
   Wall wall = Wall.create(title: '', target: '');
   
   final _wallRepo = WallRepository();
+  final _projectRepo = ProjectRepository();
+
+  List<Project> projects = [];
 
   String title = '';
   String group = '';
@@ -21,13 +23,16 @@ class WallFormModel extends ChangeNotifier {
   DateTime? destroyed;
   WallDiff difficulty = WallDiff.F;
   WallStatus status = WallStatus.breaking;
-  String? projectId;
+
+  Project? selectedProject;
 
   bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
-  void setWall(Wall? wll) {
+  Future setWall(Wall? wll) async {
+
+    projects = await _projectRepo.getAll();
     isEditing = wll != null;
     wall = wll ?? Wall.create(title: '', target: '');
     
@@ -39,7 +44,7 @@ class WallFormModel extends ChangeNotifier {
     destroyed = wall.destroyed;
     difficulty = wall.difficulty;
     status = wall.status;
-    projectId = wall.projectId;
+    selectedProject = wall.projectId == null ? null : projects.firstWhere((e) => e.id == wall.projectId);
     
     notifyListeners();
   }
@@ -78,8 +83,8 @@ class WallFormModel extends ChangeNotifier {
     difficulty = value;
     notifyListeners();
   }
-  void setProject(String? value) {
-    projectId = value;
+  void setProject(Project? value) {
+    selectedProject = value;
     notifyListeners();
   }
   String? groupValidator(String? text) {
@@ -110,7 +115,7 @@ class WallFormModel extends ChangeNotifier {
     wall.created = created;
     wall.destroyed = destroyed;
     wall.difficulty = difficulty;
-    wall.projectId = projectId;
+    wall.projectId = selectedProject?.id;
     
     try {
       if (isEditing) {

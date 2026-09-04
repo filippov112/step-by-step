@@ -1,5 +1,6 @@
 import 'package:chaos_control/screens/walls/form/widgets/dates.dart';
 import 'package:chaos_control/screens/walls/form/widgets/favorite.dart';
+import 'package:chaos_control/screens/walls/form/widgets/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
@@ -58,6 +59,9 @@ class _WallFormScreenState extends State<WallFormScreen> {
           : () => _deleteTask(deleteTask),
       saveCallback: () => _saveTask(saveTask),
       children: [
+
+        // Проект
+        const WallFormProject(),
 
         // Название
         CustomTextInput(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/progress.dart';
-import 'package:chaos_control/services/exp_calculator.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:provider/provider.dart';
 import 'package:snap_chart/snap_chart.dart';
 

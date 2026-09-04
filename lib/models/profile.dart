@@ -2,8 +2,7 @@
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
-import 'package:chaos_control/tools/datetime.dart';
-import 'package:chaos_control/tools/get_age_string.dart';
+import 'package:chaos_control/services/datetool.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Пользователь
@@ -15,6 +14,7 @@ class Profile {
   static const cIcon = "_icon";
   static const cBirthDate = "_dbirth";
   static const cEfforts = "_efforts";
+  static const cLevel = "_lvl";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -22,7 +22,8 @@ class Profile {
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
           $cBirthDate INTEGER,
-          $cEfforts INTEGER
+          $cEfforts INTEGER,
+          $cLevel INTEGER
         )''';
 
   int? id;
@@ -30,14 +31,16 @@ class Profile {
   CustomImageData? icon; // Аватар
   DateTime dateBirth = DateTime(2000); // Дата рождения
   int efforts = 0; // Кэш усилий
+  int level = 1; // Кэш уровня
 
-  String get age => getDateIntervalString(dateBirth, DateTime.now());
+  String get age => DateTool.age(dateBirth, DateTime.now());
 
   Profile({
     this.name = "",
     this.icon,
     required this.dateBirth,
     this.efforts = 0,
+    this.level = 1,
   });
 
   Map<String, Object?> toMap() {
@@ -46,6 +49,7 @@ class Profile {
       cIcon: icon?.toJson() ,
       cBirthDate: DateTool.datetimeToDays(dateBirth),
       cEfforts: efforts,
+      cLevel: level
     };
     if (id != null) {
       map[cId] = id;
@@ -59,6 +63,7 @@ class Profile {
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
     efforts = map[cEfforts];
+    level = map[cLevel];
   }
 }
 

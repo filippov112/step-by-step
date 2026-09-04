@@ -84,8 +84,8 @@ class WallTreeTile extends StatelessWidget {
             colors: [record.color!.withValues(alpha: 0.5), containterColor],
             stops: [0, 0.2],
           );
-    Color titleColor = Theme.of(context).colorScheme.onPrimary;
-    Color focusColor = Theme.of(context).focusColor;
+    final titleColor = Theme.of(context).colorScheme.onPrimary;
+    final focusColor = Theme.of(context).focusColor;
 
     // Чекбокс выделения записи
     final selectCheckboxWidget = Checkbox(
@@ -97,13 +97,8 @@ class WallTreeTile extends StatelessWidget {
     final titleWidget = CustomText(
       record.name ?? '',
       size: 17,
-      padding: EdgeInsets.only(
-        top: 12,
-        left: 12,
-        right: 12,
-        bottom: record.isFolder ? 12 : 3,
-      ),
       overflow: TextOverflow.ellipsis,
+      padding: const EdgeInsets.only(bottom: 3),
       weight: record.isFolder ? FontWeight.w500 : FontWeight.normal,
       color: titleColor,
     );
@@ -116,13 +111,17 @@ class WallTreeTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(record.object?.status.icon, color: record.object?.status.color, size: 14),
-                const SizedBox(width: 8,),
+                Icon(
+                  record.object?.status.icon,
+                  color: record.object?.status.color,
+                  size: 14,
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: CustomText(
                     'Попытки: ${attempts[record.object?.id] ?? 0}',
                     size: 12,
-                    padding: EdgeInsets.only(bottom:3),
+                    padding: EdgeInsets.only(bottom: 3),
                     overflow: TextOverflow.ellipsis,
                     color: record.object?.status.color,
                   ),
@@ -137,6 +136,10 @@ class WallTreeTile extends StatelessWidget {
       onPressed: deleteCallback,
       tooltip: 'Удалить',
     );
+
+    final favoriteWidget = (record.object?.favorite ?? false)
+        ? Icon(Icons.star, size: 18, color: focusColor.withAlpha(120),)
+        : null;
 
     // Иконка
     final folderIconWidget = !record.isFolder
@@ -178,8 +181,22 @@ class WallTreeTile extends StatelessWidget {
                 // Информация
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [titleWidget, ?attemptsWidget],
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 12,
+                          left: 12,
+                          right: 12,
+                          bottom: record.isFolder ? 12 : 0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [Expanded(child:titleWidget), ?favoriteWidget],
+                        ),
+                      ),
+                      ?attemptsWidget,
+                    ],
                   ),
                 ),
 

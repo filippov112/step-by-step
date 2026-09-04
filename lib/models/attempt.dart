@@ -2,8 +2,8 @@ import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/services/exp_calculator.dart';
-import 'package:chaos_control/tools/datetime.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/datetool.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -116,6 +116,12 @@ class AttemptRepository {
     return maps.map((m) => Attempt.fromMap(m)).toList();
   }
 
+  Future<List<Attempt>> getByWall(String? wallId) async {
+    if (wallId == null) return [];
+    List<Map<String, Object?>> maps = await db.query(Attempt.tn, where: '${Attempt.cWallId} = ?', whereArgs: [wallId]);
+    return maps.map((m) => Attempt.fromMap(m)).toList();
+  }
+
   Future<Attempt?> get(String id) async {
     List<Map> maps = await db.query(Attempt.tn, where: '${Attempt.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
@@ -183,7 +189,7 @@ class AttemptRepository {
     user?.efforts += deltaEfforts;
     if (user == null) return;
     await userRepo.update(user);
-    SpiritCalculator.recalcLevelUser(user);
+    await SpiritCalculator.recalcLevelUser(user);
   }
 }
 

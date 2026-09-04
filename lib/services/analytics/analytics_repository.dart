@@ -1,6 +1,6 @@
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/attempt.dart';
-import 'package:chaos_control/services/analytics/dto_exp_time.dart';
+import 'package:chaos_control/services/analytics/dto_activity.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Репозиторий для аналитических запросов
@@ -10,7 +10,7 @@ class AnalyticsRepository {
   // ================ БАЗОВЫЕ ЗАПРОСЫ ================
 
   /// Получить агрегированные данные по дням
-  Future<List<DtoExpTime>> getDailyExpTime({
+  Future<List<DtoActivity>> getDailyExpTime({
     int? startDate,
     int? endDate,
     String? skillId,
@@ -37,7 +37,7 @@ class AnalyticsRepository {
         '''
       SELECT 
         ${Attempt.cDate},
-        COALESCE(SUM(${Attempt.cEfforts}), 0) AS ${DtoExpTime.cExp}
+        COALESCE(SUM(${Attempt.cEfforts}), 0) AS ${DtoActivity.cExp}
       FROM ${Attempt.tn}
       $whereClause
       GROUP BY ${Attempt.cDate}
@@ -45,7 +45,7 @@ class AnalyticsRepository {
     ''';
 
     final result = await db.rawQuery(query, args);
-    return result.map((row) => DtoExpTime.fromMap(row)).toList();
+    return result.map((row) => DtoActivity.fromMap(row)).toList();
   }
 
 

@@ -13,12 +13,26 @@ class NotificationService {
 
   final Queue<NotificationItem> queue = Queue<NotificationItem>();
   bool _isShowing = false;
+
+  GlobalKey<NavigatorState>? _navigatorKey;
+  BuildContext? get _context => _navigatorKey?.currentContext;
   
-  // Для доступа к контексту (можно передавать через GlobalKey)
+  bool _isInitialized = false;
+  void init({
+    required GlobalKey<NavigatorState> navigatorKey,
+  }) {
+    _navigatorKey = navigatorKey;
+    _isInitialized = true;
+  }
+
   OverlayEntry? _currentOverlay;
   Timer? _autoHideTimer;
 
-  void showNotification(BuildContext context, NotificationItem item) {
+   void showNotification(NotificationItem item) {
+    if (!_isInitialized) return;
+    final context = _context;
+    if (context == null) return;
+
     queue.add(item);
     _processQueue(context);
   }

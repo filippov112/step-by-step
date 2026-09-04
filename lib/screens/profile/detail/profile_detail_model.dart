@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
-import 'package:chaos_control/services/analytics/dto_exp_time.dart';
-import 'package:chaos_control/tools/datetime.dart';
+import 'package:chaos_control/services/analytics/dto_activity.dart';
+import 'package:chaos_control/services/datetool.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 enum StatPeriod { threeMonth, oneMonth, oneWeek }
@@ -58,7 +58,7 @@ class ProfileDetailModel extends ChangeNotifier {
     lastDay = DateTime(now.year, now.month, now.day, 3);
     firstDay = lastDay.subtract(Duration(days: subtractDays()));
 
-    List<DtoExpTime> daysData = await _analRepo.getDailyExpTime(
+    List<DtoActivity> daysData = await _analRepo.getDailyExpTime(
       startDate: DateTool.datetimeToDays(firstDay),
       endDate: DateTool.datetimeToDays(lastDay),
     );

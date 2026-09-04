@@ -13,13 +13,16 @@ class WallListAppbar extends StatelessWidget implements PreferredSizeWidget {
     final model = context.read<WallListModel>();
     final allItemsCount = context.select<WallListModel,int>((m) => m.visualList.length);
     final visibilitySearch = context.select<WallListModel,bool>((m) => m.visibilitySearch);
+    final selectedItemsCount = context.select<WallListModel,int>((m) => m.selectedIds.length);
+    final isSelectionMode = context.select<WallListModel,bool>((m) => m.isSelectionMode); 
+    final searchQuery = context.select<WallListModel,String>((m) => m.searchQuery); 
 
     return ListAppBar(
         title: 'Стены',
         selectionParams: SelectionParams(
-          isSelectionMode: model.isSelectionMode,
+          isSelectionMode: isSelectionMode,
           selectAll: model.toggleSelectAll,
-          selectedItemsCount: model.selectedIds.length,
+          selectedItemsCount: selectedItemsCount,
           allItemsCount: allItemsCount,
           deleteSelected: model.deleteAllSelected,
           clearSelection: model.clearSelection,
@@ -29,7 +32,7 @@ class WallListAppbar extends StatelessWidget implements PreferredSizeWidget {
         searchWidget: SearchString(
           placeholder: 'Поиск стен...',
           controller: searchController,
-          value: model.searchQuery,
+          value: searchQuery,
           clearCallback: model.clearSearch,
           changeCallback: model.setSearchQuery,
         ),

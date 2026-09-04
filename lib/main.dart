@@ -1,5 +1,6 @@
 import 'package:chaos_control/screens/walls/create/wall_create_model.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
+import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
@@ -59,13 +60,30 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Инициализируем сервис с ключами
+    NotificationService().init(
+      navigatorKey: navigatorKey,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
       title: 'Chaos Control',
+      navigatorKey: navigatorKey,
       theme: SoloLevelingTheme.theme,
       home: HomeScreen()
       // home: TestScreen()

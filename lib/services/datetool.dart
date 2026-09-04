@@ -46,9 +46,55 @@ class DateTool {
   }
 
   // Краткое обозначение месяца
-  static String getShortMonthName(int month) {
+  static String shortMonthFormat(int month) {
     const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 
                     'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
     return months[month - 1];
+  }
+
+
+  static String age(DateTime first, DateTime? last) {
+    final DateTime last0 = last ?? DateTime.now();
+
+    // Вычисляем полные года
+    int years = last0.year - first.year;
+    // Корректируем, если день рождения ещё не наступил в этом году
+    if (last0.month < first.month || 
+        (last0.month == first.month && last0.day < first.day)) {
+      years--;
+    }
+    int days;
+    
+    // Берём остаток от общего количества дней
+    // Вычисляем дни, прошедшие после последнего дня рождения
+    final birthdayThisYear = DateTime(last0.year, first.month, first.day);
+    if (last0.isAfter(birthdayThisYear)) {
+      days = last0.difference(birthdayThisYear).inDays;
+    } else {
+      final birthdayLastYear = DateTime(last0.year - 1, first.month, first.day);
+      days = last0.difference(birthdayLastYear).inDays;
+    }
+    
+    // Склонение для лет
+    String yearsStr;
+    if (years % 10 == 1 && years % 100 != 11) {
+      yearsStr = '$years год';
+    } else if (years % 10 >= 2 && years % 10 <= 4 && (years % 100 < 10 || years % 100 >= 20)) {
+      yearsStr = '$years года';
+    } else {
+      yearsStr = '$years лет';
+    }
+    
+    // Склонение для дней
+    String daysStr;
+    if (days % 10 == 1 && days % 100 != 11) {
+      daysStr = '$days день';
+    } else if (days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20)) {
+      daysStr = '$days дня';
+    } else {
+      daysStr = '$days дней';
+    }
+    
+    return years > 0 ? '$yearsStr, $daysStr' : daysStr;
   }
 }

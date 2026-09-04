@@ -1,8 +1,8 @@
+import 'package:chaos_control/tools/datetool.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/achiev_rar.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
-import 'package:chaos_control/tools/format_date.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
@@ -61,7 +61,7 @@ class AchiHeader extends StatelessWidget {
               children: [
                 Icon(Icons.calendar_today, size: 14),
                 const SizedBox(width: 8),
-                CustomText(formatDate(date)),
+                CustomText(DateTool.fullDateFormat(date)),
               ],
             ),
           },

@@ -33,4 +33,22 @@ class DateTool {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day);
   }
+
+  // Текстовое представление даты
+  static String fullDateFormat(DateTime? date) {
+    if (date == null) return '';
+    return '${date.day} ${_getMonthName(date.month)} ${date.year}';
+  }
+  static String _getMonthName(int month) {
+    const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
+                    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    return months[month - 1];
+  }
+
+  // Краткое обозначение месяца
+  static String getShortMonthName(int month) {
+    const months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 
+                    'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    return months[month - 1];
+  }
 }

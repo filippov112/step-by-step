@@ -29,14 +29,14 @@ class CustomCardBlock extends StatelessWidget {
 
               // Иконка
               if (icon != null) ...{
-                Icon(icon, size: 32),
+                Icon(icon, size: 24),
                 const SizedBox(width: 8),
               },
               
               // Название блока
               CustomText(
                 title!,
-                size: 16,
+                size: 14,
                 color: Theme.of(context).colorScheme.onPrimary,
                 expanded: true,
                 weight: FontWeight(500),

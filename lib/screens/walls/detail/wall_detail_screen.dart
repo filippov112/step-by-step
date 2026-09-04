@@ -1,10 +1,10 @@
-import 'package:chaos_control/models/enums/wall_status.dart';
+import 'package:chaos_control/screens/walls/detail/widgets/add_attempt_button.dart';
+import 'package:chaos_control/screens/walls/detail/widgets/change_status_button.dart';
+import 'package:chaos_control/screens/walls/detail/widgets/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
-import 'package:chaos_control/screens/walls/detail/widgets/description.dart';
-import 'package:chaos_control/screens/walls/detail/widgets/title.dart';
-import 'package:chaos_control/screens/walls/detail/widgets/status.dart';
+import 'package:chaos_control/screens/walls/detail/widgets/header.dart';
 import 'package:chaos_control/screens/walls/edit/wall_edit_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
@@ -18,61 +18,56 @@ class WallDetailsScreen extends StatefulWidget {
   State<WallDetailsScreen> createState() => _WallDetailsScreenState();
 }
 
-class _WallDetailsScreenState extends State<WallDetailsScreen> {
+class _WallDetailsScreenState extends State<WallDetailsScreen>
+    with SingleTickerProviderStateMixin {
   late WallDetailModel model;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     model = context.read<WallDetailModel>();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setTask(widget.wall);
+      model.setWall(widget.wall);
     });
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var task = context.select<WallDetailModel, Wall>((model) => model.wall);
-    var status = context.select<WallDetailModel, WallStatus>(
-      (model) => model.wall.status,
+    final wll = context.select<WallDetailModel, Wall>((m) => m.wall);
+    final currentTabIndex = context.select<WallDetailModel, int>(
+      (m) => m.currentTabIndex,
     );
-    var setStatus = model.setStatus;
-    var deleteWall = model.deleteWall;
+    final visibilityForm = context.select<WallDetailModel, bool>(
+      (m) => m.visibilityAttemptForm,
+    );
+
+    void editCallback() => _edit(model, wll);
+    Future<dynamic> deleteCallback() => _deleteWall(model.deleteWall);
+
+    final floatingButton = currentTabIndex == 0
+        ? (visibilityForm ? null : const WallDetailAddAttemptButton())
+        : const WallDetailChangeStatusButton();
 
     return EntityScreen(
       title: 'Стена',
-      editCallback: () => _edit(model, task),
-      deleteCallback: () => _deleteWall(deleteWall),
-      floatingButton: FloatingActionButton(
-              onPressed: () => setStatus(),
-              tooltip: 'Разрушить',
-              backgroundColor: Theme.of(context).focusColor,
-              child: Icon(
-                status == WallStatus.destroyed ? Icons.task_alt_outlined : Icons.circle_outlined,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
+      editCallback: editCallback,
+      deleteCallback: deleteCallback,
+      floatingButton: floatingButton,
       child: Column(
         children: [
           // Заголовок
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: const WallDetailTitle(),
-          ),
+          const WallDetailHeader(),
 
-          // Описание
-          Expanded(
-            child: Padding(
-              padding: EdgeInsetsGeometry.all(16),
-              child: ListView(
-                children: [
-                  const WallDetailStatus(),
-                  const Divider(),
-                  const WallDetailDesc(),
-                ],
-              ),
-            ),
-          ),
+          // Вкладки
+          WallDetailTabs(controller: _tabController),
         ],
       ),
     );

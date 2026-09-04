@@ -16,7 +16,7 @@ class WallCreateFavorite extends StatelessWidget {
     final dividerColor = Theme.of(context).dividerColor;
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
-    final Gradient? gradient = LinearGradient(
+    final Gradient gradient = LinearGradient(
             transform: GradientRotation(0.7),
             colors: [diff.color.withValues(alpha: 0.5), cardColor],
             stops: [0, 0.2],

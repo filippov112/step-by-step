@@ -1,37 +1,70 @@
 import 'package:chaos_control/models/enums/wall_status.dart';
+import 'package:chaos_control/models/project.dart';
+import 'package:chaos_control/tools/datetool.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
 
 class WallDetailModel extends ChangeNotifier {
-  final WallRepository _taskRepo = WallRepository();
+  final _taskRepo = WallRepository();
+  final _projectRepo = ProjectRepository();
 
   Wall wall = Wall.create(title: '', target: '');
-  
-  Map<String,int> childTasksCount = {};
-  Map<String,int> childDoneTasksCount = {};
-  bool sortAscending = true;
-  bool isLoading = true;
-  
+  int currentTabIndex = 0;
+  bool visibilityAttemptForm = false;
+
+  Project? project;
+
+  // ------------ Main -----------------
 
   Future<bool> checkExist() async {
-    return await _taskRepo.get(wall.id) != null;
+    final updatedWall = await _taskRepo.get(wall.id);
+    if (updatedWall == null) return false;
+    wall = updatedWall;
+    notifyListeners();
+    return true;
   }
 
+  Future setWall(Wall wll) async {
+    wall = wll;
+    project = wll.projectId == null ? null : await _projectRepo.get(wll.projectId!);
+    notifyListeners();
+  }
 
-  Future setTask(Wall tsk) async {
-    isLoading = true;
-    wall = tsk;
+  void changeTabIndex(int index) {
+    currentTabIndex = index;
+    notifyListeners();
+  }
+
+  // ------------ Attempts --------------
+
+  void openCreateForm() {
+    visibilityAttemptForm = true;
+
+    notifyListeners();
+  }
+
+  void closeAttemptForm() {
+    visibilityAttemptForm = false;
     notifyListeners();
   }
 
 
-  void setStatus({WallStatus status = WallStatus.destroyed}) async {
-    wall.status = status;
+  // ------------ Wall -----------------
+
+  Future changeStatus() async {
+    wall.status = WallStatus.values[(wall.status.index + 1) % 3];
+    wall.destroyed = wall.status == WallStatus.destroyed ? DateTool.today() : null;
     await _taskRepo.update(wall);
     notifyListeners();
     notifyListeners();
   }
 
+  Future setFavorite(bool value) async {
+    wall.favorite = value;
+    await _taskRepo.update(wall);
+    notifyListeners();
+    notifyListeners();
+  }
 
   Future deleteWall() async {
     await _taskRepo.delete(wall.id);

@@ -8,25 +8,17 @@ class ProjectDetailInfoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var description = context.select<ProjectDetailModel, String>(
+    var target = context.select<ProjectDetailModel, String>(
       (model) => model.project.target,
     );
 
-    if (description.isNotEmpty) {
-      return Container(
-        padding: EdgeInsets.all(12),
-        child: ListView(
-          children: [
-            CustomText(
-              description,
-              lines: null,
-              overflow: TextOverflow.visible,
-            ),
-          ],
-        ),
-      );
-    }
+    final targetWidget = target.isEmpty
+        ? null
+        : CustomText(target, lines: null, overflow: TextOverflow.visible);
 
-    return const SizedBox();
+    return Container(
+      padding: EdgeInsets.all(12),
+      child: ListView(children: [?targetWidget]),
+    );
   }
 }

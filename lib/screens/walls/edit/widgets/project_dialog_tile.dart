@@ -1,5 +1,5 @@
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +15,8 @@ class ProjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final projectFilter = context.select<WallListModel, Project?>(
-      (m) => m.projectFilter,
+    final projectFilter = context.select<WallEditModel, Project?>(
+      (m) => m.selectedProject,
     );
     final color = projectFilter?.id != project?.id
         ? Theme.of(context).cardColor.withAlpha(100)

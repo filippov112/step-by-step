@@ -1,21 +1,25 @@
-import 'package:chaos_control/screens/walls/edit/widgets/dates.dart';
-import 'package:chaos_control/screens/walls/edit/widgets/favorite.dart';
-import 'package:chaos_control/screens/walls/edit/widgets/project.dart';
+import 'package:chaos_control/models/project.dart';
+import 'package:chaos_control/screens/walls/create/wall_create_model.dart';
+import 'package:chaos_control/screens/walls/create/widgets/difficulty.dart';
+import 'package:chaos_control/screens/walls/create/widgets/favorite.dart';
+import 'package:chaos_control/screens/walls/create/widgets/info.dart';
+import 'package:chaos_control/screens/walls/create/widgets/status.dart';
+import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
-import 'package:chaos_control/screens/walls/edit/widgets/difficulty.dart';
-import 'package:chaos_control/screens/walls/edit/widgets/status.dart';
-import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
-import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
 class WallCreateScreen extends StatefulWidget {
-  final Wall? wall;
   final Wall? parent;
-
-  const WallCreateScreen({super.key, this.wall, this.parent});
+  final Project? project;
+  final String group;
+  const WallCreateScreen({
+    super.key,
+    this.parent,
+    required this.project,
+    required this.group,
+  });
 
   @override
   State<WallCreateScreen> createState() => _WallCreateScreenState();
@@ -23,18 +27,18 @@ class WallCreateScreen extends StatefulWidget {
 
 class _WallCreateScreenState extends State<WallCreateScreen> {
   final _formKey = GlobalKey<FormState>();
-  late WallEditModel model;
+  late WallCreateModel model;
   late TextEditingController titleController, groupController, targetController;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<WallEditModel>();
-    titleController = TextEditingController(text: widget.wall?.title);
-    targetController = TextEditingController(text: widget.wall?.target);
-    groupController = TextEditingController(text: widget.wall?.group);
+    model = context.read<WallCreateModel>();
+    titleController = TextEditingController();
+    targetController = TextEditingController();
+    groupController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setWall(widget.wall);
+      model.setWall(widget.project, widget.group);
     });
   }
 
@@ -49,41 +53,34 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
   @override
   Widget build(BuildContext context) {
     final saveTask = model.save;
-    final deleteTask = model.delete;
 
-    return EntityScreen(
-      title: 'Стена',
+    return BottomModalForm(
+      title: 'Новая стена',
+      confirmCallback: () => _save(saveTask),
       formKey: _formKey,
-      deleteCallback: widget.wall == null
-          ? null
-          : () => _deleteTask(deleteTask),
-      saveCallback: () => _saveTask(saveTask),
       children: [
+        // Проект и группа
+        const WallCreateInfo(),
 
-        // Проект
-        const WallEditProject(),
-
-        // Название
-        CustomTextInput(
-          requiredErrorText: 'Введите название',
-          header: 'Название',
-          setText: model.setTitle,
-          icon: Icons.title,
-          controller: titleController,
+        Row(
+          children: [
+            // Название
+            Expanded(
+              child: CustomTextInput(
+                requiredErrorText: 'Введите название',
+                header: 'Название',
+                setText: model.setTitle,
+                icon: Icons.title,
+                controller: titleController,
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Избранная
+            const WallCreateFavorite(),
+          ],
         ),
-        const SizedBox(height: 12),
-
-        // Группа
-        CustomTextInput(
-          header: 'Группа',
-          controller: groupController,
-          icon: Icons.folder,
-          setText: model.setGroup,
-          lines:1,
-          customValidator: model.groupValidator,
-        ),
-        const SizedBox(height: 12),
-
+        const SizedBox(height: 6),
+        
         // Цель
         CustomTextInput(
           header: 'Цель',
@@ -94,44 +91,23 @@ class _WallCreateScreenState extends State<WallCreateScreen> {
         ),
         const SizedBox(height: 12),
 
-        // Статус
-        const WallEditStatus(),
-        const SizedBox(height: 12),
-
         // Сложность
-        const WallEditDifficulty(),
+        const WallCreateDifficulty(),
         const SizedBox(height: 12),
 
-        // Даты создания и разрушения
-        const WallEditDates(),
-        const SizedBox(height: 12),
-
-        // Избранная
-        const WallEditFavorite()
+        // Статус
+        const WallCreateStatus(),
       ],
     );
   }
 
-  Future _saveTask(Future<bool> Function() saveTask) async {
+  Future _save(Future<bool> Function() wall) async {
     if (!mounted || _formKey.currentState == null) return;
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    var result = await saveTask();
+    var result = await wall();
     if (mounted) {
       Navigator.pop(context, result);
-    }
-  }
-
-  void _close() {
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
-  }
-
-  Future _deleteTask(Future Function() deleteTask) async {
-    if (await showConfirmDialog(context) == true && context.mounted) {
-      await deleteTask();
-      _close();
     }
   }
 }

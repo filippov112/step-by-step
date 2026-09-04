@@ -11,40 +11,29 @@ class WallCreateModel extends ChangeNotifier {
   Wall wall = Wall.create(title: '', target: '');
   
   final _wallRepo = WallRepository();
-  final _projectRepo = ProjectRepository();
-
-  List<Project> projects = [];
 
   String title = '';
-  String group = '';
+  String selectedGroup = '';
   String target = '';
   bool favorite = false;
-  DateTime? created = DateTool.today();
-  DateTime? destroyed;
   WallDiff difficulty = WallDiff.F;
   WallStatus status = WallStatus.breaking;
 
   Project? selectedProject;
 
-  bool isEditing = false;
-
   // ---------------- Initialization ------------------
 
-  Future setWall(Wall? wll) async {
+  Future setWall(Project? project, String group) async {
 
-    projects = await _projectRepo.getAll();
-    isEditing = wll != null;
-    wall = wll ?? Wall.create(title: '', target: '');
+    wall = Wall.create(title: '', target: '');
     
     title = wall.title;
     target = wall.target;
-    group = wall.group;
+    selectedGroup = group;
     favorite = wall.favorite;
-    created = wall.created;
-    destroyed = wall.destroyed;
     difficulty = wall.difficulty;
     status = wall.status;
-    selectedProject = wall.projectId == null ? null : projects.firstWhere((e) => e.id == wall.projectId);
+    selectedProject = project;
     
     notifyListeners();
   }
@@ -59,10 +48,6 @@ class WallCreateModel extends ChangeNotifier {
     target = value ?? '';
     notifyListeners();
   }
-  void setGroup(String? value) {
-    group = value ?? '';
-    notifyListeners();
-  }
   void setFavorite(bool value) {
     favorite = value;
     notifyListeners();
@@ -71,58 +56,25 @@ class WallCreateModel extends ChangeNotifier {
     status = value;
     notifyListeners();
   }
-  void setCreated(DateTime? value) {
-    created = value;
-    notifyListeners();
-  }
-  void setDestroyed(DateTime? value) {
-    destroyed = value;
-    notifyListeners();
-  }
   void setDifficulty(WallDiff value) {
     difficulty = value;
     notifyListeners();
   }
-  void setProject(Project? value) {
-    selectedProject = value;
-    notifyListeners();
-  }
-  String? groupValidator(String? text) {
-    if (text == null || text.isEmpty) return null;
-    var parts = text.split('/');
-    if (parts.any((e) => e.isEmpty)) return 'Части группы не могут быть пустыми';
-    return null;
-  }
 
   // ---------- CRUD ---------------------
-
-  Future delete() async {
-    if (isEditing) {
-      try {
-        await _wallRepo.delete(wall.id);
-      } catch (e) {
-        // print(e);
-      }
-    }
-  }
 
   Future<bool> save() async {
     wall.title = title;
     wall.target = target;
-    wall.group = group;
+    wall.group = selectedGroup;
     wall.favorite = favorite;
     wall.status = status;
-    wall.created = created;
-    wall.destroyed = destroyed;
+    wall.created = DateTool.today();
     wall.difficulty = difficulty;
     wall.projectId = selectedProject?.id;
     
     try {
-      if (isEditing) {
-        await _wallRepo.update(wall);
-      } else {
-        await _wallRepo.insert(wall);
-      }
+      await _wallRepo.insert(wall);
     }
     catch (e) {
       // print(e);

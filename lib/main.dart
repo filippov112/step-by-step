@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/walls/create/wall_create_model.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
@@ -30,6 +31,7 @@ void main() async {
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
 
         // Tasks
+        ChangeNotifierProvider<WallCreateModel>(create: (_) { return WallCreateModel(); }),
         ChangeNotifierProvider<WallEditModel>(create: (_) { return WallEditModel(); }),
         ChangeNotifierProvider<WallDetailModel>(create: (_) { return WallDetailModel(); }),
         ChangeNotifierProvider<WallListModel>(create: (_) { return WallListModel(); }),

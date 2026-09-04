@@ -1,3 +1,4 @@
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
@@ -12,30 +13,42 @@ class WallEditDifficulty extends StatelessWidget {
       (model) => model.difficulty,
     );
     final setDifficulty = context.read<WallEditModel>().setDifficulty;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Сложность', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: WallDiff.values
-                .map(
-                  (difficulty) => Padding(
-                    padding: EdgeInsetsGeometry.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(difficulty.name),
-                      selected: selectedDifficulty == difficulty,
-                      onSelected: (_) => setDifficulty(difficulty),
+    final radius = BorderRadius.circular(4);
+    
+    return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: WallDiff.values
+              .map(
+                (value) => Padding(
+                  padding: EdgeInsetsGeometry.only(right: 4),
+                  child: InkWell(
+                    borderRadius: radius,
+                    onTap: () => setDifficulty(value),
+                    child: Container(
+                      width: 50,
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        borderRadius: radius,
+                        color: selectedDifficulty == value
+                            ? value.color
+                            : value.color.withAlpha(50),
+                      ),
+                      child: Center(
+                        child: CustomText(
+                          value.name,
+                          size: 18,
+                          color: selectedDifficulty == value
+                              ? Theme.of(context).canvasColor
+                              : value.color,
+                        ),
+                      ),
                     ),
                   ),
-                )
-                .toList(),
-          ),
+                ),
+              )
+              .toList(),
         ),
-      ],
-    );
+      );
   }
 }

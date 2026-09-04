@@ -1,19 +1,19 @@
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
 import 'package:chaos_control/widgets/form/datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class WallFormDates extends StatelessWidget {
+class WallEditDates extends StatelessWidget {
 
-  const WallFormDates({
+  const WallEditDates({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<WallFormModel>();
-    final created = context.select<WallFormModel,DateTime?>((m) => m.created);
-    final destroyed = context.select<WallFormModel,DateTime?>((m) => m.destroyed);
+    final model = context.read<WallEditModel>();
+    final created = context.select<WallEditModel,DateTime?>((m) => m.created);
+    final destroyed = context.select<WallEditModel,DateTime?>((m) => m.destroyed);
     final setCreated = model.setCreated;
     final setDestroyed = model.setDestroyed;
 

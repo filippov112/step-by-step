@@ -1,27 +1,27 @@
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/project_dialog_tile.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/project_dialog_tile.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class WallFormSelectProjectDialog extends StatefulWidget {
-  const WallFormSelectProjectDialog({super.key});
+class WallCreateSelectProjectDialog extends StatefulWidget {
+  const WallCreateSelectProjectDialog({super.key});
 
   @override
-  State<WallFormSelectProjectDialog> createState() =>
-      _WallFormSelectProjectDialogState();
+  State<WallCreateSelectProjectDialog> createState() =>
+      _WallCreateSelectProjectDialogState();
 }
 
-class _WallFormSelectProjectDialogState
-    extends State<WallFormSelectProjectDialog> {
+class _WallCreateSelectProjectDialogState
+    extends State<WallCreateSelectProjectDialog> {
   void _selectCallback(Project? project) {
     Navigator.pop(context, project);
   }
 
   @override
   Widget build(BuildContext context) {
-    final projects = context.select<WallFormModel, List<Project>>(
+    final projects = context.select<WallEditModel, List<Project>>(
       (m) => m.projects,
     );
 

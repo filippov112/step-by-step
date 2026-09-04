@@ -1,13 +1,13 @@
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/project_dialog.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/project_dialog.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class WallFormProject extends StatelessWidget {
-  const WallFormProject({super.key});
+class WallCreateProject extends StatelessWidget {
+  const WallCreateProject({super.key});
 
   Future _openProjectDialog(
     BuildContext context,
@@ -15,7 +15,7 @@ class WallFormProject extends StatelessWidget {
   ) async {
     final selectedProject = await showDialog<Project?>(
       context: context,
-      builder: (context) => const WallFormSelectProjectDialog(),
+      builder: (context) => const WallEditSelectProjectDialog(),
     );
     if (selectedProject != null) {
       callback.call(selectedProject);
@@ -24,9 +24,9 @@ class WallFormProject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<WallFormModel>();
+    final model = context.read<WallEditModel>();
 
-    final selectedProject = context.select<WallFormModel, Project?>(
+    final selectedProject = context.select<WallEditModel, Project?>(
       (m) => m.selectedProject,
     );
     final setProject = model.setProject;

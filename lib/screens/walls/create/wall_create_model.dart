@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/models/wall.dart';
 
-class WallFormModel extends ChangeNotifier {
+class WallCreateModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
   Wall wall = Wall.create(title: '', target: '');

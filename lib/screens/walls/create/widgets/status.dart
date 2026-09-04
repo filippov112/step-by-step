@@ -1,17 +1,17 @@
 import 'package:chaos_control/models/enums/wall_status.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
 import 'package:provider/provider.dart';
 
-class WallFormStatus extends StatelessWidget {
-  const WallFormStatus({super.key});
+class WallCreateStatus extends StatelessWidget {
+  const WallCreateStatus({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final status = context.select<WallFormModel, WallStatus>(
+    final status = context.select<WallEditModel, WallStatus>(
       (model) => model.status,
     );
-    final setStatus = context.read<WallFormModel>().setStatus;
+    final setStatus = context.read<WallEditModel>().setStatus;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/walls/form/wall_form_screen.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_screen.dart';
 import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
 import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class WallListAddButton extends StatelessWidget {
   void _create(BuildContext context, VoidCallback loadCallback) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => WallFormScreen()),
+      MaterialPageRoute(builder: (context) => WallEditScreen()),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

@@ -1,35 +1,35 @@
-import 'package:chaos_control/screens/walls/form/widgets/dates.dart';
-import 'package:chaos_control/screens/walls/form/widgets/favorite.dart';
-import 'package:chaos_control/screens/walls/form/widgets/project.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/dates.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/favorite.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
-import 'package:chaos_control/screens/walls/form/widgets/difficulty.dart';
-import 'package:chaos_control/screens/walls/form/widgets/status.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/difficulty.dart';
+import 'package:chaos_control/screens/walls/edit/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class WallFormScreen extends StatefulWidget {
+class WallEditScreen extends StatefulWidget {
   final Wall? wall;
   final Wall? parent;
 
-  const WallFormScreen({super.key, this.wall, this.parent});
+  const WallEditScreen({super.key, this.wall, this.parent});
 
   @override
-  State<WallFormScreen> createState() => _WallFormScreenState();
+  State<WallEditScreen> createState() => _WallEditScreenState();
 }
 
-class _WallFormScreenState extends State<WallFormScreen> {
+class _WallEditScreenState extends State<WallEditScreen> {
   final _formKey = GlobalKey<FormState>();
-  late WallFormModel model;
+  late WallEditModel model;
   late TextEditingController titleController, groupController, targetController;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<WallFormModel>();
+    model = context.read<WallEditModel>();
     titleController = TextEditingController(text: widget.wall?.title);
     targetController = TextEditingController(text: widget.wall?.target);
     groupController = TextEditingController(text: widget.wall?.group);
@@ -61,7 +61,7 @@ class _WallFormScreenState extends State<WallFormScreen> {
       children: [
 
         // Проект
-        const WallFormProject(),
+        const WallEditProject(),
 
         // Название
         CustomTextInput(
@@ -95,19 +95,19 @@ class _WallFormScreenState extends State<WallFormScreen> {
         const SizedBox(height: 12),
 
         // Статус
-        const WallFormStatus(),
+        const WallEditStatus(),
         const SizedBox(height: 12),
 
         // Сложность
-        const TaskFormDifficulty(),
+        const WallEditDifficulty(),
         const SizedBox(height: 12),
 
         // Даты создания и разрушения
-        const WallFormDates(),
+        const WallEditDates(),
         const SizedBox(height: 12),
 
         // Избранная
-        const WallFormFavorite()
+        const WallEditFavorite()
       ],
     );
   }

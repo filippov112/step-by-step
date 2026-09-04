@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
-import 'package:chaos_control/screens/walls/form/wall_form_model.dart';
+import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
 import 'package:provider/provider.dart';
 
-class TaskFormDifficulty extends StatelessWidget {
-  const TaskFormDifficulty({super.key});
+class WallCreateDifficulty extends StatelessWidget {
+  const WallCreateDifficulty({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final selectedDifficulty = context.select<WallFormModel, WallDiff>(
+    final selectedDifficulty = context.select<WallEditModel, WallDiff>(
       (model) => model.difficulty,
     );
-    final setDifficulty = context.read<WallFormModel>().setDifficulty;
+    final setDifficulty = context.read<WallEditModel>().setDifficulty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

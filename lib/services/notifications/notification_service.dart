@@ -1,35 +1,31 @@
-import 'dart:async';
 import 'dart:collection';
 import 'package:chaos_control/services/notifications/notification_item.dart';
 import 'package:chaos_control/services/notifications/notification_widget.dart';
 import 'package:flutter/material.dart';
 
-class NotificationService {
-  static const _duration = 2000;
-
+class NotificationService extends ChangeNotifier {
+  // Синглтон
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
 
+  // Контекст
+  BuildContext? _context;
+  void setContext(BuildContext context) {
+    _context = context;
+  }
+
+  static const _duration = 2000; // Задержка
+
+  // Очередь
   final Queue<NotificationItem> queue = Queue<NotificationItem>();
   bool _isShowing = false;
 
-  GlobalKey<NavigatorState>? _navigatorKey;
-  BuildContext? get _context => _navigatorKey?.currentContext;
-  
-  bool _isInitialized = false;
-  void init({
-    required GlobalKey<NavigatorState> navigatorKey,
-  }) {
-    _navigatorKey = navigatorKey;
-    _isInitialized = true;
-  }
+  OverlayEntry? _currentOverlay; // UI слой с уведомлением
 
-  OverlayEntry? _currentOverlay;
-  Timer? _autoHideTimer;
-
-   void showNotification(NotificationItem item) {
-    if (!_isInitialized) return;
+  // Добавить уведомление в очередь
+  void showNotification(NotificationItem item) {
+    if (_context == null) return;
     final context = _context;
     if (context == null) return;
 
@@ -39,7 +35,7 @@ class NotificationService {
 
   void _processQueue(BuildContext context) {
     if (_isShowing || queue.isEmpty) return;
-    
+
     _isShowing = true;
     final item = queue.removeFirst();
     _showOverlay(context, item);
@@ -48,7 +44,6 @@ class NotificationService {
   void _showOverlay(BuildContext context, NotificationItem item) {
     // Удаляем предыдущий overlay, если есть
     _currentOverlay?.remove();
-    _autoHideTimer?.cancel();
 
     final overlay = Overlay.of(context);
     _currentOverlay = OverlayEntry(
@@ -63,7 +58,6 @@ class NotificationService {
   }
 
   void _dismissCurrent(BuildContext context) {
-    _autoHideTimer?.cancel();
     _currentOverlay?.remove();
     _currentOverlay = null;
     _isShowing = false;
@@ -72,7 +66,6 @@ class NotificationService {
 
   void clearAll() {
     queue.clear();
-    _autoHideTimer?.cancel();
     _currentOverlay?.remove();
     _currentOverlay = null;
     _isShowing = false;

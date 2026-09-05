@@ -87,13 +87,13 @@ class _ProfileProgressState extends State<ProfileProgress> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(
-                '${widget.currentValue.toInt()} / ${widget.nextLevel.toInt()}',
+                '${widget.currentValue.toInt()} / ${widget.nextLevel.toInt()} SF',
                 size: 11,
                 align: TextAlign.center,
               ),
               const SizedBox(width: 8),
               CustomText(
-                '+${widget.deltaValue.toInt()} | ${(getPercent(widget.currentValue, widget.nextLevel) * 100).toInt()}%',
+                '+${widget.deltaValue.toInt()} SF | ${(getPercent(widget.currentValue, widget.nextLevel) * 100).toInt()}%',
                 size: 11,
                 align: TextAlign.center,
               ),

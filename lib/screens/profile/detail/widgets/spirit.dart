@@ -10,7 +10,7 @@ class ProfileDetailSpirit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eff = context.select<ProfileDetailModel, int>((model) => model.user?.efforts ?? 0);
+    final eff = context.select<ProfileDetailModel, int>((model) => model.user?.spiritFragments ?? 0);
 
     final int deltaEff = context.select<ProfileDetailModel, int>(
       (model) => model.deltaEfforts,

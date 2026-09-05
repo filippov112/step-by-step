@@ -48,12 +48,16 @@ class _WallDetailsScreenState extends State<WallDetailsScreen>
     final visibilityForm = context.select<WallDetailModel, bool>(
       (m) => m.visibilityAttemptForm,
     );
+    final isSelectionMode = context.select<WallDetailModel, bool>(
+      (m) => m.isSelectionMode,
+    );
+    
 
     void editCallback() => _edit(model, wll);
     Future<dynamic> deleteCallback() => _deleteWall(model.deleteWall);
 
     final floatingButton = currentTabIndex == 0
-        ? (visibilityForm ? null : const WallDetailAddAttemptButton())
+        ? (visibilityForm || isSelectionMode ? null : const WallDetailAddAttemptButton())
         : const WallDetailChangeStatusButton();
 
     return EntityScreen(

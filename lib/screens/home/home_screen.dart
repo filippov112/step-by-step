@@ -1,3 +1,4 @@
+import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
@@ -13,6 +14,12 @@ class HomeScreen extends StatelessWidget {
 
     var module = context.select<HomeModel,AppModule>((model) => model.currentModule);
     var user = context.select<HomeModel,Profile?>((service) => service.user);
+
+    // Инициализация сервиса уведомлений
+    final ns = context.read<NotificationService>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ns.setContext(context);
+    });
 
     return FutureBuilder(
       future: context.read<HomeModel>().loadUser(),

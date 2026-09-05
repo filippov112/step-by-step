@@ -76,7 +76,7 @@ class ProfileDetailModel extends ChangeNotifier {
 
     int dayIndex = DateTool.datetimeToDays(lastDay) ?? 0;
     int firstDayIndex = DateTool.datetimeToDays(firstDay) ?? 0;
-    var summaEff = user!.efforts;
+    var summaEff = user!.spiritFragments;
     while (dayIndex >= firstDayIndex) {
       final dayDateTime = DateTool.joinDateTime(date: dayIndex);
       progressEffortData.add(

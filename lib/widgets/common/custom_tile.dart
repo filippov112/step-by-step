@@ -5,23 +5,25 @@ class CustomTile extends StatelessWidget {
   final double? borderWidth;
   final Color? borderColor;
   final double? padding;
-  final List<Widget> children;
+  final Widget child;
   final Color? background;
-  final VoidCallback? callback;
+  final VoidCallback? callback, longPressCallback;
 
   const CustomTile({super.key, 
-    required this.children,
+    required this.child,
     this.borderRadius, 
     this.padding,
     this.background,
     this.callback,
     this.borderColor,
-    this.borderWidth
+    this.borderWidth,
+    this.longPressCallback
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onLongPress: longPressCallback,
       onTap: callback,
       borderRadius: borderRadius != null ? BorderRadius.all(Radius.circular(borderRadius!)) : null,
       child: Container(
@@ -33,11 +35,7 @@ class CustomTile extends StatelessWidget {
             color: borderColor ?? Theme.of(context).dividerColor, 
             width: borderWidth ?? 1)
         ),
-        child: Row(
-            children: [
-              ...children,
-            ],
-          ),
+        child: child
         ),
     );
   }

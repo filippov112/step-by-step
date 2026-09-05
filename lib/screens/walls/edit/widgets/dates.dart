@@ -19,9 +19,9 @@ class WallEditDates extends StatelessWidget {
 
     return Column(
       children: [
-      CustomDateTime(title: 'Создана:', callback: setCreated, value: created, dateOnly: true,),
+      CustomDateTime(label: 'Создана:', callback: setCreated, value: created, dateOnly: true,),
       SizedBox(height: 12,),
-      CustomDateTime(title: 'Разрушена:', callback: setDestroyed, value: destroyed, dateOnly: true,),
+      CustomDateTime(label: 'Разрушена:', callback: setDestroyed, value: destroyed, dateOnly: true,),
     ],);
   }
 }

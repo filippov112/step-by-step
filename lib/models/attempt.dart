@@ -18,7 +18,7 @@ class Attempt {
   static const cSuccess = "_success";
   static const cDescription = "_description";
   static const cDate = "_date";
-  static const cEfforts = "_efforts";
+  static const cSpiritFragments = "_sf";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
@@ -26,18 +26,18 @@ class Attempt {
           $cSuccess INTEGER,
           $cDescription TEXT,
           $cDate INTEGER,
-          $cEfforts INTEGER,
+          $cSpiritFragments INTEGER,
           FOREIGN KEY ($cWallId) REFERENCES ${Wall.tn}(${Wall.cId}) ON DELETE CASCADE
         );
         ''';
 
   // ------------ Поля ------------
-  String id = "";
-  String? wallId; // Стена
+  String id = '';
+  String wallId = ''; // Стена
   int success = 0; // Процент успеха
   String description = ""; // Описание
-  DateTime? date; // Дата
-  int efforts = 0; // Кол-во усилий
+  DateTime date = DateTool.today(); // Дата
+  int spiritFragments = 0; // Фрагменты духа
 
   // ------------ Конструкторы ------------
 
@@ -47,14 +47,14 @@ class Attempt {
     required this.success,
     required this.description,
     required this.date,
-    required this.efforts,
+    required this.spiritFragments,
   });
 
   factory Attempt.create({
-    String? wallId,
+    required String wallId,
     int success = 0,
     String? description,
-    DateTime? date,
+    required DateTime date,
     int efforts = 0,
   }) {
     final guid = const Uuid().v4();
@@ -64,7 +64,7 @@ class Attempt {
       success: success,
       description: description ?? '',
       date: date,
-      efforts: efforts,
+      spiritFragments: efforts,
     );
   }
 
@@ -76,7 +76,7 @@ class Attempt {
       cSuccess: success,
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
-      cEfforts: efforts,
+      cSpiritFragments: spiritFragments,
     };
   }
 
@@ -85,8 +85,8 @@ class Attempt {
     wallId = map[cWallId];
     success = map[cSuccess];
     description = map[cDescription];
-    date = DateTool.joinDateTime(date: map[cDate]);
-    efforts = map[cEfforts] ?? 0;
+    date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
+    spiritFragments = map[cSpiritFragments] ?? 0;
   }
 }
 
@@ -100,7 +100,7 @@ extension RewardCopyWith on Attempt {
       description: description,
       id: id,
       date: date,
-      efforts: efforts,
+      spiritFragments: spiritFragments,
     );
   }
 }
@@ -170,13 +170,13 @@ class AttemptRepository {
     switch (type) {
       case TransactionType.update: {
         var oldRecord = await get(rw.id);
-        result = rw.efforts - (oldRecord?.efforts ?? 0);
+        result = rw.spiritFragments - (oldRecord?.spiritFragments ?? 0);
       }
       case TransactionType.add: {
-        result = rw.efforts;
+        result = rw.spiritFragments;
       }
       case TransactionType.remove: {
-        result = - rw.efforts;
+        result = - rw.spiritFragments;
       }
     }
     return result;
@@ -186,7 +186,7 @@ class AttemptRepository {
   Future _updateProfile(TransactionType type, Attempt rw) async {
     var deltaEfforts = await _getDelta(type, rw);
     var user = await userRepo.get();
-    user?.efforts += deltaEfforts;
+    user?.spiritFragments += deltaEfforts;
     if (user == null) return;
     await userRepo.update(user);
     await SpiritCalculator.recalcLevelUser(user);

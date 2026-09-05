@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
 class CustomTextInput extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? header;
   final IconData icon;
   final String? requiredErrorText;
   final Function(String?) setText;
   final int? lines;
   final String? Function(String?)? customValidator;
+  final String? initialValue;
 
   const CustomTextInput({
     super.key,
     required this.header,
-    required this.controller,
+    this.controller,
     required this.setText,
     required this.icon,
     this.requiredErrorText,
     this.lines,
-    this.customValidator
+    this.customValidator,
+    this.initialValue
   });
 
   @override
@@ -25,6 +27,7 @@ class CustomTextInput extends StatelessWidget {
     return TextFormField(
       controller: controller,
       onChanged: setText,
+      initialValue: initialValue,
       decoration: InputDecoration(
         labelText: header,
         border: const OutlineInputBorder(),

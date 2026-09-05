@@ -57,10 +57,10 @@ class WallListModel extends ChangeNotifier {
     final list = await _attemptRepo.getAll();
     final result = <String,int>{};
     for(var at in list) {
-      if (!result.containsKey(at.id)) {
-        result[at.id] = 1;
+      if (!result.containsKey(at.wallId)) {
+        result[at.wallId] = 1;
       } else {
-        result[at.id] = (result[at.id] ?? 0) + 1;
+        result[at.wallId] = (result[at.wallId] ?? 0) + 1;
       }
     }
     attempts = result;

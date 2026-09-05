@@ -1,14 +1,15 @@
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
 import 'package:chaos_control/models/enums/wall_status.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
+import 'package:chaos_control/screens/walls/detail/widgets/detail_price_card.dart';
 import 'package:chaos_control/services/datetool.dart';
-import 'package:chaos_control/services/numerictool.dart';
 import 'package:chaos_control/services/wall_calculator.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// Вкладка деталей
 class WallDetailDetailTab extends StatelessWidget {
   const WallDetailDetailTab({super.key});
 
@@ -37,6 +38,7 @@ class WallDetailDetailTab extends StatelessWidget {
     final successPrice = WallCalculator.getSuccesPrice(diff, attempts, status);
     final failurePrice = WallCalculator.getFailurePrice(diff, attempts, status);
 
+    // Блок "Награда за успех"
     final successPriceWidget = WallDetailPriceCard(
       title: 'Успех',
       color: WallStatus.destroyed.color,
@@ -44,6 +46,7 @@ class WallDetailDetailTab extends StatelessWidget {
       value: successPrice,
     );
 
+    // Блок "Награда за провал"
     final failurePriceWidget = WallDetailPriceCard(
       title: 'Провал',
       color: WallStatus.retreated.color,
@@ -51,6 +54,7 @@ class WallDetailDetailTab extends StatelessWidget {
       value: failurePrice,
     );
 
+    // Блок "Цель"
     final targetWidget = target.isEmpty
         ? null
         : CustomCardBlock(
@@ -64,14 +68,16 @@ class WallDetailDetailTab extends StatelessWidget {
             ),
           );
 
+    // Строка "Сложность"
     final diffWidget = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const CustomText('Уровень сложности:'),
+        const CustomText('Сложность:'),
         CustomText(diff.name, color: diff.color, weight: FontWeight.bold),
       ],
     );
 
+    // Строка "Создана"
     final createdWidget = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -80,6 +86,7 @@ class WallDetailDetailTab extends StatelessWidget {
       ],
     );
 
+    // Строка "Разрушена"
     final destroyedWidget = destroyed == null
         ? null
         : Row(
@@ -94,6 +101,7 @@ class WallDetailDetailTab extends StatelessWidget {
             ],
           );
 
+    // Блок "Сложность, создана, разрушена"
     final otherInfoWidget = CustomCardBlock(
       child: Padding(
         padding: const EdgeInsetsGeometry.all(8),
@@ -112,63 +120,12 @@ class WallDetailDetailTab extends StatelessWidget {
           Row(
             children: [
               successPriceWidget,
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               failurePriceWidget,
             ],
           ),
           otherInfoWidget,
         ],
-      ),
-    );
-  }
-}
-
-class WallDetailPriceCard extends StatelessWidget {
-  final int value;
-  final String title;
-  final IconData icon;
-  final Color color;
-
-  const WallDetailPriceCard({
-    super.key,
-    required this.value,
-    required this.title,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final backColor = color.withAlpha(20);
-    final defaultTC = Theme.of(context).colorScheme.onPrimary;
-    final textColor = Color.from(
-      alpha: defaultTC.a,
-      red: (6 * defaultTC.r + color.r) / 7,
-      green: (6 * defaultTC.g + color.g) / 7,
-      blue: (6 * defaultTC.b + color.b) / 7,
-    );
-    return Expanded(
-      child: CustomCardBlock(
-        title: title,
-        icon: icon,
-        backColor: backColor,
-        iconColor: color,
-        textColor: textColor,
-        borderColor: color,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            CustomText(
-              NumericTool.toThousandString(value),
-              size: 24,
-              weight: const FontWeight(500),
-            ),
-            const CustomText(
-              'SF',
-              padding: EdgeInsets.only(left: 4, bottom: 4),
-            ),
-          ],
-        ),
       ),
     );
   }

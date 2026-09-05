@@ -37,7 +37,7 @@ class AnalyticsRepository {
         '''
       SELECT 
         ${Attempt.cDate},
-        COALESCE(SUM(${Attempt.cEfforts}), 0) AS ${DtoActivity.cExp}
+        COALESCE(SUM(${Attempt.cSpiritFragments}), 0) AS ${DtoActivity.cExp}
       FROM ${Attempt.tn}
       $whereClause
       GROUP BY ${Attempt.cDate}

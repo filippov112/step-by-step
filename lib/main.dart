@@ -1,4 +1,5 @@
 import 'package:chaos_control/screens/walls/create/wall_create_model.dart';
+import 'package:chaos_control/screens/walls/detail/attempt_form_model.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
 import 'package:provider/provider.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -29,12 +31,14 @@ void main() async {
       providers: [
 
         // Home
+        ChangeNotifierProvider<NotificationService>(create: (_) => NotificationService()),
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
 
         // Tasks
         ChangeNotifierProvider<WallCreateModel>(create: (_) { return WallCreateModel(); }),
         ChangeNotifierProvider<WallEditModel>(create: (_) { return WallEditModel(); }),
         ChangeNotifierProvider<WallDetailModel>(create: (_) { return WallDetailModel(); }),
+        ChangeNotifierProvider<AttemptFormModel>(create: (_) { return AttemptFormModel(); }),
         ChangeNotifierProvider<WallListModel>(create: (_) { return WallListModel(); }),
         
         // User
@@ -68,22 +72,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-  @override
-  void initState() {
-    super.initState();
-    // Инициализируем сервис с ключами
-    NotificationService().init(
-      navigatorKey: navigatorKey,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
       title: 'Chaos Control',
-      navigatorKey: navigatorKey,
       theme: SoloLevelingTheme.theme,
       home: HomeScreen()
       // home: TestScreen()

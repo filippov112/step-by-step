@@ -99,7 +99,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
           callback: (v) => model?.setDateBirth(v),
           value: dateBirth,
           dateOnly: true,
-          title: 'Дата рождения',
+          label: 'Дата рождения',
         ),
         const SizedBox(height: 20),
       ],

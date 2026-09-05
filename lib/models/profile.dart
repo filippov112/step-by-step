@@ -30,7 +30,7 @@ class Profile {
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
   DateTime dateBirth = DateTime(2000); // Дата рождения
-  int efforts = 0; // Кэш усилий
+  int spiritFragments = 0; // Кэш усилий
   int level = 1; // Кэш уровня
 
   String get age => DateTool.age(dateBirth, DateTime.now());
@@ -39,7 +39,7 @@ class Profile {
     this.name = "",
     this.icon,
     required this.dateBirth,
-    this.efforts = 0,
+    this.spiritFragments = 0,
     this.level = 1,
   });
 
@@ -48,7 +48,7 @@ class Profile {
       cName: name,
       cIcon: icon?.toJson() ,
       cBirthDate: DateTool.datetimeToDays(dateBirth),
-      cEfforts: efforts,
+      cEfforts: spiritFragments,
       cLevel: level
     };
     if (id != null) {
@@ -62,7 +62,7 @@ class Profile {
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
-    efforts = map[cEfforts];
+    spiritFragments = map[cEfforts];
     level = map[cLevel];
   }
 }

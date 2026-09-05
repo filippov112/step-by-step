@@ -1,3 +1,5 @@
+import 'package:chaos_control/services/datetool.dart';
+import 'package:chaos_control/services/numerictool.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/custom_tile.dart';
@@ -8,65 +10,64 @@ class CustomDateTime extends StatelessWidget {
   final DateTime? value;
   final Function(DateTime?) callback;
   final bool dateOnly;
-  final String? title;
+  final String? label;
 
   const CustomDateTime({
     super.key,
     required this.callback,
     required this.value,
     this.dateOnly = false,
-    this.title,
+    this.label,
   });
+
+  Future _openDialog(BuildContext context) async {
+    final today = DateTool.today();
+    final result = dateOnly
+        ? await selectDateOnly(context, value ?? today)
+        : await selectDateTime(context, value ?? today);
+    if (result != null) {
+      callback(result);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final displayDateOnly = DateTool.shortDateFormat(value);
+    final displayTime =
+        '${NumericTool.toZeroFormat(value?.hour ?? 0, 2)}:${NumericTool.toZeroFormat(value?.minute ?? 0, 2)}';
+
     final displayValue = value != null
-        ? (dateOnly
-              ? '${value!.day}.${value!.month}.${value!.year} '
-              : '${value!.day}.${value!.month}.${value!.year} '
-                    '${value!.hour}:${value!.minute.toString().padLeft(2, '0')}')
+        ? (dateOnly ? displayDateOnly : '$displayDateOnly $displayTime')
         : '';
 
     return CustomTile(
-      callback: () async {
-        final result = dateOnly
-            ? await selectDateOnly(
-                context,
-                value ?? DateTime(now.year, now.month, now.day),
-              )
-            : await selectDateTime(
-                context,
-                value ??
-                    DateTime(
-                      now.year,
-                      now.month,
-                      now.day,
-                      now.hour,
-                      now.minute,
-                    ),
-              );
-        if (result != null) {
-          callback(result);
-        }
-      },
-      padding: 16,
-      borderRadius: 16,
-      children: [
-        const Icon(Icons.event),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(title ?? (dateOnly ? 'Дата' : 'Дата и время')),
-              CustomText(displayValue),
-            ],
+      callback: () => _openDialog(context),
+      padding: 8,
+      borderRadius: 12,
+      child: Row(
+        children: [
+          const Icon(Icons.event),
+          const SizedBox(width: 12),
+
+          if (label != null)
+            CustomText(
+              label!,
+              size: 14,
+              padding: const EdgeInsets.only(right: 8),
+            ),
+          CustomText(
+            displayValue,
+            color: Theme.of(context).focusColor,
+            expanded: true,
           ),
-        ),
-        if (value != null)
-          IconButton(onPressed: () => callback(null), icon: Icon(Icons.close)),
-      ],
+
+          if (value != null)
+            IconButton(
+              onPressed: () => callback(null),
+              icon: Icon(Icons.close),
+            ),
+        ],
+      ),
     );
   }
 }

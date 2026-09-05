@@ -35,7 +35,7 @@ class WallDetailModel extends ChangeNotifier {
   }
 
   Future _loadAttempts() async {
-    attempts = await _attemptRepo.getByWall(wall.id);
+    attempts = (await _attemptRepo.getByWall(wall.id))..sort((a,b) => b.date.compareTo(a.date));
   }
 
   void changeTabIndex(int index) {
@@ -45,17 +45,72 @@ class WallDetailModel extends ChangeNotifier {
 
   // ------------ Attempts --------------
 
-  void openCreateForm() {
-    visibilityAttemptForm = true;
+  Attempt? editionAttempt;
 
+  void openForm(Attempt? attempt) {
+    visibilityAttemptForm = true;
+    editionAttempt = attempt;
     notifyListeners();
+  }
+
+  Future saveAttempt() async {
+    await _loadAttempts();
+    closeAttemptForm();
   }
 
   void closeAttemptForm() {
     visibilityAttemptForm = false;
+    editionAttempt = null;
     notifyListeners();
   }
 
+  Future deleteAllSelectedAttempts() async {
+    for (final id in selectedIds) {
+      await _attemptRepo.delete(id);
+    }
+    selectedIds.clear();
+    isSelectionMode = false;
+    await _loadAttempts();
+    notifyListeners();
+  }
+
+  // Режим выделения
+  bool isSelectionMode = false;
+  Set<String> selectedIds = {};
+  void toggleSelectionMode() {
+    isSelectionMode = !isSelectionMode;
+    if (!isSelectionMode) {
+      selectedIds = {};
+    } else {
+      visibilityAttemptForm = false;
+    }
+    notifyListeners();
+  }
+  void toggleSelectAll() {
+    if (selectedIds.length == attempts.length) {
+      selectedIds = {};
+    } else {
+      selectedIds = attempts.map((t) => t.id).toSet();
+    }
+    notifyListeners();
+  }
+  void toggleSelect(String id) {
+    if (!isSelectionMode) toggleSelectionMode();
+
+    final selectedIdsCopy = selectedIds.toSet();
+    if (selectedIdsCopy.contains(id)) {
+      selectedIdsCopy.remove(id);
+    } else {
+      selectedIdsCopy.add(id);
+    }
+    selectedIds = selectedIdsCopy;
+    notifyListeners();
+  }
+  void clearSelection() {
+    selectedIds = {};
+    isSelectionMode = false;
+    notifyListeners();
+  }
 
   // ------------ Wall -----------------
 

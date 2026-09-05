@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/walls/detail/attempt_form_model.dart';
 import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,9 +9,10 @@ class WallDetailAddAttemptButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.read<WallDetailModel>();
+    final formModel = context.read<AttemptFormModel>();
 
     return FloatingActionButton(
-      onPressed: model.openCreateForm,
+      onPressed: () { model.openForm(null); formModel.initAttempt(null, model.wall, model.attempts.length); },
       tooltip: 'Добавить попытку',
       backgroundColor: Theme.of(context).focusColor,
       child: Icon(Icons.sports_martial_arts, color: Theme.of(context).primaryColor),

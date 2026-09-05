@@ -37,16 +37,16 @@ class WallCalculator {
 
   // Награды за провал от сложности
   static const _attemptPriceMap = <WallDiff,int>{
-    WallDiff.F: 2,
-    WallDiff.E: 3,
-    WallDiff.D: 5,
-    WallDiff.C: 8,
-    WallDiff.B: 14,
-    WallDiff.A: 20,
-    WallDiff.S: 60,
-    WallDiff.SS: 100,
-    WallDiff.SSS: 100,
-    WallDiff.EX: 150,
+    WallDiff.F: 6,
+    WallDiff.E: 9,
+    WallDiff.D: 15,
+    WallDiff.C: 24,
+    WallDiff.B: 42,
+    WallDiff.A: 60,
+    WallDiff.S: 180,
+    WallDiff.SS: 300,
+    WallDiff.SSS: 300,
+    WallDiff.EX: 450,
   };
 
   static int getSuccesPrice(WallDiff diff, int attempts, WallStatus status) {

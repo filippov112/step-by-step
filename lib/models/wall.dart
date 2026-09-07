@@ -143,6 +143,16 @@ class WallRepository {
     return res;
   }
 
+  // Получить по проекту
+  Future<List<Wall>> getByProject(String projectId) async {
+    List<Map<String, Object?>> maps = await db.query(Wall.tn, where: '${Wall.cProjectId} = ?', whereArgs: [projectId]);
+    List<Wall> res = [];
+    for (Map m in maps) {
+      res.add(Wall.fromMap(m));
+    }
+    return res;
+  }
+
   // Вставить
   Future<Wall> insert(Wall wll) async {
     await db.insert(Wall.tn, wll.toMap());

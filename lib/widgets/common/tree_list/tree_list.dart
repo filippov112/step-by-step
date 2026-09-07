@@ -11,7 +11,7 @@ class CustomTreeList<T> extends StatelessWidget {
   final VoidCallback? clearFilters, selectModeCallback;
   final Function(T?)? deleteCallback, selectCallback;
   final bool Function(T?)? isSelectedCallback;
-  final Function(T?) openRecordCallback;
+  final Function(T?)? openRecordCallback;
   final Function(TreeRecord<T>) openFolderCallback;
   final List<TreeRecord<T>> visualList;
   final String currentAddress;
@@ -27,12 +27,12 @@ class CustomTreeList<T> extends StatelessWidget {
     this.emptyTitle,
     this.emptySubtitle,
     this.clearFilters,
-    required this.deleteCallback,
-    required this.selectCallback,
-    required this.selectModeCallback,
-    required this.openRecordCallback,
+    this.deleteCallback,
+    this.selectCallback,
+    this.selectModeCallback,
+    this.openRecordCallback,
     required this.openFolderCallback,
-    required this.isSelectedCallback,
+    this.isSelectedCallback,
     this.isSelectionMode = false,
     this.floatingButton,
     this.tileFabric
@@ -57,11 +57,13 @@ class CustomTreeList<T> extends StatelessWidget {
       return true;
     }
 
+    final addressColor = Theme.of(context).colorScheme.onPrimary.withAlpha(120);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (currentAddress.isNotEmpty) 
-          CustomText(currentAddress, padding: EdgeInsets.symmetric(horizontal: 16)),
+          CustomText(currentAddress, padding: EdgeInsets.fromLTRB(16,8,16,0), color: addressColor),
         Expanded(
           child: Stack(children: [
               emptyMessage ??
@@ -73,7 +75,7 @@ class CustomTreeList<T> extends StatelessWidget {
 
                   final cOpen = record.isFolder
                         ? () => openFolderCallback(record)
-                        : () => openRecordCallback(record.object);
+                        : (openRecordCallback == null ? null : () => openRecordCallback?.call(record.object));
                   final cSelect = record.isFolder
                         ? () {
                             for (var child in record.children ?? []) {

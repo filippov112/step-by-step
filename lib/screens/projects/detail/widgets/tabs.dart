@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/projects/detail/widgets/info_tab.dart';
+import 'package:chaos_control/screens/projects/detail/widgets/detail_tab.dart';
 import 'package:chaos_control/screens/projects/detail/widgets/walls_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -18,16 +18,16 @@ class ProjectDetailTabs extends StatelessWidget {
             indicatorColor: Theme.of(context).focusColor,
             controller: controller,
             tabs: const [
+              Tab(text: 'Детали', height: 40,),
               Tab(text: 'Стены', height: 40,),
-              Tab(text: 'Цели', height: 40,),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: controller,
               children: const [
+                ProjectDetailDetailTab(),
                 ProjectDetailWallsTab(),
-                ProjectDetailInfoTab(),
               ],
             ),
           ),

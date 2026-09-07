@@ -122,6 +122,13 @@ class AttemptRepository {
     return maps.map((m) => Attempt.fromMap(m)).toList();
   }
 
+  Future<List<Attempt>> getByProject(String projectId) async {
+    List<Map<String, Object?>> maps = await db.rawQuery('''
+      SELECT at.* FROM ${Wall.tn} w JOIN ${Attempt.tn} at ON w.${Wall.cProjectId} = ? AND at.${Attempt.cWallId} = w.${Wall.cId}
+    ''', [projectId]);
+    return maps.map((m) => Attempt.fromMap(m)).toList();
+  }
+
   Future<Attempt?> get(String id) async {
     List<Map> maps = await db.query(Attempt.tn, where: '${Attempt.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {

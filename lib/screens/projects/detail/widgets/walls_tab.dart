@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/projects/detail/widgets/walls.dart';
 import 'package:flutter/material.dart';
 
 class ProjectDetailWallsTab extends StatelessWidget {
@@ -5,10 +6,6 @@ class ProjectDetailWallsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 150,
-      padding: EdgeInsets.only(bottom: 16),
-      child: SizedBox(),
-    );
+    return const ProjectDetailWalls();
   }
 }

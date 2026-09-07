@@ -27,7 +27,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
     _tabController = TabController(length: 2, vsync: this);
     model = context.read<ProjectDetailModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setClass(widget.project);
+      model.setProject(widget.project);
     });
   }
 

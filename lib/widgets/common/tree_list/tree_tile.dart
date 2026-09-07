@@ -72,7 +72,7 @@ class DefaultTreeTile<T> extends StatelessWidget {
     final iconWidget = Padding(
       padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
       child: CustomImageIcon(
-        record.customIconData,
+        record.isFolder ? null : record.customIconData,
         altIcon: customAltIcon,
         color: record.color,
         width: 40,

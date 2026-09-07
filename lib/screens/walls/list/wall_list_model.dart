@@ -1,5 +1,6 @@
 import 'package:chaos_control/models/attempt.dart';
 import 'package:chaos_control/models/enums/wall_difficulty.dart';
+import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
@@ -66,16 +67,38 @@ class WallListModel extends ChangeNotifier {
     attempts = result;
   }
 
-  List<TreeRecord<Wall>> transformRecords() => _filteredWalls
-    .map(
-      (e) => TreeRecord<Wall>(
-        address: e.group,
-        object: e,
-        name: e.title,
-        color: e.difficulty.color
-      ),
-    )
-    .toList();
+  void _reloadList() {
+    visualList = treeListModel.openFolder(
+      list: transformRecords(), 
+      folder: treeListModel.currentFolder,
+      groupFilter: groupFilter
+    );
+  }
+
+  List<TreeRecord<Wall>> transformRecords() => _filteredWalls.map(_buildTreeRecord).toList();
+
+  TreeRecord<Wall> _buildTreeRecord(Wall wall) {
+    Project? project; 
+    if ( wall.projectId != null && projects.map((p) => p.id).contains(wall.projectId)) {
+      project = projects.firstWhere((p) => p.id == wall.projectId);
+    }
+    return TreeRecord<Wall>(
+      address: _buildAddress(wall, project),
+      object: wall,
+      customIconData: _buildIcon(project),
+      name: wall.title,
+      color: wall.difficulty.color
+    );
+  }
+  String _buildAddress(Wall wall, Project? project) {
+    if (projectFilter != null || wall.projectId == null) {
+      return wall.group;
+    }
+    return [?project?.title, wall.group].join('/');
+  }
+  CustomImageData _buildIcon(Project? project) {
+    return project?.icon ?? CustomImageData.fromIcon(Icons.folder);
+  }
   
   Future openFolder(TreeRecord<Wall>? folder) async {
     visualList = treeListModel.openFolder(list: transformRecords(), folder: folder);
@@ -107,6 +130,7 @@ class WallListModel extends ChangeNotifier {
   }
   Future setProjectFilter(Project? value) async {
     projectFilter = value;
+    treeListModel.resetAddress();
     await _applyFiltersAndSort();
     notifyListeners();
   }
@@ -165,11 +189,7 @@ class WallListModel extends ChangeNotifier {
       result = result.reversed.toList();
     }
     _filteredWalls = result;
-    visualList = treeListModel.openFolder(
-      list: transformRecords(), 
-      folder: treeListModel.currentFolder,
-      groupFilter: groupFilter
-    );
+    _reloadList();
   }
   
   Future update(Wall wll) async {

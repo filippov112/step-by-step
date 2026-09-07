@@ -1,14 +1,18 @@
+import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 
 class CustomTreeListModel<T> {
   
   String currentAddress = '';
   TreeRecord<T>? currentFolder;
+  void resetAddress() {
+    currentAddress = '';
+    currentFolder = null;
+  }
 
   List<TreeRecord<T>> openFolder({required List<TreeRecord<T>> list, TreeRecord<T>? folder, bool groupFilter = true}) {
     if (!groupFilter) {
-      currentAddress = '';
-      currentFolder = null;
+      resetAddress();
       return list;
     }
     currentFolder = folder;
@@ -46,25 +50,28 @@ class CustomTreeListModel<T> {
 
   // Дочерние каталоги
   List<TreeRecord<T>> _getFolders(List<TreeRecord<T>> list) {
-    Set<String> folderNames = {};
 
-    void addFolder(String addr) {
-      final parts = addr.split('/');
-      if (parts[0].isNotEmpty) {
+    Set<String> folderNames = {};
+    Map<String,CustomImageData?> images = {};
+
+    void addFolder((CustomImageData?, String) rec) {
+      final parts = rec.$2.split('/');
+      if (parts[0].isNotEmpty && !folderNames.contains(parts[0])) {
+        images[parts[0]] = rec.$1;
         folderNames.add(parts[0]);
       }
     }
 
     // отфильтровываем записи в других каталогах и отсекаем текущий каталог
-    List<String> filteredList = [];
+    List<(CustomImageData?, String)> filteredList = [];
     
     if (currentAddress.isEmpty) {
       for(var rec in list) {
-        filteredList.add(rec.address);
+        filteredList.add((rec.customIconData, rec.address));
       }
     } else {
       for(var rec in list.where((e) => e.address.startsWith('$currentAddress/'))) {
-        filteredList.add(rec.address.substring(currentAddress.length + 1));
+        filteredList.add((rec.customIconData, rec.address.substring(currentAddress.length + 1)));
       }
     }
     for (var addr in filteredList) {
@@ -76,6 +83,7 @@ class CustomTreeListModel<T> {
       final path = (currentAddress.isEmpty ? [name,] : [currentAddress, name]).join('/');
       results.add(TreeRecord<T>(
         isFolder: true,
+        customIconData: images[name],
         name: name,
         address: path,
         children: list

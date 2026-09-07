@@ -1,5 +1,5 @@
-import 'package:chaos_control/models/wall.dart';
-import 'package:chaos_control/screens/projects/detail/project_walls_model.dart';
+import 'package:chaos_control/models/target.dart';
+import 'package:chaos_control/screens/projects/detail/project_targets_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
@@ -8,7 +8,7 @@ class ProjectDetailModel extends ChangeNotifier {
   final _classRepo = ProjectRepository();
 
   Project project = Project.create(title: '');
-  ProjectWallsModel? wallsModel;
+  ProjectTargetsModel? targetsModel;
 
   Future<bool> checkExist() async {
     var newRecord = await _classRepo.get(project.id);
@@ -22,8 +22,8 @@ class ProjectDetailModel extends ChangeNotifier {
 
   Future setProject(Project cls) async {
     project = cls;
-    wallsModel = ProjectWallsModel(project: project);
-    await reloadWalls();
+    targetsModel = ProjectTargetsModel(project: project);
+    await reloadTargets();
     notifyListeners();
   }
 
@@ -36,13 +36,13 @@ class ProjectDetailModel extends ChangeNotifier {
     await _delete(project.id);
   }
 
-  Future reloadWalls() async {
-    await wallsModel?.loadData();
+  Future reloadTargets() async {
+    await targetsModel?.loadData();
     notifyListeners();
   }
 
-  Future openWallsFolder(TreeRecord<Wall> folder) async {
-    await wallsModel?.openFolder(folder);
+  Future openTargetsFolder(TreeRecord<Target> folder) async {
+    await targetsModel?.openFolder(folder);
     notifyListeners();
   }
 }

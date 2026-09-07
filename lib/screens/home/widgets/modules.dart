@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/landmarks/list/achievement_list_screen.dart';
 import 'package:chaos_control/screens/projects/list/project_list_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_screen.dart';
-import 'package:chaos_control/screens/walls/list/wall_list_screen.dart';
+import 'package:chaos_control/screens/targets/list/target_list_screen.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
   profile,
-  walls,
+  targets,
   landmarks,
   projects,
   log,
@@ -16,7 +16,7 @@ enum AppModule {
 
 List<AppModule> bottomMenuList = [
   AppModule.profile,
-  AppModule.walls,
+  AppModule.targets,
   AppModule.projects,
   AppModule.landmarks,
 ];
@@ -31,8 +31,8 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return ProfileDetailScreen();
-      case AppModule.walls:
-        return WallListScreen();
+      case AppModule.targets:
+        return TargetListScreen();
       case AppModule.landmarks:
         return AchievementListScreen();
       case AppModule.projects:
@@ -49,8 +49,8 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return 'Профиль';
-      case AppModule.walls:
-        return 'Стены';
+      case AppModule.targets:
+        return 'Цели';
       case AppModule.landmarks:
         return 'Смыслы';
       case AppModule.projects:
@@ -66,8 +66,8 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return Icons.portrait;
-      case AppModule.walls:
-        return Icons.fort;
+      case AppModule.targets:
+        return Icons.center_focus_strong;
       case AppModule.landmarks:
         return Icons.diamond;
       case AppModule.projects:

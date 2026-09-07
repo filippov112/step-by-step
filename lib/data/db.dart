@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:chaos_control/models/achievement.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/models/attempt.dart';
-import 'package:chaos_control/models/wall.dart';
+import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -33,9 +33,9 @@ class DB {
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Project.init);
       await db.execute(Profile.init);
-      await db.execute(Wall.init);
+      await db.execute(Target.init);
       await db.execute(Achievement.init);
-      await db.execute(Attempt.init);        // зависит от Task, Skill
+      await db.execute(Task.init);        // зависит от Task, Skill
     });
   }
 

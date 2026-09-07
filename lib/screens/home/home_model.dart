@@ -3,14 +3,14 @@ import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/home/widgets/modules.dart';
 
 class HomeModel extends ChangeNotifier {
-  Profile? user;
-  AppModule currentModule = AppModule.walls;
-  bool get userIsExist => user != null;
+  Profile? profile;
+  AppModule currentModule = AppModule.targets;
+  bool get userIsExist => profile != null;
 
-  final ProfileRepository _userRepo = ProfileRepository();
+  final ProfileRepository _profileRepo = ProfileRepository();
   
-  Future loadUser() async {
-    user = await _userRepo.get(); 
+  Future loadData() async {
+    profile = await _profileRepo.get(); 
     notifyListeners();
   }
 

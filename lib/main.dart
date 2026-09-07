@@ -1,6 +1,6 @@
-import 'package:chaos_control/screens/walls/create/wall_create_model.dart';
-import 'package:chaos_control/screens/walls/detail/attempt_form_model.dart';
-import 'package:chaos_control/screens/walls/detail/wall_detail_model.dart';
+import 'package:chaos_control/screens/targets/create/target_create_model.dart';
+import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
+import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
@@ -13,8 +13,8 @@ import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/home_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_model.dart';
-import 'package:chaos_control/screens/walls/edit/wall_edit_model.dart';
-import 'package:chaos_control/screens/walls/list/wall_list_model.dart';
+import 'package:chaos_control/screens/targets/edit/target_edit_model.dart';
+import 'package:chaos_control/screens/targets/list/target_list_model.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
@@ -35,11 +35,11 @@ void main() async {
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
 
         // Tasks
-        ChangeNotifierProvider<WallCreateModel>(create: (_) { return WallCreateModel(); }),
-        ChangeNotifierProvider<WallEditModel>(create: (_) { return WallEditModel(); }),
-        ChangeNotifierProvider<WallDetailModel>(create: (_) { return WallDetailModel(); }),
-        ChangeNotifierProvider<AttemptFormModel>(create: (_) { return AttemptFormModel(); }),
-        ChangeNotifierProvider<WallListModel>(create: (_) { return WallListModel(); }),
+        ChangeNotifierProvider<TargetCreateModel>(create: (_) { return TargetCreateModel(); }),
+        ChangeNotifierProvider<TargetEditModel>(create: (_) { return TargetEditModel(); }),
+        ChangeNotifierProvider<TargetDetailModel>(create: (_) { return TargetDetailModel(); }),
+        ChangeNotifierProvider<TaskFormModel>(create: (_) { return TaskFormModel(); }),
+        ChangeNotifierProvider<TargetListModel>(create: (_) { return TargetListModel(); }),
         
         // User
         ChangeNotifierProvider<ProfileFormModel>(create: (_) { return ProfileFormModel(); }),

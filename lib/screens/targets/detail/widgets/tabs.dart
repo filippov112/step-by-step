@@ -1,14 +1,19 @@
-import 'package:chaos_control/screens/projects/detail/widgets/detail_tab.dart';
-import 'package:chaos_control/screens/projects/detail/widgets/targets_tab.dart';
+import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
+import 'package:chaos_control/screens/targets/detail/widgets/tasks_tab.dart';
+import 'package:chaos_control/screens/targets/detail/widgets/detail_tab.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ProjectDetailTabs extends StatelessWidget {
+class TargetDetailTabs extends StatelessWidget {
   final TabController controller;
 
-  const ProjectDetailTabs({super.key, required this.controller});
+  const TargetDetailTabs({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
+
+    final model = context.read<TargetDetailModel>();
+
     return Expanded(
       child: Column(
         children: [
@@ -17,17 +22,18 @@ class ProjectDetailTabs extends StatelessWidget {
             dividerColor: Theme.of(context).dividerColor,
             indicatorColor: Theme.of(context).focusColor,
             controller: controller,
+            onTap: model.changeTabIndex,
             tabs: const [
+              Tab(text: 'Задачи', height: 40,),
               Tab(text: 'Детали', height: 40,),
-              Tab(text: 'Цели', height: 40,),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: controller,
               children: const [
-                ProjectDetailDetailTab(),
-                ProjectDetailTargetsTab(),
+                TargetDetailTaskTab(),
+                TargetDetailDetailTab(),
               ],
             ),
           ),

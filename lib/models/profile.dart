@@ -1,5 +1,5 @@
-
 import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -13,8 +13,9 @@ class Profile {
   static const cName = "_name";
   static const cIcon = "_icon";
   static const cBirthDate = "_dbirth";
-  static const cEfforts = "_efforts";
+  static const cSpiritFragments = "_sf";
   static const cLevel = "_lvl";
+  static const cChars = "_chars";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -22,18 +23,28 @@ class Profile {
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
           $cBirthDate INTEGER,
-          $cEfforts INTEGER,
-          $cLevel INTEGER
+          $cSpiritFragments INTEGER,
+          $cLevel INTEGER,
+          $cChars TEXT
         )''';
 
   int? id;
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
   DateTime dateBirth = DateTime(2000); // Дата рождения
-  int spiritFragments = 0; // Кэш усилий
-  int level = 1; // Кэш уровня
+  int spiritFragments = 0; // Кэш усилий (чтобы не пересчитывать)
+  int level = 1; // Кэш уровня (для уведомлений)
+  Map<String,int>? chars = defaultChars(); // Характеристики
 
   String get age => DateTool.age(dateBirth, DateTime.now());
+
+  static Map<String,int> defaultChars() {
+    final res = <String,int>{};
+    for (var c in Characteristics.values) {
+      res[c.name] = 0;
+    }
+    return res;
+  }
 
   Profile({
     this.name = "",
@@ -41,6 +52,7 @@ class Profile {
     required this.dateBirth,
     this.spiritFragments = 0,
     this.level = 1,
+    this.chars
   });
 
   Map<String, Object?> toMap() {
@@ -48,8 +60,9 @@ class Profile {
       cName: name,
       cIcon: icon?.toJson() ,
       cBirthDate: DateTool.datetimeToDays(dateBirth),
-      cEfforts: spiritFragments,
-      cLevel: level
+      cSpiritFragments: spiritFragments,
+      cLevel: level,
+      cChars: chars
     };
     if (id != null) {
       map[cId] = id;
@@ -62,8 +75,9 @@ class Profile {
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
-    spiritFragments = map[cEfforts];
+    spiritFragments = map[cSpiritFragments];
     level = map[cLevel];
+    chars = map[cChars];
   }
 }
 

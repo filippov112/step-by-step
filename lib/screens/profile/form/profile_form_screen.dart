@@ -50,7 +50,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
         if (widget.isEdit) {
           Navigator.pop(context);
         } else {
-          await context.read<HomeModel>().loadUser();
+          await context.read<HomeModel>().loadData();
         }
       }
     }

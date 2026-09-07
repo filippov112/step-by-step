@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var module = context.select<HomeModel,AppModule>((model) => model.currentModule);
-    var user = context.select<HomeModel,Profile?>((service) => service.user);
+    var profile = context.select<HomeModel,Profile?>((service) => service.profile);
 
     // Инициализация сервиса уведомлений
     final ns = context.read<NotificationService>();
@@ -22,9 +22,9 @@ class HomeScreen extends StatelessWidget {
     });
 
     return FutureBuilder(
-      future: context.read<HomeModel>().loadUser(),
+      future: context.read<HomeModel>().loadData(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return user == null ? ProfileFormScreen() : module.widget;
+        return profile == null ? ProfileFormScreen() : module.widget;
       }
     );
   }

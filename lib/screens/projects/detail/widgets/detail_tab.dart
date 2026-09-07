@@ -15,13 +15,13 @@ class ProjectDetailDetailTab extends StatelessWidget {
 
     final focusColor = Theme.of(context).focusColor;
 
-    // Блок "Цель"
+    // Блок "Глобальные цели"
     final targetWidget = target.isEmpty
         ? null
         : CustomCardBlock(
             borderColor: focusColor,
             icon: Icons.center_focus_weak_rounded,
-            title: 'Цель',
+            title: 'Глобальные цели',
             child: CustomText(
               target,
               lines: null,

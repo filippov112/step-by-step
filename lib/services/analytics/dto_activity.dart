@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/attempt.dart';
+import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/services/datetool.dart';
 
 /// Модель для агрегированных данных по дате
@@ -17,7 +17,7 @@ class DtoActivity {
 
   factory DtoActivity.fromMap(Map<String, dynamic> map) {
     return DtoActivity(
-      date: map[Attempt.cDate] as int,
+      date: map[Task.cDate] as int,
       totalExperience: map[cExp] as int? ?? 0,
     );
   }

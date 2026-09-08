@@ -21,17 +21,21 @@ class TargetDetailModel extends ChangeNotifier {
     final updatedTarget = await _target.get(target.id);
     if (updatedTarget == null) return false;
     target = updatedTarget;
+    await _loadProject();
     notifyListeners();
     return true;
   }
 
   Future setTarget(Target trg) async {
     target = trg;
-    project = trg.projectId == null ? null : await _projectRepo.get(trg.projectId!);
+    await _loadProject();
     await _loadTasks();
     notifyListeners();
   }
 
+  Future _loadProject() async {
+    project = target.projectId == null ? null : await _projectRepo.get(target.projectId!);
+  }
   Future _loadTasks() async {
     tasks = (await _taskRepo.getByTarget(target.id))..sort((a,b) => b.date.compareTo(a.date));
   }

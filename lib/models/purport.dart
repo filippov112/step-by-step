@@ -1,21 +1,20 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:sqflite/sqflite.dart';
-// import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:uuid/uuid.dart';
 
-// Достижение
-class Achievement {
+// Смысл
+class Purport {
   // ------------ Схема ------------
-  static const tn = "achievements";
+  static const tn = "purports";
   
   static const cId = "_id";
   static const cTitle = "_title";
   static const cDescription = "_description";
-  static const cRarity = "_rarity";
+  static const cType = "_type";
   static const cDate = "_date";
   static const cIcon = "_icon";
 
@@ -23,7 +22,7 @@ class Achievement {
           $cId TEXT PRIMARY KEY, 
           $cTitle TEXT NOT NULL, 
           $cDescription TEXT, 
-          $cRarity INTEGER,
+          $cType INTEGER,
           $cDate INTEGER,
           $cIcon TEXT
         );
@@ -33,33 +32,33 @@ class Achievement {
   String id = "";
   String title = "";
   String description = "";
-  AchievRar rarity = AchievRar.common;
+  PurportType type = PurportType.wealth;
   DateTime? date;
   CustomImageData? icon;
 
   // ------------ Конструкторы ------------
-  Achievement({
+  Purport({
     required this.id,
     required this.title,
     required this.description,
-    required this.rarity,
+    required this.type,
     this.date,
     this.icon,
   });
 
-  factory Achievement.create({
+  factory Purport.create({
     required String title,
     String description = "",
-    AchievRar rarity = AchievRar.common,
+    PurportType type = PurportType.wealth,
     DateTime? date,
     CustomImageData? icon,
   }) {
     final guid = const Uuid().v4();
-    return Achievement(
+    return Purport(
       id: guid,
       title: title,
       description: description,
-      rarity: rarity,
+      type: type,
       date: date,
       icon: icon,
     );
@@ -71,66 +70,66 @@ class Achievement {
       cId: id,
       cTitle: title,
       cDescription: description,
-      cRarity: rarity.index,
+      cType: type.index,
       cDate: DateTool.datetimeToDays(date),
       cIcon: icon?.toJson(),
     };
   }
 
-  Achievement.fromMap(Map map) {
+  Purport.fromMap(Map map) {
     id = map[cId];
     title = map[cTitle];
     description = map[cDescription] ?? "";
-    rarity = allAchievRar[map[cRarity] ?? 0];
+    type = allPurportRar[map[cType] ?? 0];
     date = DateTool.joinDateTime(date: map[cDate]);
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
   }
 }
 
-// Базовый репозиторий достижений
-class AchievementRepository {
+// Базовый репозиторий
+class PurportRepository {
   Database db = DB.db!;
   
-  Future<List<Achievement>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(Achievement.tn);
-    return maps.map((m) => Achievement.fromMap(m)).toList();
+  Future<List<Purport>> getAll() async {
+    List<Map<String, Object?>> maps = await db.query(Purport.tn);
+    return maps.map((m) => Purport.fromMap(m)).toList();
   }
 
-  Future<Achievement> insert(Achievement ach) async {
-    await db.insert(Achievement.tn, ach.toMap());
-    return ach;
+  Future<Purport> insert(Purport pur) async {
+    await db.insert(Purport.tn, pur.toMap());
+    return pur;
   }
 
-  Future<List<int>> insertBatch(Iterable<Achievement> models) async {
+  Future<List<int>> insertBatch(Iterable<Purport> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (Achievement m in models) {
-        res.add(await txn.insert(Achievement.tn, m.toMap()));
+      for (Purport m in models) {
+        res.add(await txn.insert(Purport.tn, m.toMap()));
       }
     });
     return res;
   }
 
-  Future<Achievement?> get(String id) async {
-    List<Map> maps = await db.query(Achievement.tn, where: '${Achievement.cId} = ?', whereArgs: [id]);
+  Future<Purport?> get(String id) async {
+    List<Map> maps = await db.query(Purport.tn, where: '${Purport.cId} = ?', whereArgs: [id]);
     if (maps.isNotEmpty) {
-      return Achievement.fromMap(maps.first as Map<String, Object?>);
+      return Purport.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
   Future<int?> delete(String id) async {
     await deleteIconIfSetupNull(id: id);
-    return await db.delete(Achievement.tn, where: '${Achievement.cId} = ?', whereArgs: [id]);
+    return await db.delete(Purport.tn, where: '${Purport.cId} = ?', whereArgs: [id]);
   }
 
-  Future<int?> update(Achievement ach) async {
-    await deleteIconIfSetupNull(obj: ach);
-    return await db.update(Achievement.tn, ach.toMap(),
-        where: '${Achievement.cId} = ?', whereArgs: [ach.id]);
+  Future<int?> update(Purport pur) async {
+    await deleteIconIfSetupNull(obj: pur);
+    return await db.update(Purport.tn, pur.toMap(),
+        where: '${Purport.cId} = ?', whereArgs: [pur.id]);
   }
 
-  Future deleteIconIfSetupNull({String? id, Achievement? obj}) async {
+  Future deleteIconIfSetupNull({String? id, Purport? obj}) async {
     // Если удаление
     if (id != null) {
       var oldObject = await get(id);

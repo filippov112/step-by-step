@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
-import 'package:chaos_control/screens/landmarks/form/achievement_form_model.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
+import 'package:chaos_control/screens/purports/form/purport_form_model.dart';
 import 'package:provider/provider.dart';
 
-class AchievFormRarity extends StatelessWidget {
-  const AchievFormRarity({super.key});
+class PurportFormRarity extends StatelessWidget {
+  const PurportFormRarity({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<AchievementFormModel>();
-    final selectedRarity = context.select<AchievementFormModel, AchievRar>(
+    final model = context.read<PurportFormModel>();
+    final selectedRarity = context.select<PurportFormModel, PurportType>(
       (model) => model.selectedRarity,
     );
 
@@ -23,7 +23,7 @@ class AchievFormRarity extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: AchievRar.values
+            children: PurportType.values
                 .map(
                   (rarity) => Padding(
                     padding: EdgeInsetsGeometry.only(right: 8),

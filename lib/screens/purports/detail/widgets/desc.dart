@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
-class AchiDescription extends StatelessWidget {
-  const AchiDescription({super.key});
+class PurportDetailDesc extends StatelessWidget {
+  const PurportDetailDesc({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var description = context.select<AchievementDetailsModel, String>(
-      (model) => model.achievement.description,
+    var description = context.select<PurportDetailsModel, String>(
+      (model) => model.purport.description,
     );
 
     return CustomCardBlock(

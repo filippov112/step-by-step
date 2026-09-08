@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/achievement.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/purport.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
 import 'package:chaos_control/models/other/image.dart';
 
 
-class AchievementFormModel extends ChangeNotifier {
+class PurportFormModel extends ChangeNotifier {
 
   // -------------- Fields ----------------
-  Achievement achievement = Achievement.create(title: '');
-  final achiRepo = AchievementRepository();
+  Purport purport = Purport.create(title: '');
+  final purportRepo = PurportRepository();
 
-  List<Achievement> allAchievements = [];
+  List<Purport> allPurports = [];
 
   String selectedTitle = '';
   String selectedDescription = '';
   CustomImageData? selectedIcon;
   DateTime? selectedDate;
-  AchievRar selectedRarity = AchievRar.common;
+  PurportType selectedRarity = PurportType.wealth;
 
   bool isEditing = false;
 
   // ---------------- Initialization ------------------
 
-  void setAchievement(Achievement? achi) {
-    isEditing = achi != null;
-    achievement = achi ?? Achievement.create(title: '');
-    selectedDate = achievement.date;
-    selectedRarity = achievement.rarity;
-    selectedIcon = achievement.icon;
-    selectedTitle = achievement.title;
-    selectedDescription = achievement.description;
+  void setPurport(Purport? value) {
+    isEditing = value != null;
+    purport = value ?? Purport.create(title: '');
+    selectedDate = purport.date;
+    selectedRarity = purport.type;
+    selectedIcon = purport.icon;
+    selectedTitle = purport.title;
+    selectedDescription = purport.description;
     notifyListeners();
   }
 
@@ -52,7 +52,7 @@ class AchievementFormModel extends ChangeNotifier {
     selectedDate = date;
     notifyListeners();
   }
-  void setRarity(AchievRar rarity) {
+  void setRarity(PurportType rarity) {
     selectedRarity = rarity;
     notifyListeners();
   }
@@ -60,27 +60,27 @@ class AchievementFormModel extends ChangeNotifier {
 
   // ---------- CRUD ---------------------
 
-  Future deleteAchievement() async {
+  Future deletePurport() async {
     if (isEditing) {
       try {
-        await achiRepo.delete(achievement.id);
+        await purportRepo.delete(purport.id);
       } catch (e) {
         // print(e);
       }
     }
   }
 
-  Future<bool> saveAchievement() async {
-    achievement.title = selectedTitle;
-    achievement.description = selectedDescription;
-    achievement.date = selectedDate;
-    achievement.icon = selectedIcon;
-    achievement.rarity = selectedRarity;
+  Future<bool> savePurport() async {
+    purport.title = selectedTitle;
+    purport.description = selectedDescription;
+    purport.date = selectedDate;
+    purport.icon = selectedIcon;
+    purport.type = selectedRarity;
     try {
       if (isEditing) {
-        await achiRepo.update(achievement);
+        await purportRepo.update(purport);
       } else {
-        await achiRepo.insert(achievement);
+        await purportRepo.insert(purport);
       }
     }
     catch (e) {

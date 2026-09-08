@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:chaos_control/models/achievement.dart';
+import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/models/target.dart';
@@ -34,7 +34,7 @@ class DB {
       await db.execute(Project.init);
       await db.execute(Profile.init);
       await db.execute(Target.init);
-      await db.execute(Achievement.init);
+      await db.execute(Purport.init);
       await db.execute(Task.init);        // зависит от Task, Skill
     });
   }

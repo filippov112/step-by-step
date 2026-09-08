@@ -337,7 +337,7 @@ class GameficationIcons {
       tags: ['починка', 'мастер', 'инструмент', 'repair', 'fix'],
     ),
 
-    // === ДОСТИЖЕНИЯ (Achievements) ===
+    // === ДОСТИЖЕНИЯ (Purports) ===
     NamedIcon(
       icon: Icons.emoji_events,
       name: 'Трофей',

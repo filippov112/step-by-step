@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/landmarks/list/achievement_list_model.dart';
-import 'package:chaos_control/screens/landmarks/form/achievement_form_screen.dart';
-import 'package:chaos_control/screens/landmarks/list/widgets/filters.dart';
-import 'package:chaos_control/screens/landmarks/list/widgets/tile.dart';
+import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
+import 'package:chaos_control/screens/purports/form/purport_form_screen.dart';
+import 'package:chaos_control/screens/purports/list/widgets/filters.dart';
+import 'package:chaos_control/screens/purports/list/widgets/tile.dart';
 import 'package:chaos_control/widgets/common/app_bar_list.dart';
 import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
@@ -12,22 +12,22 @@ import 'package:chaos_control/widgets/common/search_string.dart';
 import 'package:provider/provider.dart';
 
 
-class AchievementListScreen extends StatefulWidget {
-  const AchievementListScreen({super.key});
+class PurportListScreen extends StatefulWidget {
+  const PurportListScreen({super.key});
 
   @override
-  State<AchievementListScreen> createState() => _AchievementListScreenState();
+  State<PurportListScreen> createState() => _PurportListScreenState();
 }
 
-class _AchievementListScreenState extends State<AchievementListScreen> {
+class _PurportListScreenState extends State<PurportListScreen> {
   final TextEditingController _searchController = TextEditingController();
-  late AchievementListModel model;
+  late PurportListModel model;
   @override
   void initState() {
     super.initState();
-    model = context.read<AchievementListModel>();
+    model = context.read<PurportListModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.loadAchievements();
+      model.loadPurports();
     });
   }
 
@@ -40,24 +40,24 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AchievementListModel>(
+    return Consumer<PurportListModel>(
       builder: (context, model, child) {
         return Scaffold(
 
           appBar: ListAppBar(
-              title: 'Достижения',
+              title: 'Смыслы',
               selectionParams: SelectionParams(
                 isSelectionMode: model.isSelectionMode,
                 selectAll: model.toggleSelectAll,
                 selectedItemsCount: model.selectedIds.length,
-                allItemsCount: model.achievements.length,
-                deleteSelected: model.deleteSelectedAchievements,
+                allItemsCount: model.purports.length,
+                deleteSelected: model.deleteSelectedPurports,
                 clearSelection: model.clearSelection,
               ),
               searchWidget: PreferredSize(
                 preferredSize: const Size.fromHeight(60),
                 child: SearchString(
-                  placeholder: 'Поиск достижений...',
+                  placeholder: 'Поиск смыслов...',
                   controller: _searchController,
                   value: model.searchQuery,
                   clearCallback: model.clearSearch,
@@ -70,26 +70,26 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
               ? null
               : CustomFloatingActionButton(
                   openFormCreate: _openCreateForm,
-                  tooltip: 'Создать достижение',
+                  tooltip: 'Добавить смысл',
                 ),
           bottomNavigationBar: MainBottomMenu(),
         
-          endDrawer: AchievementFilters(),
+          endDrawer: PurportListFilters(),
           drawer: const MainMenuDrawer(),
         );
       }
     );
   }
 
-  Widget _buildBody(BuildContext context, AchievementListModel model) {
-    if (model.achievements.isEmpty) {
+  Widget _buildBody(BuildContext context, PurportListModel model) {
+    if (model.purports.isEmpty) {
       return EmptyListScreen(
-        title: 'Нет достижений',
-        subtitle: 'Добавьте достижение, нажав на кнопку +',
+        title: 'Нет смыслов',
+        subtitle: 'Добавьте смысл, нажав на кнопку +',
         icon: Icons.diamond,
       );
     }
-    if (model.hasActiveFilters && model.achievements.isEmpty) {
+    if (model.hasActiveFilters && model.purports.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -97,7 +97,7 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
             Icon(Icons.filter_alt_off, size: 64, color: Theme.of(context).hintColor),
             const SizedBox(height: 16),
             Text(
-              'Нет достижений по заданным фильтрам',
+              'Нет смыслов по заданным фильтрам',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -111,12 +111,12 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     }
     return ListView.builder(
       padding: const EdgeInsets.all(8),
-      itemCount: model.achievements.length,
+      itemCount: model.purports.length,
       itemBuilder: (context, index) {
-        final achievement = model.achievements[index];
-        return AchievementTile(
+        final purport = model.purports[index];
+        return PurportListTile(
           model: model, 
-          achi: achievement, 
+          purport: purport, 
         );
       },
     );
@@ -126,8 +126,8 @@ class _AchievementListScreenState extends State<AchievementListScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AchievementFormScreen(),
+        builder: (context) => PurportFormScreen(),
       ),
-    ).then((_) { if (context.mounted) model.loadAchievements(); });
+    ).then((_) { if (context.mounted) model.loadPurports(); });
   }
 }

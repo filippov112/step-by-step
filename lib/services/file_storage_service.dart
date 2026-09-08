@@ -21,7 +21,7 @@ class FileService {
       
       return newFile.path;
     } catch (e) {
-      // print('Ошибка сохранения иконки достижения: $e');
+      // print('Ошибка сохранения иконки смысла: $e');
       return null;
     }
   }

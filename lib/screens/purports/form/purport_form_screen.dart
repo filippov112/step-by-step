@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/achievement.dart';
-import 'package:chaos_control/screens/landmarks/form/achievement_form_model.dart';
-import 'package:chaos_control/screens/landmarks/form/widgets/date.dart';
+import 'package:chaos_control/models/purport.dart';
+import 'package:chaos_control/screens/purports/form/purport_form_model.dart';
+import 'package:chaos_control/screens/purports/form/widgets/date.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
-import 'package:chaos_control/screens/landmarks/form/widgets/icon.dart';
-import 'package:chaos_control/screens/landmarks/form/widgets/rarity.dart';
+import 'package:chaos_control/screens/purports/form/widgets/icon.dart';
+import 'package:chaos_control/screens/purports/form/widgets/rarity.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class AchievementFormScreen extends StatefulWidget {
-  final Achievement? achi;
+class PurportFormScreen extends StatefulWidget {
+  final Purport? purport;
 
-  const AchievementFormScreen({super.key, this.achi});
+  const PurportFormScreen({super.key, this.purport});
 
   @override
-  State<AchievementFormScreen> createState() => _AchievementFormScreenState();
+  State<PurportFormScreen> createState() => _PurportFormScreenState();
 }
 
-class _AchievementFormScreenState extends State<AchievementFormScreen> {
+class _PurportFormScreenState extends State<PurportFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  late AchievementFormModel model;
+  late PurportFormModel model;
   late TextEditingController titleController;
   late TextEditingController descController;
 
@@ -34,32 +34,32 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
   @override
   void initState() {
     super.initState();
-    model = context.read<AchievementFormModel>();
+    model = context.read<PurportFormModel>();
     titleController = TextEditingController();
     descController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setAchievement(widget.achi);
-      titleController.text = widget.achi?.title ?? '';
-      descController.text = widget.achi?.description ?? '';
+      model.setPurport(widget.purport);
+      titleController.text = widget.purport?.title ?? '';
+      descController.text = widget.purport?.description ?? '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final saveAchievement = model.saveAchievement;
-    final deleteAchievement = model.deleteAchievement;
+    final savePurport = model.savePurport;
+    final deletePurport = model.deletePurport;
 
     return EntityScreen(
-      title: 'Достижение',
+      title: 'Смысл',
       formKey: _formKey,
-      saveCallback: () => _saveAchievement(saveAchievement),
-      deleteCallback: widget.achi == null
+      saveCallback: () => _savePurport(savePurport),
+      deleteCallback: widget.purport == null
           ? null
-          : () => _delete(deleteAchievement),
+          : () => _delete(deletePurport),
       children: [
         // Иконка
-        const AchievFormIcon(),
+        const PurportFormIcon(),
         const SizedBox(height: 12),
 
         // Название
@@ -82,19 +82,19 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
         const SizedBox(height: 12),
 
         // Дата
-        const AchievFormDate(),
+        const PurportFormDate(),
         const SizedBox(height: 12),
 
         // Редкость
-        const AchievFormRarity(),
+        const PurportFormRarity(),
         const SizedBox(height: 12),
       ],
     );
   }
 
-  Future _saveAchievement(Future<bool> Function() saveAchievement) async {
+  Future _savePurport(Future<bool> Function() savePurport) async {
     if (!_formKey.currentState!.validate()) return;
-    var result = await saveAchievement();
+    var result = await savePurport();
     if (mounted) {
       Navigator.pop(context, result);
     }
@@ -106,9 +106,9 @@ class _AchievementFormScreenState extends State<AchievementFormScreen> {
     }
   }
 
-  Future _delete(Future Function() deleteAchievement) async {
+  Future _delete(Future Function() deletePurport) async {
     if (await showConfirmDialog(context) == true && context.mounted) {
-      await deleteAchievement();
+      await deletePurport();
       _close();
     }
   }

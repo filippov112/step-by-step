@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/achievement.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
-import 'package:chaos_control/screens/landmarks/detail/widgets/desc.dart';
-import 'package:chaos_control/screens/landmarks/detail/widgets/header.dart';
-import 'package:chaos_control/screens/landmarks/form/achievement_form_screen.dart';
+import 'package:chaos_control/models/purport.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
+import 'package:chaos_control/screens/purports/detail/widgets/desc.dart';
+import 'package:chaos_control/screens/purports/detail/widgets/header.dart';
+import 'package:chaos_control/screens/purports/form/purport_form_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:provider/provider.dart';
 
-class AchievementDetailScreen extends StatefulWidget {
-  final Achievement achievement;
-  const AchievementDetailScreen({super.key, required this.achievement});
+class PurportDetailScreen extends StatefulWidget {
+  final Purport purport;
+  const PurportDetailScreen({super.key, required this.purport});
 
   @override
-  State<AchievementDetailScreen> createState() =>
-      _AchievementDetailScreenState();
+  State<PurportDetailScreen> createState() =>
+      _PurportDetailScreenState();
 }
 
-class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
-  late AchievementDetailsModel model;
+class _PurportDetailScreenState extends State<PurportDetailScreen> {
+  late PurportDetailsModel model;
 
   @override
   void initState() {
     super.initState();
-    model = context.read<AchievementDetailsModel>();
+    model = context.read<PurportDetailsModel>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setAchievement(widget.achievement);
+      model.setPurport(widget.purport);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var achievement = context.select<AchievementDetailsModel, Achievement>(
-      (model) => model.achievement,
+    var purport = context.select<PurportDetailsModel, Purport>(
+      (model) => model.purport,
     );
-    var date = context.select<AchievementDetailsModel, DateTime?>(
-      (model) => model.achievement.date,
+    var date = context.select<PurportDetailsModel, DateTime?>(
+      (model) => model.purport.date,
     );
     var setDone = model.setDone;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Достижение'),
+        title: const Text('Смысл'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () => _edit(achievement),
+            onPressed: () => _edit(purport),
             tooltip: 'Редактировать',
           ),
           IconButton(
@@ -65,7 +65,7 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
                   padding: EdgeInsetsGeometry.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [const AchiHeader(), const AchiDescription()],
+                    children: [const PurportDetailHeader(), const PurportDetailDesc()],
                   ),
                 ),
               ],
@@ -84,11 +84,11 @@ class _AchievementDetailScreenState extends State<AchievementDetailScreen> {
     );
   }
 
-  Future _edit(Achievement achi) async {
+  Future _edit(Purport purport) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AchievementFormScreen(achi: achi),
+        builder: (context) => PurportFormScreen(purport: purport),
       ),
     ).then((_) async {
       if (context.mounted) {

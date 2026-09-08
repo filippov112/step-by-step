@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/achievement.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
-import 'package:chaos_control/screens/landmarks/list/achievement_list_model.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_screen.dart';
+import 'package:chaos_control/models/purport.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
+import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:provider/provider.dart';
 
-class AchievementTile extends StatelessWidget {
+class PurportListTile extends StatelessWidget {
 
-  final AchievementListModel model;
-  final Achievement achi;
+  final PurportListModel model;
+  final Purport purport;
 
-  const AchievementTile({
+  const PurportListTile({
     super.key, 
     required this.model, 
-    required this.achi,
+    required this.purport,
   });
 
   @override
   Widget build(BuildContext context) {
 
-    final isSelected = model.selectedIds.contains(achi.id);
-    Color? containterColor = Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: achi.date == null ? 0.2 : 0.9);
+    final isSelected = model.selectedIds.contains(purport.id);
+    Color? containterColor = Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: purport.date == null ? 0.2 : 0.9);
     Gradient containterBorderColor = LinearGradient(
       transform: GradientRotation(0.7),
-      colors: [achi.rarity.color.withValues(alpha: 0.5), containterColor],
+      colors: [purport.type.color.withValues(alpha: 0.5), containterColor],
       stops: [0, 0.2]);
     Color titleColor = Theme.of(context).colorScheme.onPrimary;
 
@@ -42,15 +42,15 @@ class AchievementTile extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(16)),
           onTap: () {
             if (model.isSelectionMode) {
-              model.toggleSelectAchievement(achi.id);
+              model.toggleSelectPurport(purport.id);
             } else {
-              _openDetails(context, model, achi);
+              _openDetails(context, model, purport);
             }
           },
           onLongPress: () {
             if (!model.isSelectionMode) {
               model.toggleSelectionMode();
-              model.toggleSelectAchievement(achi.id);
+              model.toggleSelectPurport(purport.id);
             }
           },
           child: Padding(
@@ -62,14 +62,14 @@ class AchievementTile extends StatelessWidget {
                   padding: EdgeInsetsGeometry.only(right: 12),
                   child: model.isSelectionMode ? Checkbox(
                       value: isSelected,
-                      onChanged: (_) => model.toggleSelectAchievement(achi.id),
+                      onChanged: (_) => model.toggleSelectPurport(purport.id),
                     ) :
                     Padding(
                       padding: const EdgeInsetsGeometry.fromLTRB(12,12,0,12), 
                       child: CustomImageIcon(
-                        achi.icon, 
+                        purport.icon, 
                         altIcon: Icons.star_border, 
-                        color: achi.rarity.color, 
+                        color: purport.type.color, 
                         width: 40, height: 40
                       ),
                     ),
@@ -78,7 +78,7 @@ class AchievementTile extends StatelessWidget {
                 // Информация
                 Expanded(
                   child: Text(
-                    achi.title,
+                    purport.title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
@@ -91,7 +91,7 @@ class AchievementTile extends StatelessWidget {
                   SizedBox(width: 8,),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, size: 16),
-                    onPressed: () => _deleteAchievement(context, achi, model.deleteAchievement),
+                    onPressed: () => _deletePurport(context, purport, model.deletePurport),
                     tooltip: 'Удалить',
                   ),
                 }
@@ -103,23 +103,23 @@ class AchievementTile extends StatelessWidget {
     );
   }
 
-  Future<void> _deleteAchievement(BuildContext context, Achievement achi, Future Function(String) deleteAchievement) async {
+  Future<void> _deletePurport(BuildContext context, Purport purport, Future Function(String) deletePurport) async {
     if (await showConfirmDialog(context) == true) {
-      await deleteAchievement(achi.id);
+      await deletePurport(purport.id);
     }
   }
 
 
-  Future _openDetails(BuildContext context, AchievementListModel model, Achievement achi) async {
+  Future _openDetails(BuildContext context, PurportListModel model, Purport purport) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
-          create: (context) => AchievementDetailsModel(), 
-          child: AchievementDetailScreen(achievement: achi),
+          create: (context) => PurportDetailsModel(), 
+          child: PurportDetailScreen(purport: purport),
         ),
       ),
     );
-    if (context.mounted) model.loadAchievements(); 
+    if (context.mounted) model.loadPurports(); 
   }
 }

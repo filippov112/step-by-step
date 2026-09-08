@@ -1,29 +1,29 @@
 import 'package:chaos_control/services/datetool.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
 import 'package:chaos_control/models/other/image.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
-class AchiHeader extends StatelessWidget {
-  const AchiHeader({super.key});
+class PurportDetailHeader extends StatelessWidget {
+  const PurportDetailHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var title = context.select<AchievementDetailsModel, String>(
-      (model) => model.achievement.title,
+    var title = context.select<PurportDetailsModel, String>(
+      (model) => model.purport.title,
     );
-    var icon = context.select<AchievementDetailsModel, CustomImageData?>(
-      (model) => model.achievement.icon,
+    var icon = context.select<PurportDetailsModel, CustomImageData?>(
+      (model) => model.purport.icon,
     );
-    var date = context.select<AchievementDetailsModel, DateTime?>(
-      (model) => model.achievement.date,
+    var date = context.select<PurportDetailsModel, DateTime?>(
+      (model) => model.purport.date,
     );
-    var rarity = context.select<AchievementDetailsModel, AchievRar>(
-      (model) => model.achievement.rarity,
+    var rarity = context.select<PurportDetailsModel, PurportType>(
+      (model) => model.purport.type,
     );
   
 

@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/enums/achiev_rar.dart';
-import 'package:chaos_control/screens/landmarks/list/achievement_list_model.dart';
+import 'package:chaos_control/models/enums/purport_type.dart';
+import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
 import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
-class AchievementFilters extends StatefulWidget {
-  const AchievementFilters({super.key});
+class PurportListFilters extends StatefulWidget {
+  const PurportListFilters({super.key});
 
   @override
-  State<AchievementFilters> createState() => _AchievementFiltersState();
+  State<PurportListFilters> createState() => _PurportListFiltersState();
 }
 
-class _AchievementFiltersState extends State<AchievementFilters> {
+class _PurportListFiltersState extends State<PurportListFilters> {
   @override
   Widget build(BuildContext context) {
-    final model = context.read<AchievementListModel>();
-    var hasActiveFilters = context.select<AchievementListModel, bool>(
+    final model = context.read<PurportListModel>();
+    var hasActiveFilters = context.select<PurportListModel, bool>(
       (model) => model.hasActiveFilters,
     );
-    var filterRarity = context.select<AchievementListModel, Set<AchievRar>>(
+    var filterRarity = context.select<PurportListModel, Set<PurportType>>(
       (model) => model.filterRarity,
     );
     var filterStatus = context
-        .select<AchievementListModel, Set<FilterStatusValue>>(
+        .select<PurportListModel, Set<FilterStatusValue>>(
           (model) => model.filterStatus,
         );
-    var sortField = context.select<AchievementListModel, SortAchievementField>(
+    var sortField = context.select<PurportListModel, SortPurportField>(
       (model) => model.sortField,
     );
-    var sortAscending = context.select<AchievementListModel, bool>(
+    var sortAscending = context.select<PurportListModel, bool>(
       (model) => model.sortAscending,
     );
 
@@ -41,7 +41,7 @@ class _AchievementFiltersState extends State<AchievementFilters> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            ...AchievRar.values.map(
+            ...PurportType.values.map(
               (rarity) => Padding(
                 padding: EdgeInsetsGeometry.only(right: 8),
                 child: FilterChip(
@@ -94,7 +94,7 @@ class _AchievementFiltersState extends State<AchievementFilters> {
             sortField,
             model.setSortField,
             sortAscending,
-            SortAchievementField.title,
+            SortPurportField.title,
             'По названию',
           ),
           const SizedBox(height: 8),
@@ -103,7 +103,7 @@ class _AchievementFiltersState extends State<AchievementFilters> {
             sortField,
             model.setSortField,
             sortAscending,
-            SortAchievementField.rarity,
+            SortPurportField.rarity,
             'По редкости',
           ),
           const SizedBox(height: 8),
@@ -112,7 +112,7 @@ class _AchievementFiltersState extends State<AchievementFilters> {
             sortField,
             model.setSortField,
             sortAscending,
-            SortAchievementField.datetime,
+            SortPurportField.datetime,
             'По дате получения',
           ),
         ],
@@ -132,10 +132,10 @@ class _AchievementFiltersState extends State<AchievementFilters> {
 
   Widget _buildSortButton(
     BuildContext context,
-    SortAchievementField sortField,
-    Function(SortAchievementField) setSortField,
+    SortPurportField sortField,
+    Function(SortPurportField) setSortField,
     bool sortAscending,
-    SortAchievementField field,
+    SortPurportField field,
     String label,
   ) {
     final isActive = sortField == field;

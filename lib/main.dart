@@ -4,9 +4,9 @@ import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/screens/landmarks/detail/achievement_details_model.dart';
-import 'package:chaos_control/screens/landmarks/form/achievement_form_model.dart';
-import 'package:chaos_control/screens/landmarks/list/achievement_list_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
+import 'package:chaos_control/screens/purports/form/purport_form_model.dart';
+import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
 import 'package:chaos_control/screens/projects/form/project_form_model.dart';
 import 'package:chaos_control/screens/projects/list/project_list_model.dart';
@@ -48,16 +48,16 @@ void main() async {
         // Settings
         ChangeNotifierProvider<SettingListModel>(create: (_) { return SettingListModel(); }),
 
-        // Achievements
-        ChangeNotifierProvider<AchievementListModel>(create: (_) { return AchievementListModel(); }),
-        ChangeNotifierProvider<AchievementDetailsModel>(create: (_) { return AchievementDetailsModel(); }),
-        ChangeNotifierProvider<AchievementFormModel>(create: (_) { return AchievementFormModel(); }),
+        // Purports
+        ChangeNotifierProvider<PurportListModel>(create: (_) { return PurportListModel(); }),
+        ChangeNotifierProvider<PurportDetailsModel>(create: (_) { return PurportDetailsModel(); }),
+        ChangeNotifierProvider<PurportFormModel>(create: (_) { return PurportFormModel(); }),
         
         // Classes
         ChangeNotifierProvider<ProjectListModel>(create: (_) { return ProjectListModel(); }),
         ChangeNotifierProvider<ProjectDetailModel>(create: (_) { return ProjectDetailModel(); }),
         ChangeNotifierProvider<ProjectFormModel>(create: (_) { return ProjectFormModel(); }),
-        // Provider<IUserService>(create: (_) => UserServiceImpl()),
+
       ],
       child: MyApp(),
     )

@@ -1,3 +1,5 @@
+import 'package:chaos_control/screens/profile/detail/widgets/chars.dart';
+import 'package:chaos_control/widgets/analysis/custom_radar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
@@ -114,6 +116,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 
                 // Активность
                 const ProfileDetailActivity(),
+
+                // Характеристики
+                const ProfileDetailChars(),
               ],
             ),
           ),

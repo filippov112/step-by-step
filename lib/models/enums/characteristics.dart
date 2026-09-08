@@ -54,4 +54,19 @@ extension CharacteristicsExt on Characteristics {
         return Icons.visibility;
     }
   }
+
+  String get emoji {
+    switch (this) {
+      case Characteristics.control:
+        return '☯';
+      case Characteristics.perseverance:
+        return '🔥';
+      case Characteristics.courage:
+        return '⚔️';
+      case Characteristics.durability:
+        return '🛡️';
+      case Characteristics.creativity:
+        return '🧠';
+    }
+  }
 }

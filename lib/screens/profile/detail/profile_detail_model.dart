@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
@@ -12,31 +13,40 @@ class ProfileDetailModel extends ChangeNotifier {
   final _userRepo = ProfileRepository();
   final _analRepo = AnalyticsRepository();
 
-  Map<DateTime, int> efforts = {};
-  int maxEff = 0;
+  // --- SF ---
+  Map<DateTime, int> spiritFragments = {};
+  List<SnapSpot> progressSFData = [];
+  int deltaSF = 0;
+  int maxSF = 0;
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
-  Profile? user;
-  List<SnapSpot> progressEffortData = [];
-  int deltaEfforts = 0;
-
   StatPeriod selectedPeriod = StatPeriod.oneMonth;
+
+
+  // --- Chars ---
+  Map<Characteristics,int>? chars;
+  
+  
+  Profile? user;
+
+  
 
   // Инициализация страницы
   Future loadData() async {
-    await loadUser();
-    await loadStatistics();
+    await _loadUser();
+    await _loadSFData();
   }
 
   // Переключить фильтр периода
   Future setPeriodFilter(StatPeriod period) async {
     selectedPeriod = period;
-    await loadStatistics();
+    await _loadSFData();
     notifyListeners();
   }
 
   // Загрузить данные пользователя
-  Future loadUser() async {
+  Future _loadUser() async {
     user = await _userRepo.get();
+    chars = user?.chars;
     notifyListeners();
   }
 
@@ -51,8 +61,8 @@ class ProfileDetailModel extends ChangeNotifier {
     }
   }
 
-  // Загрузить статистику
-  Future loadStatistics() async {
+  // Загрузить статистику по фрагментам духа
+  Future _loadSFData() async {
     if (user == null) return;
     var now = DateTime.now();
     lastDay = DateTime(now.year, now.month, now.day, 3);
@@ -63,15 +73,15 @@ class ProfileDetailModel extends ChangeNotifier {
       endDate: DateTool.datetimeToDays(lastDay),
     );
 
-    efforts = {};
-    progressEffortData = [];
-    deltaEfforts = 0;
+    spiritFragments = {};
+    progressSFData = [];
+    deltaSF = 0;
 
     for (var day in daysData) {
       if (day.dateTime == null) continue;
-      efforts[day.dateTime!] = day.totalExperience;
-      maxEff = max(maxEff, day.totalExperience);
-      deltaEfforts += day.totalExperience;
+      spiritFragments[day.dateTime!] = day.totalExperience;
+      maxSF = max(maxSF, day.totalExperience);
+      deltaSF += day.totalExperience;
     }
 
     int dayIndex = DateTool.datetimeToDays(lastDay) ?? 0;
@@ -79,14 +89,14 @@ class ProfileDetailModel extends ChangeNotifier {
     var summaEff = user!.spiritFragments;
     while (dayIndex >= firstDayIndex) {
       final dayDateTime = DateTool.joinDateTime(date: dayIndex);
-      progressEffortData.add(
+      progressSFData.add(
         SnapSpot(
           dayIndex.toDouble(),
           summaEff.toDouble(),
         ),
       );
-      if (efforts.keys.contains(dayDateTime)) {
-        summaEff -= efforts[dayDateTime] ?? 0;
+      if (spiritFragments.keys.contains(dayDateTime)) {
+        summaEff -= spiritFragments[dayDateTime] ?? 0;
       }
       dayIndex--;
     }

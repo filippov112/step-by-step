@@ -13,15 +13,18 @@ class SpiritCalculator {
 
   // Уровень
   static int getLevel(int sf) => _calc(sf).$1;
-
+  // Требование для следующего уровня
+  static int getLevelRequirements(int sf) => _calc(sf).$3;
+  // Свободный опыт
+  static int getLevelRemains(int sf) => _calc(sf).$2;
+  
   // Очки хар-к
   static int getCharPoints(int char) => (char.toDouble() / 100).toInt();
-
   // Требование для следующего уровня
-  static int getRequirements(int sf) => _calc(sf).$3;
-
+  static int getCharPointsRequirements(int char) => 100;
   // Свободный опыт
-  static int getRemains(int sf) => _calc(sf).$2;
+  static int getCharPointsRemains(int char) => char % 100;
+  
 
   static (int, int, int) _calc(int sf) {
     int sum = 0;

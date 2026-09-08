@@ -2,34 +2,43 @@ import 'package:chartify/chartify.dart';
 import 'package:flutter/material.dart';
 
 class CustomRadarChart extends StatelessWidget {
-  const CustomRadarChart({super.key});
+  final String seriesName;
+  final double? height;
+  final Color? color;
+  final List<String> labels;
+  final List<double> values;
+  
+  const CustomRadarChart({
+    super.key,
+    required this.seriesName,
+    required this.labels,
+    required this.values,
+    this.color,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300, child: RadarChart(
-        data: const RadarChartData(
-          axes: ['Speed', 'Power', 'Defense', 'Range', 'Accuracy', 'Mobility'],
+      height: height ?? 300,
+      child: RadarChart(
+        data: RadarChartData(
+          axes: labels,
           series: [
             RadarSeries(
-              name: 'Player A',
-              values: [85, 70, 60, 90, 75, 80],
-              color: Color(0xFF3B82F6),
-            ),
-            RadarSeries(
-              name: 'Player B',
-              values: [70, 85, 75, 65, 90, 70],
-              color: Color(0xFFEF4444),
+              name: seriesName,
+              values: values,
+              color: color ?? Theme.of(context).focusColor,
             ),
           ],
           tickCount: 5,
-          gridType: RadarGridType.polygon, // or .circular
+          gridType: RadarGridType.circular,
         ),
         animation: const ChartAnimation(
           duration: Duration(milliseconds: 1000),
           curve: Curves.easeOutCubic,
         ),
-      )
+      ),
     );
   }
 }

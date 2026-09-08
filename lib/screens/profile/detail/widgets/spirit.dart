@@ -13,7 +13,7 @@ class ProfileDetailSpirit extends StatelessWidget {
     final eff = context.select<ProfileDetailModel, int>((model) => model.user?.spiritFragments ?? 0);
 
     final int deltaEff = context.select<ProfileDetailModel, int>(
-      (model) => model.deltaEfforts,
+      (model) => model.deltaSF,
     );
     final DateTime firstDay = context.select<ProfileDetailModel, DateTime>(
       (model) => model.firstDay,
@@ -23,15 +23,15 @@ class ProfileDetailSpirit extends StatelessWidget {
     );
     final List<SnapSpot> progressData = context
         .select<ProfileDetailModel, List<SnapSpot>>(
-          (model) => model.progressEffortData,
+          (model) => model.progressSFData,
         );
 
     return ProfileProgress(
       level: SpiritCalculator.getLevel(eff),
       deltaValue: deltaEff.toDouble(),
-      currentValue: SpiritCalculator.getRemains(eff).toDouble(),
+      currentValue: SpiritCalculator.getLevelRemains(eff).toDouble(),
       title: 'Дух',
-      nextLevel: SpiritCalculator.getRequirements(eff).toDouble(),
+      nextLevel: SpiritCalculator.getLevelRequirements(eff).toDouble(),
       icon: Icons.local_fire_department,
       data: progressData,
       firstDay: firstDay,

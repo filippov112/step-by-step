@@ -32,9 +32,21 @@ class TargetListAddButton extends StatelessWidget {
   ) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: false,
-      builder: (context) =>
-          TargetCreateScreen(project: selectedProject, group: selectedGroup),
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom, // Важно!
+          ),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.45,
+            child: TargetCreateScreen(
+              project: selectedProject,
+              group: selectedGroup,
+            ),
+          ),
+        );
+      },
     ).then((_) {
       if (context.mounted) loadCallback();
     });

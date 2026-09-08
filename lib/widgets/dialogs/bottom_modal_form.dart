@@ -35,12 +35,7 @@ class BottomModalFormState extends State<BottomModalForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(
-        8,
-        6,
-        8,
-        6 + MediaQuery.of(context).viewInsets.bottom,
-      ),
+      padding: EdgeInsetsGeometry.fromLTRB(8, 6, 8, 6),
       child: Column(
         children: [
           Container(
@@ -65,14 +60,9 @@ class BottomModalFormState extends State<BottomModalForm> {
                       const SizedBox(width: 12),
 
                       // Сохранить
-                      ElevatedButton(
+                      IconButton(
                         onPressed: widget.confirmCallback,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children:[ Icon(widget.confirmIcon ?? Icons.done),]
-                        ),
+                        icon: Icon(widget.confirmIcon ?? Icons.done),
                       ),
                     ],
                   ),

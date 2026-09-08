@@ -67,8 +67,11 @@ class BottomModalFormState extends State<BottomModalForm> {
                       // Сохранить
                       ElevatedButton(
                         onPressed: widget.confirmCallback,
-                        child: Center(
-                          child: Icon(widget.confirmIcon ?? Icons.done),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children:[ Icon(widget.confirmIcon ?? Icons.done),]
                         ),
                       ),
                     ],

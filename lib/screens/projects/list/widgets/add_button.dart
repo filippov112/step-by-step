@@ -22,11 +22,8 @@ class ProjectListAddButton extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => SizedBox(
-        height: MediaQuery.of(context).size.height * 0.42,
-        child: ProjectCreateScreen(group: group),
-      ),
+      isScrollControlled: false,
+      builder: (context) => ProjectCreateScreen(group: group),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

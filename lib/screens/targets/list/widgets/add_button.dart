@@ -11,23 +11,30 @@ class TargetListAddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = context.read<TargetListModel>();
-    final group = context.select<TargetListModel,String>((m) => m.treeListModel.currentAddress);
-    final project = context.select<TargetListModel,Project?>((m) => m.projectFilter);
+    final group = context.select<TargetListModel, String>(
+      (m) => m.treeListModel.currentAddress,
+    );
+    final project = context.select<TargetListModel, Project?>(
+      (m) => m.projectFilter,
+    );
 
-    return  CustomFloatingActionButton(
+    return CustomFloatingActionButton(
       openFormCreate: () => _create(context, model.loadData, project, group),
       tooltip: 'Новая цель',
     );
   }
 
-  void _create(BuildContext context, VoidCallback loadCallback, Project? selectedProject, String selectedGroup) {
+  void _create(
+    BuildContext context,
+    VoidCallback loadCallback,
+    Project? selectedProject,
+    String selectedGroup,
+  ) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => SizedBox(
-        height: MediaQuery.of(context).size.height * 0.42,
-        child: TargetCreateScreen(project: selectedProject, group: selectedGroup,)
-      ),
+      isScrollControlled: false,
+      builder: (context) =>
+          TargetCreateScreen(project: selectedProject, group: selectedGroup),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
 
 class TargetDetailModel extends ChangeNotifier {
-  final _target = TargetRepository();
+  final _targetRepo = TargetRepository();
   final _projectRepo = ProjectRepository();
   final _taskRepo = TaskRepository();
 
@@ -18,7 +18,7 @@ class TargetDetailModel extends ChangeNotifier {
   // ------------ Main -----------------
 
   Future<bool> checkExist() async {
-    final updatedTarget = await _target.get(target.id);
+    final updatedTarget = await _targetRepo.get(target.id);
     if (updatedTarget == null) return false;
     target = updatedTarget;
     await _loadProject();
@@ -68,9 +68,9 @@ class TargetDetailModel extends ChangeNotifier {
 
   Future deleteAllSelectedTasks() async {
     for (final id in selectedIds) {
-      await _target.delete(id);
+      await _taskRepo.delete(id);
     }
-    selectedIds.clear();
+    selectedIds = {};
     isSelectionMode = false;
     await _loadTasks();
     notifyListeners();
@@ -118,13 +118,13 @@ class TargetDetailModel extends ChangeNotifier {
 
   Future setFavorite(bool value) async {
     target.favorite = value;
-    await _target.update(target);
+    await _targetRepo.update(target);
     notifyListeners();
     notifyListeners();
   }
 
   Future deleteTarget() async {
-    await _target.delete(target.id);
+    await _targetRepo.delete(target.id);
     notifyListeners();
   }
 }

@@ -1,5 +1,4 @@
 import 'package:chaos_control/screens/targets/detail/widgets/add_task_button.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/change_status_button.dart';
 import 'package:chaos_control/screens/targets/detail/widgets/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
@@ -58,7 +57,7 @@ class _TargetDetailScreenState extends State<TargetDetailScreen>
 
     final floatingButton = currentTabIndex == 0
         ? (visibilityForm || isSelectionMode ? null : const TargetDetailAddTaskButton())
-        : const TargetDetailChangeStatusButton();
+        : null;
 
     return EntityScreen(
       title: 'Цель',

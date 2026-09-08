@@ -1,7 +1,5 @@
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/services/datetool.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
 
@@ -113,14 +111,6 @@ class TargetDetailModel extends ChangeNotifier {
   }
 
   // ------------ Target -----------------
-
-  Future changeStatus() async {
-    target.status = TargetStatus.values[(target.status.index + 1) % 3];
-    target.destroyed = target.status == TargetStatus.destroyed ? DateTool.today() : null;
-    await _target.update(target);
-    notifyListeners();
-    notifyListeners();
-  }
 
   Future setFavorite(bool value) async {
     target.favorite = value;

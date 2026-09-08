@@ -8,7 +8,7 @@ class ProfileFormModel extends ChangeNotifier {
   bool _isEdit = false;
 
   Future loadData(bool isEdit) async {
-    newUser = (await _userRepo.get()) ?? Profile(dateBirth: DateTime(2000));
+    newUser = (await _userRepo.get()) ?? Profile();
     _isEdit = isEdit;
     notifyListeners();
   }
@@ -31,11 +31,6 @@ class ProfileFormModel extends ChangeNotifier {
     catch (e) {
       return e.toString();
     }
-  }
-
-  void setDateBirth(DateTime? selectedDate) {
-    newUser?.dateBirth = selectedDate ?? DateTime(2000);
-    notifyListeners();
   }
 
   void setName(String? name) {

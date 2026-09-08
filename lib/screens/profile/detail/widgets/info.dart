@@ -28,17 +28,6 @@ class ProfileInfo extends StatelessWidget {
       shadow: const Shadow(offset: Offset(1, 1), blurRadius: 4),
     );
 
-    var ageWidget = Row(
-      children: [
-        const Icon(Icons.monitor_heart, size: 16),
-        const SizedBox(width: 6),
-        CustomText(
-          user.age,
-          size: 16, expanded: true,
-        )
-      ],
-    );
-
     return CustomCardBlock(
       child: Row(
         children: [
@@ -50,8 +39,6 @@ class ProfileInfo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 nameWidget,
-                const SizedBox(height: 4),
-                ageWidget
               ],
             ),
           ),

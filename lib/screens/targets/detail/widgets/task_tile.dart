@@ -1,5 +1,4 @@
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -20,7 +19,7 @@ class TargetDetailTaskTile extends StatelessWidget {
     final selectedIds = context.select<TargetDetailModel,Set<String>>((m) => m.selectedIds);
     final isSelectedTask = context.select<TargetDetailModel,bool>((m) => m.editionTask?.id == task.id);
 
-    final successColor = Color.lerp(TargetStatus.retreated.color, TargetStatus.destroyed.color, task.success.toDouble() / 100);
+    final successColor = Color.lerp(Colors.red, Colors.greenAccent, task.time.toDouble() / 100);
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
 
@@ -30,10 +29,10 @@ class TargetDetailTaskTile extends StatelessWidget {
       );
     final successIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(TargetStatus.destroyed.icon, size: 12, color: successColor),
+      child: Icon(Icons.verified_user, size: 12, color: successColor),
     );
     final successPercent = CustomText(
-      '${task.success}%',
+      '${task.time}%',
       size: 16,
       padding: const EdgeInsets.only(bottom: 3),
       color: successColor,

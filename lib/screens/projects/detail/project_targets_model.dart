@@ -1,5 +1,4 @@
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/models/enums/target_difficulty.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
@@ -66,7 +65,6 @@ class ProjectTargetsModel {
       object: target,
       customIconData: _buildIcon(),
       name: target.title,
-      color: target.difficulty.color
     );
   }
   String _buildAddress(Target target) {

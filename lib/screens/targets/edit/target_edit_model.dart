@@ -1,8 +1,5 @@
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/services/datetool.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/enums/target_difficulty.dart';
 import 'package:chaos_control/models/target.dart';
 
 class TargetEditModel extends ChangeNotifier {
@@ -19,10 +16,6 @@ class TargetEditModel extends ChangeNotifier {
   String group = '';
   String desc = '';
   bool favorite = false;
-  DateTime? created = DateTool.today();
-  DateTime? destroyed;
-  TargetDiff difficulty = TargetDiff.F;
-  TargetStatus status = TargetStatus.breaking;
 
   Project? selectedProject;
 
@@ -40,10 +33,6 @@ class TargetEditModel extends ChangeNotifier {
     desc = target.desc;
     group = target.group;
     favorite = target.favorite;
-    created = target.created;
-    destroyed = target.destroyed;
-    difficulty = target.difficulty;
-    status = target.status;
     selectedProject = target.projectId == null ? null : projects.firstWhere((e) => e.id == target.projectId);
     
     notifyListeners();
@@ -65,22 +54,6 @@ class TargetEditModel extends ChangeNotifier {
   }
   void setFavorite(bool value) {
     favorite = value;
-    notifyListeners();
-  }
-  void setStatus(TargetStatus value) {
-    status = value;
-    notifyListeners();
-  }
-  void setCreated(DateTime? value) {
-    created = value;
-    notifyListeners();
-  }
-  void setDestroyed(DateTime? value) {
-    destroyed = value;
-    notifyListeners();
-  }
-  void setDifficulty(TargetDiff value) {
-    difficulty = value;
     notifyListeners();
   }
   void setProject(Project? value) {
@@ -111,10 +84,6 @@ class TargetEditModel extends ChangeNotifier {
     target.desc = desc;
     target.group = group;
     target.favorite = favorite;
-    target.status = status;
-    target.created = created;
-    target.destroyed = destroyed;
-    target.difficulty = difficulty;
     target.projectId = selectedProject?.id;
     
     try {

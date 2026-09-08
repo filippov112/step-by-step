@@ -61,9 +61,6 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
     final iconPath = context.select<ProfileFormModel, CustomImageData?>(
       (model) => model.newUser?.icon,
     );
-    final dateBirth = context.select<ProfileFormModel, DateTime>(
-      (model) => model.newUser?.dateBirth ?? DateTime(2000),
-    );
     final setIcon = context.read<ProfileFormModel>().setIcon;
     final setName = context.read<ProfileFormModel>().setName;
 
@@ -92,16 +89,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
           requiredErrorText: 'Введите имя',
           setText: setName,
         ),
-        const SizedBox(height: 12),
 
-        // Дата рождения
-        CustomDateTime(
-          callback: (v) => model?.setDateBirth(v),
-          value: dateBirth,
-          dateOnly: true,
-          label: 'Дата рождения',
-        ),
-        const SizedBox(height: 20),
       ],
     );
   }

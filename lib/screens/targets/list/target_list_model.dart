@@ -1,5 +1,4 @@
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/models/enums/target_difficulty.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
@@ -7,7 +6,7 @@ import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
 
-enum SortTargetField { title, difficulty }
+enum SortTargetField { title }
 
 class TargetListModel extends ChangeNotifier {
   final _targetRepo = TargetRepository();
@@ -87,7 +86,6 @@ class TargetListModel extends ChangeNotifier {
       object: target,
       customIconData: _buildIcon(project),
       name: target.title,
-      color: target.difficulty.color
     );
   }
   String _buildAddress(Target target, Project? project) {
@@ -182,8 +180,6 @@ class TargetListModel extends ChangeNotifier {
     switch (sortField) {
       case SortTargetField.title:
         result.sort((a, b) => a.title.compareTo(b.title));
-      case SortTargetField.difficulty:
-        result.sort((a, b) => a.difficulty.index - b.difficulty.index);
     }
     if (!sortAscending) {
       result = result.reversed.toList();

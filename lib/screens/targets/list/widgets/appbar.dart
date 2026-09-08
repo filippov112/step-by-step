@@ -30,7 +30,7 @@ class TargetListAppbar extends StatelessWidget implements PreferredSizeWidget {
         visibilitySearch: visibilitySearch,
         setVisibilitySearch: model.setVisibilitySearch,
         searchWidget: SearchString(
-          placeholder: 'Поиск стен...',
+          placeholder: 'Поиск целей...',
           controller: searchController,
           value: searchQuery,
           clearCallback: model.clearSearch,

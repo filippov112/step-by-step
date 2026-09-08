@@ -16,7 +16,7 @@ class TargetListAddButton extends StatelessWidget {
 
     return  CustomFloatingActionButton(
       openFormCreate: () => _create(context, model.loadData, project, group),
-      tooltip: 'Новая стена',
+      tooltip: 'Новая цель',
     );
   }
 

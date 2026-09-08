@@ -1,9 +1,7 @@
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/targets/create/target_create_model.dart';
-import 'package:chaos_control/screens/targets/create/widgets/difficulty.dart';
 import 'package:chaos_control/screens/targets/create/widgets/favorite.dart';
 import 'package:chaos_control/screens/targets/create/widgets/info.dart';
-import 'package:chaos_control/screens/targets/create/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
@@ -55,7 +53,7 @@ class _TargetCreateScreenState extends State<TargetCreateScreen> {
     final saveTask = model.save;
 
     return BottomModalForm(
-      title: 'Новая стена',
+      title: 'Новая цель',
       confirmCallback: () => _save(saveTask),
       formKey: _formKey,
       children: [
@@ -89,14 +87,6 @@ class _TargetCreateScreenState extends State<TargetCreateScreen> {
           controller: targetController,
           lines: 4,
         ),
-        const SizedBox(height: 12),
-
-        // Сложность
-        const TargetCreateDifficulty(),
-        const SizedBox(height: 12),
-
-        // Статус
-        const TargetCreateStatus(),
       ],
     );
   }

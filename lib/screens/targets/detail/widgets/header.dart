@@ -1,4 +1,3 @@
-import 'package:chaos_control/models/enums/target_difficulty.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
@@ -20,9 +19,6 @@ class TargetDetailHeader extends StatelessWidget {
     final selectedGroup = context.select<TargetDetailModel, String>(
       (m) => m.target.group,
     );
-    final diff = context.select<TargetDetailModel, TargetDiff>(
-      (m) => m.target.difficulty,
-    );
     final favorite = context.select<TargetDetailModel, bool>(
       (m) => m.target.favorite,
     );
@@ -30,15 +26,9 @@ class TargetDetailHeader extends StatelessWidget {
     final focusColor = Theme.of(context).focusColor;
     final disabledColor = Theme.of(context).disabledColor;
     final dividerColor = Theme.of(context).dividerColor;
-    final cardColor = Theme.of(context).cardColor;
 
-    final Gradient gradient = LinearGradient(
-      transform: GradientRotation(0.7),
-      colors: [diff.color.withValues(alpha: 0.5), cardColor],
-      stops: [0, 0.2],
-    );
     final favoriteIconColor = favorite
-        ? diff.color
+        ? focusColor
         : disabledColor.withAlpha(60);
     final favoriteBorderColor = favorite ? focusColor : dividerColor;
 
@@ -79,7 +69,6 @@ class TargetDetailHeader extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(gradient: gradient),
       child: Row(
         children: [
           Expanded(child:Column(

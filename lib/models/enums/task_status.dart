@@ -1,5 +1,3 @@
-// Статус стены
-
 import 'package:flutter/material.dart';
 
 enum TaskStatus { done, plan }

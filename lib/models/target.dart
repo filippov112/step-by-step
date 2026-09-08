@@ -1,6 +1,4 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/enums/target_difficulty.dart';
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:uuid/uuid.dart';
@@ -19,10 +17,6 @@ class Target {
   static const cGroup = "_group";
   static const cDesc = "_desc";
   static const cFavorite = "_favorite";
-  static const cStatus = "_status";
-  static const cCreated = "_created";
-  static const cDestroyed = "_destroyed";
-  static const cDifficulty = "_difficulty";
   static const cProjectId = "_project_id";
 
   static const init = '''CREATE TABLE $tn (
@@ -31,10 +25,6 @@ class Target {
     $cGroup TEXT,
     $cDesc TEXT NOT NULL,
     $cFavorite INTEGER,
-    $cStatus INTEGER,
-    $cCreated INTEGER,
-    $cDestroyed INTEGER,
-    $cDifficulty INTEGER,
     $cProjectId TEXT,
     FOREIGN KEY ($cProjectId) REFERENCES ${Project.tn}(${Project.cId}) ON DELETE CASCADE
   );
@@ -47,10 +37,6 @@ class Target {
   String group = ""; // Группа
   String desc = ""; // Формулировка
   bool favorite = false; // Избранное
-  TargetStatus status = TargetStatus.breaking; // Статус
-  DateTime? created = DateTime.now(); // Дата создания
-  DateTime? destroyed; // Дата разрушения
-  TargetDiff difficulty = TargetDiff.F; // Сложность
   String? projectId; // Связанный проект
 
   // ------------ Конструкторы ------------
@@ -61,10 +47,6 @@ class Target {
     required this.group,
     required this.desc, 
     required this.favorite,
-    required this.status,
-    required this.created,
-    required this.destroyed,
-    required this.difficulty,
     required this.projectId
   });
 
@@ -73,14 +55,10 @@ class Target {
     required String desc,
     String group = '',
     bool favorite = false,
-    TargetStatus status = TargetStatus.breaking,
-    DateTime? created,
-    DateTime? destroyed,
-    TargetDiff difficulty = TargetDiff.F,
     String? projectId
   }) {
     final guid = const Uuid().v4();
-    final dateCreated = created ?? DateTool.today();
+    final dateCreated = DateTool.today();
     final dateKey = dateCreated.toIso8601String().substring(0, 10);
     final id = '$dateKey|$guid';
 
@@ -90,10 +68,6 @@ class Target {
       desc: desc,
       group: group,
       favorite: favorite,
-      status: status,
-      created: dateCreated,
-      destroyed: destroyed,
-      difficulty: difficulty,
       projectId: projectId
     );
   }
@@ -107,10 +81,6 @@ class Target {
       cDesc: desc,
       cGroup: group,
       cFavorite: favorite ? 1 : 0,
-      cStatus: status.index,
-      cCreated: DateTool.datetimeToDays(created),
-      cDestroyed: DateTool.datetimeToDays(destroyed),
-      cDifficulty: difficulty.index,
       cProjectId: projectId
     };
     return map;
@@ -121,10 +91,6 @@ class Target {
     desc = map[cDesc];
     group = map[cGroup];
     favorite = map[cFavorite] == 1;
-    status = TargetStatus.values[map[cStatus]];
-    created = DateTool.joinDateTime(date: map[cCreated]);
-    destroyed = DateTool.joinDateTime(date: map[cDestroyed]);
-    difficulty = TargetDiff.values[map[cDifficulty]];
     projectId = map[cProjectId];
   }
 }

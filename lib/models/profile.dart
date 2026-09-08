@@ -12,7 +12,6 @@ class Profile {
   static const cId = "_id";
   static const cName = "_name";
   static const cIcon = "_icon";
-  static const cBirthDate = "_dbirth";
   static const cSpiritFragments = "_sf";
   static const cLevel = "_lvl";
   static const cChars = "_chars";
@@ -22,7 +21,6 @@ class Profile {
           $cId INTEGER PRIMARY KEY AUTOINCREMENT, 
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
-          $cBirthDate INTEGER,
           $cSpiritFragments INTEGER,
           $cLevel INTEGER,
           $cChars TEXT
@@ -31,12 +29,9 @@ class Profile {
   int? id;
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
-  DateTime dateBirth = DateTime(2000); // Дата рождения
   int spiritFragments = 0; // Кэш усилий (чтобы не пересчитывать)
   int level = 1; // Кэш уровня (для уведомлений)
   Map<String,int>? chars = defaultChars(); // Характеристики
-
-  String get age => DateTool.age(dateBirth, DateTime.now());
 
   static Map<String,int> defaultChars() {
     final res = <String,int>{};
@@ -49,7 +44,6 @@ class Profile {
   Profile({
     this.name = "",
     this.icon,
-    required this.dateBirth,
     this.spiritFragments = 0,
     this.level = 1,
     this.chars
@@ -58,8 +52,7 @@ class Profile {
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       cName: name,
-      cIcon: icon?.toJson() ,
-      cBirthDate: DateTool.datetimeToDays(dateBirth),
+      cIcon: icon?.toJson(),
       cSpiritFragments: spiritFragments,
       cLevel: level,
       cChars: chars
@@ -74,7 +67,6 @@ class Profile {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
-    dateBirth = DateTool.joinDateTime(date: map[cBirthDate]) ?? DateTime(2000);
     spiritFragments = map[cSpiritFragments];
     level = map[cLevel];
     chars = map[cChars];

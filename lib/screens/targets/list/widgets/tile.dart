@@ -1,4 +1,3 @@
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/screens/targets/list/target_list_model.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
@@ -103,33 +102,6 @@ class TargetTreeTile extends StatelessWidget {
       color: titleColor,
     );
 
-    // Задачи
-    final tasksWidget = record.isFolder || record.object == null
-        ? null
-        : Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  record.object?.status.icon,
-                  color: record.object?.status.color,
-                  size: 14,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: CustomText(
-                    'Задачи: ${tasks[record.object?.id] ?? 0}',
-                    size: 12,
-                    padding: EdgeInsets.only(bottom: 3),
-                    overflow: TextOverflow.ellipsis,
-                    color: record.object?.status.color,
-                  ),
-                ),
-              ],
-            ),
-          );
-
     // Кнопка удаления
     final deleteButtonWidget = IconButton(
       icon: const Icon(Icons.delete_outline, size: 16),
@@ -184,18 +156,12 @@ class TargetTreeTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: 12,
-                          left: 12,
-                          right: 12,
-                          bottom: record.isFolder ? 12 : 0,
-                        ),
+                        padding: EdgeInsets.all(12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [Expanded(child:titleWidget), ?favoriteWidget],
                         ),
                       ),
-                      ?tasksWidget,
                     ],
                   ),
                 ),

@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -51,14 +49,15 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       (m) => m.visibilityTaskForm,
     );
     if (!visibility) return const SizedBox();
-    final success = context.select<TaskFormModel, int>((m) => m.success);
+    final time = context.select<TaskFormModel, int>((m) => m.time);
+    final diff = context.select<TaskFormModel, int>((m) => m.diff);
     final date = context.select<TaskFormModel, DateTime>((m) => m.date);
     final sf = context.select<TaskFormModel,int>((m) => m.sf);
 
 
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
-    final successColor = TargetStatus.destroyed.color;
+    final successColor = Colors.greenAccent;
 
     final descWidget = CustomTextInput(
       header: 'Описание',
@@ -68,13 +67,25 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       lines: 3,
     );
 
-    final succesWidget = Slider(
-      value: success.toDouble(),
-      label: 'Процент успеха:',
+    final timeSlider = Slider(
+      value: time.toDouble(),
+      label: 'Трудозатраты',
+      padding: const EdgeInsets.all(6),
       min: 0,
-      divisions: 100,
+      divisions: 13,
+      max: 12,
+      showValueIndicator: ShowValueIndicator.onDrag,
+      onChanged: (v) => model.setTime(v.toInt()),
+    );
+    final diffSlider = Slider(
+      value: diff.toDouble(),
+      
+      padding: const EdgeInsets.all(6),
+      label: 'Концентрация',
+      min: 0,
+      divisions: 101,
       max: 100,
-      onChanged: (v) => model.setSuccess(v.toInt()),
+      onChanged: (v) => model.setDiff(v.toInt()),
     );
 
     final datePicker = Padding(
@@ -87,15 +98,25 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       ),
     );
 
-    final successIcon = Padding(
+    final timeIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(TargetStatus.destroyed.icon, size: 12, color: successColor),
+      child: Icon(Icons.timelapse, size: 14, color: successColor),
     );
-    final successPercent = CustomText(
-      '$success%',
+    final timeValue = CustomText(
+      '$time h.',
       size: 16,
       padding: const EdgeInsets.only(bottom: 3),
       color: successColor,
+    );
+    final diffIcon = Padding(
+      padding: const EdgeInsetsGeometry.only(right: 4),
+      child: Icon(Icons.handyman, size: 14, color: Colors.amber),
+    );
+    final diffValue = CustomText(
+      '$diff %',
+      size: 16,
+      padding: const EdgeInsets.only(bottom: 3),
+      color: Colors.amber,
     );
     final spiritIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
@@ -121,8 +142,11 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
 
 
     final statusWidget = Row(children: [
-      successIcon,
-      successPercent,
+      timeIcon,
+      timeValue,
+      const SizedBox(width: 8,),
+      diffIcon,
+      diffValue,
       const Expanded(child: SizedBox(),),
       spiritIcon,
       spiritFragments
@@ -149,7 +173,9 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   statusWidget,
-                  succesWidget, 
+                  diffSlider,
+                  timeSlider, 
+                  const SizedBox(height: 14,),
                   descWidget, 
                   datePicker
                 ],

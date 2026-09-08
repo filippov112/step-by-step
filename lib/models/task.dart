@@ -16,7 +16,8 @@ class Task {
   
   static const cId = "_id";
   static const cTargetId = "_target_id";
-  static const cSuccess = "_success";
+  static const cTime = "_time";
+  static const cDiff = "_diff";
   static const cDescription = "_description";
   static const cDate = "_date";
   static const cSpiritFragments = "_sf";
@@ -25,7 +26,8 @@ class Task {
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
           $cTargetId TEXT,
-          $cSuccess INTEGER,
+          $cTime INTEGER,
+          $cDiff INTEGER,
           $cDescription TEXT,
           $cDate INTEGER,
           $cSpiritFragments INTEGER,
@@ -38,7 +40,8 @@ class Task {
 
   String id = '';
   String targetId = ''; // Цель
-  int success = 0; // Процент успеха
+  int time = 0; // Трудозатраты
+  int diff = 0; // Степень концентрации
   String description = ""; // Описание
   DateTime date = DateTool.today(); // Дата
   TaskStatus status = TaskStatus.done; // Статус
@@ -49,7 +52,8 @@ class Task {
   Task({
     required this.id,
     required this.targetId,
-    required this.success,
+    required this.time,
+    required this.diff,
     required this.description,
     required this.date,
     required this.status,
@@ -58,7 +62,8 @@ class Task {
 
   factory Task.create({
     required String targetId,
-    int success = 0,
+    int time = 0,
+    int diff = 0,
     String? description,
     required DateTime date,
     int efforts = 0,
@@ -68,7 +73,8 @@ class Task {
     return Task(
       id: guid,
       targetId: targetId,
-      success: success,
+      time: time,
+      diff: diff,
       description: description ?? '',
       date: date,
       status: status,
@@ -81,7 +87,8 @@ class Task {
     return {
       cId: id,
       cTargetId: targetId,
-      cSuccess: success,
+      cTime: time,
+      cDiff: diff,
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cStatus: status.index,
@@ -92,7 +99,8 @@ class Task {
   Task.fromMap(Map map) {
     id = map[cId];
     targetId = map[cTargetId];
-    success = map[cSuccess];
+    time = map[cTime];
+    diff = map[cDiff];
     description = map[cDescription];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     status = TaskStatus.values[map[cStatus]];

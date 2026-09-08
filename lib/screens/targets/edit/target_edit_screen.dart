@@ -1,11 +1,8 @@
-import 'package:chaos_control/screens/targets/edit/widgets/dates.dart';
 import 'package:chaos_control/screens/targets/edit/widgets/favorite.dart';
 import 'package:chaos_control/screens/targets/edit/widgets/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/screens/targets/edit/target_edit_model.dart';
-import 'package:chaos_control/screens/targets/edit/widgets/difficulty.dart';
-import 'package:chaos_control/screens/targets/edit/widgets/status.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
@@ -92,18 +89,6 @@ class _TargetEditScreenState extends State<TargetEditScreen> {
           controller: targetController,
           lines: 4,
         ),
-        const SizedBox(height: 12),
-
-        // Статус
-        const TargetEditStatus(),
-        const SizedBox(height: 12),
-
-        // Сложность
-        const TargetEditDifficulty(),
-        const SizedBox(height: 12),
-
-        // Даты создания и разрушения
-        const TargetEditDates(),
         const SizedBox(height: 12),
 
         // Избранная

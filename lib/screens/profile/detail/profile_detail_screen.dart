@@ -46,7 +46,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   Widget build(BuildContext context) {
     final user =
         context.select<ProfileDetailModel, Profile?>((model) => model.user) ??
-        Profile(dateBirth: DateTime(2000));
+        Profile();
 
 
     final StatPeriod selectedPeriod = context

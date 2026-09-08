@@ -1,8 +1,5 @@
-import 'package:chaos_control/models/enums/target_status.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/services/datetool.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/enums/target_difficulty.dart';
 import 'package:chaos_control/models/target.dart';
 
 class TargetCreateModel extends ChangeNotifier {
@@ -16,8 +13,6 @@ class TargetCreateModel extends ChangeNotifier {
   String selectedGroup = '';
   String desc = '';
   bool favorite = false;
-  TargetDiff difficulty = TargetDiff.F;
-  TargetStatus status = TargetStatus.breaking;
 
   Project? selectedProject;
 
@@ -31,8 +26,6 @@ class TargetCreateModel extends ChangeNotifier {
     desc = target.desc;
     selectedGroup = group;
     favorite = target.favorite;
-    difficulty = target.difficulty;
-    status = target.status;
     selectedProject = project;
     
     notifyListeners();
@@ -52,14 +45,6 @@ class TargetCreateModel extends ChangeNotifier {
     favorite = value;
     notifyListeners();
   }
-  void setStatus(TargetStatus value) {
-    status = value;
-    notifyListeners();
-  }
-  void setDifficulty(TargetDiff value) {
-    difficulty = value;
-    notifyListeners();
-  }
 
   // ---------- CRUD ---------------------
 
@@ -68,9 +53,6 @@ class TargetCreateModel extends ChangeNotifier {
     target.desc = desc;
     target.group = selectedGroup;
     target.favorite = favorite;
-    target.status = status;
-    target.created = DateTool.today();
-    target.difficulty = difficulty;
     target.projectId = selectedProject?.id;
     
     try {

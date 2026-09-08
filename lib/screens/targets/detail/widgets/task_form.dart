@@ -77,9 +77,9 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       showValueIndicator: ShowValueIndicator.onDrag,
       onChanged: (v) => model.setTime(v.toInt()),
     );
+    
     final diffSlider = Slider(
       value: diff.toDouble(),
-      
       padding: const EdgeInsets.all(6),
       label: 'Концентрация',
       min: 0,

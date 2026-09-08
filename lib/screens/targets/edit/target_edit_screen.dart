@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/targets/edit/widgets/chars.dart';
 import 'package:chaos_control/screens/targets/edit/widgets/favorite.dart';
 import 'package:chaos_control/screens/targets/edit/widgets/project.dart';
 import 'package:flutter/material.dart';
@@ -92,7 +93,10 @@ class _TargetEditScreenState extends State<TargetEditScreen> {
         const SizedBox(height: 12),
 
         // Избранная
-        const TargetEditFavorite()
+        const TargetEditFavorite(),
+
+        // Распределение опыта
+        const TargetEditChars(),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
@@ -15,8 +16,8 @@ class TargetEditModel extends ChangeNotifier {
   String title = '';
   String group = '';
   String desc = '';
+  Map<Characteristics,int>? chars, chars100;
   bool favorite = false;
-
   Project? selectedProject;
 
   bool isEditing = false;
@@ -33,9 +34,22 @@ class TargetEditModel extends ChangeNotifier {
     desc = target.desc;
     group = target.group;
     favorite = target.favorite;
+    chars = target.chars;
+    _recalcChars100();
     selectedProject = target.projectId == null ? null : projects.firstWhere((e) => e.id == target.projectId);
     
     notifyListeners();
+  }
+
+  void _recalcChars100() {
+    int sum = 0;
+    chars100 = {};
+    for(var v in chars?.values ?? <int>[]) {
+      sum += v;
+    }
+    for(var ch in Characteristics.values) {
+      chars100![ch] = ((chars?[ch] ?? 0).toDouble() / (sum == 0 ? 1 : sum) * 100).toInt();
+    }
   }
 
   // -------------------- Commands ------------------------
@@ -58,6 +72,20 @@ class TargetEditModel extends ChangeNotifier {
   }
   void setProject(Project? value) {
     selectedProject = value;
+    notifyListeners();
+  }
+  void setChars(Characteristics selectedChar, int value) {
+    chars?[selectedChar] = value;
+    final newChars = <Characteristics, int>{};
+    for (var ch in Characteristics.values) {
+      if (ch == selectedChar) {
+        newChars[ch] = value;
+      } else {
+        newChars[ch] = chars?[ch] ?? 0;
+      }
+    }
+    chars = newChars;
+    _recalcChars100();
     notifyListeners();
   }
   String? groupValidator(String? text) {
@@ -86,6 +114,12 @@ class TargetEditModel extends ChangeNotifier {
     target.favorite = favorite;
     target.projectId = selectedProject?.id;
     
+    target.control = chars100?[Characteristics.control] ?? 0;
+    target.perseverance = chars100?[Characteristics.perseverance] ?? 0;
+    target.courage = chars100?[Characteristics.courage] ?? 0;
+    target.durability = chars100?[Characteristics.durability] ?? 0;
+    target.creativity = chars100?[Characteristics.creativity] ?? 0;
+
     try {
       if (isEditing) {
         await _targetRepo.update(target);

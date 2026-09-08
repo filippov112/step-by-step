@@ -1,4 +1,5 @@
 import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:uuid/uuid.dart';
@@ -19,6 +20,12 @@ class Target {
   static const cFavorite = "_favorite";
   static const cProjectId = "_project_id";
 
+  static const cControl = "_c1";
+  static const cPerseverance = "_c2";
+  static const cCourage = "_c3";
+  static const cDurability = "_c4";
+  static const cCreativity = "_c5";
+
   static const init = '''CREATE TABLE $tn (
     $cId TEXT PRIMARY KEY, 
     $cTitle TEXT NOT NULL, 
@@ -26,6 +33,13 @@ class Target {
     $cDesc TEXT NOT NULL,
     $cFavorite INTEGER,
     $cProjectId TEXT,
+
+    $cControl INTEGER,
+    $cPerseverance INTEGER,
+    $cCourage INTEGER,
+    $cDurability INTEGER,
+    $cCreativity INTEGER,
+
     FOREIGN KEY ($cProjectId) REFERENCES ${Project.tn}(${Project.cId}) ON DELETE CASCADE
   );
   ''';
@@ -39,6 +53,12 @@ class Target {
   bool favorite = false; // Избранное
   String? projectId; // Связанный проект
 
+  int control = 0;
+  int perseverance = 0;
+  int courage = 0;
+  int durability = 0;
+  int creativity = 0;
+
   // ------------ Конструкторы ------------
 
   Target({
@@ -47,7 +67,12 @@ class Target {
     required this.group,
     required this.desc, 
     required this.favorite,
-    required this.projectId
+    required this.projectId,
+    required this.control,
+    required this.perseverance,
+    required this.courage,
+    required this.durability,
+    required this.creativity
   });
 
   factory Target.create({
@@ -55,7 +80,12 @@ class Target {
     required String desc,
     String group = '',
     bool favorite = false,
-    String? projectId
+    String? projectId,
+    int control = 0,
+    int perseverance = 0,
+    int courage = 0,
+    int durability = 0,
+    int creativity = 0
   }) {
     final guid = const Uuid().v4();
     final dateCreated = DateTool.today();
@@ -68,9 +98,23 @@ class Target {
       desc: desc,
       group: group,
       favorite: favorite,
-      projectId: projectId
+      projectId: projectId,
+
+      control: control,
+      perseverance: perseverance,
+      courage: courage,
+      durability: durability,
+      creativity: creativity
     );
   }
+
+  Map<Characteristics,int> get chars => <Characteristics,int>{
+    Characteristics.control: control,
+    Characteristics.perseverance: perseverance,
+    Characteristics.courage: courage,
+    Characteristics.durability: durability,
+    Characteristics.creativity: creativity
+  };
 
   // ------------ Сериализация ------------
 
@@ -81,7 +125,13 @@ class Target {
       cDesc: desc,
       cGroup: group,
       cFavorite: favorite ? 1 : 0,
-      cProjectId: projectId
+      cProjectId: projectId,
+
+      cControl: control,
+      cPerseverance: perseverance,
+      cCourage: courage,
+      cDurability: durability,
+      cCreativity: creativity
     };
     return map;
   }
@@ -92,6 +142,12 @@ class Target {
     group = map[cGroup];
     favorite = map[cFavorite] == 1;
     projectId = map[cProjectId];
+
+    control = map[cControl];
+    perseverance = map[cPerseverance];
+    courage = map[cCourage];
+    durability = map[cDurability];
+    creativity = map[cCreativity];
   }
 }
 

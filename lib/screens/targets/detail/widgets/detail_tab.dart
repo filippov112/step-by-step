@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
@@ -10,8 +11,11 @@ class TargetDetailDetailTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final target = context.select<TargetDetailModel, String>(
+    final desc = context.select<TargetDetailModel, String>(
       (model) => model.target.desc,
+    );
+    final chars = context.select<TargetDetailModel, Map<Characteristics, int>>(
+      (model) => model.target.chars,
     );
     // final tasks = context.select<TargetDetailModel, int>(
     //   (model) => model.tasks.length,
@@ -28,32 +32,44 @@ class TargetDetailDetailTab extends StatelessWidget {
     //   value: successPrice,
     // );
 
-
-    // Блок "Цель"
-    final targetWidget = target.isEmpty
+    // Блок "Описание"
+    final descWidget = desc.isEmpty
         ? null
         : CustomCardBlock(
             borderColor: focusColor,
-            icon: Icons.center_focus_weak_rounded,
-            title: 'Цель',
+            icon: Icons.description,
+            title: 'Описание',
             child: CustomText(
-              target,
+              desc,
               lines: null,
               overflow: TextOverflow.visible,
             ),
           );
 
-
-
-
+    // Блок "Распределение опыта"
+    final charsBlock = CustomCardBlock(
+      borderColor: focusColor,
+      icon: Icons.bar_chart,
+      title: 'Распределение',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ...Characteristics.values.map(
+            (c) => Row(
+              children: [
+                Icon(c.icon, color: c.color),
+                CustomText(c.displayName, expanded: true),
+                CustomText('${chars[c]} %', weight: FontWeight.bold),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
 
     return Container(
       padding: EdgeInsets.all(12),
-      child: ListView(
-        children: [
-          ?targetWidget,
-        ],
-      ),
+      child: ListView(children: [?descWidget, charsBlock]),
     );
   }
 }

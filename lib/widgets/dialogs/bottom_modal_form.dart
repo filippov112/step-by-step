@@ -16,7 +16,7 @@ class BottomModalForm extends StatefulWidget {
     required this.children,
     required this.confirmCallback,
     this.closeCallback,
-    this.confirmIcon
+    this.confirmIcon,
   });
 
   @override
@@ -35,7 +35,12 @@ class BottomModalFormState extends State<BottomModalForm> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsetsGeometry.fromLTRB(8, 6, 8, 6),
+      padding: EdgeInsetsGeometry.fromLTRB(
+        8,
+        6,
+        8,
+        6 + MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         children: [
           Container(
@@ -49,7 +54,7 @@ class BottomModalFormState extends State<BottomModalForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Заголовок
-                      CustomText(widget.title, size: 18, expanded: true,),
+                      CustomText(widget.title, size: 18, expanded: true),
                       const SizedBox(width: 12),
 
                       // Закрыть
@@ -62,7 +67,9 @@ class BottomModalFormState extends State<BottomModalForm> {
                       // Сохранить
                       ElevatedButton(
                         onPressed: widget.confirmCallback,
-                        child: Icon(widget.confirmIcon ?? Icons.done),
+                        child: Center(
+                          child: Icon(widget.confirmIcon ?? Icons.done),
+                        ),
                       ),
                     ],
                   ),

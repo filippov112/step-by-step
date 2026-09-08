@@ -26,6 +26,7 @@ class CustomTextInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      textInputAction: TextInputAction.done,
       onChanged: setText,
       initialValue: initialValue,
       decoration: InputDecoration(

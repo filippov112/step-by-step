@@ -23,8 +23,11 @@ class TargetListAddButton extends StatelessWidget {
   void _create(BuildContext context, VoidCallback loadCallback, Project? selectedProject, String selectedGroup) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: false,
-      builder: (context) => TargetCreateScreen(project: selectedProject, group: selectedGroup,),
+      isScrollControlled: true,
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.42,
+        child: TargetCreateScreen(project: selectedProject, group: selectedGroup,)
+      ),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

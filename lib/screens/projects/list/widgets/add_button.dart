@@ -11,7 +11,7 @@ class ProjectListAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = context.read<ProjectListModel>();
 
-    return  CustomFloatingActionButton(
+    return CustomFloatingActionButton(
       openFormCreate: () => _create(context, model.loadData),
       tooltip: 'Создать проект',
     );
@@ -22,8 +22,11 @@ class ProjectListAddButton extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: false,
-      builder: (context) => ProjectCreateScreen(group: group,),
+      isScrollControlled: true,
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.42,
+        child: ProjectCreateScreen(group: group),
+      ),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

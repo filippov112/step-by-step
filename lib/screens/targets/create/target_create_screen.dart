@@ -4,17 +4,14 @@ import 'package:chaos_control/screens/targets/create/widgets/favorite.dart';
 import 'package:chaos_control/screens/targets/create/widgets/info.dart';
 import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:provider/provider.dart';
 
 class TargetCreateScreen extends StatefulWidget {
-  final Target? parent;
   final Project? project;
   final String group;
   const TargetCreateScreen({
     super.key,
-    this.parent,
     required this.project,
     required this.group,
   });
@@ -26,17 +23,17 @@ class TargetCreateScreen extends StatefulWidget {
 class _TargetCreateScreenState extends State<TargetCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   late TargetCreateModel model;
-  late TextEditingController titleController, groupController, targetController;
+  late TextEditingController titleController, targetController;
 
   @override
   void initState() {
     super.initState();
     model = context.read<TargetCreateModel>();
+    model.group = widget.group;
     titleController = TextEditingController();
     targetController = TextEditingController();
-    groupController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setTarget(widget.project, widget.group);
+      model.setTarget(widget.project);
     });
   }
 
@@ -44,13 +41,13 @@ class _TargetCreateScreenState extends State<TargetCreateScreen> {
   void dispose() {
     titleController.dispose();
     targetController.dispose();
-    groupController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final saveTask = model.save;
+    final group = context.select<TargetCreateModel, String>((m) => m.group);
 
     return BottomModalForm(
       title: 'Новая цель',
@@ -78,7 +75,7 @@ class _TargetCreateScreenState extends State<TargetCreateScreen> {
           ],
         ),
         const SizedBox(height: 6),
-        
+
         // Цель
         CustomTextInput(
           header: 'Цель',
@@ -86,6 +83,15 @@ class _TargetCreateScreenState extends State<TargetCreateScreen> {
           icon: Icons.center_focus_weak_rounded,
           controller: targetController,
           lines: 4,
+        ),
+        const SizedBox(height: 12),
+
+        // Группа
+        CustomTextInput(
+          header: 'Группа',
+          initialValue: group,
+          setText: model.setGroup,
+          icon: Icons.folder,
         ),
       ],
     );

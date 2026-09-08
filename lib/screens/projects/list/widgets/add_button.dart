@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/projects/form/project_form_screen.dart';
+import 'package:chaos_control/screens/projects/create/project_create_screen.dart';
 import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +18,12 @@ class ProjectListAddButton extends StatelessWidget {
   }
 
   void _create(BuildContext context, VoidCallback loadCallback) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProjectFormScreen()),
+    final group = context.read<ProjectListModel>().treeListModel.currentAddress;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      builder: (context) => ProjectCreateScreen(group: group,),
     ).then((_) {
       if (context.mounted) loadCallback();
     });

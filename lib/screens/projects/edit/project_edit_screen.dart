@@ -1,25 +1,27 @@
-import 'package:chaos_control/screens/projects/form/widgets/hidden.dart';
+import 'package:chaos_control/screens/projects/create/widgets/hidden.dart';
+import 'package:chaos_control/screens/projects/edit/widgets/hidden.dart';
+import 'package:chaos_control/screens/projects/edit/widgets/icon.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/screens/projects/form/widgets/icon.dart';
+import 'package:chaos_control/screens/projects/create/widgets/icon.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
-import 'package:chaos_control/screens/projects/form/project_form_model.dart';
+import 'package:chaos_control/screens/projects/edit/project_edit_model.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class ProjectFormScreen extends StatefulWidget {
-  final Project? project;
+class ProjectEditScreen extends StatefulWidget {
+  final Project project;
 
-  const ProjectFormScreen({super.key, this.project});
+  const ProjectEditScreen({super.key, required this.project});
 
   @override
-  State<ProjectFormScreen> createState() => _ProjectFormScreenState();
+  State<ProjectEditScreen> createState() => _ProjectEditScreenState();
 }
 
-class _ProjectFormScreenState extends State<ProjectFormScreen> {
+class _ProjectEditScreenState extends State<ProjectEditScreen> {
   final _formKey = GlobalKey<FormState>();
-  late ProjectFormModel model;
+  late ProjectEditModel model;
   late TextEditingController titleController, targetController, groupController;
 
   @override
@@ -33,12 +35,12 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
   @override
   void initState() {
     super.initState();
-    model = context.read<ProjectFormModel>();
+    model = context.read<ProjectEditModel>();
     titleController = TextEditingController(text: widget.project?.title);
     targetController = TextEditingController(text: widget.project?.target);
     groupController = TextEditingController(text: widget.project?.group);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      model.setClass(widget.project);
+      model.setProject(widget.project);
     });
   }
 
@@ -50,11 +52,11 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
     return EntityScreen(
       title: 'Проект',
       saveCallback: () => _save(save),
-      deleteCallback: widget.project == null ? null : () => _delete(delete),
+      deleteCallback: () => _delete(delete),
       formKey: _formKey,
       children: [
         // Иконка
-        const ProjectFormIcon(),
+        const ProjectEditIcon(),
         const SizedBox(height: 12),
 
         // Название
@@ -89,7 +91,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
         const SizedBox(height: 12),
 
         // Скрытый
-        const ProjectFormHidden()
+        const ProjectEditHidden()
       ],
     );
   }

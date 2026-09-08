@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/projects/create/project_create_model.dart';
 import 'package:chaos_control/screens/targets/create/target_create_model.dart';
 import 'package:chaos_control/screens/tasks/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
@@ -8,7 +9,7 @@ import 'package:chaos_control/screens/purports/detail/purport_details_model.dart
 import 'package:chaos_control/screens/purports/form/purport_form_model.dart';
 import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
-import 'package:chaos_control/screens/projects/form/project_form_model.dart';
+import 'package:chaos_control/screens/projects/edit/project_edit_model.dart';
 import 'package:chaos_control/screens/projects/list/project_list_model.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/home_screen.dart';
@@ -53,11 +54,11 @@ void main() async {
         ChangeNotifierProvider<PurportDetailsModel>(create: (_) { return PurportDetailsModel(); }),
         ChangeNotifierProvider<PurportFormModel>(create: (_) { return PurportFormModel(); }),
         
-        // Classes
+        // Projects
         ChangeNotifierProvider<ProjectListModel>(create: (_) { return ProjectListModel(); }),
         ChangeNotifierProvider<ProjectDetailModel>(create: (_) { return ProjectDetailModel(); }),
-        ChangeNotifierProvider<ProjectFormModel>(create: (_) { return ProjectFormModel(); }),
-
+        ChangeNotifierProvider<ProjectEditModel>(create: (_) { return ProjectEditModel(); }),
+        ChangeNotifierProvider<ProjectCreateModel>(create: (_) { return ProjectCreateModel(); }),
       ],
       child: MyApp(),
     )

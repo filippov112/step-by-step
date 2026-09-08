@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/screens/projects/detail/project_detail_model.dart';
 import 'package:chaos_control/screens/projects/detail/widgets/header.dart';
-import 'package:chaos_control/screens/projects/form/project_form_screen.dart';
+import 'package:chaos_control/screens/projects/edit/project_edit_screen.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +64,7 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen>
   void _edit(ProjectDetailModel model, Project cls) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProjectFormScreen(project: cls)),
+      MaterialPageRoute(builder: (context) => ProjectEditScreen(project: cls)),
     ).then((_) async {
       if (context.mounted) {
         var checkExist = await model.checkExist();

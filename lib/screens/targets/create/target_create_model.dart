@@ -10,7 +10,7 @@ class TargetCreateModel extends ChangeNotifier {
   final _targetRepo = TargetRepository();
 
   String title = '';
-  String selectedGroup = '';
+  String group = '';
   String desc = '';
   bool favorite = false;
 
@@ -18,13 +18,12 @@ class TargetCreateModel extends ChangeNotifier {
 
   // ---------------- Initialization ------------------
 
-  Future setTarget(Project? project, String group) async {
+  Future setTarget(Project? project) async {
 
     target = Target.create(title: '', desc: '');
     
     title = target.title;
     desc = target.desc;
-    selectedGroup = group;
     favorite = target.favorite;
     selectedProject = project;
     
@@ -45,13 +44,17 @@ class TargetCreateModel extends ChangeNotifier {
     favorite = value;
     notifyListeners();
   }
+  void setGroup(String? value) {
+    group = value ?? '';
+    notifyListeners();
+  }
 
   // ---------- CRUD ---------------------
 
   Future<bool> save() async {
     target.title = title;
     target.desc = desc;
-    target.group = selectedGroup;
+    target.group = group;
     target.favorite = favorite;
     target.projectId = selectedProject?.id;
     

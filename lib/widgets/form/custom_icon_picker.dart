@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chaos_control/widgets/common/custom_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
@@ -73,63 +74,68 @@ class CustomIconPicker extends StatelessWidget {
         ? Border.all(color: foreColor, width: borderWidth!)
         : null;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            color: backColor,
-            border: border,
+    return CustomTile(
+      borderRadius: 12,
+      padding: 8,
+      borderWidth: 2,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              borderRadius: borderRadius,
+              color: backColor,
+              border: border,
+            ),
+            child:
+                selectedIcon == null ||
+                    (!selectedIcon!.isIcon && !selectedIcon!.isImage) ||
+                    selectedIcon!.isIcon
+                ? Center(
+                    child: Icon(
+                      selectedIcon?.icon() ?? Icons.image,
+                      size: size * 0.6,
+                      color: foreColor,
+                    ),
+                  )
+                : ClipRRect(
+                    borderRadius: borderRadius,
+                    child: Image.file(
+                      File(selectedIcon!.imagePath!),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            size: size * 0.6,
+                            color: foreColor,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
-          child:
-              selectedIcon == null ||
-                  (!selectedIcon!.isIcon && !selectedIcon!.isImage) ||
-                  selectedIcon!.isIcon
-              ? Center(
-                  child: Icon(
-                    selectedIcon?.icon() ?? Icons.image,
-                    size: size * 0.6,
-                    color: foreColor,
-                  ),
-                )
-              : ClipRRect(
-                  borderRadius: borderRadius,
-                  child: Image.file(
-                    File(selectedIcon!.imagePath!),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: size * 0.6,
-                          color: foreColor,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-        ),
 
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => pickImage(context),
-              icon: Icon(Icons.image),
-            ),
-            IconButton(
-              onPressed: () => pickIcon(context),
-              icon: Icon(Icons.abc),
-            ),
-            IconButton(onPressed: deleteIcon, icon: Icon(Icons.clear)),
-          ],
-        ),
-      ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () => pickImage(context),
+                icon: Icon(Icons.image),
+              ),
+              IconButton(
+                onPressed: () => pickIcon(context),
+                icon: Icon(Icons.abc),
+              ),
+              IconButton(onPressed: deleteIcon, icon: Icon(Icons.clear)),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

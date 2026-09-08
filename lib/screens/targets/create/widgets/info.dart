@@ -13,7 +13,7 @@ class TargetCreateInfo extends StatelessWidget {
       (m) => m.selectedProject,
     );
     final selectedGroup = context.select<TargetCreateModel, String>(
-      (m) => m.selectedGroup,
+      (m) => m.group,
     );
 
     final focusColor = Theme.of(context).focusColor;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -52,8 +53,10 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
     final time = context.select<TaskFormModel, int>((m) => m.time);
     final diff = context.select<TaskFormModel, int>((m) => m.diff);
     final date = context.select<TaskFormModel, DateTime>((m) => m.date);
-    final sf = context.select<TaskFormModel,int>((m) => m.sf);
-
+    final sf = context.select<TaskFormModel, int>((m) => m.sf);
+    final chars = context.select<TaskFormModel, Map<Characteristics, int>?>(
+      (m) => m.currentChars,
+    );
 
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
@@ -77,7 +80,7 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       showValueIndicator: ShowValueIndicator.onDrag,
       onChanged: (v) => model.setTime(v.toInt()),
     );
-    
+
     final diffSlider = Slider(
       value: diff.toDouble(),
       padding: const EdgeInsets.all(6),
@@ -97,6 +100,19 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
         value: date,
       ),
     );
+
+    final charsIndicator = chars == null
+        ? null
+        : Row(
+            children: [
+              ...Characteristics.values.map(
+                (ch) => Expanded(
+                  flex: chars[ch] ?? 0,
+                  child: Container(height: 10, color: ch.color),
+                ),
+              ),
+            ],
+          );
 
     final timeIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
@@ -140,17 +156,18 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
       ],
     );
 
-
-    final statusWidget = Row(children: [
-      timeIcon,
-      timeValue,
-      const SizedBox(width: 8,),
-      diffIcon,
-      diffValue,
-      const Expanded(child: SizedBox(),),
-      spiritIcon,
-      spiritFragments
-    ],);
+    final statusWidget = Row(
+      children: [
+        timeIcon,
+        timeValue,
+        const SizedBox(width: 8),
+        diffIcon,
+        diffValue,
+        const Expanded(child: SizedBox()),
+        spiritIcon,
+        spiritFragments,
+      ],
+    );
 
     return Expanded(
       flex: 3,
@@ -172,12 +189,13 @@ class TargetDetailTaskFormState extends State<TargetDetailTaskForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  ?charsIndicator,
                   statusWidget,
                   diffSlider,
-                  timeSlider, 
-                  const SizedBox(height: 14,),
-                  descWidget, 
-                  datePicker
+                  timeSlider,
+                  const SizedBox(height: 14),
+                  descWidget,
+                  datePicker,
                 ],
               ),
             ),

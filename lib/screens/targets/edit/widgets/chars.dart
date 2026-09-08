@@ -16,8 +16,8 @@ class TargetEditChars extends StatelessWidget {
     final chars = context.select<TargetEditModel, Map<Characteristics, int>?>(
       (model) => model.chars,
     );
-    final chars100 = context.select<TargetEditModel, Map<Characteristics, int>?>(
-      (model) => model.chars100,
+    final chars10000 = context.select<TargetEditModel, Map<Characteristics, int>?>(
+      (model) => model.chars10000,
     );
 
     // Блок "Распределение опыта"
@@ -27,20 +27,24 @@ class TargetEditChars extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Divider(color: Theme.of(context).dividerColor,),
           ...Characteristics.values.map(
             (c) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(children: [
-                  Icon(c.icon, color: c.color),
-                  CustomText(c.displayName, expanded: true),
-                  CustomText('${chars100?[c]} %', weight: FontWeight.bold),
-                ],),
+                Padding(
+                  padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+                  child:Row(children: [
+                  Icon(c.icon, color: c.color, size: 14,),
+                  CustomText(c.displayName, expanded: true, size: 12, padding: const EdgeInsets.only(left: 12),),
+                  CustomText('${(chars10000?[c] ?? 0).toDouble() / 100} %', weight: FontWeight.bold),
+                ],),),
                 Slider(
                   value: (chars?[c])?.toDouble() ?? 0,
                   padding: const EdgeInsets.all(6),
                   min: 0,
                   thumbColor: c.color,
+                  activeColor: c.color,
                   divisions: 101,
                   max: 100,
                   onChanged: (v) => model.setChars(c, v.toInt()),

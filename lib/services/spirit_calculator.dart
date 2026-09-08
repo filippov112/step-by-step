@@ -1,5 +1,7 @@
 
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/profile.dart';
+import 'package:chaos_control/services/notifications/implementations/n_char_points.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_level.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 
@@ -11,6 +13,9 @@ class SpiritCalculator {
 
   // Уровень
   static int getLevel(int sf) => _calc(sf).$1;
+
+  // Очки хар-к
+  static int getCharPoints(int char) => (char.toDouble() / 100).toInt();
 
   // Требование для следующего уровня
   static int getRequirements(int sf) => _calc(sf).$3;
@@ -31,18 +36,35 @@ class SpiritCalculator {
     return (level, sf - sum, req);
   }
 
-  static Future recalcLevelUser(Profile user) async {
-    final newLevel = getLevel(user.spiritFragments);
-    if (newLevel > user.level) {
-      final ns = NotificationService();
-      for (var lvl = user.level + 1; lvl <= newLevel; lvl++) {
+  // Проверить получение уровня и очков характеристик
+  static Future checkNotifications(Map<Characteristics,int> oldChars, Map<Characteristics,int> newChars) async {
+    final ns = NotificationService();
+    _checkLevel(ns, oldChars.values.reduce((a, b) => a + b), newChars.values.reduce((a, b) => a + b));
+    _recalcUserCharPoints(ns, oldChars, newChars);
+  }
+
+  static void _checkLevel(NotificationService ns, int oldSF, int newSF) {
+    final newLevel = getLevel(newSF);
+    final oldLevel = getLevel(oldSF);
+    
+    if (oldLevel < newLevel) {
+      for (var lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
         ns.showNotification(NNewLevel()..level = lvl);
       }
     }
-    if (newLevel != user.level) {
-      user.level = newLevel;
-      final repo = ProfileRepository();
-      await repo.update(user);
+  }
+
+  static void _recalcUserCharPoints(NotificationService ns, Map<Characteristics,int> oldChars, Map<Characteristics,int> newChars) {
+    for(var ch in Characteristics.values) {
+      final newPoints = getCharPoints(newChars[ch] ?? 0);
+      final oldPoints = getCharPoints(oldChars[ch] ?? 0);
+    
+      if (oldPoints < newPoints) {
+        final n = NCharPoints();
+        n.char = ch;
+        n.value = newPoints - oldPoints;
+        ns.showNotification(n);
+      }
     }
   }
 }

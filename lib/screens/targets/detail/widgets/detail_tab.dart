@@ -55,13 +55,15 @@ class TargetDetailDetailTab extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ...Characteristics.values.map(
-            (c) => Row(
+            (c) => Padding(
+              padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
+              child:Row(
               children: [
-                Icon(c.icon, color: c.color),
-                CustomText(c.displayName, expanded: true),
+                Icon(c.icon, color: c.color, size: 14,),
+                CustomText(c.displayName, expanded: true, padding: const EdgeInsets.only(left: 12, bottom: 3), size: 12),
                 CustomText('${chars[c]} %', weight: FontWeight.bold),
               ],
-            ),
+            ),)
           ),
         ],
       ),

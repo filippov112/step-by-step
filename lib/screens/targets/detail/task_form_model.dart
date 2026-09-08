@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -14,18 +15,22 @@ class TaskFormModel extends ChangeNotifier {
   int diff = 0;
   DateTime date = DateTool.today();
   int sf = 0;
+  Target? target;
+  Map<Characteristics,int>? currentChars;
 
   Task? task;
   bool isEditing = false;
 
-  void initTask(Task? value, Target target, int tasksCount) {
-    isEditing = value != null;
+  void initTask(Task? tsk, Target target, int tasksCount) {
+    isEditing = tsk != null;
 
-    desc = value?.description ?? '';
-    time = value?.time ?? 0;
-    diff = value?.diff ?? 0;
-    date = value?.date ?? DateTool.today();
-    task = value ?? Task.create(targetId: target.id, date: date);
+    this.target = target;
+    currentChars = tsk?.chars ?? target.chars;
+    desc = tsk?.description ?? '';
+    time = tsk?.time ?? 0;
+    diff = tsk?.diff ?? 0;
+    date = tsk?.date ?? DateTool.today();
+    task = tsk ?? Task.create(targetId: target.id, date: date);
     _recalcSF();
 
     notifyListeners();
@@ -56,6 +61,10 @@ class TaskFormModel extends ChangeNotifier {
     date = value;
     notifyListeners();
   }
+  void setChars(Map<Characteristics,int> value) {
+    currentChars = value;
+    notifyListeners();
+  }
 
   Future save() async {
 
@@ -63,7 +72,12 @@ class TaskFormModel extends ChangeNotifier {
     task?.time = time;
     task?.diff = diff;
     task?.date = date;
-    task?.spiritFragments = sf;
+    
+    task?.control = (sf.toDouble() * (currentChars?[Characteristics.control] ?? 0) / 100).toInt();
+    task?.perseverance = (sf.toDouble() * (currentChars?[Characteristics.perseverance] ?? 0) / 100).toInt();
+    task?.courage = (sf.toDouble() * (currentChars?[Characteristics.courage] ?? 0) / 100).toInt();
+    task?.durability = (sf.toDouble() * (currentChars?[Characteristics.durability] ?? 0) / 100).toInt();
+    task?.creativity = (sf.toDouble() * (currentChars?[Characteristics.creativity] ?? 0) / 100).toInt();
 
     if (task == null) return;
 

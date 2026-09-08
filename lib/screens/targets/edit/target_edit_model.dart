@@ -16,7 +16,7 @@ class TargetEditModel extends ChangeNotifier {
   String title = '';
   String group = '';
   String desc = '';
-  Map<Characteristics,int>? chars, chars100;
+  Map<Characteristics,int>? chars, chars10000;
   bool favorite = false;
   Project? selectedProject;
 
@@ -35,20 +35,20 @@ class TargetEditModel extends ChangeNotifier {
     group = target.group;
     favorite = target.favorite;
     chars = target.chars;
-    _recalcChars100();
+    _recalcChars10000();
     selectedProject = target.projectId == null ? null : projects.firstWhere((e) => e.id == target.projectId);
     
     notifyListeners();
   }
 
-  void _recalcChars100() {
+  void _recalcChars10000() {
     int sum = 0;
-    chars100 = {};
+    chars10000 = {};
     for(var v in chars?.values ?? <int>[]) {
       sum += v;
     }
     for(var ch in Characteristics.values) {
-      chars100![ch] = ((chars?[ch] ?? 0).toDouble() / (sum == 0 ? 1 : sum) * 100).toInt();
+      chars10000![ch] = ((chars?[ch] ?? 0).toDouble() / (sum == 0 ? 1 : sum) * 10000).toInt();
     }
   }
 
@@ -85,7 +85,7 @@ class TargetEditModel extends ChangeNotifier {
       }
     }
     chars = newChars;
-    _recalcChars100();
+    _recalcChars10000();
     notifyListeners();
   }
   String? groupValidator(String? text) {
@@ -114,11 +114,11 @@ class TargetEditModel extends ChangeNotifier {
     target.favorite = favorite;
     target.projectId = selectedProject?.id;
     
-    target.control = chars100?[Characteristics.control] ?? 0;
-    target.perseverance = chars100?[Characteristics.perseverance] ?? 0;
-    target.courage = chars100?[Characteristics.courage] ?? 0;
-    target.durability = chars100?[Characteristics.durability] ?? 0;
-    target.creativity = chars100?[Characteristics.creativity] ?? 0;
+    target.control = ((chars10000?[Characteristics.control] ?? 0).toDouble() / 100).toInt();
+    target.perseverance = ((chars10000?[Characteristics.perseverance] ?? 0).toDouble() / 100).toInt();
+    target.courage = ((chars10000?[Characteristics.courage] ?? 0).toDouble() / 100).toInt();
+    target.durability = ((chars10000?[Characteristics.durability] ?? 0).toDouble() / 100).toInt();
+    target.creativity = ((chars10000?[Characteristics.creativity] ?? 0).toDouble() / 100).toInt();
 
     try {
       if (isEditing) {

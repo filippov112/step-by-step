@@ -2,7 +2,6 @@ import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
-import 'package:chaos_control/services/datetool.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Пользователь
@@ -12,50 +11,68 @@ class Profile {
   static const cId = "_id";
   static const cName = "_name";
   static const cIcon = "_icon";
-  static const cSpiritFragments = "_sf";
-  static const cLevel = "_lvl";
-  static const cChars = "_chars";
+  
+  static const cControl = "_c1";
+  static const cPerseverance = "_c2";
+  static const cCourage = "_c3";
+  static const cDurability = "_c4";
+  static const cCreativity = "_c5";
 
   static const init =
       '''CREATE TABLE $tn (
           $cId INTEGER PRIMARY KEY AUTOINCREMENT, 
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
-          $cSpiritFragments INTEGER,
-          $cLevel INTEGER,
-          $cChars TEXT
+          
+          $cControl INTEGER,
+          $cPerseverance INTEGER,
+          $cCourage INTEGER,
+          $cDurability INTEGER,
+          $cCreativity INTEGER
         )''';
 
   int? id;
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
-  int spiritFragments = 0; // Кэш усилий (чтобы не пересчитывать)
-  int level = 1; // Кэш уровня (для уведомлений)
-  Map<String,int>? chars = defaultChars(); // Характеристики
+  
+  int control = 0;
+  int perseverance = 0;
+  int courage = 0;
+  int durability = 0;
+  int creativity = 0;
 
-  static Map<String,int> defaultChars() {
-    final res = <String,int>{};
-    for (var c in Characteristics.values) {
-      res[c.name] = 0;
-    }
-    return res;
-  }
+  int get spiritFragments => control + perseverance + courage + durability + creativity;
+
 
   Profile({
     this.name = "",
     this.icon,
-    this.spiritFragments = 0,
-    this.level = 1,
-    this.chars
+    
+    this.control = 0,
+    this.perseverance = 0,
+    this.courage = 0,
+    this.durability = 0,
+    this.creativity = 0
   });
+
+  Map<Characteristics,int> get chars => <Characteristics,int>{
+    Characteristics.control: control,
+    Characteristics.perseverance: perseverance,
+    Characteristics.courage: courage,
+    Characteristics.durability: durability,
+    Characteristics.creativity: creativity
+  };
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       cName: name,
       cIcon: icon?.toJson(),
-      cSpiritFragments: spiritFragments,
-      cLevel: level,
-      cChars: chars
+      
+      cControl: control,
+      cPerseverance: perseverance,
+      cCourage: courage,
+      cDurability: durability,
+      cCreativity: creativity
     };
     if (id != null) {
       map[cId] = id;
@@ -67,9 +84,20 @@ class Profile {
     id = map[cId];
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
-    spiritFragments = map[cSpiritFragments];
-    level = map[cLevel];
-    chars = map[cChars];
+   
+    control = map[cControl];
+    perseverance = map[cPerseverance];
+    courage = map[cCourage];
+    durability = map[cDurability];
+    creativity = map[cCreativity];
+  }
+
+  void setChars(Map<Characteristics, int> newUserChars) {
+    control = newUserChars[Characteristics.control] ?? 0;
+    perseverance = newUserChars[Characteristics.perseverance] ?? 0;
+    courage = newUserChars[Characteristics.courage] ?? 0;
+    durability = newUserChars[Characteristics.durability] ?? 0;
+    creativity = newUserChars[Characteristics.creativity] ?? 0;
   }
 }
 

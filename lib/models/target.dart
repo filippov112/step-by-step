@@ -53,11 +53,11 @@ class Target {
   bool favorite = false; // Избранное
   String? projectId; // Связанный проект
 
-  int control = 0;
-  int perseverance = 0;
-  int courage = 0;
-  int durability = 0;
-  int creativity = 0;
+  int control = 20;
+  int perseverance = 20;
+  int courage = 20;
+  int durability = 20;
+  int creativity = 20;
 
   // ------------ Конструкторы ------------
 
@@ -81,11 +81,11 @@ class Target {
     String group = '',
     bool favorite = false,
     String? projectId,
-    int control = 0,
-    int perseverance = 0,
-    int courage = 0,
-    int durability = 0,
-    int creativity = 0
+    int control = 20,
+    int perseverance = 20,
+    int courage = 20,
+    int durability = 20,
+    int creativity = 20
   }) {
     final guid = const Uuid().v4();
     final dateCreated = DateTool.today();

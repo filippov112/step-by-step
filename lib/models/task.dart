@@ -1,4 +1,5 @@
 import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/task_status.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/models/target.dart';
@@ -20,8 +21,13 @@ class Task {
   static const cDiff = "_diff";
   static const cDescription = "_description";
   static const cDate = "_date";
-  static const cSpiritFragments = "_sf";
   static const cStatus = "_done";
+
+  static const cControl = "_c1";
+  static const cPerseverance = "_c2";
+  static const cCourage = "_c3";
+  static const cDurability = "_c4";
+  static const cCreativity = "_c5";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
@@ -30,8 +36,14 @@ class Task {
           $cDiff INTEGER,
           $cDescription TEXT,
           $cDate INTEGER,
-          $cSpiritFragments INTEGER,
           $cStatus INTEGER,
+
+          $cControl INTEGER,
+          $cPerseverance INTEGER,
+          $cCourage INTEGER,
+          $cDurability INTEGER,
+          $cCreativity INTEGER,
+
           FOREIGN KEY ($cTargetId) REFERENCES ${Target.tn}(${Target.cId}) ON DELETE CASCADE
         );
         ''';
@@ -45,7 +57,12 @@ class Task {
   String description = ""; // Описание
   DateTime date = DateTool.today(); // Дата
   TaskStatus status = TaskStatus.done; // Статус
-  int spiritFragments = 0; // Фрагменты духа
+
+  int control = 0;
+  int perseverance = 0;
+  int courage = 0;
+  int durability = 0;
+  int creativity = 0;
 
   // ------------ Конструкторы ------------
 
@@ -57,7 +74,12 @@ class Task {
     required this.description,
     required this.date,
     required this.status,
-    required this.spiritFragments,
+
+    required this.control,
+    required this.perseverance,
+    required this.courage,
+    required this.durability,
+    required this.creativity
   });
 
   factory Task.create({
@@ -66,8 +88,13 @@ class Task {
     int diff = 0,
     String? description,
     required DateTime date,
-    int efforts = 0,
-    TaskStatus status = TaskStatus.done
+    TaskStatus status = TaskStatus.done,
+    
+    int control = 0,
+    int perseverance = 0,
+    int courage = 0,
+    int durability = 0,
+    int creativity = 0
   }) {
     final guid = const Uuid().v4();
     return Task(
@@ -78,9 +105,25 @@ class Task {
       description: description ?? '',
       date: date,
       status: status,
-      spiritFragments: efforts,
+
+      control: control,
+      perseverance: perseverance,
+      courage: courage,
+      durability: durability,
+      creativity: creativity
     );
   }
+
+  Map<Characteristics,int> get chars => <Characteristics,int>{
+    Characteristics.control: control,
+    Characteristics.perseverance: perseverance,
+    Characteristics.courage: courage,
+    Characteristics.durability: durability,
+    Characteristics.creativity: creativity
+  };
+
+  int get spiritFragments => control + perseverance + courage + durability + creativity;
+
 
   // ------------ Сериализация ------------
   Map<String, Object?> toMap() {
@@ -92,7 +135,12 @@ class Task {
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cStatus: status.index,
-      cSpiritFragments: spiritFragments,
+
+      cControl: control,
+      cPerseverance: perseverance,
+      cCourage: courage,
+      cDurability: durability,
+      cCreativity: creativity
     };
   }
 
@@ -104,7 +152,12 @@ class Task {
     description = map[cDescription];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     status = TaskStatus.values[map[cStatus]];
-    spiritFragments = map[cSpiritFragments] ?? 0;
+    
+    control = map[cControl];
+    perseverance = map[cPerseverance];
+    courage = map[cCourage];
+    durability = map[cDurability];
+    creativity = map[cCreativity];
   }
 }
 
@@ -175,31 +228,47 @@ class TaskRepository {
   // ---------------------------------------
 
   // Рассчитать дельту
-  Future<int> _getDelta(TransactionType type, Task rw) async {
-    int result = 0;
-    switch (type) {
-      case TransactionType.update: {
-        var oldRecord = await get(rw.id);
-        result = rw.spiritFragments - (oldRecord?.spiritFragments ?? 0);
+  Future<Map<Characteristics,int>> _getDelta(TransactionType type, Task rw) async {
+    
+    final deltaChars = <Characteristics,int>{};
+    final chars = rw.chars;
+    var oldChars = type == TransactionType.update ? (await get(rw.id))?.chars : null;
+    
+    for (var ch in Characteristics.values) {
+
+      int result = 0;
+      switch (type) {
+        case TransactionType.update: {
+          
+          result = (chars[ch] ?? 0) - (oldChars?[ch] ?? 0);
+        }
+        case TransactionType.add: {
+          result = chars[ch] ?? 0;
+        }
+        case TransactionType.remove: {
+          result = - (chars[ch] ?? 0);
+        }
       }
-      case TransactionType.add: {
-        result = rw.spiritFragments;
-      }
-      case TransactionType.remove: {
-        result = - rw.spiritFragments;
-      }
+      deltaChars[ch] = result;
     }
-    return result;
+    return deltaChars;
   }
 
   // Добавить дельту к пользователю
   Future _updateProfile(TransactionType type, Task rw) async {
-    var deltaEfforts = await _getDelta(type, rw);
-    var user = await userRepo.get();
-    user?.spiritFragments += deltaEfforts;
+    final user = await userRepo.get();
     if (user == null) return;
+    final deltaChars = await _getDelta(type, rw);
+
+    final userChars = user.chars;
+    
+    final newUserChars = <Characteristics,int>{};
+    for (var ch in Characteristics.values) {
+      newUserChars[ch] = (userChars[ch] ?? 0) + (deltaChars[ch] ?? 0);
+    }
+    await SpiritCalculator.checkNotifications(userChars, newUserChars);
+    user.setChars(newUserChars);
     await userRepo.update(user);
-    await SpiritCalculator.recalcLevelUser(user);
   }
 }
 

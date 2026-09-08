@@ -37,7 +37,7 @@ class AnalyticsRepository {
         '''
       SELECT 
         ${Task.cDate},
-        COALESCE(SUM(${Task.cSpiritFragments}), 0) AS ${DtoActivity.cExp}
+        COALESCE(SUM(${Task.cControl} + ${Task.cPerseverance} + ${Task.cCourage} + ${Task.cDurability} + ${Task.cCreativity}), 0) AS ${DtoActivity.cExp}
       FROM ${Task.tn}
       $whereClause
       GROUP BY ${Task.cDate}

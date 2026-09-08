@@ -17,11 +17,11 @@ class SpiritCalculator {
   static int getLevelRemains(int sf) => _calc(sf).$2;
   
   // Очки хар-к
-  static int getCharPoints(int char) => (char.toDouble() / 100).toInt();
+  static int getCharPoints(int char) => (char.toDouble() / 1000).toInt();
   // Требование для следующего уровня
-  static int getCharPointsRequirements(int char) => 100;
+  static int getCharPointsRequirements(int char) => 1000;
   // Свободный опыт
-  static int getCharPointsRemains(int char) => char % 100;
+  static int getCharPointsRemains(int char) => char % 1000;
   
 
   static (int, int, int) _calc(int sf) {

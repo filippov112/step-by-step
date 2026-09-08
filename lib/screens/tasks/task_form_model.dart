@@ -66,6 +66,7 @@ class TaskFormModel extends ChangeNotifier {
   }
   void changeStatus() {
     status = TaskStatus.values[(status.index + 1) % TaskStatus.values.length];
+    _recalcChars();
     notifyListeners();
   }
   void setChars(Map<Characteristics,int> value) {
@@ -73,15 +74,7 @@ class TaskFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future save() async {
-    if (task == null) return;
-
-    task?.description = desc ?? '';
-    task?.time = time;
-    task?.diff = diff;
-    task?.date = date;
-    task?.status = status;
-    
+  void _recalcChars() {
     if (status == TaskStatus.done) {
       task?.control = (sf.toDouble() * (activeChars?[Characteristics.control] ?? 0) / 100).toInt();
       task?.perseverance = (sf.toDouble() * (activeChars?[Characteristics.perseverance] ?? 0) / 100).toInt();
@@ -96,6 +89,17 @@ class TaskFormModel extends ChangeNotifier {
       task?.durability = 0;
       task?.creativity = 0;
     }
+  }
+  Future save() async {
+    if (task == null) return;
+
+    task?.description = desc ?? '';
+    task?.time = time;
+    task?.diff = diff;
+    task?.date = date;
+    task?.status = status;
+    
+    _recalcChars();
 
     if (isEditing) {
       await _taskRepo.update(task!);

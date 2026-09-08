@@ -1,5 +1,5 @@
 import 'package:chaos_control/screens/targets/create/target_create_model.dart';
-import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
+import 'package:chaos_control/screens/tasks/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';

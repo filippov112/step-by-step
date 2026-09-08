@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/targets/detail/widgets/add_task_button.dart';
+import 'package:chaos_control/screens/tasks/widgets/add_task_button.dart';
 import 'package:chaos_control/screens/targets/detail/widgets/tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';

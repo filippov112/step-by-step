@@ -1,6 +1,6 @@
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/tasks_tab.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/detail_tab.dart';
+import 'package:chaos_control/screens/targets/detail/widgets/tab_tasks.dart';
+import 'package:chaos_control/screens/targets/detail/widgets/tab_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,8 @@
 import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/task_form.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/task_tile.dart';
-import 'package:chaos_control/screens/targets/detail/widgets/tasks_appbar.dart';
+import 'package:chaos_control/screens/tasks/widgets/task_form.dart';
+import 'package:chaos_control/screens/tasks/widgets/task_tile.dart';
+import 'package:chaos_control/screens/tasks/widgets/tasks_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

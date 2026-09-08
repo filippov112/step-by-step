@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
+import 'package:chaos_control/screens/tasks/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

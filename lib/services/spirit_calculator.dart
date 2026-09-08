@@ -1,13 +1,11 @@
 
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/notifications/implementations/n_char_points.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_level.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 
 class SpiritCalculator {
-  static int level_1 = 100;
-  static int sf_1 = 100;
+  static int sf_1 = 1000;
 
   static List<double> koefs = [1.1, 1.03,  1.002];
 

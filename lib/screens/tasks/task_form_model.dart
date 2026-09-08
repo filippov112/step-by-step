@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/enums/task_status.dart';
 import 'package:chaos_control/models/task.dart';
 import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -16,7 +17,8 @@ class TaskFormModel extends ChangeNotifier {
   DateTime date = DateTool.today();
   int sf = 0;
   Target? target;
-  Map<Characteristics,int>? currentChars;
+  Map<Characteristics,int>? activeChars;
+  TaskStatus status = TaskStatus.done;
 
   Task? task;
   bool isEditing = false;
@@ -25,11 +27,12 @@ class TaskFormModel extends ChangeNotifier {
     isEditing = tsk != null;
 
     this.target = target;
-    currentChars = tsk?.chars ?? target.chars;
+    activeChars = target.chars;
     desc = tsk?.description ?? '';
     time = tsk?.time ?? 0;
     diff = tsk?.diff ?? 0;
     date = tsk?.date ?? DateTool.today();
+    status = tsk?.status ?? TaskStatus.done;
     task = tsk ?? Task.create(targetId: target.id, date: date);
     _recalcSF();
 
@@ -61,25 +64,38 @@ class TaskFormModel extends ChangeNotifier {
     date = value;
     notifyListeners();
   }
+  void changeStatus() {
+    status = TaskStatus.values[(status.index + 1) % TaskStatus.values.length];
+    notifyListeners();
+  }
   void setChars(Map<Characteristics,int> value) {
-    currentChars = value;
+    activeChars = value;
     notifyListeners();
   }
 
   Future save() async {
+    if (task == null) return;
 
     task?.description = desc ?? '';
     task?.time = time;
     task?.diff = diff;
     task?.date = date;
+    task?.status = status;
     
-    task?.control = (sf.toDouble() * (currentChars?[Characteristics.control] ?? 0) / 100).toInt();
-    task?.perseverance = (sf.toDouble() * (currentChars?[Characteristics.perseverance] ?? 0) / 100).toInt();
-    task?.courage = (sf.toDouble() * (currentChars?[Characteristics.courage] ?? 0) / 100).toInt();
-    task?.durability = (sf.toDouble() * (currentChars?[Characteristics.durability] ?? 0) / 100).toInt();
-    task?.creativity = (sf.toDouble() * (currentChars?[Characteristics.creativity] ?? 0) / 100).toInt();
-
-    if (task == null) return;
+    if (status == TaskStatus.done) {
+      task?.control = (sf.toDouble() * (activeChars?[Characteristics.control] ?? 0) / 100).toInt();
+      task?.perseverance = (sf.toDouble() * (activeChars?[Characteristics.perseverance] ?? 0) / 100).toInt();
+      task?.courage = (sf.toDouble() * (activeChars?[Characteristics.courage] ?? 0) / 100).toInt();
+      task?.durability = (sf.toDouble() * (activeChars?[Characteristics.durability] ?? 0) / 100).toInt();
+      task?.creativity = (sf.toDouble() * (activeChars?[Characteristics.creativity] ?? 0) / 100).toInt();
+      task?.control += sf - (task?.spiritFragments ?? 0);
+    } else {
+      task?.control = 0;
+      task?.perseverance = 0;
+      task?.courage = 0;
+      task?.durability = 0;
+      task?.creativity = 0;
+    }
 
     if (isEditing) {
       await _taskRepo.update(task!);

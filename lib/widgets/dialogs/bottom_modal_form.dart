@@ -7,6 +7,8 @@ class BottomModalForm extends StatefulWidget {
   final Iterable<Widget> children;
   final VoidCallback confirmCallback;
   final VoidCallback? closeCallback;
+  final IconData? confirmIcon;
+
   const BottomModalForm({
     super.key,
     this.formKey,
@@ -14,6 +16,7 @@ class BottomModalForm extends StatefulWidget {
     required this.children,
     required this.confirmCallback,
     this.closeCallback,
+    this.confirmIcon
   });
 
   @override
@@ -59,7 +62,7 @@ class BottomModalFormState extends State<BottomModalForm> {
                       // Сохранить
                       ElevatedButton(
                         onPressed: widget.confirmCallback,
-                        child: Icon(Icons.done),
+                        child: Icon(widget.confirmIcon ?? Icons.done),
                       ),
                     ],
                   ),

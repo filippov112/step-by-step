@@ -58,12 +58,15 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                       padding: const EdgeInsets.only(bottom: 3, left: 12),
                     ),
                     CustomText(
+                      '($remains / $requirements)',
+                      size: 12,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    CustomText(
                       points.toString(),
                       weight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                    CustomText('($remains / $requirements)', size: 12,),
                   ],
                 ),
                 CustomProgressBar(

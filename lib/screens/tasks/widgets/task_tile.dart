@@ -1,5 +1,6 @@
+import 'package:chaos_control/models/enums/task_status.dart';
 import 'package:chaos_control/models/task.dart';
-import 'package:chaos_control/screens/targets/detail/task_form_model.dart';
+import 'package:chaos_control/screens/tasks/task_form_model.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
@@ -19,41 +20,70 @@ class TargetDetailTaskTile extends StatelessWidget {
     final selectedIds = context.select<TargetDetailModel,Set<String>>((m) => m.selectedIds);
     final isSelectedTask = context.select<TargetDetailModel,bool>((m) => m.editionTask?.id == task.id);
 
-    final successColor = Color.lerp(Colors.red, Colors.greenAccent, task.time.toDouble() / 100);
+    final timeColor = Colors.greenAccent;
+    final diffColor = Colors.amber;
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
 
+
     final selectCheckbox = isSelectionMode ? Checkbox(value: selectedIds.contains(task.id), onChanged: (_) => tabModel.toggleSelect(task.id)) : null;
-    final dateWidget = CustomText(
-      DateTool.shortDateFormat(task.date), expanded: true, color: focusColor, size: 12, padding: const EdgeInsets.only(bottom: 2),
-      );
-    final successIcon = Padding(
+    
+    // -------- Дата и статус -----------
+    
+    final statusIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(Icons.verified_user, size: 12, color: successColor),
+      child: Icon(task.status.icon, size: 12, color: task.status.color),
     );
-    final successPercent = CustomText(
-      '${task.time}%',
-      size: 16,
+    final dateWidget = CustomText(
+      DateTool.shortDateFormat(task.date), expanded: true, color: task.status.color, size: 12, padding: const EdgeInsets.only(bottom: 2),
+    );
+
+    
+    // --------- Время ---------
+
+    final timeIcon = Padding(
+      padding: const EdgeInsetsGeometry.only(right: 4),
+      child: Icon(Icons.timelapse, size: 12, color: timeColor),
+    );
+    final timeValue = CustomText(
+      '${task.time} h.',
+      size: 14,
       padding: const EdgeInsets.only(bottom: 3),
-      color: successColor,
+      color: timeColor,
     );
+
+    // ------ Концентрация ---------
+
+    final diffIcon = Padding(
+      padding: const EdgeInsetsGeometry.only(right: 4),
+      child: Icon(Icons.handyman, size: 12, color: diffColor),
+    );
+    final diffValue = CustomText(
+      '${task.diff} %',
+      size: 14,
+      padding: const EdgeInsets.only(bottom: 3),
+      color: diffColor,
+    );
+    
+    // ----------- SF ------------
+    
     final spiritIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(Icons.local_fire_department, size: 14),
+      child: Icon(Icons.local_fire_department, size: 12),
     );
-    final spiritFragments = Row(
+    final spiritValue = Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         CustomText(
           '${task.spiritFragments}',
-          size: 16,
+          size: 14,
           padding: const EdgeInsets.only(bottom: 3),
           color: focusColor,
         ),
         CustomText(
           'SF',
-          size: 12,
-          padding: const EdgeInsets.only(left: 2, bottom: 5, right: 16),
+          size: 10,
+          padding: const EdgeInsets.only(left: 2, bottom: 3),
           color: focusColor,
         ),
       ],
@@ -64,11 +94,16 @@ class TargetDetailTaskTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ?selectCheckbox,
+                statusIcon,
                 dateWidget,
                 spiritIcon,
-                spiritFragments,
-                successIcon,
-                successPercent,
+                spiritValue,
+                const SizedBox(width: 12,),
+                timeIcon,
+                timeValue,
+                const SizedBox(width: 12,),
+                diffIcon,
+                diffValue
               ],
             );
     final descWidget = CustomText(task.description);

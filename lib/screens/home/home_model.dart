@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/screens/home/widgets/modules.dart';
+import 'package:chaos_control/screens/home/modules.dart';
 
 class HomeModel extends ChangeNotifier {
   Profile? profile;
-  AppModule currentModule = AppModule.barriers;
+  AppModule currentModule = AppModule.chronicle;
   bool get userIsExist => profile != null;
 
   final ProfileRepository _profileRepo = ProfileRepository();

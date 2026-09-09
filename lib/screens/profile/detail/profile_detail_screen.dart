@@ -1,5 +1,5 @@
 import 'package:chaos_control/screens/profile/detail/widgets/chars.dart';
-import 'package:chaos_control/widgets/analysis/custom_radar_chart.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
@@ -29,6 +29,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   void initState() {
     super.initState();
     model = context.read<ProfileDetailModel>();
+    reload();
+  }
+
+  void reload() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       model?.loadData();
     });
@@ -38,9 +42,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     if (model?.user == null) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ProfileFormScreen(isEdit: true)),
-    ).then((result) async {
-      await model?.loadData();
+      MaterialPageRoute(builder: (context) => ProfileFormScreen(profile: model?.user)),
+    ).then((result) {
+      reload();
     });
   }
 
@@ -105,7 +109,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           Padding(
             padding: const EdgeInsetsGeometry.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
 
                 // Карточка
@@ -119,6 +123,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
                 // Характеристики
                 const ProfileDetailChars(),
+                
+                OutlinedButton(onPressed: model?.recalcStats, child: CustomText('Перерасчет', noShadow: true,))
               ],
             ),
           ),

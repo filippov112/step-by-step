@@ -1,3 +1,4 @@
+import 'package:chaos_control/services/numerictool.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/analysis/custom_progress_bar.dart';
@@ -13,10 +14,10 @@ class ProfileProgress extends StatefulWidget {
   final DateTime lastDay;
   final List<SnapSpot> data;
 
-  final double deltaValue;
+  final int deltaValue;
   final String title;
-  final double currentValue;
-  final double nextLevel;
+  final int currentValue;
+  final int nextLevel;
   final IconData icon;
 
   const ProfileProgress({
@@ -39,8 +40,8 @@ class ProfileProgress extends StatefulWidget {
 class _ProfileProgressState extends State<ProfileProgress> {
   bool isExpanded = false;
 
-  double getPercent(double val, double max) {
-    return max > 0 ? (val / max).clamp(0.0, 1.0) : 0.0;
+  double getPercent(int val, int max) {
+    return max > 0 ? (val.toDouble() / max).clamp(0.0, 1.0) : 0.0;
   }
 
   @override
@@ -65,15 +66,18 @@ class _ProfileProgressState extends State<ProfileProgress> {
 
           // Уровень
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Theme.of(context).focusColor,
+              shape: BoxShape.rectangle,
+              boxShadow: [ const BoxShadow(blurStyle: BlurStyle.outer, color: Colors.amber, blurRadius: 12),],
+              border: Border.all(width: 2, color: Colors.amber),
+              borderRadius: const BorderRadius.all(Radius.circular(8))
             ),
             child: CustomText(
-              widget.level.toString(),
+              NumericTool.toThousandString(widget.level),
               weight: FontWeight.bold,
-              color: Theme.of(context).primaryColor,
+              color: Colors.amber,
+              shadow: const Shadow(color: Colors.amber, blurRadius: 6),
             ),
           ),
         ],
@@ -87,13 +91,13 @@ class _ProfileProgressState extends State<ProfileProgress> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(
-                '${widget.currentValue.toInt()} / ${widget.nextLevel.toInt()} SF',
+                '${NumericTool.toThousandString(widget.currentValue)} / ${NumericTool.toThousandString(widget.nextLevel)} SF',
                 size: 11,
                 align: TextAlign.center,
               ),
               const SizedBox(width: 8),
               CustomText(
-                '+${widget.deltaValue.toInt()} SF | ${(getPercent(widget.currentValue, widget.nextLevel) * 100).toInt()}%',
+                '+${NumericTool.toThousandString(widget.deltaValue)} SF | ${(getPercent(widget.currentValue, widget.nextLevel) * 100).round()}%',
                 size: 11,
                 align: TextAlign.center,
               ),
@@ -103,9 +107,9 @@ class _ProfileProgressState extends State<ProfileProgress> {
           // Прогресс-бар
           const SizedBox(height: 8),
           CustomProgressBar(
-            value: widget.currentValue,
-            maxValue: widget.nextLevel,
-            deltaValue: widget.deltaValue,
+            value: widget.currentValue.toDouble(),
+            maxValue: widget.nextLevel.toDouble(),
+            deltaValue: widget.deltaValue.toDouble(),
           ),
 
           // График роста

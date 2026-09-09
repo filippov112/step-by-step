@@ -6,7 +6,7 @@ import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart'
 
 enum AppModule {
   profile,
-  barriers,
+  chronicle,
   purports,
   log,
   settings,
@@ -14,7 +14,7 @@ enum AppModule {
 
 List<AppModule> bottomMenuList = [
   AppModule.profile,
-  AppModule.barriers,
+  AppModule.chronicle,
   AppModule.purports,
 ];
 
@@ -28,7 +28,7 @@ extension AppModuleExt on AppModule {
     switch (this) {
       case AppModule.profile:
         return ProfileDetailScreen();
-      case AppModule.barriers:
+      case AppModule.chronicle:
         return BarrierListScreen();
       case AppModule.purports:
         return PurportListScreen();
@@ -43,9 +43,9 @@ extension AppModuleExt on AppModule {
   String get nameModule {
     switch (this) {
       case AppModule.profile:
-        return 'Профиль';
-      case AppModule.barriers:
-        return 'Преграды';
+        return 'Герой';
+      case AppModule.chronicle:
+        return 'Хроники';
       case AppModule.purports:
         return 'Смыслы';
       case AppModule.log:
@@ -58,9 +58,9 @@ extension AppModuleExt on AppModule {
   IconData get icon {
     switch (this) {
       case AppModule.profile:
-        return Icons.portrait;
-      case AppModule.barriers:
-        return Icons.fort;
+        return Icons.person;
+      case AppModule.chronicle:
+        return Icons.auto_stories;
       case AppModule.purports:
         return Icons.local_fire_department;
       case AppModule.log:

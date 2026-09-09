@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextInput extends StatelessWidget {
   final TextEditingController? controller;
@@ -9,6 +10,7 @@ class CustomTextInput extends StatelessWidget {
   final int? lines;
   final String? Function(String?)? customValidator;
   final String? initialValue;
+  final TextInputType? type;
 
   const CustomTextInput({
     super.key,
@@ -19,7 +21,8 @@ class CustomTextInput extends StatelessWidget {
     this.requiredErrorText,
     this.lines,
     this.customValidator,
-    this.initialValue
+    this.initialValue,
+    this.type
   });
 
   @override
@@ -28,6 +31,10 @@ class CustomTextInput extends StatelessWidget {
       controller: controller,
       textInputAction: TextInputAction.done,
       onChanged: setText,
+      keyboardType: type,
+      inputFormatters: type == TextInputType.number ? [
+        FilteringTextInputFormatter.digitsOnly, 
+      ] : null,
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: header,

@@ -18,6 +18,12 @@ class Profile {
   static const cDurability = "_c4";
   static const cCreativity = "_c5";
 
+  static const cBControl = "_cb1";
+  static const cBPerseverance = "_cb2";
+  static const cBCourage = "_cb3";
+  static const cBDurability = "_cb4";
+  static const cBCreativity = "_cb5";
+
   static const init =
       '''CREATE TABLE $tn (
           $cId INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -28,21 +34,34 @@ class Profile {
           $cPerseverance INTEGER,
           $cCourage INTEGER,
           $cDurability INTEGER,
-          $cCreativity INTEGER
+          $cCreativity INTEGER,
+
+          $cBControl INTEGER,
+          $cBPerseverance INTEGER,
+          $cBCourage INTEGER,
+          $cBDurability INTEGER,
+          $cBCreativity INTEGER
         )''';
 
   int? id;
   String name = ""; // Никнейм
   CustomImageData? icon; // Аватар
-  
+
+  // Кэш
   int control = 0;
   int perseverance = 0;
   int courage = 0;
   int durability = 0;
   int creativity = 0;
+  
+  // Базовые значения
+  int controlBase = 0;
+  int perseveranceBase = 0;
+  int courageBase = 0;
+  int durabilityBase = 0;
+  int creativityBase = 0;
 
   int get spiritFragments => control + perseverance + courage + durability + creativity;
-
 
   Profile({
     this.name = "",
@@ -52,7 +71,13 @@ class Profile {
     this.perseverance = 0,
     this.courage = 0,
     this.durability = 0,
-    this.creativity = 0
+    this.creativity = 0,
+
+    this.controlBase = 0,
+    this.perseveranceBase = 0,
+    this.courageBase = 0,
+    this.durabilityBase = 0,
+    this.creativityBase = 0
   });
 
   Map<Characteristic,int> get chars => <Characteristic,int>{
@@ -72,7 +97,13 @@ class Profile {
       cPerseverance: perseverance,
       cCourage: courage,
       cDurability: durability,
-      cCreativity: creativity
+      cCreativity: creativity,
+
+      cBControl: controlBase,
+      cBPerseverance: perseveranceBase,
+      cBCourage: courageBase,
+      cBDurability: durabilityBase,
+      cBCreativity: creativityBase,
     };
     if (id != null) {
       map[cId] = id;
@@ -90,6 +121,12 @@ class Profile {
     courage = map[cCourage];
     durability = map[cDurability];
     creativity = map[cCreativity];
+
+    controlBase = map[cBControl];
+    perseveranceBase = map[cBPerseverance];
+    courageBase = map[cBCourage];
+    durabilityBase = map[cBDurability];
+    creativityBase = map[cBCreativity];
   }
 
   void setChars(Map<Characteristic, int> newUserChars) {

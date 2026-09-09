@@ -1,32 +1,33 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/profile.dart';
 
 class ProfileFormModel extends ChangeNotifier {
   final ProfileRepository _userRepo = ProfileRepository();
-  Profile? newUser;
+  Profile? profile;
   bool _isEdit = false;
 
-  Future loadData(bool isEdit) async {
-    newUser = (await _userRepo.get()) ?? Profile();
-    _isEdit = isEdit;
-    notifyListeners();
+  void loadData(Profile? p) {
+    profile = p ?? Profile();
+    _isEdit = p != null;
   }
 
   void setIcon(CustomImageData? value) {
-    newUser?.icon = value;
+    profile?.icon = value;
     notifyListeners();
   }
 
-  Future saveUser() async {
+  Future save() async {
     try {
-      if (newUser == null) return;
+      if (profile == null) return;
       if (!_isEdit) {
-        await _userRepo.insert(newUser!);
+        await _userRepo.insert(profile!);
       } else {
-        await _userRepo.update(newUser!);
+        await _userRepo.update(profile!);
       }
-      
+      await SpiritCalculator.recalcUserChars();
     } 
     catch (e) {
       return e.toString();
@@ -34,7 +35,22 @@ class ProfileFormModel extends ChangeNotifier {
   }
 
   void setName(String? name) {
-    newUser?.name = name ?? '';
+    profile?.name = name ?? '';
+    notifyListeners();
+  }
+  void setChar(Characteristic char, int value) {
+    switch (char) {
+      case Characteristic.control:
+        profile?.controlBase = value;
+      case Characteristic.perseverance:
+        profile?.perseveranceBase = value;
+      case Characteristic.courage:
+        profile?.courageBase = value;
+      case Characteristic.durability:
+        profile?.durabilityBase = value;
+      case Characteristic.creativity:
+        profile?.creativityBase = value;
+    }
     notifyListeners();
   }
 }

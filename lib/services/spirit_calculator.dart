@@ -1,5 +1,7 @@
 
 import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/profile.dart';
+import 'package:chaos_control/services/analytics/analytics_repository.dart';
 import 'package:chaos_control/services/notifications/implementations/n_char_points.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_level.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
@@ -22,6 +24,8 @@ class SpiritCalculator {
   static int getCharPointsRequirements(int char) => 1000;
   // Свободный опыт
   static int getCharPointsRemains(int char) => char % 1000;
+  // Очки в опыт
+  static int getSFFromCP(int cp) => cp * 1000;
   
 
   static (int, int, int) _calc(int sf) {
@@ -67,5 +71,21 @@ class SpiritCalculator {
         ns.showNotification(n);
       }
     }
+  }
+
+  static Future recalcUserChars() async {
+    final analRepo = AnalyticsRepository();
+    final userRepo = ProfileRepository();
+
+    final dto = await analRepo.getChars();
+    final user = (await userRepo.get()) ?? Profile();
+    
+    user.control =  getSFFromCP(user.controlBase) + (dto?.control ?? 0);
+    user.perseverance =  getSFFromCP(user.perseveranceBase) + (dto?.perseverance ?? 0);
+    user.courage =  getSFFromCP(user.courageBase) + (dto?.courage ?? 0);
+    user.durability =  getSFFromCP(user.durabilityBase) + (dto?.durability ?? 0);
+    user.creativity =  getSFFromCP(user.creativityBase) + (dto?.creativity ?? 0);
+
+    userRepo.update(user);
   }
 }

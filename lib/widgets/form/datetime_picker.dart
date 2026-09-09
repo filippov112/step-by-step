@@ -57,6 +57,7 @@ class CustomDateTime extends StatelessWidget {
             ),
           CustomText(
             displayValue,
+            noShadow: true,
             color: Theme.of(context).focusColor,
             expanded: true,
           ),

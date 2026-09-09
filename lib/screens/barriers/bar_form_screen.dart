@@ -20,6 +20,7 @@ class BarrierForm extends StatefulWidget {
 }
 
 class BarrierFormState extends State<BarrierForm> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController descController, groupController;
   late BarrierFormModel model;
   late BarrierListModel listModel;
@@ -82,8 +83,8 @@ class BarrierFormState extends State<BarrierForm> {
       inactiveColor: diff.color.withAlpha(40),
       padding: const EdgeInsets.all(6),
       min: 0,
-      divisions: 5,
-      max: 5,
+      divisions: DifficultyLvl.values.length - 1,
+      max: DifficultyLvl.values.length - 1,
       showValueIndicator: ShowValueIndicator.onDrag,
       onChanged: (v) => model.setDiff(v.round()),
     );
@@ -178,9 +179,17 @@ class BarrierFormState extends State<BarrierForm> {
       icon: Icons.description,
       lines: 3,
     );
+
+    String? groupValidator(String? text) {
+      if (text == null || text.isEmpty) return null;
+      var parts = text.split('/');
+      if (parts.any((e) => e.isEmpty)) return 'Части группы не могут быть пустыми';
+      return null;
+    }
     final groupWidget = CustomTextInput(
-      header: 'Группа',
+      header: "Группа (разделитель: '/')",
       controller: groupController,
+      customValidator: groupValidator,
       setText: (v) => model.setGroup(v ?? ''),
       icon: Icons.folder,
       lines: 1,
@@ -197,6 +206,7 @@ class BarrierFormState extends State<BarrierForm> {
     final saveButton = InkWell(
       borderRadius: const BorderRadius.all(Radius.circular(12)),
       onTap: () async {
+        if (!(_formKey.currentState?.validate() ?? false)) return;
         await model.save();
         await listModel.loadData();
       },
@@ -235,6 +245,7 @@ class BarrierFormState extends State<BarrierForm> {
         color: cardColor.withAlpha(150),
       ),
       child: BottomModalForm(
+        formKey: _formKey,
         children: [
           Padding(
             padding: const EdgeInsetsGeometry.all(12),

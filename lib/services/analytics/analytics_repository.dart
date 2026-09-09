@@ -1,6 +1,7 @@
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/services/analytics/dto_activity.dart';
+import 'package:chaos_control/services/analytics/dto_stats.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Репозиторий для аналитических запросов
@@ -13,8 +14,6 @@ class AnalyticsRepository {
   Future<List<DtoActivity>> getDailyExpTime({
     int? startDate,
     int? endDate,
-    String? skillId,
-    String? classId,
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
@@ -46,6 +45,24 @@ class AnalyticsRepository {
 
     final result = await db.rawQuery(query, args);
     return result.map((row) => DtoActivity.fromMap(row)).toList();
+  }
+
+  // Пересчитать суммы характеристик
+  Future<DtoStats?> getChars() async {
+
+    final query =
+        '''
+      SELECT
+        COALESCE(SUM( ${Barrier.cControl} ), 0) AS ${DtoStats.cControl},
+        COALESCE(SUM( ${Barrier.cPerseverance} ), 0) AS ${DtoStats.cPerseverance},
+        COALESCE(SUM( ${Barrier.cCourage} ), 0) AS ${DtoStats.cCourage},
+        COALESCE(SUM( ${Barrier.cDurability} ), 0) AS ${DtoStats.cDurability},
+        COALESCE(SUM( ${Barrier.cCreativity} ), 0) AS ${DtoStats.cCreativity}
+      FROM ${Barrier.tn}
+    ''';
+
+    final result = await db.rawQuery(query);
+    return result.map((row) => DtoStats.fromMap(row)).firstOrNull;
   }
 
 

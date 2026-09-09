@@ -98,6 +98,7 @@ class BarrierTileRecord extends BarrierTreeTile {
       record.object?.description ?? '',
       padding: const EdgeInsets.all(8),
       overflow: TextOverflow.visible,
+      shadow: Shadow(color: Theme.of(context).colorScheme.onPrimary, blurRadius: 3),
       lines: null,
     );
 

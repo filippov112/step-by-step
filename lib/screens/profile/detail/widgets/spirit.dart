@@ -28,10 +28,10 @@ class ProfileDetailSpirit extends StatelessWidget {
 
     return ProfileProgress(
       level: SpiritCalculator.getLevel(eff),
-      deltaValue: deltaEff.toDouble(),
-      currentValue: SpiritCalculator.getLevelRemains(eff).toDouble(),
+      deltaValue: deltaEff,
+      currentValue: SpiritCalculator.getLevelRemains(eff),
       title: 'Дух',
-      nextLevel: SpiritCalculator.getLevelRequirements(eff).toDouble(),
+      nextLevel: SpiritCalculator.getLevelRequirements(eff),
       icon: Icons.local_fire_department,
       data: progressData,
       firstDay: firstDay,

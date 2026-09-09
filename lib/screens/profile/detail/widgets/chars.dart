@@ -1,4 +1,5 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/services/numerictool.dart';
 import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:chaos_control/widgets/analysis/custom_progress_bar.dart';
 import 'package:chaos_control/widgets/analysis/custom_radar_chart.dart';
@@ -58,12 +59,12 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                       padding: const EdgeInsets.only(bottom: 3, left: 12),
                     ),
                     CustomText(
-                      '($remains / $requirements)',
+                      '(${NumericTool.toThousandString(remains)} / ${NumericTool.toThousandString(requirements)} SF)',
                       size: 12,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
                     CustomText(
-                      points.toString(),
+                      NumericTool.toThousandString(points),
                       weight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),

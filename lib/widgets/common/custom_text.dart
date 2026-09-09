@@ -9,6 +9,7 @@ class CustomText extends StatelessWidget {
   final int? lines;
   final EdgeInsetsGeometry? padding;
   final Shadow? shadow;
+  final bool noShadow;
   final bool expanded;
   final int expandedFlex;
   final TextAlign align;
@@ -30,31 +31,23 @@ class CustomText extends StatelessWidget {
     this.align = TextAlign.start,
     this.height,
     this.decoration,
+    this.noShadow = false
   });
 
   @override
   Widget build(BuildContext context) {
-    final isCustomStyle =
-        height != null ||
-        size != null ||
-        color != null ||
-        weight != null ||
-        shadow != null ||
-        decoration != null;
 
     var txt = Text(
       text,
       textAlign: align,
-      style: isCustomStyle
-          ? TextStyle(
+      style: TextStyle(
               height: height,
               fontSize: size,
               color: color,
               fontWeight: weight,
-              shadows: shadow == null ? null : [shadow!],
+              shadows: noShadow ? null : [ shadow ?? Shadow(color: Theme.of(context).colorScheme.onPrimary, blurRadius: 4)],
               decoration: decoration,
-            )
-          : null,
+            ),
       maxLines: lines,
       overflow: overflow,
     );

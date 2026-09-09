@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
@@ -28,12 +29,17 @@ class ProfileDetailModel extends ChangeNotifier {
   
   Profile? user;
 
-  
-
   // Инициализация страницы
   Future loadData() async {
     await _loadUser();
     await _loadSFData();
+    notifyListeners();
+  }
+
+  // Перерасчет характеристик
+  Future recalcStats() async {
+    await SpiritCalculator.recalcUserChars();
+    await loadData();
   }
 
   // Переключить фильтр периода
@@ -47,10 +53,9 @@ class ProfileDetailModel extends ChangeNotifier {
   Future _loadUser() async {
     user = await _userRepo.get();
     chars = user?.chars;
-    notifyListeners();
   }
 
-  int subtractDays() {
+  int _subtractDays() {
     switch (selectedPeriod) {
       case StatPeriod.threeMonth:
         return 90;
@@ -66,7 +71,7 @@ class ProfileDetailModel extends ChangeNotifier {
     if (user == null) return;
     var now = DateTime.now();
     lastDay = DateTime(now.year, now.month, now.day, 3);
-    firstDay = lastDay.subtract(Duration(days: subtractDays()));
+    firstDay = lastDay.subtract(Duration(days: _subtractDays()));
 
     List<DtoActivity> daysData = await _analRepo.getDailyExpTime(
       startDate: DateTool.datetimeToDays(firstDay),
@@ -100,6 +105,5 @@ class ProfileDetailModel extends ChangeNotifier {
       }
       dayIndex--;
     }
-    notifyListeners();
   }
 }

@@ -13,9 +13,9 @@ class BarrierListOpenButton extends StatelessWidget {
 
     return FloatingActionButton(
       onPressed: () { model.openForm(null); formModel.init(null); },
-      tooltip: 'Добавить задачу',
+      tooltip: 'Добавить запись',
       backgroundColor: Theme.of(context).focusColor,
-      child: Icon(Icons.sports_martial_arts, color: Theme.of(context).primaryColor),
+      child: Icon(Icons.edit_note, color: Theme.of(context).primaryColor),
     );
   }
 

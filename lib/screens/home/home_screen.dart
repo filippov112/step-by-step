@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_screen.dart';
-import 'package:chaos_control/screens/home/widgets/modules.dart';
+import 'package:chaos_control/screens/home/modules.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {

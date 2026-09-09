@@ -1,53 +1,44 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
-import 'package:chaos_control/widgets/form/datetime_picker.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 import 'profile_form_model.dart';
 
 class ProfileFormScreen extends StatefulWidget {
-  final bool isEdit;
-  const ProfileFormScreen({super.key, this.isEdit = false});
+  final Profile? profile;
+  const ProfileFormScreen({super.key, this.profile});
   @override
   State<StatefulWidget> createState() => _ProfileFormScreenState();
 }
 
 class _ProfileFormScreenState extends State<ProfileFormScreen> {
   final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
   ProfileFormModel? model;
 
   @override
   void initState() {
     super.initState();
     model = context.read<ProfileFormModel>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      model?.loadData(widget.isEdit);
-      nameController.text = model?.newUser?.name ?? '';
-    });
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    super.dispose();
+    model?.loadData(widget.profile);
   }
 
   Future _saveUser(BuildContext context) async {
     final form = formKey.currentState;
     if (form == null || !form.validate()) return;
 
-    String? error = await model?.saveUser();
+    String? error = await model?.save();
     if (error != null && context.mounted) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Ошибка: $error')));
     } else {
       if (context.mounted) {
-        if (widget.isEdit) {
+        if (widget.profile != null) {
           Navigator.pop(context);
         } else {
           await context.read<HomeModel>().loadData();
@@ -58,38 +49,90 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final iconPath = context.select<ProfileFormModel, CustomImageData?>(
-      (model) => model.newUser?.icon,
+    final profile = context.select<ProfileFormModel, Profile?>(
+      (model) => model.profile,
     );
-    final setIcon = context.read<ProfileFormModel>().setIcon;
-    final setName = context.read<ProfileFormModel>().setName;
+    final iconData = context.select<ProfileFormModel, CustomImageData?>((m) => m.profile?.icon);
+    final model = context.read<ProfileFormModel>();
 
-    return EntityScreen(
-      title: 'Пользователь',
-      formKey: formKey,
-      saveCallback: () => _saveUser(context),
-      children: [
-        // Аватар
-        Center(
+    // Аватар
+    final avatar = Center(
           child: CustomIconPicker(
-            selectedIcon: iconPath,
-            setIcon: setIcon,
+            selectedIcon: iconData,
+            setIcon: model.setIcon,
             size: 100,
             radius: const BorderRadius.all(Radius.circular(50)),
             borderWidth: 3,
           ),
-        ),
+        );
+
+    // Имя
+    final nameField = CustomTextInput(
+      icon: Icons.title,
+      header: 'Имя',
+      initialValue: profile?.name,
+      requiredErrorText: 'Введите имя',
+      setText: model.setName,
+    );
+
+    int getChar(Characteristic ch) {
+      switch (ch) {
+        case Characteristic.control:
+          return profile?.controlBase ?? 0;
+        case Characteristic.perseverance:
+          return profile?.perseveranceBase ?? 0;
+        case Characteristic.courage:
+          return profile?.courageBase ?? 0;
+        case Characteristic.durability:
+          return profile?.durabilityBase ?? 0;
+        case Characteristic.creativity:
+          return profile?.creativityBase ?? 0;
+      }
+    }
+
+    final charFields = Characteristic.values
+        .map(
+          (ch) => CustomTextInput(
+            header: ch.displayName,
+            initialValue: getChar(ch).toString(),
+            setText: (v) => model.setChar(ch, int.tryParse(v ?? '0') ?? 0),
+            icon: ch.icon,
+            type: TextInputType.number
+          ),
+        )
+        .toList();
+
+    return EntityScreen(
+      title: 'Герой',
+      formKey: formKey,
+      saveCallback: () => _saveUser(context),
+      children: [
+        avatar,
         const SizedBox(height: 12),
 
-        // Имя
-        CustomTextInput(
-          icon: Icons.title,
-          header: 'Имя',
-          controller: nameController,
-          requiredErrorText: 'Введите имя',
-          setText: setName,
-        ),
+        nameField,
 
+        Padding(
+          padding: const EdgeInsetsGeometry.only(top: 12),
+          child: Row(children: [
+          Expanded(child: charFields[0],),
+          const SizedBox(width: 12,),
+          Expanded(child: charFields[1],),
+        ],),),
+        Padding(
+          padding: const EdgeInsetsGeometry.only(top: 12),
+          child: Row(children: [
+          Expanded(child: charFields[2],),
+          const SizedBox(width: 12,),
+          Expanded(child: charFields[3],),
+        ],),),
+        Padding(
+          padding: const EdgeInsetsGeometry.only(top: 12),
+          child: Row(children: [
+          Expanded(child: SizedBox(),),
+          Expanded(flex: 2, child: charFields[4],),
+          Expanded(child: SizedBox(),),
+        ],),),
       ],
     );
   }

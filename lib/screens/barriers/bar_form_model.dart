@@ -73,11 +73,11 @@ class BarrierFormModel extends ChangeNotifier {
       case Characteristic.perseverance:
         barrier?.perseverance = sf;
       case Characteristic.courage:
-        barrier?.perseverance = sf;
+        barrier?.courage = sf;
       case Characteristic.durability:
-        barrier?.perseverance = sf;
+        barrier?.durability = sf;
       case Characteristic.creativity:
-        barrier?.perseverance = sf;
+        barrier?.creativity = sf;
     }
   }
 
@@ -96,6 +96,7 @@ class BarrierFormModel extends ChangeNotifier {
       await _barRepo.update(barrier!);
     } else {
       await _barRepo.insert(barrier!);
+      init(null);
     }
   }
 

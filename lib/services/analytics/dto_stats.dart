@@ -1,5 +1,3 @@
-import 'package:chaos_control/models/barrier.dart';
-
 /// Модель для характеристик
 class DtoStats {
   static const cControl = 'total_1';
@@ -20,11 +18,11 @@ class DtoStats {
 
   factory DtoStats.fromMap(Map<String, dynamic> map) {
     return DtoStats(
-      control: map[Barrier.cControl] as int? ?? 0,
-      perseverance: map[Barrier.cPerseverance] as int? ?? 0,
-      courage: map[Barrier.cCourage] as int? ?? 0,
-      durability: map[Barrier.cDurability] as int? ?? 0,
-      creativity: map[Barrier.cCreativity] as int? ?? 0,
+      control: map[cControl] as int? ?? 0,
+      perseverance: map[cPerseverance] as int? ?? 0,
+      courage: map[cCourage] as int? ?? 0,
+      durability: map[cDurability] as int? ?? 0,
+      creativity: map[cCreativity] as int? ?? 0,
     );
   }
 }

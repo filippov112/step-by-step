@@ -20,7 +20,7 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
   Widget build(BuildContext context) {
     final Map<DateTime, int> efforts = context
         .select<ProfileDetailModel, Map<DateTime, int>>(
-          (model) => model.spiritFragments,
+          (model) => model.activityData,
         );
     final int maxEff = context.select<ProfileDetailModel, int>(
       (model) => model.maxSF,

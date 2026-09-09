@@ -23,7 +23,7 @@ class ProfileDetailSpirit extends StatelessWidget {
     );
     final List<SnapSpot> progressData = context
         .select<ProfileDetailModel, List<SnapSpot>>(
-          (model) => model.progressSFData,
+          (model) => model.graphData,
         );
 
     return ProfileProgress(

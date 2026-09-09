@@ -36,7 +36,11 @@ class AnalyticsRepository {
         '''
       SELECT 
         ${Barrier.cDate},
-        COALESCE(SUM(${Barrier.cControl} + ${Barrier.cPerseverance} + ${Barrier.cCourage} + ${Barrier.cDurability} + ${Barrier.cCreativity}), 0) AS ${DtoActivity.cExp}
+        COALESCE(SUM( ${Barrier.cControl} ), 0) AS ${DtoActivity.cControl},
+        COALESCE(SUM( ${Barrier.cPerseverance} ), 0) AS ${DtoActivity.cPerseverance},
+        COALESCE(SUM( ${Barrier.cCourage} ), 0) AS ${DtoActivity.cCourage},
+        COALESCE(SUM( ${Barrier.cDurability} ), 0) AS ${DtoActivity.cDurability},
+        COALESCE(SUM( ${Barrier.cCreativity} ), 0) AS ${DtoActivity.cCreativity}
       FROM ${Barrier.tn}
       $whereClause
       GROUP BY ${Barrier.cDate}
@@ -49,7 +53,6 @@ class AnalyticsRepository {
 
   // Пересчитать суммы характеристик
   Future<DtoStats?> getChars() async {
-
     final query =
         '''
       SELECT
@@ -64,6 +67,4 @@ class AnalyticsRepository {
     final result = await db.rawQuery(query);
     return result.map((row) => DtoStats.fromMap(row)).firstOrNull;
   }
-
-
 }

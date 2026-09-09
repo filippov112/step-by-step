@@ -2,19 +2,18 @@ import 'package:chartify/chartify.dart';
 import 'package:flutter/material.dart';
 
 class CustomRadarChart extends StatelessWidget {
-  final String seriesName;
+
   final double? height;
-  final Color? color;
   final List<String> labels;
-  final List<double> values;
+  final List<RadarSeries> values;
+  final EdgeInsets? padding;
   
   const CustomRadarChart({
     super.key,
-    required this.seriesName,
     required this.labels,
     required this.values,
-    this.color,
     this.height,
+    this.padding
   });
 
   @override
@@ -22,15 +21,10 @@ class CustomRadarChart extends StatelessWidget {
     return SizedBox(
       height: height ?? 300,
       child: RadarChart(
+        padding: padding ?? const EdgeInsets.all(0),
         data: RadarChartData(
           axes: labels,
-          series: [
-            RadarSeries(
-              name: seriesName,
-              values: values,
-              color: color ?? Theme.of(context).focusColor,
-            ),
-          ],
+          series: values,
           tickCount: 5,
           gridType: RadarGridType.circular,
         ),

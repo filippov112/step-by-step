@@ -1,5 +1,4 @@
 import 'package:chaos_control/screens/barriers/bar_form_screen.dart';
-import 'package:chaos_control/screens/barriers/widgets/open_button.dart';
 import 'package:chaos_control/screens/barriers/widgets/appbar.dart';
 import 'package:chaos_control/screens/barriers/widgets/filters.dart';
 import 'package:chaos_control/screens/barriers/widgets/list.dart';

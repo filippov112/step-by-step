@@ -96,6 +96,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   value: StatPeriod.oneWeek,
                   child: Text('1 неделя'),
                 ),
+                const DropdownMenuItem(
+                  value: StatPeriod.oneDay,
+                  child: Text('1 день'),
+                ),
               ],
               initialValue: selectedPeriod,
               onChanged: (v) => setPeriodFilter(v ?? StatPeriod.oneMonth),

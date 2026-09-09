@@ -8,7 +8,7 @@ import 'package:chaos_control/services/analytics/dto_activity.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:snap_chart/snap_chart.dart';
 
-enum StatPeriod { threeMonth, oneMonth, oneWeek }
+enum StatPeriod { threeMonth, oneMonth, oneWeek, oneDay }
 
 class ProfileDetailModel extends ChangeNotifier {
   final _userRepo = ProfileRepository();
@@ -64,7 +64,9 @@ class ProfileDetailModel extends ChangeNotifier {
       case StatPeriod.oneMonth:
         return 30;
       case StatPeriod.oneWeek:
-        return 7;
+        return 6;
+      case StatPeriod.oneDay:
+        return 0;
     }
   }
 

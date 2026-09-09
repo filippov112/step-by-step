@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';

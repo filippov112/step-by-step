@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
@@ -17,7 +17,7 @@ class TargetDetailTasksAppbar extends StatelessWidget {
     final isSelectionMode = context.select<TargetDetailModel, bool>(
       (m) => m.isSelectionMode,
     );
-    final tasks = context.select<TargetDetailModel, List<Task>>(
+    final tasks = context.select<TargetDetailModel, List<Barrier>>(
       (m) => m.tasks,
     );
     final selectedCount = selectedIds.length;

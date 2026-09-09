@@ -19,8 +19,8 @@ class ProfileDetailChars extends StatefulWidget {
 class _ProfileDetailCharsState extends State<ProfileDetailChars> {
   @override
   Widget build(BuildContext context) {
-    final Map<Characteristics, int>? chars = context
-        .select<ProfileDetailModel, Map<Characteristics, int>?>(
+    final Map<Characteristic, int>? chars = context
+        .select<ProfileDetailModel, Map<Characteristic, int>?>(
           (model) => model.chars,
         );
 
@@ -39,7 +39,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ...Characteristics.values.map((ch) {
+          ...Characteristic.values.map((ch) {
             final sf = chars?[ch] ?? 0;
             final points = SpiritCalculator.getCharPoints(sf);
             final remains = SpiritCalculator.getCharPointsRemains(sf);

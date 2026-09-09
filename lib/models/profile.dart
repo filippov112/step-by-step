@@ -55,12 +55,12 @@ class Profile {
     this.creativity = 0
   });
 
-  Map<Characteristics,int> get chars => <Characteristics,int>{
-    Characteristics.control: control,
-    Characteristics.perseverance: perseverance,
-    Characteristics.courage: courage,
-    Characteristics.durability: durability,
-    Characteristics.creativity: creativity
+  Map<Characteristic,int> get chars => <Characteristic,int>{
+    Characteristic.control: control,
+    Characteristic.perseverance: perseverance,
+    Characteristic.courage: courage,
+    Characteristic.durability: durability,
+    Characteristic.creativity: creativity
   };
 
   Map<String, Object?> toMap() {
@@ -92,12 +92,12 @@ class Profile {
     creativity = map[cCreativity];
   }
 
-  void setChars(Map<Characteristics, int> newUserChars) {
-    control = newUserChars[Characteristics.control] ?? 0;
-    perseverance = newUserChars[Characteristics.perseverance] ?? 0;
-    courage = newUserChars[Characteristics.courage] ?? 0;
-    durability = newUserChars[Characteristics.durability] ?? 0;
-    creativity = newUserChars[Characteristics.creativity] ?? 0;
+  void setChars(Map<Characteristic, int> newUserChars) {
+    control = newUserChars[Characteristic.control] ?? 0;
+    perseverance = newUserChars[Characteristic.perseverance] ?? 0;
+    courage = newUserChars[Characteristic.courage] ?? 0;
+    durability = newUserChars[Characteristic.durability] ?? 0;
+    creativity = newUserChars[Characteristic.creativity] ?? 0;
   }
 }
 

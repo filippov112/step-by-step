@@ -10,6 +10,6 @@ class NCharPoints extends NotificationItem {
     return CustomText('${char.displayName}: +$value');
   }
 
-  Characteristics char = Characteristics.control;
+  Characteristic char = Characteristic.control;
   int value = 0;
 }

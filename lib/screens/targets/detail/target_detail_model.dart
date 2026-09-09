@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/models/project.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/target.dart';
@@ -9,7 +9,7 @@ class TargetDetailModel extends ChangeNotifier {
   final _taskRepo = TaskRepository();
 
   Target target = Target.create(title: '', desc: '');
-  List<Task> tasks = [];
+  List<Barrier> tasks = [];
   int currentTabIndex = 0;
   bool visibilityTaskForm = false;
 
@@ -47,9 +47,9 @@ class TargetDetailModel extends ChangeNotifier {
 
   // ------------ Tasks --------------
 
-  Task? editionTask;
+  Barrier? editionTask;
 
-  void openForm(Task? task) {
+  void openForm(Barrier? task) {
     visibilityTaskForm = true;
     editionTask = task;
     notifyListeners();

@@ -23,7 +23,7 @@ class ProfileDetailModel extends ChangeNotifier {
 
 
   // --- Chars ---
-  Map<Characteristics,int>? chars;
+  Map<Characteristic,int>? chars;
   
   
   Profile? user;

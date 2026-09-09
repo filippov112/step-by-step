@@ -80,7 +80,7 @@ class Purport {
     id = map[cId];
     title = map[cTitle];
     description = map[cDescription] ?? "";
-    type = allPurportRar[map[cType] ?? 0];
+    type = PurportType.values[map[cType] ?? 0];
     date = DateTool.joinDateTime(date: map[cDate]);
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
   }

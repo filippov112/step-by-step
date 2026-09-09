@@ -14,7 +14,7 @@ class TargetDetailDetailTab extends StatelessWidget {
     final desc = context.select<TargetDetailModel, String>(
       (model) => model.target.desc,
     );
-    final chars = context.select<TargetDetailModel, Map<Characteristics, int>>(
+    final chars = context.select<TargetDetailModel, Map<Characteristic, int>>(
       (model) => model.target.chars,
     );
     // final tasks = context.select<TargetDetailModel, int>(
@@ -54,7 +54,7 @@ class TargetDetailDetailTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ...Characteristics.values.map(
+          ...Characteristic.values.map(
             (c) => Padding(
               padding: const EdgeInsetsGeometry.symmetric(horizontal: 8),
               child:Row(

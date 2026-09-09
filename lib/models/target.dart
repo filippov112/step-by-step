@@ -108,12 +108,12 @@ class Target {
     );
   }
 
-  Map<Characteristics,int> get chars => <Characteristics,int>{
-    Characteristics.control: control,
-    Characteristics.perseverance: perseverance,
-    Characteristics.courage: courage,
-    Characteristics.durability: durability,
-    Characteristics.creativity: creativity
+  Map<Characteristic,int> get chars => <Characteristic,int>{
+    Characteristic.control: control,
+    Characteristic.perseverance: perseverance,
+    Characteristic.courage: courage,
+    Characteristic.durability: durability,
+    Characteristic.creativity: creativity
   };
 
   // ------------ Сериализация ------------

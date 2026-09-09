@@ -1,5 +1,5 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/services/analytics/dto_activity.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,12 +20,12 @@ class AnalyticsRepository {
     final args = <dynamic>[];
 
     if (startDate != null) {
-      conditions.add('${Task.cDate} >= ?');
+      conditions.add('${Barrier.cDate} >= ?');
       args.add(startDate);
     }
 
     if (endDate != null) {
-      conditions.add('${Task.cDate} <= ?');
+      conditions.add('${Barrier.cDate} <= ?');
       args.add(endDate);
     }
 
@@ -36,12 +36,12 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT 
-        ${Task.cDate},
-        COALESCE(SUM(${Task.cControl} + ${Task.cPerseverance} + ${Task.cCourage} + ${Task.cDurability} + ${Task.cCreativity}), 0) AS ${DtoActivity.cExp}
-      FROM ${Task.tn}
+        ${Barrier.cDate},
+        COALESCE(SUM(${Barrier.cControl} + ${Barrier.cPerseverance} + ${Barrier.cCourage} + ${Barrier.cDurability} + ${Barrier.cCreativity}), 0) AS ${DtoActivity.cExp}
+      FROM ${Barrier.tn}
       $whereClause
-      GROUP BY ${Task.cDate}
-      ORDER BY ${Task.cDate} DESC
+      GROUP BY ${Barrier.cDate}
+      ORDER BY ${Barrier.cDate} DESC
     ''';
 
     final result = await db.rawQuery(query, args);

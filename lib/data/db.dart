@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:path/path.dart';
@@ -35,7 +35,7 @@ class DB {
       await db.execute(Profile.init);
       await db.execute(Target.init);
       await db.execute(Purport.init);
-      await db.execute(Task.init);        // зависит от Task, Skill
+      await db.execute(Barrier.init);        // зависит от Task, Skill
     });
   }
 

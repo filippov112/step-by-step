@@ -30,5 +30,3 @@ extension PurportRarExt on PurportType {
     }
   }
 }
-
-List<PurportType> allPurportRar = PurportType.values;

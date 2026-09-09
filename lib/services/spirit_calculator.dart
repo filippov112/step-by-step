@@ -38,7 +38,7 @@ class SpiritCalculator {
   }
 
   // Проверить получение уровня и очков характеристик
-  static Future checkNotifications(Map<Characteristics,int> oldChars, Map<Characteristics,int> newChars) async {
+  static Future checkNotifications(Map<Characteristic,int> oldChars, Map<Characteristic,int> newChars) async {
     final ns = NotificationService();
     _checkLevel(ns, oldChars.values.reduce((a, b) => a + b), newChars.values.reduce((a, b) => a + b));
     _recalcUserCharPoints(ns, oldChars, newChars);
@@ -55,8 +55,8 @@ class SpiritCalculator {
     }
   }
 
-  static void _recalcUserCharPoints(NotificationService ns, Map<Characteristics,int> oldChars, Map<Characteristics,int> newChars) {
-    for(var ch in Characteristics.values) {
+  static void _recalcUserCharPoints(NotificationService ns, Map<Characteristic,int> oldChars, Map<Characteristic,int> newChars) {
+    for(var ch in Characteristic.values) {
       final newPoints = getCharPoints(newChars[ch] ?? 0);
       final oldPoints = getCharPoints(oldChars[ch] ?? 0);
     

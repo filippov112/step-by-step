@@ -13,10 +13,10 @@ class TargetEditChars extends StatelessWidget {
 
     // final focusColor = Theme.of(context).focusColor;
     final model = context.read<TargetEditModel>();
-    final chars = context.select<TargetEditModel, Map<Characteristics, int>?>(
+    final chars = context.select<TargetEditModel, Map<Characteristic, int>?>(
       (model) => model.chars,
     );
-    final chars10000 = context.select<TargetEditModel, Map<Characteristics, int>?>(
+    final chars10000 = context.select<TargetEditModel, Map<Characteristic, int>?>(
       (model) => model.chars10000,
     );
 
@@ -28,7 +28,7 @@ class TargetEditChars extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Divider(color: Theme.of(context).dividerColor,),
-          ...Characteristics.values.map(
+          ...Characteristic.values.map(
             (c) => Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum Characteristics {
+enum Characteristic {
   control,
   perseverance,
   courage,
@@ -8,64 +8,64 @@ enum Characteristics {
   creativity
 }
 
-extension CharacteristicsExt on Characteristics {
+extension CharacteristicsExt on Characteristic {
 
   String get displayName {
     switch (this) {
-      case Characteristics.control:
+      case Characteristic.control:
         return 'Контроль';
-      case Characteristics.perseverance:
+      case Characteristic.perseverance:
         return 'Упорство';
-        case Characteristics.courage:
+        case Characteristic.courage:
         return 'Смелость';
-      case Characteristics.durability:
+      case Characteristic.durability:
         return 'Стойкость';
-      case Characteristics.creativity:
+      case Characteristic.creativity:
         return 'Креативность';
     }
   }
 
   Color get color {
     switch (this) {
-      case Characteristics.control:
+      case Characteristic.control:
         return Colors.greenAccent;
-      case Characteristics.perseverance:
+      case Characteristic.perseverance:
         return Colors.orangeAccent;
-      case Characteristics.courage:
+      case Characteristic.courage:
         return Colors.redAccent;
-      case Characteristics.durability:
+      case Characteristic.durability:
         return Colors.lightBlueAccent;
-      case Characteristics.creativity:
+      case Characteristic.creativity:
         return Colors.purpleAccent;
     }
   }
 
   IconData get icon {
     switch (this) {
-      case Characteristics.control:
+      case Characteristic.control:
         return Icons.self_improvement;
-      case Characteristics.perseverance:
+      case Characteristic.perseverance:
         return Icons.construction;
-      case Characteristics.courage:
+      case Characteristic.courage:
         return Icons.favorite;
-      case Characteristics.durability:
+      case Characteristic.durability:
         return Icons.diamond;
-      case Characteristics.creativity:
+      case Characteristic.creativity:
         return Icons.visibility;
     }
   }
 
   String get emoji {
     switch (this) {
-      case Characteristics.control:
+      case Characteristic.control:
         return '☯';
-      case Characteristics.perseverance:
+      case Characteristic.perseverance:
         return '🔥';
-      case Characteristics.courage:
+      case Characteristic.courage:
         return '⚔️';
-      case Characteristics.durability:
+      case Characteristic.durability:
         return '🛡️';
-      case Characteristics.creativity:
+      case Characteristic.creativity:
         return '🧠';
     }
   }

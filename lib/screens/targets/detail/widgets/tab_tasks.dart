@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/task.dart';
+import 'package:chaos_control/models/barrier.dart';
 import 'package:chaos_control/screens/targets/detail/target_detail_model.dart';
 import 'package:chaos_control/screens/tasks/widgets/task_form.dart';
 import 'package:chaos_control/screens/tasks/widgets/task_tile.dart';
@@ -11,7 +11,7 @@ class TargetDetailTaskTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = context.select<TargetDetailModel, List<Task>>(
+    final tasks = context.select<TargetDetailModel, List<Barrier>>(
       (m) => m.tasks,
     );
 

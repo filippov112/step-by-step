@@ -16,7 +16,8 @@ class CustomText extends StatelessWidget {
   final TextDecoration? decoration;
 
   const CustomText(
-    this.text, {super.key, 
+    this.text, {
+    super.key,
     this.size,
     this.color,
     this.overflow = TextOverflow.ellipsis,
@@ -28,28 +29,36 @@ class CustomText extends StatelessWidget {
     this.expandedFlex = 1,
     this.align = TextAlign.start,
     this.height,
-    this.decoration
+    this.decoration,
   });
 
   @override
   Widget build(BuildContext context) {
-    var txt = Text(text, 
+    final isCustomStyle =
+        height != null ||
+        size != null ||
+        color != null ||
+        weight != null ||
+        shadow != null ||
+        decoration != null;
+
+    var txt = Text(
+      text,
       textAlign: align,
-      style: TextStyle(
-        height: height,
-        fontSize: size,
-        color: color,
-        overflow: overflow,
-        fontWeight: weight,
-        shadows: shadow == null ? null : [shadow!,],
-        decoration: decoration
-      ),
+      style: isCustomStyle
+          ? TextStyle(
+              height: height,
+              fontSize: size,
+              color: color,
+              fontWeight: weight,
+              shadows: shadow == null ? null : [shadow!],
+              decoration: decoration,
+            )
+          : null,
       maxLines: lines,
+      overflow: overflow,
     );
-    var pdng = padding == null ? txt : Padding(
-      padding: padding!,
-      child: txt,
-    );
-    return expanded ? Expanded(flex: expandedFlex, child: pdng,) : pdng;
+    var pdng = padding == null ? txt : Padding(padding: padding!, child: txt);
+    return expanded ? Expanded(flex: expandedFlex, child: pdng) : pdng;
   }
 }

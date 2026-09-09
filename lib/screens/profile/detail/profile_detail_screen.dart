@@ -60,7 +60,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     return Scaffold(
       drawer: MainMenuDrawer(),
       appBar: ListAppBar(
-        title: 'Профиль',
+        title: '',
         actions: [
           Consumer<ProfileFormModel>(
             builder: (context, viewModel, child) {

@@ -19,7 +19,7 @@ class MainMenuDrawer extends StatelessWidget {
           // Список пунктов меню
           Expanded(
             child: ListView(
-              children: allAppModules
+              children: AppModule.values
                   .map(
                     (module) => MenuItemTile(
                       icon: module.icon,

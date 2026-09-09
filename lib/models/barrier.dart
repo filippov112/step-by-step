@@ -1,9 +1,6 @@
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
-import 'package:chaos_control/models/enums/task_status.dart';
-import 'package:chaos_control/models/project.dart';
-import 'package:chaos_control/models/target.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -16,7 +13,7 @@ class Barrier {
   static const tn = "barriers";
 
   static const cId = "_id";
-  static const cTargetId = "_target_id";
+  static const cGroup = "_group";
   static const cDiffLvl = "_diff";
   static const cCharacteristic = "_char";
   static const cDescription = "_description";
@@ -31,7 +28,7 @@ class Barrier {
   static const init =
       '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
-          $cTargetId TEXT,
+          $cGroup TEXT,
           $cCharacteristic INTEGER,
           $cDiffLvl INTEGER,
           $cDescription TEXT,
@@ -41,20 +38,19 @@ class Barrier {
           $cPerseverance INTEGER,
           $cCourage INTEGER,
           $cDurability INTEGER,
-          $cCreativity INTEGER,
-
-          FOREIGN KEY ($cTargetId) REFERENCES ${Target.tn}(${Target.cId}) ON DELETE CASCADE
+          $cCreativity INTEGER
         );
         ''';
 
   // ------------ Поля ------------
 
   String id = '';
-  String targetId = ''; // Цель
+  
+  String description = ""; // Описание
   Characteristic char = Characteristic.perseverance; // Тип преграды
   DifficultyLvl difficulty = DifficultyLvl.F; // Уровень сложности
-  String description = ""; // Описание
   DateTime date = DateTool.today(); // Дата
+  String group = ""; // Группа
 
   int control = 0;
   int perseverance = 0;
@@ -66,10 +62,11 @@ class Barrier {
 
   Barrier({
     required this.id,
-    required this.targetId,
+
+    required this.description,
+    required this.group,
     required this.char,
     required this.difficulty,
-    required this.description,
     required this.date,
 
     required this.control,
@@ -80,13 +77,11 @@ class Barrier {
   });
 
   factory Barrier.create({
-    required String targetId,
-
+    String group = '',
     Characteristic char = Characteristic.perseverance,
     DifficultyLvl difficulty = DifficultyLvl.F,
     String description = '',
     required DateTime date,
-    TaskStatus status = TaskStatus.done,
 
     int control = 0,
     int perseverance = 0,
@@ -98,7 +93,7 @@ class Barrier {
     return Barrier(
       id: guid,
 
-      targetId: targetId,
+      group: group,
       char: char,
       difficulty: difficulty,
       description: description,
@@ -128,7 +123,7 @@ class Barrier {
     return {
       cId: id,
 
-      cTargetId: targetId,
+      cGroup: group,
       cCharacteristic: char.index,
       cDiffLvl: difficulty.index,
       cDescription: description,
@@ -144,11 +139,11 @@ class Barrier {
 
   Barrier.fromMap(Map map) {
     id = map[cId];
-
-    targetId = map[cTargetId];
+    
+    description = map[cDescription];
+    group = map[cGroup];
     char = Characteristic.values[map[cCharacteristic]];
     difficulty = DifficultyLvl.values[map[cDiffLvl]];
-    description = map[cDescription];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
 
     control = map[cControl];
@@ -160,33 +155,12 @@ class Barrier {
 }
 
 // Базовый репозиторий
-class TaskRepository {
+class BarrierRepository {
   Database db = DB.db!;
-  final classRepo = ProjectRepository();
   final userRepo = ProfileRepository();
 
   Future<List<Barrier>> getAll() async {
     List<Map<String, Object?>> maps = await db.query(Barrier.tn);
-    return maps.map((m) => Barrier.fromMap(m)).toList();
-  }
-
-  Future<List<Barrier>> getByTarget(String? targetId) async {
-    if (targetId == null) return [];
-    List<Map<String, Object?>> maps = await db.query(
-      Barrier.tn,
-      where: '${Barrier.cTargetId} = ?',
-      whereArgs: [targetId],
-    );
-    return maps.map((m) => Barrier.fromMap(m)).toList();
-  }
-
-  Future<List<Barrier>> getByProject(String projectId) async {
-    List<Map<String, Object?>> maps = await db.rawQuery(
-      '''
-      SELECT at.* FROM ${Target.tn} w JOIN ${Barrier.tn} at ON w.${Target.cProjectId} = ? AND at.${Barrier.cTargetId} = w.${Target.cId}
-    ''',
-      [projectId],
-    );
     return maps.map((m) => Barrier.fromMap(m)).toList();
   }
 

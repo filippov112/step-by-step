@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 
 class BottomModalForm extends StatefulWidget {
   final Key? formKey;
-  final String title;
+  final String? title;
   final Iterable<Widget> children;
-  final VoidCallback confirmCallback;
+  final VoidCallback? confirmCallback;
   final VoidCallback? closeCallback;
   final IconData? confirmIcon;
+  final bool? expanded;
 
   const BottomModalForm({
     super.key,
     this.formKey,
-    required this.title,
+    this.title,
     required this.children,
-    required this.confirmCallback,
+    this.confirmCallback,
     this.closeCallback,
     this.confirmIcon,
+    this.expanded,
   });
 
   @override
@@ -34,11 +36,12 @@ class BottomModalFormState extends State<BottomModalForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsetsGeometry.fromLTRB(8, 6, 8, 6),
-      child: Column(
-        children: [
-          Container(
+    final header =
+        (widget.title == null &&
+            widget.closeCallback == null &&
+            widget.confirmCallback == null)
+        ? null
+        : Container(
             height: 46,
             padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
             child: Column(
@@ -49,7 +52,7 @@ class BottomModalFormState extends State<BottomModalForm> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Заголовок
-                      CustomText(widget.title, size: 18, expanded: true),
+                      CustomText(widget.title ?? '', size: 18, expanded: true),
                       const SizedBox(width: 12),
 
                       // Закрыть
@@ -60,28 +63,34 @@ class BottomModalFormState extends State<BottomModalForm> {
                       const SizedBox(width: 12),
 
                       // Сохранить
-                      IconButton(
-                        onPressed: widget.confirmCallback,
-                        icon: Icon(widget.confirmIcon ?? Icons.done),
-                      ),
+                      if (widget.confirmCallback != null)
+                        IconButton(
+                          onPressed: widget.confirmCallback,
+                          icon: Icon(widget.confirmIcon ?? Icons.done),
+                        ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
+          );
 
-          Expanded(
-            child: SingleChildScrollView(
-              child: Form(
-                key: widget.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [...widget.children],
-                ),
-              ),
-            ),
-          ),
+    final form = Form(
+      key: widget.formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [...widget.children],
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsetsGeometry.fromLTRB(8, 6, 8, 6),
+      child: Column(
+        children: [
+          ?header,
+          if (widget.expanded == true)
+            Expanded(child: SingleChildScrollView(child: form)),
+          if (widget.expanded != true) form,
         ],
       ),
     );

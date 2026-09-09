@@ -17,7 +17,7 @@ class CustomDateTime extends StatelessWidget {
     required this.callback,
     required this.value,
     this.dateOnly = false,
-    this.label,
+    this.label
   });
 
   Future _openDialog(BuildContext context) async {

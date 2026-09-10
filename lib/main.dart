@@ -1,9 +1,12 @@
+import 'package:chaos_control/screens/purports/create/purport_create_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_detail_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_images_model.dart';
+import 'package:chaos_control/screens/purports/detail/purport_sounds_model.dart';
+import 'package:chaos_control/screens/purports/edit/purport_edit_model.dart';
 import 'package:chaos_control/screens/records/record_form_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/screens/purports/detail/purport_details_model.dart';
-import 'package:chaos_control/screens/purports/form/purport_form_model.dart';
 import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/home_screen.dart';
@@ -23,7 +26,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-
         // Home
         ChangeNotifierProvider<NotificationService>(create: (_) => NotificationService()),
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
@@ -41,9 +43,11 @@ void main() async {
 
         // Purports
         ChangeNotifierProvider<PurportListModel>(create: (_) { return PurportListModel(); }),
-        ChangeNotifierProvider<PurportDetailsModel>(create: (_) { return PurportDetailsModel(); }),
-        ChangeNotifierProvider<PurportFormModel>(create: (_) { return PurportFormModel(); }),
-        
+        ChangeNotifierProvider<PurportDetailModel>(create: (_) { return PurportDetailModel(); }),
+        ChangeNotifierProvider<PurportImagesModel>(create: (_) { return PurportImagesModel(); }),
+        ChangeNotifierProvider<PurportSoundsModel>(create: (_) { return PurportSoundsModel(); }),
+        ChangeNotifierProvider<PurportEditModel>(create: (_) { return PurportEditModel(); }),
+        ChangeNotifierProvider<PurportCreateModel>(create: (_) { return PurportCreateModel(); }),
       ],
       child: MyApp(),
     )

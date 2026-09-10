@@ -5,10 +5,10 @@ import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
 import 'package:flutter/material.dart';
 
-class RecordTreeFabric implements TreeTileFabric<Record, RecordTreeTile> {
+class RecordTreeFabric implements TreeTileFabric<ChronicleRecord, RecordTreeTile> {
   @override
   RecordTreeTile create({
-    required TreeRecord<Record> record,
+    required TreeRecord<ChronicleRecord> record,
     VoidCallback? openCallback,
     VoidCallback? selectCallback,
     VoidCallback? deleteCallback,
@@ -41,7 +41,7 @@ class RecordTreeFabric implements TreeTileFabric<Record, RecordTreeTile> {
 }
 
 class RecordTreeTile extends StatelessWidget {
-  final TreeRecord<Record> record;
+  final TreeRecord<ChronicleRecord> record;
   final VoidCallback? openCallback,
       selectCallback,
       deleteCallback,

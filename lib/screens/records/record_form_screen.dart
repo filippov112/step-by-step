@@ -30,7 +30,7 @@ class RecordFormState extends State<RecordForm> {
   void initState() {
     super.initState();
     descController = TextEditingController();
-    groupController = TextEditingController(); 
+    groupController = TextEditingController();
     model = context.read<RecordFormModel>();
     listModel = context.read<RecordListModel>();
     subscription = model.initStream.listen((event) => resetControllers());
@@ -63,9 +63,7 @@ class RecordFormState extends State<RecordForm> {
       (m) => m.characteristic,
     );
 
-    final isEditing = context.select<RecordFormModel, bool>(
-      (m) => m.isEditing,
-    );
+    final isEditing = context.select<RecordFormModel, bool>((m) => m.isEditing);
 
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
@@ -184,9 +182,11 @@ class RecordFormState extends State<RecordForm> {
     String? groupValidator(String? text) {
       if (text == null || text.isEmpty) return null;
       var parts = text.split('/');
-      if (parts.any((e) => e.isEmpty)) return 'Части группы не могут быть пустыми';
+      if (parts.any((e) => e.isEmpty))
+        return 'Части группы не могут быть пустыми';
       return null;
     }
+
     final groupWidget = CustomTextInput(
       header: "Группа (разделитель: '/')",
       controller: groupController,
@@ -237,7 +237,6 @@ class RecordFormState extends State<RecordForm> {
       ),
     );
 
-
     // ==============================
 
     return Container(
@@ -253,7 +252,6 @@ class RecordFormState extends State<RecordForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-
                 statisticsRow,
                 diffSlider,
                 typeWidget,

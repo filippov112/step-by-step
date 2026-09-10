@@ -43,7 +43,7 @@ class DtoActivity {
 
   factory DtoActivity.fromMap(Map<String, dynamic> map) {
     return DtoActivity(
-      date: map[Record.cDate] as int,
+      date: map[ChronicleRecord.cDate] as int,
 
       control: map[cControl] as int? ?? 0,
       perseverance: map[cPerseverance] as int? ?? 0,

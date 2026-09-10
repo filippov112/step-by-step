@@ -16,23 +16,36 @@ class RecordFormModel extends ChangeNotifier {
   Characteristic characteristic = Characteristic.perseverance;
 
   int sf = 0;
-  Record? record;
+  ChronicleRecord? record;
   bool isEditing = false;
 
-  void init(Record? rec) {
+  void init(ChronicleRecord? rec, String gr, {bool softClear = false}) {
     isEditing = rec != null;
 
-    diffIndex = rec?.difficulty.index ?? 0;
-    desc = rec?.description ?? '';
-    group = rec?.group ?? '';
-    characteristic = rec?.char ?? Characteristic.perseverance;
-    date = rec?.date ?? DateTool.today();
-
-    record = rec ?? Record.create(date: date);
+    if (!softClear) {
+      diffIndex = rec?.difficulty.index ?? 0;
+      desc = rec?.description ?? '';
+      group = gr;
+      characteristic = rec?.char ?? Characteristic.perseverance;
+      date = rec?.date ?? DateTool.today();
+    }
+  
+    record = rec ?? ChronicleRecord.create(date: date);
     _recalcSF();
 
-    notifyListeners();
     _initController.add(true);
+    notifyListeners();
+  }
+  void clearModel() {
+    if (record == null) return;
+    isEditing = false;
+    diffIndex = 0;
+    desc = '';
+    group = '';
+    characteristic = Characteristic.perseverance;
+    date = DateTool.today();
+    record = null;
+    sf = 0;
   }
 
   void _recalcSF() {
@@ -89,6 +102,7 @@ class RecordFormModel extends ChangeNotifier {
     record?.char = characteristic;
     record?.date = date;
     record?.difficulty = DifficultyLvl.values[diffIndex];
+    record?.time = DateTime.now().millisecondsSinceEpoch;
 
     _recalcChars();
 
@@ -96,7 +110,7 @@ class RecordFormModel extends ChangeNotifier {
       await _recRepo.update(record!);
     } else {
       await _recRepo.insert(record!);
-      init(null);
+      init(null, group, softClear: true);
     }
   }
 

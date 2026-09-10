@@ -8,7 +8,7 @@ import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
 // Запись
-class Record {
+class ChronicleRecord {
   // ------------ Схема ------------
   static const tn = "records";
 
@@ -18,6 +18,7 @@ class Record {
   static const cCharacteristic = "_char";
   static const cDescription = "_description";
   static const cDate = "_date";
+  static const cTime = "_time";
 
   static const cControl = "_c1";
   static const cPerseverance = "_c2";
@@ -33,6 +34,7 @@ class Record {
           $cDiffLvl INTEGER,
           $cDescription TEXT,
           $cDate INTEGER,
+          $cTime INTEGER,
 
           $cControl INTEGER,
           $cPerseverance INTEGER,
@@ -50,6 +52,7 @@ class Record {
   Characteristic char = Characteristic.perseverance; // Характеристика
   DifficultyLvl difficulty = DifficultyLvl.F; // Уровень сложности
   DateTime date = DateTool.today(); // Дата
+  int time = 0;
   String group = ""; // Группа
 
   int control = 0;
@@ -60,7 +63,7 @@ class Record {
 
   // ------------ Конструкторы ------------
 
-  Record({
+  ChronicleRecord({
     required this.id,
 
     required this.description,
@@ -68,6 +71,7 @@ class Record {
     required this.char,
     required this.difficulty,
     required this.date,
+    required this.time,
 
     required this.control,
     required this.perseverance,
@@ -76,12 +80,13 @@ class Record {
     required this.creativity,
   });
 
-  factory Record.create({
+  factory ChronicleRecord.create({
     String group = '',
     Characteristic char = Characteristic.perseverance,
     DifficultyLvl difficulty = DifficultyLvl.F,
     String description = '',
     required DateTime date,
+    int time = 0,
 
     int control = 0,
     int perseverance = 0,
@@ -90,7 +95,7 @@ class Record {
     int creativity = 0,
   }) {
     final guid = const Uuid().v4();
-    return Record(
+    return ChronicleRecord(
       id: guid,
 
       group: group,
@@ -98,6 +103,7 @@ class Record {
       difficulty: difficulty,
       description: description,
       date: date,
+      time: time,
 
       control: control,
       perseverance: perseverance,
@@ -128,6 +134,7 @@ class Record {
       cDiffLvl: difficulty.index,
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
+      cTime: time,
 
       cControl: control,
       cPerseverance: perseverance,
@@ -137,7 +144,7 @@ class Record {
     };
   }
 
-  Record.fromMap(Map map) {
+  ChronicleRecord.fromMap(Map map) {
     id = map[cId];
     
     description = map[cDescription];
@@ -145,6 +152,7 @@ class Record {
     char = Characteristic.values[map[cCharacteristic]];
     difficulty = DifficultyLvl.values[map[cDiffLvl]];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
+    time = map[cTime];
 
     control = map[cControl];
     perseverance = map[cPerseverance];
@@ -159,37 +167,67 @@ class RecordRepository {
   Database db = DB.db!;
   final userRepo = ProfileRepository();
 
-  Future<List<Record>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(Record.tn);
-    return maps.map((m) => Record.fromMap(m)).toList();
+  Future<List<ChronicleRecord>> getAll() async {
+    List<Map<String, Object?>> maps = await db.query(ChronicleRecord.tn);
+    return maps.map((m) => ChronicleRecord.fromMap(m)).toList();
   }
 
-  Future<Record?> get(String id) async {
+  Future<ChronicleRecord?> get(String id) async {
     List<Map> maps = await db.query(
-      Record.tn,
-      where: '${Record.cId} = ?',
+      ChronicleRecord.tn,
+      where: '${ChronicleRecord.cId} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Record.fromMap(maps.first as Map<String, Object?>);
+      return ChronicleRecord.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
+  /// Получить по датам
+  Future<List<ChronicleRecord>> getAllByDate({
+    int? startDate,
+    int? endDate,
+  }) async {
+    final conditions = <String>[];
+    final args = <dynamic>[];
+
+    if (startDate != null) {
+      conditions.add('${ChronicleRecord.cDate} >= ?');
+      args.add(startDate);
+    }
+    if (endDate != null) {
+      conditions.add('${ChronicleRecord.cDate} <= ?');
+      args.add(endDate);
+    }
+    final whereClause = conditions.isNotEmpty
+        ? 'WHERE ${conditions.join(' AND ')}'
+        : '';
+    final query =
+        '''
+      SELECT 
+        *
+      FROM ${ChronicleRecord.tn}
+      $whereClause
+    ''';
+    final result = await db.rawQuery(query, args);
+    return result.map((row) => ChronicleRecord.fromMap(row)).toList();
+  }
+
   // ----------- Изменения ----------------
 
-  Future<Record> insert(Record rw) async {
+  Future<ChronicleRecord> insert(ChronicleRecord rw) async {
     await _updateProfile(TransactionType.add, rw);
-    await db.insert(Record.tn, rw.toMap());
+    await db.insert(ChronicleRecord.tn, rw.toMap());
     return rw;
   }
 
-  Future<List<int>> insertBatch(Iterable<Record> models) async {
+  Future<List<int>> insertBatch(Iterable<ChronicleRecord> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (Record m in models) {
+      for (ChronicleRecord m in models) {
         await _updateProfile(TransactionType.add, m);
-        res.add(await txn.insert(Record.tn, m.toMap()));
+        res.add(await txn.insert(ChronicleRecord.tn, m.toMap()));
       }
     });
     return res;
@@ -199,15 +237,15 @@ class RecordRepository {
     var rw = await get(id);
     if (rw == null) return;
     await _updateProfile(TransactionType.remove, rw);
-    await db.delete(Record.tn, where: '${Record.cId} = ?', whereArgs: [id]);
+    await db.delete(ChronicleRecord.tn, where: '${ChronicleRecord.cId} = ?', whereArgs: [id]);
   }
 
-  Future update(Record rw) async {
+  Future update(ChronicleRecord rw) async {
     await _updateProfile(TransactionType.update, rw);
     return await db.update(
-      Record.tn,
+      ChronicleRecord.tn,
       rw.toMap(),
-      where: '${Record.cId} = ?',
+      where: '${ChronicleRecord.cId} = ?',
       whereArgs: [rw.id],
     );
   }
@@ -217,7 +255,7 @@ class RecordRepository {
   // Рассчитать дельту
   Future<Map<Characteristic, int>> _getDelta(
     TransactionType type,
-    Record rw,
+    ChronicleRecord rw,
   ) async {
     final deltaChars = <Characteristic, int>{};
     final chars = rw.chars;
@@ -247,7 +285,7 @@ class RecordRepository {
   }
 
   // Добавить дельту к пользователю
-  Future _updateProfile(TransactionType type, Record rw) async {
+  Future _updateProfile(TransactionType type, ChronicleRecord rw) async {
     final user = await userRepo.get();
     if (user == null) return;
     final deltaChars = await _getDelta(type, rw);

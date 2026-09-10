@@ -19,12 +19,12 @@ class AnalyticsRepository {
     final args = <dynamic>[];
 
     if (startDate != null) {
-      conditions.add('${Record.cDate} >= ?');
+      conditions.add('${ChronicleRecord.cDate} >= ?');
       args.add(startDate);
     }
 
     if (endDate != null) {
-      conditions.add('${Record.cDate} <= ?');
+      conditions.add('${ChronicleRecord.cDate} <= ?');
       args.add(endDate);
     }
 
@@ -35,16 +35,16 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT 
-        ${Record.cDate},
-        COALESCE(SUM( ${Record.cControl} ), 0) AS ${DtoActivity.cControl},
-        COALESCE(SUM( ${Record.cPerseverance} ), 0) AS ${DtoActivity.cPerseverance},
-        COALESCE(SUM( ${Record.cCourage} ), 0) AS ${DtoActivity.cCourage},
-        COALESCE(SUM( ${Record.cDurability} ), 0) AS ${DtoActivity.cDurability},
-        COALESCE(SUM( ${Record.cCreativity} ), 0) AS ${DtoActivity.cCreativity}
-      FROM ${Record.tn}
+        ${ChronicleRecord.cDate},
+        COALESCE(SUM( ${ChronicleRecord.cControl} ), 0) AS ${DtoActivity.cControl},
+        COALESCE(SUM( ${ChronicleRecord.cPerseverance} ), 0) AS ${DtoActivity.cPerseverance},
+        COALESCE(SUM( ${ChronicleRecord.cCourage} ), 0) AS ${DtoActivity.cCourage},
+        COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoActivity.cDurability},
+        COALESCE(SUM( ${ChronicleRecord.cCreativity} ), 0) AS ${DtoActivity.cCreativity}
+      FROM ${ChronicleRecord.tn}
       $whereClause
-      GROUP BY ${Record.cDate}
-      ORDER BY ${Record.cDate} DESC
+      GROUP BY ${ChronicleRecord.cDate}
+      ORDER BY ${ChronicleRecord.cDate} DESC
     ''';
 
     final result = await db.rawQuery(query, args);
@@ -56,12 +56,12 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT
-        COALESCE(SUM( ${Record.cControl} ), 0) AS ${DtoStats.cControl},
-        COALESCE(SUM( ${Record.cPerseverance} ), 0) AS ${DtoStats.cPerseverance},
-        COALESCE(SUM( ${Record.cCourage} ), 0) AS ${DtoStats.cCourage},
-        COALESCE(SUM( ${Record.cDurability} ), 0) AS ${DtoStats.cDurability},
-        COALESCE(SUM( ${Record.cCreativity} ), 0) AS ${DtoStats.cCreativity}
-      FROM ${Record.tn}
+        COALESCE(SUM( ${ChronicleRecord.cControl} ), 0) AS ${DtoStats.cControl},
+        COALESCE(SUM( ${ChronicleRecord.cPerseverance} ), 0) AS ${DtoStats.cPerseverance},
+        COALESCE(SUM( ${ChronicleRecord.cCourage} ), 0) AS ${DtoStats.cCourage},
+        COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoStats.cDurability},
+        COALESCE(SUM( ${ChronicleRecord.cCreativity} ), 0) AS ${DtoStats.cCreativity}
+      FROM ${ChronicleRecord.tn}
     ''';
 
     final result = await db.rawQuery(query);

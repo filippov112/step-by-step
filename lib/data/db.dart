@@ -31,7 +31,7 @@ class DB {
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Profile.init);
       await db.execute(Purport.init);
-      await db.execute(Record.init);
+      await db.execute(ChronicleRecord.init);
     });
   }
 

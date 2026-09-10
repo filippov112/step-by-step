@@ -13,7 +13,7 @@ class RecordList extends StatelessWidget {
 
   Future<void> _delete(
     BuildContext context,
-    Record? target,
+    ChronicleRecord? target,
     Future Function(String) deleteCallback,
   ) async {
     if (target == null) return;
@@ -26,7 +26,7 @@ class RecordList extends StatelessWidget {
     final formModel = context.read<RecordFormModel>();
 
     final records = context
-        .select<RecordListModel, List<TreeRecord<Record>>>((m) => m.records);
+        .select<RecordListModel, List<TreeRecord<ChronicleRecord>>>((m) => m.records);
     final currentAddress = context.select<RecordListModel, String>(
       (m) => m.listModel.currentAddress,
     );
@@ -42,21 +42,23 @@ class RecordList extends StatelessWidget {
     final selectedIds = context.select<RecordListModel, Set<String>>(
       (m) => m.selectedIds,
     );
+    final selectedRecord = context.select<RecordFormModel,ChronicleRecord?>((m) => m.record);
+    
 
-    return CustomTreeList<Record>(
+    return CustomTreeList<ChronicleRecord>(
       clearFilters: hasActiveFilters ? model.clearAllFilters : null,
       currentAddress: currentAddress,
       visualList: records,
       tileIcon: Icons.fort,
       openRecordCallback: (b) {
         model.openForm(b);
-        formModel.init(b);
+        formModel.init(b, b?.group ?? '');
       },
       openFolderCallback: model.openFolder,
       deleteCallback: (b) => _delete(context, b, model.delete),
-      selectCallback: (b) => model.toggleSelect(b?.id ?? ''),
+      selectCallback: (b) { formModel.clearModel(); model.toggleSelect(b?.id ?? ''); },
       selectModeCallback: model.toggleSelectionMode,
-      isSelectedCallback: (b) => b != null && selectedIds.contains(b.id),
+      isSelectedCallback: (b) => b != null && (selectedRecord?.id == b.id || selectedIds.contains(b.id)),
       isSelectionMode: isSelectionMode,
       floatingButton: isSelectionMode || isFormVisibility ? null : const RecordListOpenButton(),
       tileFabric: RecordTreeFabric(),

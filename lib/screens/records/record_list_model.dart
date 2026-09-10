@@ -1,115 +1,131 @@
 import 'package:chaos_control/models/record.dart';
+import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
-enum SortRecord { date }
+enum SortRecord { date, time }
 
 class RecordListModel extends ChangeNotifier {
   final _taskRepo = RecordRepository();
 
-  List<Record> _records = [];
-  List<Record> _filtered = [];
-  List<TreeRecord<Record>> records = [];
+  List<ChronicleRecord> _records = [];
+  List<ChronicleRecord> _filtered = [];
+  List<TreeRecord<ChronicleRecord>> records = [];
 
   // Открытие / закрытие формы
-
-  Record? currentRecord;
   bool visibilityForm = false;
 
-  void openForm(Record? task) {
+  void openForm(ChronicleRecord? task) {
     visibilityForm = true;
-    currentRecord = task;
     notifyListeners();
   }
+
   void closeForm() {
     visibilityForm = false;
-    currentRecord = null;
     notifyListeners();
   }
 
   // ------
 
-  final listModel = CustomTreeListModel<Record>();
-  
+  final listModel = CustomTreeListModel<ChronicleRecord>();
+
   // Фильтрация
   String searchQuery = '';
+  DateTime? dateBeginFilter, dateEndFilter;
   bool visibilitySearch = false;
   bool groupFilter = true;
   bool get hasActiveFilters {
-    return searchQuery.isNotEmpty;
+    return dateBeginFilter != null ||
+        dateEndFilter != null ||
+        searchQuery.isNotEmpty;
   }
 
   // Сортировка
   SortRecord sorting = SortRecord.date;
   bool sortAscending = true;
-  
+
   // Выборки
   bool isSelectionMode = false;
   Set<String> selectedIds = {};
-  
-  
+
   // ---------- Загрузка данных ------------
 
   Future loadData() async {
-    _records = await _taskRepo.getAll();
+    _records = await _taskRepo.getAllByDate(
+      startDate: DateTool.datetimeToDays(dateBeginFilter),
+      endDate: DateTool.datetimeToDays(dateEndFilter),
+    );
     await _applyFiltersAndSort();
     notifyListeners();
   }
 
   void _reloadList() {
     records = listModel.openFolder(
-      list: transformRecords(), 
+      list: transformRecords(),
       folder: listModel.currentFolder,
-      groupFilter: groupFilter
+      groupFilter: groupFilter,
     );
   }
 
-  List<TreeRecord<Record>> transformRecords() => _filtered.map(_buildTreeRecord).toList();
-  TreeRecord<Record> _buildTreeRecord(Record record) {
-    return TreeRecord<Record>(
+  List<TreeRecord<ChronicleRecord>> transformRecords() =>
+      _filtered.map(_buildTreeRecord).toList();
+  TreeRecord<ChronicleRecord> _buildTreeRecord(ChronicleRecord record) {
+    return TreeRecord<ChronicleRecord>(
       address: record.group,
       object: record,
       name: record.description,
     );
   }
 
-  
-  Future openFolder(TreeRecord<Record>? folder) async {
+  Future openFolder(TreeRecord<ChronicleRecord>? folder) async {
     records = listModel.openFolder(list: transformRecords(), folder: folder);
     notifyListeners();
   }
-  
+
   // Поиск
   Future setSearchQuery(String query) async {
     searchQuery = query;
     await _applyFiltersAndSort();
     notifyListeners();
   }
-  
+
   Future clearSearch() async {
     searchQuery = '';
     await _applyFiltersAndSort();
     notifyListeners();
   }
-  
+
   // ---------- Фильтры -------------
 
   void setVisibilitySearch(bool value) {
     visibilitySearch = value;
     notifyListeners();
   }
+
+  Future setDateBeginFilter(DateTime? value) async {
+    dateBeginFilter = value;
+    await loadData();
+  }
+
+  Future setDateEndFilter(DateTime? value) async {
+    dateEndFilter = value;
+    await loadData();
+  }
+
   Future setGroupFilter(bool value) async {
     groupFilter = value;
     await _applyFiltersAndSort();
     notifyListeners();
   }
+
   Future clearAllFilters() async {
     searchQuery = '';
-    await _applyFiltersAndSort();
-    notifyListeners();
+    dateBeginFilter = null;
+    dateEndFilter = null;
+    await loadData();
   }
-  
+
   // ------------- Сортировка -----------------
 
   Future setSorting(SortRecord field) async {
@@ -122,22 +138,29 @@ class RecordListModel extends ChangeNotifier {
     await _applyFiltersAndSort();
     notifyListeners();
   }
-  
+
   // Основная логика фильтрации и сортировки
 
   Future _applyFiltersAndSort() async {
-    var result = List<Record>.from(_records);
+    var result = List<ChronicleRecord>.from(_records);
     // Поиск
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
-      result = result.where((t) =>
-        t.description.toLowerCase().contains(query)
-      ).toList();
+      result = result
+          .where((t) => t.description.toLowerCase().contains(query))
+          .toList();
     }
     // Сортировка
     switch (sorting) {
       case SortRecord.date:
-        result.sort((a, b) => a.date.compareTo(b.date));
+        result.sort(
+          (a, b) => dateAndTimeToInt(
+            a.date,
+            a.time,
+          ).compareTo(dateAndTimeToInt(b.date, b.time)),
+        );
+      case SortRecord.time:
+        result.sort((a, b) => a.time.compareTo(b.time));
     }
     if (!sortAscending) {
       result = result.reversed.toList();
@@ -145,8 +168,13 @@ class RecordListModel extends ChangeNotifier {
     _filtered = result;
     _reloadList();
   }
-  
-  Future update(Record trg) async {
+
+  static int dateAndTimeToInt(DateTime date, int time) {
+    return (time - DateTool.timezone.inMilliseconds) % (1000 * 60 * 60 * 24) +
+        date.millisecondsSinceEpoch;
+  }
+
+  Future update(ChronicleRecord trg) async {
     await _taskRepo.update(trg);
     final index = _records.indexWhere((t) => t.id == trg.id);
     if (index != -1) {
@@ -163,7 +191,7 @@ class RecordListModel extends ChangeNotifier {
     await _applyFiltersAndSort();
     notifyListeners();
   }
-  
+
   Future deleteAllSelected() async {
     for (final id in selectedIds) {
       await _taskRepo.delete(id);
@@ -174,7 +202,7 @@ class RecordListModel extends ChangeNotifier {
     await _applyFiltersAndSort();
     notifyListeners();
   }
-  
+
   // Режим выделения
   void toggleSelectionMode() {
     isSelectionMode = !isSelectionMode;
@@ -183,7 +211,7 @@ class RecordListModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   void toggleSelectAll() {
     if (selectedIds.length == _filtered.length) {
       selectedIds = {};
@@ -192,8 +220,11 @@ class RecordListModel extends ChangeNotifier {
     }
     notifyListeners();
   }
-  
+
   void toggleSelect(String id) {
+    if (visibilityForm) {
+      visibilityForm = false;
+    }
     final selectedIdsCopy = selectedIds.toSet();
     if (selectedIdsCopy.contains(id)) {
       selectedIdsCopy.remove(id);
@@ -203,7 +234,7 @@ class RecordListModel extends ChangeNotifier {
     selectedIds = selectedIdsCopy;
     notifyListeners();
   }
-  
+
   void clearSelection() {
     selectedIds = {};
     isSelectionMode = false;

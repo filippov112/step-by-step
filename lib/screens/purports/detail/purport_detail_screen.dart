@@ -46,10 +46,11 @@ class _PurportDetailScreenState extends State<PurportDetailScreen>
     var deleteThis = model.deleteThis;
 
     return EntityScreen(
-      title: 'Смысл',
+      title: '',
       editCallback: () => _edit(model, record),
       deleteCallback: () => _deleteThis(deleteThis),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Шапка
           const PurportDetailHeader(),

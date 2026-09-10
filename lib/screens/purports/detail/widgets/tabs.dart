@@ -1,7 +1,9 @@
 import 'package:chaos_control/screens/purports/detail/widgets/tab_detail.dart';
 import 'package:chaos_control/screens/purports/detail/widgets/tab_images.dart';
 import 'package:chaos_control/screens/purports/detail/widgets/tab_sounds.dart';
+import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PurportDetailTabs extends StatelessWidget {
   final TabController controller;
@@ -10,6 +12,9 @@ class PurportDetailTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final imagesCount = context.select<PurportImagesModel,int>((m) => m.images.length);
+
     return Expanded(
       child: Column(
         children: [
@@ -18,9 +23,9 @@ class PurportDetailTabs extends StatelessWidget {
             dividerColor: Theme.of(context).dividerColor,
             indicatorColor: Theme.of(context).focusColor,
             controller: controller,
-            tabs: const [
+            tabs: [
               Tab(text: 'Детали', height: 40,),
-              Tab(text: 'Фото', height: 40,),
+              Tab(text: 'Фото ($imagesCount)', height: 40,),
               Tab(text: 'Аудио', height: 40,),
             ],
           ),

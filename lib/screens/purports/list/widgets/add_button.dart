@@ -12,7 +12,7 @@ class PurportListAddButton extends StatelessWidget {
     final model = context.read<PurportListModel>();
 
     return CustomFloatingActionButton(
-      openFormCreate: () => _create(context, model.loadData),
+      callback: () => _create(context, model.loadData),
       tooltip: 'Добавить смысл',
     );
   }

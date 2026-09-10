@@ -45,8 +45,9 @@ class _PurportCreateScreenState extends State<PurportCreateScreen> {
       customValidator: model.groupValidator,
     );
     final descField = CustomTextInput(
-      header: 'Описание',
-      icon: Icons.mode_standby,
+      header: 'Суть',
+      icon: Icons.description,
+      action: null,
       setText: model.setTarget,
       lines: 4,
     );

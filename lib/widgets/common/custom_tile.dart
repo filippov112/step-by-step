@@ -29,7 +29,7 @@ class CustomTile extends StatelessWidget {
       child: Container(
         padding: padding != null ? EdgeInsets.all(padding!) : null,
         decoration: BoxDecoration(
-          color: (background ?? Theme.of(context).cardColor).withValues(alpha:0.8),
+          color: background ?? Theme.of(context).cardColor.withAlpha(200),
           borderRadius: borderRadius != null ? BorderRadius.all(Radius.circular(borderRadius!)) : null,
           border: Border.all(
             color: borderColor ?? Theme.of(context).dividerColor, 

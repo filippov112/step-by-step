@@ -16,13 +16,13 @@ class PurportDetailDetailTab extends StatelessWidget {
 
     final focusColor = Theme.of(context).focusColor;
 
-    // Описание
+    // Суть
     final descWidget = desc?.isEmpty ?? true
         ? null
         : CustomCardBlock(
             borderColor: focusColor,
-            icon: Icons.center_focus_weak_rounded,
-            title: 'Смысл',
+            icon: Icons.description,
+            title: 'Суть',
             child: CustomText(
               desc ?? '',
               lines: null,

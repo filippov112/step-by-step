@@ -32,7 +32,7 @@ class CustomIconPicker extends StatelessWidget {
       final file = await FileService.pickImageFromGallery();
       if (file == null) return false;
 
-      final savedPath = await FileService.saveIcon(file);
+      final savedPath = await FileService.saveImage(file);
       if (savedPath != null) {
         setIcon(CustomImageData.fromImage(savedPath));
       }

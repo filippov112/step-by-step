@@ -1,5 +1,6 @@
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/screens/purports/detail/purport_detail_screen.dart';
+import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
 import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/screens/purports/list/widgets/add_button.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
@@ -19,17 +20,20 @@ class PurportListList extends StatelessWidget {
     await deleteCallback(record.id);
   }
 
-  void _open(BuildContext context, Purport? record, VoidCallback loadCallback) {
-    if (record == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PurportDetailScreen(purport: record),
-      ),
-    ).then((_) { 
-      if (context.mounted) loadCallback();
-    });
-    
+  Future _open(BuildContext context, Purport? purport, VoidCallback loadCallback) async {
+    if (purport == null) return;
+    final imagesModel = context.read<PurportImagesModel>();
+    await imagesModel.init(purport);
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PurportDetailScreen(purport: purport),
+        ),
+      ).then((_) { 
+        if (context.mounted) loadCallback();
+      });
+    }
   }
   
   @override

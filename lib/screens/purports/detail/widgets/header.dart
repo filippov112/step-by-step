@@ -21,8 +21,10 @@ class PurportDetailHeader extends StatelessWidget {
     );
 
     return Container(
-      decoration: BoxDecoration(color: Theme.of(context).cardColor),
-      padding: EdgeInsetsGeometry.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor.withAlpha(150)
+        ),
+      padding: EdgeInsetsGeometry.all(16),
       child: titleWidget
     );
   }

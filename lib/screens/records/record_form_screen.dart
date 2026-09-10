@@ -182,8 +182,9 @@ class RecordFormState extends State<RecordForm> {
     String? groupValidator(String? text) {
       if (text == null || text.isEmpty) return null;
       var parts = text.split('/');
-      if (parts.any((e) => e.isEmpty))
+      if (parts.any((e) => e.isEmpty)) {
         return 'Части группы не могут быть пустыми';
+      }
       return null;
     }
 

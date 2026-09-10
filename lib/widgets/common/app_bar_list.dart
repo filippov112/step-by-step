@@ -4,7 +4,6 @@ import 'package:chaos_control/widgets/common/custom_text.dart';
 
 // AppBar для экранов-списков
 class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final TabBar? tabs;
   final Widget? searchWidget;
   final bool? visibilitySearch;
   final Function(bool)? setVisibilitySearch;
@@ -20,7 +19,6 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.setVisibilitySearch,
     this.selectionParams,
     this.actions,
-    this.tabs,
   });
 
   @override
@@ -77,56 +75,43 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
           ];
 
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: kToolbarHeight,
-            child: AppBar(
-              title: searchField ?? titleWidget,
-              actions: [
-                ...?selectionActions,
-                ...?actions,
+    return AppBar(
+      title: searchField ?? titleWidget,
+      actions: [
+        ...?selectionActions,
+        ...?actions,
 
-                // Поиск
-                if (selectionParams?.isSelectionMode != true &&
-                  searchWidget != null &&
-                  visibilitySearch != null &&
-                  setVisibilitySearch != null) ...{
-                  
-                  IconButton(
-                    color: visibilitySearch == true
-                        ? Theme.of(context).disabledColor
-                        : Theme.of(context).focusColor,
-                    icon: const Icon(Icons.search),
-                    tooltip: 'Поиск',
-                    onPressed: () => setVisibilitySearch!(!visibilitySearch!),
-                  ),
-                },
-                // Фильтры
-                if (selectionParams?.isSelectionMode != true)
-                  Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.filter_list),
-                      tooltip: 'Фильтры',
-                      onPressed: Scaffold.of(context).openEndDrawer,
-                    ),
-                  ),
-              ],
+        // Поиск
+        if (selectionParams?.isSelectionMode != true &&
+            searchWidget != null &&
+            visibilitySearch != null &&
+            setVisibilitySearch != null) ...{
+          IconButton(
+            color: visibilitySearch == true
+                ? Theme.of(context).disabledColor
+                : Theme.of(context).focusColor,
+            icon: const Icon(Icons.search),
+            tooltip: 'Поиск',
+            onPressed: () => setVisibilitySearch!(!visibilitySearch!),
+          ),
+        },
+        // Фильтры
+        if (selectionParams?.isSelectionMode != true)
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.filter_list),
+              tooltip: 'Фильтры',
+              onPressed: Scaffold.of(context).openEndDrawer,
             ),
           ),
-          if (tabs != null) Container(child: tabs),
-        ],
-      ),
+      ],
     );
   }
 
   @override
   Size get preferredSize {
     final double appBarHeight = kToolbarHeight;
-    final double tabBarHeight = tabs == null ? 0 : tabs!.preferredSize.height;
-    return Size.fromHeight(appBarHeight + tabBarHeight);
+    return Size.fromHeight(appBarHeight);
   }
 }
 

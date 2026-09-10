@@ -1,3 +1,5 @@
+import 'package:chaos_control/screens/purports/images/images_appbar.dart';
+import 'package:chaos_control/screens/purports/images/images_list.dart';
 import 'package:flutter/material.dart';
 
 class PurportDetailTabImages extends StatelessWidget {
@@ -6,16 +8,11 @@ class PurportDetailTabImages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return SizedBox();
-
-    // return CustomTreeList<Target>(
-    //   emptyTitle: 'Цели не найдены',
-    //   currentAddress: currentAddress,
-    //   visualList: targets,
-    //   tileIcon: Icons.center_focus_strong,
-    //   openRecordCallback: (trg) => _open(context, trg, model.reloadTargets),
-    //   openFolderCallback: model.openTargetsFolder,
-    //   tileFabric: TargetTreeFabric(),
-    // );
+    return Column(
+      children: [
+        const ImagesAppbar(),
+        const ImagesList(),
+      ],
+    );
   }
 }

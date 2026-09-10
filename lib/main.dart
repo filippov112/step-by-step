@@ -1,7 +1,7 @@
 import 'package:chaos_control/screens/purports/create/purport_create_model.dart';
 import 'package:chaos_control/screens/purports/detail/purport_detail_model.dart';
-import 'package:chaos_control/screens/purports/detail/purport_images_model.dart';
-import 'package:chaos_control/screens/purports/detail/purport_sounds_model.dart';
+import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
+import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/screens/purports/edit/purport_edit_model.dart';
 import 'package:chaos_control/screens/records/record_form_model.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';

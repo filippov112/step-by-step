@@ -14,17 +14,13 @@ class Purport {
   static const cTitle = "_title";
   static const cDescription = "_description";
   static const cGroup = "_group";
-  static const cImages = "_images";
-  static const cSounds = "_sounds";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
 
           $cTitle TEXT NOT NULL, 
           $cDescription TEXT,
-          $cGroup TEXT,
-          $cImages TEXT,
-          $cSounds TEXT
+          $cGroup TEXT
         );
         ''';
 
@@ -34,25 +30,19 @@ class Purport {
   String title = "";
   String description = "";
   String group = "";
-  List<String> images = [];
-  List<String> sounds = [];
 
   // ------------ Конструкторы ------------
   Purport({
     required this.id,
     required this.title,
     required this.group,
-    required this.description,
-    required this.images,
-    required this.sounds
+    required this.description
   });
 
   factory Purport.create({
     required String title,
     String description = "",
-    String group = "",
-    List<String>? images,
-    List<String>? sounds
+    String group = ""
   }) {
     final guid = const Uuid().v4();
     return Purport(
@@ -60,9 +50,7 @@ class Purport {
 
       title: title,
       description: description,
-      group: group,
-      images: images ?? [],
-      sounds: sounds ?? []
+      group: group
     );
   }
 
@@ -73,9 +61,7 @@ class Purport {
 
       cTitle: title,
       cDescription: description,
-      cGroup: group,
-      cImages: jsonEncode(images),
-      cSounds: jsonEncode(sounds),
+      cGroup: group
     };
   }
 
@@ -85,8 +71,6 @@ class Purport {
     title = map[cTitle];
     description = map[cDescription] ?? "";
     group = map[cGroup];
-    images = List<String>.from(jsonDecode(map[cImages]));
-    sounds = List<String>.from(jsonDecode(map[cSounds]));
   }
 }
 

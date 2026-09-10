@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 class FileService {
 
   // Сохраняет иконку
-  static Future<String?> saveIcon(File imageFile) async {
+  static Future<String?> saveImage(File imageFile) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final iconDir = Directory('${appDir.path}/icons');
@@ -40,15 +40,23 @@ class FileService {
   }
   
   // Выбор изображения из галереи
-  static Future<File?> pickImageFromGallery() async {
+  static Future<File?> pickImageFromGallery({bool full = false}) async {
     try {
       final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(
+      late XFile? image;
+      if (full) {
+        image = await picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
-        imageQuality: 85,
+        imageQuality: 100,
       );
+      } else {
+        image = await picker.pickImage(
+          source: ImageSource.gallery,
+          maxWidth: 512,
+          maxHeight: 512,
+          imageQuality: 85,
+        );
+      }
       
       if (image != null) {
         return File(image.path);

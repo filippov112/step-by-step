@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SoloLevelingTheme {
-  static const Color back1 = Color(0xFF0A0E1A); // почти чёрно-синий
-  static const Color back2 = Color(0xFF111B2E); // глубокий синий (фон карточек)
+  static const Color back1 = Color.fromARGB(200, 10, 14, 26); // почти чёрно-синий
+  static const Color back2 = Color.fromARGB(220, 18, 29, 49); // глубокий синий (фон карточек)
   static const Color details1 = Color.fromARGB(255, 13, 48, 103); // для границ/разделителей
-  static const Color details2 = Color.fromARGB(255, 30, 66, 126); // для границ/разделителей
   static const Color active1 = Color.fromARGB(255, 66, 193, 252); // основной акцент (свечение)
   static const Color active2 = Color(0xFF81D4FA); // более светлый голубой
   static const Color text3 = Color.fromARGB(255, 117, 174, 200); // для текста второстепенного
@@ -16,7 +15,7 @@ class SoloLevelingTheme {
       // ---- Базовые цвета ----
       brightness: Brightness.dark,
       primaryColor: back1,
-      scaffoldBackgroundColor: back1.withAlpha(230),
+      scaffoldBackgroundColor: back1,
       canvasColor: back2,
       cardColor: back2,
       dividerColor: details1.withValues(alpha: 0.5),

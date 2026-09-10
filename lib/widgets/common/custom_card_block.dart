@@ -24,14 +24,18 @@ class CustomCardBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final defaultBorderColor = Theme.of(context).dividerColor;
+    final cardColor = Theme.of(context).primaryColor;
+    final onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
+
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: backColor ?? Theme.of(context).dividerColor.withAlpha(25),
+        color: backColor ?? cardColor.withAlpha(220),
         borderRadius: const BorderRadius.all(Radius.circular(16)),
         border: Border.all(
-          color: borderColor ?? Theme.of(context).dividerColor,
+          color: borderColor ?? defaultBorderColor,
           width: 1,
         ),
       ),
@@ -55,7 +59,7 @@ class CustomCardBlock extends StatelessWidget {
                       title!,
                       size: 14,
                       color:
-                          textColor ?? Theme.of(context).colorScheme.onPrimary,
+                          textColor ?? onPrimaryColor,
                       expanded: true,
                       weight: FontWeight(500),
                     ),

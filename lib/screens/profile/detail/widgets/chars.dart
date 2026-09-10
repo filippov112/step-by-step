@@ -111,7 +111,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                   children: [
                     Icon(ch.icon, color: ch.color, size: 14),
                     CustomText(
-                      ch.displayName,
+                      '${ch.displayName} (${ch.emoji})',
                       expanded: true,
                       size: 12,
                       padding: const EdgeInsets.only(bottom: 3, left: 12),

@@ -1,21 +1,21 @@
-import 'package:chaos_control/screens/barriers/bar_list_model.dart';
+import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/widgets/common/app_bar_list.dart';
 import 'package:chaos_control/widgets/common/search_string.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BarrierListAppbar extends StatelessWidget implements PreferredSizeWidget {
+class RecordListAppbar extends StatelessWidget implements PreferredSizeWidget {
   final TextEditingController searchController;
-  const BarrierListAppbar({super.key, required this.searchController});
+  const RecordListAppbar({super.key, required this.searchController});
   
   @override
   Widget build(BuildContext context) {
-    final model = context.read<BarrierListModel>();
-    final allItemsCount = context.select<BarrierListModel,int>((m) => m.barriers.length);
-    final visibilitySearch = context.select<BarrierListModel,bool>((m) => m.visibilitySearch);
-    final selectedItemsCount = context.select<BarrierListModel,int>((m) => m.selectedIds.length);
-    final isSelectionMode = context.select<BarrierListModel,bool>((m) => m.isSelectionMode); 
-    final searchQuery = context.select<BarrierListModel,String>((m) => m.searchQuery); 
+    final model = context.read<RecordListModel>();
+    final allItemsCount = context.select<RecordListModel,int>((m) => m.records.length);
+    final visibilitySearch = context.select<RecordListModel,bool>((m) => m.visibilitySearch);
+    final selectedItemsCount = context.select<RecordListModel,int>((m) => m.selectedIds.length);
+    final isSelectionMode = context.select<RecordListModel,bool>((m) => m.isSelectionMode); 
+    final searchQuery = context.select<RecordListModel,String>((m) => m.searchQuery); 
 
     return ListAppBar(
         title: '',

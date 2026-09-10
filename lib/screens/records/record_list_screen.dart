@@ -1,28 +1,28 @@
-import 'package:chaos_control/screens/barriers/bar_form_screen.dart';
-import 'package:chaos_control/screens/barriers/widgets/appbar.dart';
-import 'package:chaos_control/screens/barriers/widgets/filters.dart';
-import 'package:chaos_control/screens/barriers/widgets/list.dart';
+import 'package:chaos_control/screens/records/record_form_screen.dart';
+import 'package:chaos_control/screens/records/widgets/appbar.dart';
+import 'package:chaos_control/screens/records/widgets/filters.dart';
+import 'package:chaos_control/screens/records/widgets/list.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/barriers/bar_list_model.dart';
+import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
 import 'package:chaos_control/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
-class BarrierListScreen extends StatefulWidget {
-  const BarrierListScreen({super.key});
+class RecordListScreen extends StatefulWidget {
+  const RecordListScreen({super.key});
 
   @override
-  State<BarrierListScreen> createState() => _BarrierListScreenState();
+  State<RecordListScreen> createState() => _RecordListScreenState();
 }
 
-class _BarrierListScreenState extends State<BarrierListScreen> {
+class _RecordListScreenState extends State<RecordListScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BarrierListModel>().loadData();
+      context.read<RecordListModel>().loadData();
     });
   }
 
@@ -35,16 +35,16 @@ class _BarrierListScreenState extends State<BarrierListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BarrierListAppbar(searchController: _searchController),
+      appBar: RecordListAppbar(searchController: _searchController),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          const Expanded(child: BarrierList(),),
+          const Expanded(child: RecordList(),),
          
-          BarrierForm(),
+          RecordForm(),
         ],
       ),
-      endDrawer: const BarrierListFilters(),
+      endDrawer: const RecordListFilters(),
       drawer: const MainMenuDrawer(),
       bottomNavigationBar: const MainBottomMenu(),
     );

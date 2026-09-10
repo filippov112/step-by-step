@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
-import 'package:chaos_control/models/barrier.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class BarrierFormModel extends ChangeNotifier {
-  final _barRepo = BarrierRepository();
+class RecordFormModel extends ChangeNotifier {
+  final _recRepo = RecordRepository();
 
   String desc = '';
   String group = '';
@@ -16,19 +16,19 @@ class BarrierFormModel extends ChangeNotifier {
   Characteristic characteristic = Characteristic.perseverance;
 
   int sf = 0;
-  Barrier? barrier;
+  Record? record;
   bool isEditing = false;
 
-  void init(Barrier? bar) {
-    isEditing = bar != null;
+  void init(Record? rec) {
+    isEditing = rec != null;
 
-    diffIndex = bar?.difficulty.index ?? 0;
-    desc = bar?.description ?? '';
-    group = bar?.group ?? '';
-    characteristic = bar?.char ?? Characteristic.perseverance;
-    date = bar?.date ?? DateTool.today();
+    diffIndex = rec?.difficulty.index ?? 0;
+    desc = rec?.description ?? '';
+    group = rec?.group ?? '';
+    characteristic = rec?.char ?? Characteristic.perseverance;
+    date = rec?.date ?? DateTool.today();
 
-    barrier = bar ?? Barrier.create(date: date);
+    record = rec ?? Record.create(date: date);
     _recalcSF();
 
     notifyListeners();
@@ -69,33 +69,33 @@ class BarrierFormModel extends ChangeNotifier {
   void _recalcChars() {
     switch (characteristic) {
       case Characteristic.control:
-        barrier?.control = sf;
+        record?.control = sf;
       case Characteristic.perseverance:
-        barrier?.perseverance = sf;
+        record?.perseverance = sf;
       case Characteristic.courage:
-        barrier?.courage = sf;
+        record?.courage = sf;
       case Characteristic.durability:
-        barrier?.durability = sf;
+        record?.durability = sf;
       case Characteristic.creativity:
-        barrier?.creativity = sf;
+        record?.creativity = sf;
     }
   }
 
   Future save() async {
-    if (barrier == null) return;
+    if (record == null) return;
 
-    barrier?.description = desc;
-    barrier?.group = group;
-    barrier?.char = characteristic;
-    barrier?.date = date;
-    barrier?.difficulty = DifficultyLvl.values[diffIndex];
+    record?.description = desc;
+    record?.group = group;
+    record?.char = characteristic;
+    record?.date = date;
+    record?.difficulty = DifficultyLvl.values[diffIndex];
 
     _recalcChars();
 
     if (isEditing) {
-      await _barRepo.update(barrier!);
+      await _recRepo.update(record!);
     } else {
-      await _barRepo.insert(barrier!);
+      await _recRepo.insert(record!);
       init(null);
     }
   }

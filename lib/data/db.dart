@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:chaos_control/models/purport.dart';
-import 'package:chaos_control/models/barrier.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -31,7 +31,7 @@ class DB {
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Profile.init);
       await db.execute(Purport.init);
-      await db.execute(Barrier.init);
+      await db.execute(Record.init);
     });
   }
 

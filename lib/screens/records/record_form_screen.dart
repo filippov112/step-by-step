@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
-import 'package:chaos_control/screens/barriers/bar_form_model.dart';
-import 'package:chaos_control/screens/barriers/bar_list_model.dart';
+import 'package:chaos_control/screens/records/record_form_model.dart';
+import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/services/numerictool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
@@ -12,18 +12,18 @@ import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BarrierForm extends StatefulWidget {
-  const BarrierForm({super.key});
+class RecordForm extends StatefulWidget {
+  const RecordForm({super.key});
 
   @override
-  State<StatefulWidget> createState() => BarrierFormState();
+  State<StatefulWidget> createState() => RecordFormState();
 }
 
-class BarrierFormState extends State<BarrierForm> {
+class RecordFormState extends State<RecordForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController descController, groupController;
-  late BarrierFormModel model;
-  late BarrierListModel listModel;
+  late RecordFormModel model;
+  late RecordListModel listModel;
   StreamSubscription? subscription;
 
   @override
@@ -31,8 +31,8 @@ class BarrierFormState extends State<BarrierForm> {
     super.initState();
     descController = TextEditingController();
     groupController = TextEditingController(); 
-    model = context.read<BarrierFormModel>();
-    listModel = context.read<BarrierListModel>();
+    model = context.read<RecordFormModel>();
+    listModel = context.read<RecordListModel>();
     subscription = model.initStream.listen((event) => resetControllers());
   }
 
@@ -52,18 +52,18 @@ class BarrierFormState extends State<BarrierForm> {
 
   @override
   Widget build(BuildContext context) {
-    final visibility = context.select<BarrierListModel, bool>(
+    final visibility = context.select<RecordListModel, bool>(
       (m) => m.visibilityForm,
     );
     if (!visibility) return const SizedBox();
-    final diffIndex = context.select<BarrierFormModel, int>((m) => m.diffIndex);
-    final date = context.select<BarrierFormModel, DateTime>((m) => m.date);
-    final sf = context.select<BarrierFormModel, int>((m) => m.sf);
-    final char = context.select<BarrierFormModel, Characteristic>(
+    final diffIndex = context.select<RecordFormModel, int>((m) => m.diffIndex);
+    final date = context.select<RecordFormModel, DateTime>((m) => m.date);
+    final sf = context.select<RecordFormModel, int>((m) => m.sf);
+    final char = context.select<RecordFormModel, Characteristic>(
       (m) => m.characteristic,
     );
 
-    final isEditing = context.select<BarrierFormModel, bool>(
+    final isEditing = context.select<RecordFormModel, bool>(
       (m) => m.isEditing,
     );
 
@@ -177,6 +177,7 @@ class BarrierFormState extends State<BarrierForm> {
       controller: descController,
       setText: (v) => model.setDesc(v ?? ''),
       icon: Icons.description,
+      action: null,
       lines: 3,
     );
 

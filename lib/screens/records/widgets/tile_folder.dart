@@ -1,12 +1,12 @@
-import 'package:chaos_control/screens/barriers/widgets/tile.dart';
+import 'package:chaos_control/screens/records/widgets/tile.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 
-class BarrierTileFolder extends BarrierTreeTile {
+class RecordTileFolder extends RecordTreeTile {
 
-  const BarrierTileFolder({
+  const RecordTileFolder({
     super.key,
     required super.record,
     super.openCallback,

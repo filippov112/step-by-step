@@ -1,5 +1,5 @@
 import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/barrier.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/analytics/dto_activity.dart';
 import 'package:chaos_control/services/analytics/dto_stats.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,12 +19,12 @@ class AnalyticsRepository {
     final args = <dynamic>[];
 
     if (startDate != null) {
-      conditions.add('${Barrier.cDate} >= ?');
+      conditions.add('${Record.cDate} >= ?');
       args.add(startDate);
     }
 
     if (endDate != null) {
-      conditions.add('${Barrier.cDate} <= ?');
+      conditions.add('${Record.cDate} <= ?');
       args.add(endDate);
     }
 
@@ -35,16 +35,16 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT 
-        ${Barrier.cDate},
-        COALESCE(SUM( ${Barrier.cControl} ), 0) AS ${DtoActivity.cControl},
-        COALESCE(SUM( ${Barrier.cPerseverance} ), 0) AS ${DtoActivity.cPerseverance},
-        COALESCE(SUM( ${Barrier.cCourage} ), 0) AS ${DtoActivity.cCourage},
-        COALESCE(SUM( ${Barrier.cDurability} ), 0) AS ${DtoActivity.cDurability},
-        COALESCE(SUM( ${Barrier.cCreativity} ), 0) AS ${DtoActivity.cCreativity}
-      FROM ${Barrier.tn}
+        ${Record.cDate},
+        COALESCE(SUM( ${Record.cControl} ), 0) AS ${DtoActivity.cControl},
+        COALESCE(SUM( ${Record.cPerseverance} ), 0) AS ${DtoActivity.cPerseverance},
+        COALESCE(SUM( ${Record.cCourage} ), 0) AS ${DtoActivity.cCourage},
+        COALESCE(SUM( ${Record.cDurability} ), 0) AS ${DtoActivity.cDurability},
+        COALESCE(SUM( ${Record.cCreativity} ), 0) AS ${DtoActivity.cCreativity}
+      FROM ${Record.tn}
       $whereClause
-      GROUP BY ${Barrier.cDate}
-      ORDER BY ${Barrier.cDate} DESC
+      GROUP BY ${Record.cDate}
+      ORDER BY ${Record.cDate} DESC
     ''';
 
     final result = await db.rawQuery(query, args);
@@ -56,12 +56,12 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT
-        COALESCE(SUM( ${Barrier.cControl} ), 0) AS ${DtoStats.cControl},
-        COALESCE(SUM( ${Barrier.cPerseverance} ), 0) AS ${DtoStats.cPerseverance},
-        COALESCE(SUM( ${Barrier.cCourage} ), 0) AS ${DtoStats.cCourage},
-        COALESCE(SUM( ${Barrier.cDurability} ), 0) AS ${DtoStats.cDurability},
-        COALESCE(SUM( ${Barrier.cCreativity} ), 0) AS ${DtoStats.cCreativity}
-      FROM ${Barrier.tn}
+        COALESCE(SUM( ${Record.cControl} ), 0) AS ${DtoStats.cControl},
+        COALESCE(SUM( ${Record.cPerseverance} ), 0) AS ${DtoStats.cPerseverance},
+        COALESCE(SUM( ${Record.cCourage} ), 0) AS ${DtoStats.cCourage},
+        COALESCE(SUM( ${Record.cDurability} ), 0) AS ${DtoStats.cDurability},
+        COALESCE(SUM( ${Record.cCreativity} ), 0) AS ${DtoStats.cCreativity}
+      FROM ${Record.tn}
     ''';
 
     final result = await db.rawQuery(query);

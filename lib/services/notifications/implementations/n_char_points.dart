@@ -7,7 +7,16 @@ class NCharPoints extends NotificationItem {
 
   @override
   Widget getWidget() {
-    return CustomText('${char.displayName}: +$value');
+    return Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+        Icon(char.icon, color: char.color),
+        CustomText(char.displayName, padding: EdgeInsets.only(left: 8),),
+      ],),
+      CustomText('+$value', weight: FontWeight.bold, size: 18,)
+    ],);
   }
 
   Characteristic char = Characteristic.control;

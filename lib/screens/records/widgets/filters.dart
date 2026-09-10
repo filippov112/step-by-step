@@ -1,4 +1,4 @@
-import 'package:chaos_control/screens/barriers/bar_list_model.dart';
+import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/widgets/filters/sort_button.dart';
 import 'package:chaos_control/widgets/form/checkbox.dart';
 import 'package:flutter/material.dart';
@@ -7,25 +7,25 @@ import 'package:chaos_control/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
 
-class BarrierListFilters extends StatefulWidget {
-  const BarrierListFilters({super.key});
+class RecordListFilters extends StatefulWidget {
+  const RecordListFilters({super.key});
 
   @override
-  State<BarrierListFilters> createState() => _BarrierListFiltersState();
+  State<RecordListFilters> createState() => _RecordListFiltersState();
 }
 
-class _BarrierListFiltersState extends State<BarrierListFilters> {
+class _RecordListFiltersState extends State<RecordListFilters> {
 
   @override
   Widget build(BuildContext context) {
 
-    final model = context.read<BarrierListModel>();
-    final hasActiveFilters = context.select<BarrierListModel,bool>((model) => model.hasActiveFilters);
+    final model = context.read<RecordListModel>();
+    final hasActiveFilters = context.select<RecordListModel,bool>((model) => model.hasActiveFilters);
     
-    final groupFilterValue = context.select<BarrierListModel,bool>((m) => m.groupFilter);
+    final groupFilterValue = context.select<RecordListModel,bool>((m) => m.groupFilter);
     
-    final sortField = context.select<BarrierListModel,SortBarrier>((model) => model.sorting);
-    final sortAscending = context.select<BarrierListModel,bool>((model) => model.sortAscending);
+    final sortField = context.select<RecordListModel,SortRecord>((model) => model.sorting);
+    final sortAscending = context.select<RecordListModel,bool>((model) => model.sortAscending);
 
     final groupFilter = FilterSection(
       title: 'Группировка',
@@ -43,11 +43,11 @@ class _BarrierListFiltersState extends State<BarrierListFilters> {
       icon: Icons.sort,
       children: Column(
           children: [
-            SortButton<SortBarrier>(
+            SortButton<SortRecord>(
               sortField: sortField,
               setSortField: model.setSorting,
               sortAscending: sortAscending,
-              field: SortBarrier.date,
+              field: SortRecord.date,
               label: 'По дате',
             ),
           ],

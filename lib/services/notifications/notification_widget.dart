@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -65,6 +66,8 @@ class _NotificationWidgetState extends State<NotificationWidget>
 
   @override
   Widget build(BuildContext context) {
+    final onPrimaryColor = Theme.of(context).colorScheme.onPrimary.withAlpha(150);
+
     final container = GestureDetector(
       onTap: () async {
         await _fadeController.reverse();
@@ -72,14 +75,54 @@ class _NotificationWidgetState extends State<NotificationWidget>
       },
       child: Material(
         elevation: 6,
-        borderRadius: BorderRadius.circular(12),
+        shadowColor: onPrimaryColor,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(width: 3),
+            border: Border.all(width: 1, color: onPrimaryColor),
           ),
-          child: widget.item,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsetsGeometry.all(8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+
+                    // Иконка
+                    Container(
+                      height: 30,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: onPrimaryColor),
+                      ),
+                      padding: const EdgeInsets.all(2),
+                      child: Center(child:Icon(
+                        Icons.error_outline,
+                        color: onPrimaryColor,
+                        shadows: [Shadow(color: onPrimaryColor, blurRadius: 6)],
+                      ),)
+                    ),
+
+                    const SizedBox(width: 8,),
+
+                    // Надпись
+                    Container(
+                      height: 30,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: onPrimaryColor),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 12),
+                      child: Center(child:CustomText('NOTIFICATION', weight: FontWeight.bold, color: onPrimaryColor))
+                    ),
+                  ],
+                ),
+              ),
+
+              widget.item,
+            ],
+          ),
         ),
       ),
     );

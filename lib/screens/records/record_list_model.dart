@@ -1,47 +1,47 @@
-import 'package:chaos_control/models/barrier.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
-enum SortBarrier { date }
+enum SortRecord { date }
 
-class BarrierListModel extends ChangeNotifier {
-  final _taskRepo = BarrierRepository();
+class RecordListModel extends ChangeNotifier {
+  final _taskRepo = RecordRepository();
 
-  List<Barrier> _barriers = [];
-  List<Barrier> _filtered = [];
-  List<TreeRecord<Barrier>> barriers = [];
+  List<Record> _records = [];
+  List<Record> _filtered = [];
+  List<TreeRecord<Record>> records = [];
 
   // Открытие / закрытие формы
 
-  Barrier? currentBarrier;
+  Record? currentRecord;
   bool visibilityForm = false;
 
-  void openForm(Barrier? task) {
+  void openForm(Record? task) {
     visibilityForm = true;
-    currentBarrier = task;
+    currentRecord = task;
     notifyListeners();
   }
   void closeForm() {
     visibilityForm = false;
-    currentBarrier = null;
+    currentRecord = null;
     notifyListeners();
   }
 
   // ------
 
-  final listModel = CustomTreeListModel<Barrier>();
+  final listModel = CustomTreeListModel<Record>();
   
   // Фильтрация
   String searchQuery = '';
   bool visibilitySearch = false;
-  bool groupFilter = false;
+  bool groupFilter = true;
   bool get hasActiveFilters {
     return searchQuery.isNotEmpty;
   }
 
   // Сортировка
-  SortBarrier sorting = SortBarrier.date;
+  SortRecord sorting = SortRecord.date;
   bool sortAscending = true;
   
   // Выборки
@@ -52,31 +52,31 @@ class BarrierListModel extends ChangeNotifier {
   // ---------- Загрузка данных ------------
 
   Future loadData() async {
-    _barriers = await _taskRepo.getAll();
+    _records = await _taskRepo.getAll();
     await _applyFiltersAndSort();
     notifyListeners();
   }
 
   void _reloadList() {
-    barriers = listModel.openFolder(
+    records = listModel.openFolder(
       list: transformRecords(), 
       folder: listModel.currentFolder,
       groupFilter: groupFilter
     );
   }
 
-  List<TreeRecord<Barrier>> transformRecords() => _filtered.map(_buildTreeRecord).toList();
-  TreeRecord<Barrier> _buildTreeRecord(Barrier barrier) {
-    return TreeRecord<Barrier>(
-      address: barrier.group,
-      object: barrier,
-      name: barrier.description,
+  List<TreeRecord<Record>> transformRecords() => _filtered.map(_buildTreeRecord).toList();
+  TreeRecord<Record> _buildTreeRecord(Record record) {
+    return TreeRecord<Record>(
+      address: record.group,
+      object: record,
+      name: record.description,
     );
   }
 
   
-  Future openFolder(TreeRecord<Barrier>? folder) async {
-    barriers = listModel.openFolder(list: transformRecords(), folder: folder);
+  Future openFolder(TreeRecord<Record>? folder) async {
+    records = listModel.openFolder(list: transformRecords(), folder: folder);
     notifyListeners();
   }
   
@@ -112,7 +112,7 @@ class BarrierListModel extends ChangeNotifier {
   
   // ------------- Сортировка -----------------
 
-  Future setSorting(SortBarrier field) async {
+  Future setSorting(SortRecord field) async {
     if (sorting == field) {
       sortAscending = !sortAscending;
     } else {
@@ -126,7 +126,7 @@ class BarrierListModel extends ChangeNotifier {
   // Основная логика фильтрации и сортировки
 
   Future _applyFiltersAndSort() async {
-    var result = List<Barrier>.from(_barriers);
+    var result = List<Record>.from(_records);
     // Поиск
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
@@ -136,7 +136,7 @@ class BarrierListModel extends ChangeNotifier {
     }
     // Сортировка
     switch (sorting) {
-      case SortBarrier.date:
+      case SortRecord.date:
         result.sort((a, b) => a.date.compareTo(b.date));
     }
     if (!sortAscending) {
@@ -146,11 +146,11 @@ class BarrierListModel extends ChangeNotifier {
     _reloadList();
   }
   
-  Future update(Barrier trg) async {
+  Future update(Record trg) async {
     await _taskRepo.update(trg);
-    final index = _barriers.indexWhere((t) => t.id == trg.id);
+    final index = _records.indexWhere((t) => t.id == trg.id);
     if (index != -1) {
-      _barriers[index] = trg;
+      _records[index] = trg;
     }
     await _applyFiltersAndSort();
     notifyListeners();
@@ -158,7 +158,7 @@ class BarrierListModel extends ChangeNotifier {
 
   Future delete(String id) async {
     await _taskRepo.delete(id);
-    _barriers.removeWhere((t) => t.id == id);
+    _records.removeWhere((t) => t.id == id);
     selectedIds.remove(id);
     await _applyFiltersAndSort();
     notifyListeners();
@@ -167,7 +167,7 @@ class BarrierListModel extends ChangeNotifier {
   Future deleteAllSelected() async {
     for (final id in selectedIds) {
       await _taskRepo.delete(id);
-      _barriers.removeWhere((t) => t.id == id);
+      _records.removeWhere((t) => t.id == id);
     }
     selectedIds.clear();
     isSelectionMode = false;

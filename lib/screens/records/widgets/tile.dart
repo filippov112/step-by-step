@@ -1,14 +1,14 @@
-import 'package:chaos_control/models/barrier.dart';
-import 'package:chaos_control/screens/barriers/widgets/tile_folder.dart';
-import 'package:chaos_control/screens/barriers/widgets/tile_record.dart';
+import 'package:chaos_control/models/record.dart';
+import 'package:chaos_control/screens/records/widgets/tile_folder.dart';
+import 'package:chaos_control/screens/records/widgets/tile_record.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
 import 'package:flutter/material.dart';
 
-class BarrierTreeFabric implements TreeTileFabric<Barrier, BarrierTreeTile> {
+class RecordTreeFabric implements TreeTileFabric<Record, RecordTreeTile> {
   @override
-  BarrierTreeTile create({
-    required TreeRecord<Barrier> record,
+  RecordTreeTile create({
+    required TreeRecord<Record> record,
     VoidCallback? openCallback,
     VoidCallback? selectCallback,
     VoidCallback? deleteCallback,
@@ -18,7 +18,7 @@ class BarrierTreeFabric implements TreeTileFabric<Barrier, BarrierTreeTile> {
     IconData? customAltIcon,
   }) {
     if (record.isFolder) {
-      return BarrierTileFolder(
+      return RecordTileFolder(
         record: record,
         isSelected: isSelected ?? false,
         isSelectionMode: isSelectionMode ?? false,
@@ -28,7 +28,7 @@ class BarrierTreeFabric implements TreeTileFabric<Barrier, BarrierTreeTile> {
         deleteCallback: deleteCallback,
       );
     }
-    return BarrierTileRecord(
+    return RecordTileRecord(
       record: record,
       isSelected: isSelected ?? false,
       isSelectionMode: isSelectionMode ?? false,
@@ -40,15 +40,15 @@ class BarrierTreeFabric implements TreeTileFabric<Barrier, BarrierTreeTile> {
   }
 }
 
-class BarrierTreeTile extends StatelessWidget {
-  final TreeRecord<Barrier> record;
+class RecordTreeTile extends StatelessWidget {
+  final TreeRecord<Record> record;
   final VoidCallback? openCallback,
       selectCallback,
       deleteCallback,
       selectModeCallback;
   final bool isSelected, isSelectionMode;
 
-  const BarrierTreeTile({
+  const RecordTreeTile({
     super.key,
     required this.record,
     this.openCallback,

@@ -1,15 +1,15 @@
-import 'package:chaos_control/screens/barriers/bar_form_model.dart';
-import 'package:chaos_control/screens/barriers/bar_list_model.dart';
+import 'package:chaos_control/screens/records/record_form_model.dart';
+import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class BarrierListOpenButton extends StatelessWidget {
-  const BarrierListOpenButton({super.key});
+class RecordListOpenButton extends StatelessWidget {
+  const RecordListOpenButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<BarrierListModel>();
-    final formModel = context.read<BarrierFormModel>();
+    final model = context.read<RecordListModel>();
+    final formModel = context.read<RecordFormModel>();
 
     return FloatingActionButton(
       onPressed: () { model.openForm(null); formModel.init(null); },

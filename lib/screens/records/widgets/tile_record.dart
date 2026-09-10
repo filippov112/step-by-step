@@ -1,13 +1,13 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
-import 'package:chaos_control/screens/barriers/widgets/tile.dart';
+import 'package:chaos_control/screens/records/widgets/tile.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/custom_tile.dart';
 import 'package:flutter/material.dart';
 
-class BarrierTileRecord extends BarrierTreeTile {
-  const BarrierTileRecord({
+class RecordTileRecord extends RecordTreeTile {
+  const RecordTileRecord({
     super.key,
     required super.record,
     super.openCallback,

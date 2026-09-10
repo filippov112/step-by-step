@@ -58,7 +58,7 @@ extension CharacteristicsExt on Characteristic {
   String get emoji {
     switch (this) {
       case Characteristic.control:
-        return '☯';
+        return '🎯';
       case Characteristic.perseverance:
         return '🔥';
       case Characteristic.courage:

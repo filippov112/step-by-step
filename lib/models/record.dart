@@ -7,10 +7,10 @@ import 'package:chaos_control/services/datetool.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
-// Барьер
-class Barrier {
+// Запись
+class Record {
   // ------------ Схема ------------
-  static const tn = "barriers";
+  static const tn = "records";
 
   static const cId = "_id";
   static const cGroup = "_group";
@@ -47,7 +47,7 @@ class Barrier {
   String id = '';
   
   String description = ""; // Описание
-  Characteristic char = Characteristic.perseverance; // Тип преграды
+  Characteristic char = Characteristic.perseverance; // Характеристика
   DifficultyLvl difficulty = DifficultyLvl.F; // Уровень сложности
   DateTime date = DateTool.today(); // Дата
   String group = ""; // Группа
@@ -60,7 +60,7 @@ class Barrier {
 
   // ------------ Конструкторы ------------
 
-  Barrier({
+  Record({
     required this.id,
 
     required this.description,
@@ -76,7 +76,7 @@ class Barrier {
     required this.creativity,
   });
 
-  factory Barrier.create({
+  factory Record.create({
     String group = '',
     Characteristic char = Characteristic.perseverance,
     DifficultyLvl difficulty = DifficultyLvl.F,
@@ -90,7 +90,7 @@ class Barrier {
     int creativity = 0,
   }) {
     final guid = const Uuid().v4();
-    return Barrier(
+    return Record(
       id: guid,
 
       group: group,
@@ -137,7 +137,7 @@ class Barrier {
     };
   }
 
-  Barrier.fromMap(Map map) {
+  Record.fromMap(Map map) {
     id = map[cId];
     
     description = map[cDescription];
@@ -155,41 +155,41 @@ class Barrier {
 }
 
 // Базовый репозиторий
-class BarrierRepository {
+class RecordRepository {
   Database db = DB.db!;
   final userRepo = ProfileRepository();
 
-  Future<List<Barrier>> getAll() async {
-    List<Map<String, Object?>> maps = await db.query(Barrier.tn);
-    return maps.map((m) => Barrier.fromMap(m)).toList();
+  Future<List<Record>> getAll() async {
+    List<Map<String, Object?>> maps = await db.query(Record.tn);
+    return maps.map((m) => Record.fromMap(m)).toList();
   }
 
-  Future<Barrier?> get(String id) async {
+  Future<Record?> get(String id) async {
     List<Map> maps = await db.query(
-      Barrier.tn,
-      where: '${Barrier.cId} = ?',
+      Record.tn,
+      where: '${Record.cId} = ?',
       whereArgs: [id],
     );
     if (maps.isNotEmpty) {
-      return Barrier.fromMap(maps.first as Map<String, Object?>);
+      return Record.fromMap(maps.first as Map<String, Object?>);
     }
     return null;
   }
 
   // ----------- Изменения ----------------
 
-  Future<Barrier> insert(Barrier rw) async {
+  Future<Record> insert(Record rw) async {
     await _updateProfile(TransactionType.add, rw);
-    await db.insert(Barrier.tn, rw.toMap());
+    await db.insert(Record.tn, rw.toMap());
     return rw;
   }
 
-  Future<List<int>> insertBatch(Iterable<Barrier> models) async {
+  Future<List<int>> insertBatch(Iterable<Record> models) async {
     List<int> res = [];
     await db.transaction((txn) async {
-      for (Barrier m in models) {
+      for (Record m in models) {
         await _updateProfile(TransactionType.add, m);
-        res.add(await txn.insert(Barrier.tn, m.toMap()));
+        res.add(await txn.insert(Record.tn, m.toMap()));
       }
     });
     return res;
@@ -199,15 +199,15 @@ class BarrierRepository {
     var rw = await get(id);
     if (rw == null) return;
     await _updateProfile(TransactionType.remove, rw);
-    await db.delete(Barrier.tn, where: '${Barrier.cId} = ?', whereArgs: [id]);
+    await db.delete(Record.tn, where: '${Record.cId} = ?', whereArgs: [id]);
   }
 
-  Future update(Barrier rw) async {
+  Future update(Record rw) async {
     await _updateProfile(TransactionType.update, rw);
     return await db.update(
-      Barrier.tn,
+      Record.tn,
       rw.toMap(),
-      where: '${Barrier.cId} = ?',
+      where: '${Record.cId} = ?',
       whereArgs: [rw.id],
     );
   }
@@ -217,7 +217,7 @@ class BarrierRepository {
   // Рассчитать дельту
   Future<Map<Characteristic, int>> _getDelta(
     TransactionType type,
-    Barrier rw,
+    Record rw,
   ) async {
     final deltaChars = <Characteristic, int>{};
     final chars = rw.chars;
@@ -247,7 +247,7 @@ class BarrierRepository {
   }
 
   // Добавить дельту к пользователю
-  Future _updateProfile(TransactionType type, Barrier rw) async {
+  Future _updateProfile(TransactionType type, Record rw) async {
     final user = await userRepo.get();
     if (user == null) return;
     final deltaChars = await _getDelta(type, rw);

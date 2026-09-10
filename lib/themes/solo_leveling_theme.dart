@@ -16,7 +16,7 @@ class SoloLevelingTheme {
       // ---- Базовые цвета ----
       brightness: Brightness.dark,
       primaryColor: back1,
-      scaffoldBackgroundColor: back1,
+      scaffoldBackgroundColor: back1.withAlpha(230),
       canvasColor: back2,
       cardColor: back2,
       dividerColor: details1.withValues(alpha: 0.5),

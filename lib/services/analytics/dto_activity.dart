@@ -1,4 +1,4 @@
-import 'package:chaos_control/models/barrier.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/services/datetool.dart';
 
@@ -43,7 +43,7 @@ class DtoActivity {
 
   factory DtoActivity.fromMap(Map<String, dynamic> map) {
     return DtoActivity(
-      date: map[Barrier.cDate] as int,
+      date: map[Record.cDate] as int,
 
       control: map[cControl] as int? ?? 0,
       perseverance: map[cPerseverance] as int? ?? 0,

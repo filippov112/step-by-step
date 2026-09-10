@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/purports/list/purport_list_screen.dart';
 import 'package:chaos_control/screens/settings/setting_list_screen.dart';
-import 'package:chaos_control/screens/barriers/bar_list_screen.dart';
+import 'package:chaos_control/screens/records/record_list_screen.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
@@ -29,7 +29,7 @@ extension AppModuleExt on AppModule {
       case AppModule.profile:
         return ProfileDetailScreen();
       case AppModule.chronicle:
-        return BarrierListScreen();
+        return RecordListScreen();
       case AppModule.purports:
         return PurportListScreen();
       case AppModule.settings:
@@ -43,7 +43,7 @@ extension AppModuleExt on AppModule {
   String get nameModule {
     switch (this) {
       case AppModule.profile:
-        return 'Герой';
+        return 'Игрок';
       case AppModule.chronicle:
         return 'Хроники';
       case AppModule.purports:

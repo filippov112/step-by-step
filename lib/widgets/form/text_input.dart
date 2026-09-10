@@ -11,6 +11,7 @@ class CustomTextInput extends StatelessWidget {
   final String? Function(String?)? customValidator;
   final String? initialValue;
   final TextInputType? type;
+  final TextInputAction? action;
 
   const CustomTextInput({
     super.key,
@@ -22,14 +23,15 @@ class CustomTextInput extends StatelessWidget {
     this.lines,
     this.customValidator,
     this.initialValue,
-    this.type
+    this.type,
+    this.action = TextInputAction.done
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      textInputAction: TextInputAction.done,
+      textInputAction: action,
       onChanged: setText,
       keyboardType: type,
       inputFormatters: type == TextInputType.number ? [

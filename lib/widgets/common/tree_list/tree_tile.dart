@@ -97,6 +97,9 @@ class DefaultTreeTile<T> extends StatelessWidget {
       color: titleColor,
     );
 
+    // Число записей в каталоге
+    final countWidget = record.children == null ? null : CustomText('(${record.children?.length ?? 0})');
+
     // Кнопка удаления
     final deleteButtonWidget = IconButton(
       icon: const Icon(Icons.delete_outline, size: 16),
@@ -127,6 +130,11 @@ class DefaultTreeTile<T> extends StatelessWidget {
                 
                 // Информация
                 titleWidget,
+
+                Padding(
+                  padding: EdgeInsetsGeometry.only(top:12, bottom:14, right: 12),
+                  child: countWidget,
+                ),
 
                 if (isSelectionMode) ...{
                   deleteButtonWidget,

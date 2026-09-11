@@ -1,11 +1,12 @@
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/screens/records/widgets/tile.dart';
+import 'package:chaos_control/services/numerictool.dart';
 import 'package:chaos_control/widgets/common/custom_image_icon.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
-
 class RecordTileFolder extends RecordTreeTile {
-
   const RecordTileFolder({
     super.key,
     required super.record,
@@ -30,6 +31,15 @@ class RecordTileFolder extends RecordTreeTile {
       selectModeCallback?.call();
       selectCallback?.call();
     }
+  }
+
+  int getSumSF(List<TreeRecord<ChronicleRecord>>? records) {
+    int sum = 0;
+    if (records == null) return sum;
+    for (var r in records) {
+      sum += r.object?.spiritFragments ?? 0;
+    }
+    return sum;
   }
 
   @override
@@ -61,10 +71,25 @@ class RecordTileFolder extends RecordTreeTile {
       record.name ?? '',
       size: 17,
       overflow: TextOverflow.ellipsis,
-      padding: const EdgeInsets.only(bottom: 3),
       weight: FontWeight.w500,
       color: titleColor,
     );
+
+    // Суммарное число фрагментов духа по каталогу
+    final sfWidget = record.children == null ? null : Row(
+      children: [
+        Icon(
+          Icons.local_fire_department,
+          size: 12,
+          shadows: [Shadow(color: focusColor, blurRadius: 12)],
+        ),
+        const SizedBox(width: 4),
+        CustomText(NumericTool.toThousandString(getSumSF(record.children)), color: focusColor, size: 11,),
+      ],
+    );
+
+    // Кол-во записей в каталоге
+    final countWidget = record.children == null ? null : CustomText('(${record.children?.length ?? 0})');
 
     // Кнопка удаления
     final deleteButtonWidget = IconButton(
@@ -75,23 +100,24 @@ class RecordTileFolder extends RecordTreeTile {
 
     // Иконка
     final folderIconWidget = Padding(
-            padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
-            child: CustomImageIcon(
-              record.customIconData,
-              altIcon: Icons.folder,
-              color: focusColor,
-              width: 40,
-              height: 40,
-            ),
-          );
+      padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
+      child: CustomImageIcon(
+        record.customIconData,
+        altIcon: Icons.folder,
+        color: focusColor,
+        width: 40,
+        height: 40,
+      ),
+    );
 
     // Итоговая карточка
-    return Padding(
+    return (record.children == null && isSelectionMode) ? SizedBox() : Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Container(
         decoration: BoxDecoration(
           gradient: containterBorderColor,
           borderRadius: bRadius,
+          border: isSelected ? Border.all(color:focusColor, width: 1) : null,
           color: containterColor,
         ),
         child: InkWell(
@@ -114,12 +140,23 @@ class RecordTileFolder extends RecordTreeTile {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(12),
+                        padding: EdgeInsets.only(left:12, right: 12, top: 12), 
                         child: titleWidget
                       ),
+                      Padding(
+                        padding: EdgeInsetsGeometry.only(left:12, right: 12),
+                        child: sfWidget,
+                      ),
+                      const SizedBox(height: 12,)
                     ],
                   ),
                 ),
+
+                Padding(
+                  padding: EdgeInsetsGeometry.only(top:12, bottom:14, right: 12),
+                  child: countWidget,
+                ),
+                
 
                 if (isSelectionMode) ...{
                   deleteButtonWidget,

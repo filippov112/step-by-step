@@ -156,7 +156,7 @@ class PurportListModel extends ChangeNotifier {
   }
   
   void toggleSelectAll() {
-    final set = _filtered.where((t) => t.group.startsWith(listModel.currentAddress) ).map((t) => t.id).toSet();
+    final set = _filtered.where((t) => t.group.startsWith('${listModel.currentAddress}/') || t.group == listModel.currentAddress || listModel.currentAddress.isEmpty).map((t) => t.id).toSet();
     if (selectedIds.length == set.length) {
       selectedIds = {};
     } else {

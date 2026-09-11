@@ -87,7 +87,7 @@ class CustomTreeListModel<T> {
         name: name,
         address: path,
         children: list
-            .where((e) => e.address.startsWith(path))
+            .where((e) => e.address.startsWith('$path/') || e.address == path)
             .toList(),
       ));
     }

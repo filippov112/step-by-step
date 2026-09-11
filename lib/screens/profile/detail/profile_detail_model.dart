@@ -24,8 +24,6 @@ class ProfileDetailModel extends ChangeNotifier {
   int deltaSF = 0;
   int maxSF = 0;
 
-  bool charTableMode = false;
-
   // Фильтр периода
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
   StatPeriod selectedPeriod = StatPeriod.oneMonth;
@@ -87,11 +85,6 @@ class ProfileDetailModel extends ChangeNotifier {
       case StatPeriod.oneDay:
         return 0;
     }
-  }
-
-  void setChartTableMode(bool bool) {
-    charTableMode = bool;
-    notifyListeners();
   }
 
   // Загрузить статистику по фрагментам духа

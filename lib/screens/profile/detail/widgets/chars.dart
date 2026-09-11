@@ -19,15 +19,12 @@ class ProfileDetailChars extends StatefulWidget {
 }
 
 class _ProfileDetailCharsState extends State<ProfileDetailChars> {
+  bool isDeltaTab = false;
+
   @override
   Widget build(BuildContext context) {
-    final model = context.read<ProfileDetailModel>();
-
     final deltaColor = Colors.amber;
 
-    final charTableMode = context.select<ProfileDetailModel, bool>(
-      (m) => m.charTableMode,
-    );
     final Map<Characteristic, int>? chars = context
         .select<ProfileDetailModel, Map<Characteristic, int>?>(
           (model) => model.chars,
@@ -42,26 +39,19 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
       padding: EdgeInsets.all(8),
       labels: chars?.keys.map((k) => k.emoji).toList() ?? [],
       values: [
-        if (!charTableMode)
+        if (!isDeltaTab)
           RadarSeries(
             name: 'Всего:',
             pointRadius: 2,
-            values:
-                chars?.values
-                    .map((sf) => sf.toDouble())
-                    .toList() ??
-                [],
+            values: chars?.values.map((sf) => sf.toDouble()).toList() ?? [],
             color: Theme.of(context).focusColor,
           ),
-        if (charTableMode)
+        if (isDeltaTab)
           RadarSeries(
             name: 'За период:',
             pointRadius: 2,
             values:
-                deltaChars?.values
-                    .map((sf) => sf.toDouble())
-                    .toList() ??
-                [],
+                deltaChars?.values.map((sf) => sf.toDouble()).toList() ?? [],
             color: deltaColor,
           ),
       ],
@@ -73,22 +63,28 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
         IconButton(
           icon: Icon(
             Icons.bar_chart,
-            color: charTableMode
+            color: isDeltaTab
                 ? Theme.of(context).disabledColor
                 : Theme.of(context).focusColor,
-            shadows: charTableMode ? null : [Shadow(color: Theme.of(context).focusColor, blurRadius: 6)],
+            shadows: isDeltaTab
+                ? null
+                : [Shadow(color: Theme.of(context).focusColor, blurRadius: 6)],
           ),
-          onPressed: () => model.setChartTableMode(false),
+          onPressed: () => setState(() {
+            isDeltaTab = false;
+          }),
         ),
         IconButton(
           icon: Icon(
             Icons.add,
-            color: !charTableMode
-                ? Theme.of(context).disabledColor
-                : deltaColor,
-            shadows: !charTableMode ? null : [Shadow(color: deltaColor, blurRadius: 6)],
+            color: !isDeltaTab ? Theme.of(context).disabledColor : deltaColor,
+            shadows: !isDeltaTab
+                ? null
+                : [Shadow(color: deltaColor, blurRadius: 6)],
           ),
-          onPressed: () => model.setChartTableMode(true),
+          onPressed: () => setState(() {
+            isDeltaTab = true;
+          }),
         ),
       ],
     );
@@ -99,7 +95,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ...Characteristic.values.map((ch) {
-            final sf = charTableMode ? (deltaChars?[ch] ?? 0) : (chars?[ch] ?? 0);
+            final sf = isDeltaTab ? (deltaChars?[ch] ?? 0) : (chars?[ch] ?? 0);
             final points = SpiritCalculator.getCharPoints(sf);
             final remains = SpiritCalculator.getCharPointsRemains(sf);
             final requirements = SpiritCalculator.getCharPointsRequirements(sf);
@@ -119,13 +115,15 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                     CustomText(
                       '(${NumericTool.toThousandString(remains)} / ${NumericTool.toThousandString(requirements)} SF)',
                       size: 9,
-                      color: charTableMode ? deltaColor : null,
+                      color: isDeltaTab ? deltaColor : null,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
                     CustomText(
                       NumericTool.toThousandString(points),
                       weight: FontWeight.bold,
-                      color: charTableMode ? deltaColor : Theme.of(context).colorScheme.onPrimary,
+                      color: isDeltaTab
+                          ? deltaColor
+                          : Theme.of(context).colorScheme.onPrimary,
                     ),
                   ],
                 ),

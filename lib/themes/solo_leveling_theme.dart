@@ -132,10 +132,10 @@ class SoloLevelingTheme {
       // ---- Кнопки ----
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: active1,
+          backgroundColor: text1,
           foregroundColor: back1,
           elevation: 4,
-          shadowColor: active1.withValues(alpha: 0.4),
+          shadowColor: text1.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -148,14 +148,14 @@ class SoloLevelingTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: active1,
+          foregroundColor: text1,
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: active1,
-          side: const BorderSide(color: active1, width: 1.5),
+          foregroundColor: text1,
+          side: const BorderSide(color: text1, width: 1),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -163,7 +163,8 @@ class SoloLevelingTheme {
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: details1,
+        backgroundColor: text1,
+        foregroundColor: details1,
       ),
 
       // ---- Поля ввода (как интерфейс системы) ----

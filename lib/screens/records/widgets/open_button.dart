@@ -14,7 +14,6 @@ class RecordListOpenButton extends StatelessWidget {
     return FloatingActionButton(
       onPressed: () { model.openForm(null); formModel.init(null, model.listModel.currentAddress); },
       tooltip: 'Добавить запись',
-      backgroundColor: Theme.of(context).focusColor,
       child: Icon(Icons.edit_note, color: Theme.of(context).primaryColor),
     );
   }

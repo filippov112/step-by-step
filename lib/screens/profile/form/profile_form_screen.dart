@@ -103,7 +103,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
         .toList();
 
     return EntityScreen(
-      title: 'Герой',
+      title: 'Игрок',
       formKey: formKey,
       saveCallback: () => _saveUser(context),
       children: [

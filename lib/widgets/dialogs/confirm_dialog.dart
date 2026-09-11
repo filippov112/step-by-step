@@ -22,14 +22,14 @@ Future<bool?> showConfirmDialog(
             Expanded(
               child: OutlinedButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: back ?? const CustomText('Нет'),
+                child: back ?? const CustomText('Нет', noShadow: true,),
               ),
             ),
             const SizedBox(width: 8,),
             Expanded(
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: confirm ?? const CustomText('Да'),
+                child: confirm ?? const CustomText('Да', noShadow: true,),
               ),
             )
           ],

@@ -32,7 +32,7 @@ class _PurportEditScreenState extends State<PurportEditScreen> {
     var delete = model.delete;
 
     return EntityScreen(
-      title: 'Проект',
+      title: '',
       saveCallback: () => _save(save),
       deleteCallback: () => _delete(delete),
       formKey: _formKey,

@@ -61,12 +61,6 @@ class PurportListModel extends ChangeNotifier {
     notifyListeners();
   }
   
-  Future clearSearch() async {
-    searchQuery = '';
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-  
   // Фильтры
   void setVisibilitySearch(bool value) {
     visibilitySearch = value;

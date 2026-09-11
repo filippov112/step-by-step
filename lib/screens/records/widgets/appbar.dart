@@ -30,10 +30,8 @@ class RecordListAppbar extends StatelessWidget implements PreferredSizeWidget {
         visibilitySearch: visibilitySearch,
         setVisibilitySearch: model.setVisibilitySearch,
         searchWidget: SearchString(
-          placeholder: 'Поиск целей...',
           controller: searchController,
           value: searchQuery,
-          clearCallback: model.clearSearch,
           changeCallback: model.setSearchQuery,
         ),
       );

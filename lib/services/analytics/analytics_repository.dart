@@ -14,6 +14,7 @@ class AnalyticsRepository {
   Future<List<DtoActivity>> getDailyExpTime({
     int? startDate,
     int? endDate,
+    String? pattern,
   }) async {
     final conditions = <String>[];
     final args = <dynamic>[];
@@ -26,6 +27,11 @@ class AnalyticsRepository {
     if (endDate != null) {
       conditions.add('${ChronicleRecord.cDate} <= ?');
       args.add(endDate);
+    }
+
+    if (pattern != null && pattern.isNotEmpty) {
+      conditions.add('${ChronicleRecord.cGroup} LIKE ?');
+      args.add('$pattern%');
     }
 
     final whereClause = conditions.isNotEmpty

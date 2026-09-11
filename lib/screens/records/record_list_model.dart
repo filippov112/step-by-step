@@ -90,12 +90,6 @@ class RecordListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future clearSearch() async {
-    searchQuery = '';
-    await _applyFiltersAndSort();
-    notifyListeners();
-  }
-
   // ---------- Фильтры -------------
 
   void setVisibilitySearch(bool value) {

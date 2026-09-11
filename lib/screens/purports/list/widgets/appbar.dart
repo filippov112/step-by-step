@@ -27,10 +27,8 @@ class PurportListAppbar extends StatelessWidget implements PreferredSizeWidget {
         visibilitySearch: visibilitySearch,
         setVisibilitySearch: model.setVisibilitySearch,
         searchWidget: SearchString(
-          placeholder: 'Поиск смыслов...',
           controller: searchController,
           value: model.searchQuery,
-          clearCallback: model.clearSearch,
           changeCallback: model.setSearchQuery,
         ),
       );

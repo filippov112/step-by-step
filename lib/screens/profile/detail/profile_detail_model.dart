@@ -16,10 +16,6 @@ class ProfileDetailModel extends ChangeNotifier {
   Profile? user;
   Map<Characteristic,int>? chars;
 
-  // Params
-  DateTime firstDay = DateTime(0), lastDay = DateTime(0);
-  StatPeriod selectedPeriod = StatPeriod.oneMonth;
-
   // Наборы данных за выбранный период
   Map<DateTime, DtoActivity> activityData = {};
   List<SnapSpot> graphData = [];
@@ -29,6 +25,29 @@ class ProfileDetailModel extends ChangeNotifier {
   int maxSF = 0;
 
   bool charTableMode = false;
+
+  // Фильтр периода
+  DateTime firstDay = DateTime(0), lastDay = DateTime(0);
+  StatPeriod selectedPeriod = StatPeriod.oneMonth;
+
+  // Сброс фильтров
+  bool get hasActiveFilters {
+    return groupFilter.isNotEmpty || selectedPeriod != StatPeriod.oneMonth;
+  }
+  Future clearAllFilters() async {
+    groupFilter = '';
+    selectedPeriod = StatPeriod.oneMonth;
+    await _loadSFData();
+    notifyListeners();
+  }
+
+  // Фильтр группы
+  String groupFilter = '';
+  Future setGroupFilter(String value) async {
+    groupFilter = value;
+    await _loadSFData();
+    notifyListeners();
+  }
   
 
   // Инициализация страницы
@@ -87,6 +106,7 @@ class ProfileDetailModel extends ChangeNotifier {
     List<DtoActivity> daysData = await _analRepo.getDailyExpTime(
       startDate: DateTool.datetimeToDays(firstDay),
       endDate: DateTool.datetimeToDays(lastDay),
+      pattern: groupFilter
     );
 
     activityData = {};

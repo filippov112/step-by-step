@@ -1,4 +1,5 @@
 import 'package:chaos_control/screens/profile/detail/widgets/chars.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/filters.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
@@ -50,17 +51,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user =
-        context.select<ProfileDetailModel, Profile?>((model) => model.user) ??
-        Profile();
-
-
-    final StatPeriod selectedPeriod = context
-        .select<ProfileDetailModel, StatPeriod>((model) => model.selectedPeriod);
-    final setPeriodFilter = context.read<ProfileDetailModel>().setPeriodFilter;
-
-
-
     return Scaffold(
       drawer: MainMenuDrawer(),
       appBar: ListAppBar(
@@ -77,37 +67,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           ),
         ],
       ),
-      endDrawer: FiltersDrawer(
-        filters: [
-          FilterSection(
-            title: 'Глубина анализа',
-            icon: Icons.calendar_month,
-            children: DropdownButtonFormField<StatPeriod>(
-              items: [
-                const DropdownMenuItem(
-                  value: StatPeriod.threeMonth,
-                  child: Text('3 месяца'),
-                ),
-                const DropdownMenuItem(
-                  value: StatPeriod.oneMonth,
-                  child: Text('1 месяц'),
-                ),
-                const DropdownMenuItem(
-                  value: StatPeriod.oneWeek,
-                  child: Text('1 неделя'),
-                ),
-                const DropdownMenuItem(
-                  value: StatPeriod.oneDay,
-                  child: Text('1 день'),
-                ),
-              ],
-              initialValue: selectedPeriod,
-              onChanged: (v) => setPeriodFilter(v ?? StatPeriod.oneMonth),
-            ),
-          ),
-        ],
-      ),
-
+      endDrawer: const ProfileDetailFilters(),
       body: ListView(
         children: [
           Padding(
@@ -117,7 +77,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               children: [
 
                 // Карточка
-                ProfileInfo(user: user),
+                const ProfileInfo(),
 
                 // Опыт
                 const ProfileDetailSpirit(),

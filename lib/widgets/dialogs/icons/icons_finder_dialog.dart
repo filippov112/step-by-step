@@ -61,7 +61,6 @@ class SearchableIconPickerState extends State<SearchableIconPicker> {
           padding: const EdgeInsets.all(16.0),
           child: TextField(
             decoration: InputDecoration(
-              hintText: 'Поиск иконок...',
               prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

@@ -34,7 +34,7 @@ extension CharacteristicsExt on Characteristic {
       case Characteristic.courage:
         return Colors.redAccent;
       case Characteristic.durability:
-        return Colors.lightBlueAccent;
+        return Colors.white;
       case Characteristic.creativity:
         return Colors.purpleAccent;
     }

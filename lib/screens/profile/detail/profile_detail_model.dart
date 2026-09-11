@@ -21,7 +21,7 @@ class ProfileDetailModel extends ChangeNotifier {
   StatPeriod selectedPeriod = StatPeriod.oneMonth;
 
   // Наборы данных за выбранный период
-  Map<DateTime, int> activityData = {};
+  Map<DateTime, DtoActivity> activityData = {};
   List<SnapSpot> graphData = [];
   Map<Characteristic,int>? deltaChars;
 
@@ -104,7 +104,7 @@ class ProfileDetailModel extends ChangeNotifier {
     // Activity & Chars & Stats
     for (var day in daysData) {
       if (day.dateTime == null) continue;
-      activityData[day.dateTime!] = day.totalExperience;
+      activityData[day.dateTime!] = day;
       for(var ch in Characteristic.values) {
         deltaChars![ch] = (deltaChars![ch] ?? 0) + day.getChar(ch);
       }
@@ -123,7 +123,7 @@ class ProfileDetailModel extends ChangeNotifier {
         ),
       );
       if (activityData.keys.contains(dayDateTime)) {
-        summaEff -= activityData[dayDateTime] ?? 0;
+        summaEff -= activityData[dayDateTime]?.totalExperience ?? 0;
       }
       dayIndex--;
     }

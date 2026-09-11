@@ -26,20 +26,21 @@ class DtoActivity {
     required this.creativity,
   });
 
-  int getChar(Characteristic ch) {
-      switch (ch) {
-        case Characteristic.control:
-          return control;
-        case Characteristic.perseverance:
-          return perseverance;
-        case Characteristic.courage:
-          return courage;
-        case Characteristic.durability:
-          return durability;
-        case Characteristic.creativity:
-          return creativity;
-      }
+  int getChar(Characteristic? ch) {
+    if (ch == null) return totalExperience;
+    switch (ch) {
+      case Characteristic.control:
+        return control;
+      case Characteristic.perseverance:
+        return perseverance;
+      case Characteristic.courage:
+        return courage;
+      case Characteristic.durability:
+        return durability;
+      case Characteristic.creativity:
+        return creativity;
     }
+  }
 
   factory DtoActivity.fromMap(Map<String, dynamic> map) {
     return DtoActivity(

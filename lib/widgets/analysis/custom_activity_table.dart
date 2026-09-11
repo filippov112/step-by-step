@@ -147,7 +147,7 @@ class CustomActivityTable extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.only(right: cellSpacing, bottom: cellSpacing),
                       decoration: BoxDecoration(
-                        color: isRealDay ? color : minC.withValues(alpha: 0.2),
+                        color: isRealDay ? color : minC.withValues(alpha: 0),
                       ),
                     )
                   );
@@ -173,7 +173,7 @@ class CustomActivityTable extends StatelessWidget {
   Color _getColorForCount(Color minC, Color maxV, int v) {
     var t = maxValue == 0 || maxValue < v ? 0.0 : v.toDouble() / maxValue;
     return Color.from(
-      alpha: 1, 
+      alpha: lerpDouble(minC.a, maxV.a, t) ?? 0, 
       red: lerpDouble(minC.r, maxV.r, t) ?? 0, 
       green: lerpDouble(minC.g, maxV.g, t) ?? 0, 
       blue: lerpDouble(minC.b, maxV.b, t) ?? 0

@@ -24,8 +24,8 @@ class ProfileInfo extends StatelessWidget {
     var nameWidget = CustomText(
       user.name,
       size: 24,
-      weight: FontWeight.bold,
-      shadow: const Shadow(offset: Offset(1, 1), blurRadius: 4),
+      weight: const FontWeight(500),
+      lines:2,
     );
 
     return CustomCardBlock(

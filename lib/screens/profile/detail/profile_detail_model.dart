@@ -8,7 +8,38 @@ import 'package:chaos_control/services/analytics/dto_activity.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:snap_chart/snap_chart.dart';
 
-enum StatPeriod { threeMonth, oneMonth, oneWeek, oneDay }
+enum PeriodFilterType { year, threeMonth, oneMonth, oneWeek, oneDay }
+extension StatPeriodExt on PeriodFilterType {
+  String get displayName {
+    switch (this) {
+      case PeriodFilterType.year:
+        return 'За год';
+      case PeriodFilterType.threeMonth:
+        return 'За квартал';
+      case PeriodFilterType.oneMonth:
+        return 'За месяц';
+      case PeriodFilterType.oneWeek:
+        return 'За неделю';
+      case PeriodFilterType.oneDay:
+        return 'За день';
+    }
+  }
+
+  int get days {
+     switch (this) {
+      case PeriodFilterType.year:
+        return 365;
+      case PeriodFilterType.threeMonth:
+        return 90;
+      case PeriodFilterType.oneMonth:
+        return 30;
+      case PeriodFilterType.oneWeek:
+        return 6;
+      case PeriodFilterType.oneDay:
+        return 0;
+    }
+  }
+}
 
 class ProfileDetailModel extends ChangeNotifier {
   final _userRepo = ProfileRepository();
@@ -26,15 +57,15 @@ class ProfileDetailModel extends ChangeNotifier {
 
   // Фильтр периода
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
-  StatPeriod selectedPeriod = StatPeriod.oneMonth;
+  PeriodFilterType periodFilter = PeriodFilterType.oneMonth;
 
   // Сброс фильтров
   bool get hasActiveFilters {
-    return groupFilter.isNotEmpty || selectedPeriod != StatPeriod.oneMonth;
+    return groupFilter.isNotEmpty || periodFilter != PeriodFilterType.oneMonth;
   }
   Future clearAllFilters() async {
     groupFilter = '';
-    selectedPeriod = StatPeriod.oneMonth;
+    periodFilter = PeriodFilterType.oneMonth;
     await _loadSFData();
     notifyListeners();
   }
@@ -62,8 +93,8 @@ class ProfileDetailModel extends ChangeNotifier {
   }
 
   // Переключить фильтр периода
-  Future setPeriodFilter(StatPeriod period) async {
-    selectedPeriod = period;
+  Future setPeriodFilter(PeriodFilterType period) async {
+    periodFilter = period;
     await _loadSFData();
     notifyListeners();
   }
@@ -74,25 +105,12 @@ class ProfileDetailModel extends ChangeNotifier {
     chars = user?.chars;
   }
 
-  int _subtractDays() {
-    switch (selectedPeriod) {
-      case StatPeriod.threeMonth:
-        return 90;
-      case StatPeriod.oneMonth:
-        return 30;
-      case StatPeriod.oneWeek:
-        return 6;
-      case StatPeriod.oneDay:
-        return 0;
-    }
-  }
-
   // Загрузить статистику по фрагментам духа
   Future _loadSFData() async {
     if (user == null) return;
 
     lastDay = DateTool.today();
-    firstDay = lastDay.subtract(Duration(days: _subtractDays()));
+    firstDay = lastDay.subtract(Duration(days: periodFilter.days));
     int dayIndex = DateTool.datetimeToDays(lastDay) ?? 0;
     int firstDayIndex = DateTool.datetimeToDays(firstDay) ?? 0;
 

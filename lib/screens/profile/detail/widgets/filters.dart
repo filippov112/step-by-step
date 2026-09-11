@@ -1,4 +1,5 @@
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/search_string.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/widgets/filters/filter_section.dart';
@@ -38,9 +39,9 @@ class _ProfileDetailFiltersState extends State<ProfileDetailFilters> {
       (m) => m.groupFilter,
     );
 
-    final StatPeriod selectedPeriod = context
-        .select<ProfileDetailModel, StatPeriod>(
-          (model) => model.selectedPeriod,
+    final PeriodFilterType selectedPeriod = context
+        .select<ProfileDetailModel, PeriodFilterType>(
+          (model) => model.periodFilter,
         );
     final setPeriodFilter = context.read<ProfileDetailModel>().setPeriodFilter;
 
@@ -57,27 +58,14 @@ class _ProfileDetailFiltersState extends State<ProfileDetailFilters> {
     final periodFilter = FilterSection(
       title: 'Глубина анализа',
       icon: Icons.calendar_month,
-      children: DropdownButtonFormField<StatPeriod>(
-        items: [
-          const DropdownMenuItem(
-            value: StatPeriod.threeMonth,
-            child: Text('3 месяца'),
-          ),
-          const DropdownMenuItem(
-            value: StatPeriod.oneMonth,
-            child: Text('1 месяц'),
-          ),
-          const DropdownMenuItem(
-            value: StatPeriod.oneWeek,
-            child: Text('1 неделя'),
-          ),
-          const DropdownMenuItem(
-            value: StatPeriod.oneDay,
-            child: Text('1 день'),
-          ),
+      children: DropdownButtonFormField<PeriodFilterType>(
+        items: [ ...PeriodFilterType.values.map((p) => DropdownMenuItem(
+            value: p,
+            child: CustomText(p.displayName),
+          ),)
         ],
         initialValue: selectedPeriod,
-        onChanged: (v) => setPeriodFilter(v ?? StatPeriod.oneMonth),
+        onChanged: (v) => setPeriodFilter(v ?? PeriodFilterType.oneMonth),
       ),
     );
 

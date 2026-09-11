@@ -7,6 +7,19 @@ import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
 enum SortRecord { date, time }
+enum ChallengeFilterType {all, challenges, chronicles}
+extension ChallengeFilterTypeExt on ChallengeFilterType {
+  String get displayName {
+    switch (this) {
+      case ChallengeFilterType.all:
+        return 'Все записи';
+      case ChallengeFilterType.challenges:
+        return 'Испытания';
+      case ChallengeFilterType.chronicles:
+        return 'Хроники';
+    }
+  }
+}
 
 class RecordListModel extends ChangeNotifier {
   final _taskRepo = RecordRepository();
@@ -39,6 +52,7 @@ class RecordListModel extends ChangeNotifier {
   bool groupFilter = true; // группировка
   Characteristic? charFilter; // Хар-ка
   DifficultyLvl? diffFilter; // Сложность
+  ChallengeFilterType challengeFilter = ChallengeFilterType.all; // Испытания
 
   // Сброс фильтров
   bool get hasActiveFilters {
@@ -46,6 +60,7 @@ class RecordListModel extends ChangeNotifier {
         dateEndFilter != null ||
         charFilter != null ||
         diffFilter != null ||
+        challengeFilter != ChallengeFilterType.all ||
         searchQuery.isNotEmpty;
   }
 
@@ -131,12 +146,19 @@ class RecordListModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future setChallengeFilter(ChallengeFilterType value) async {
+    challengeFilter = value;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+
   Future clearAllFilters() async {
     searchQuery = '';
     dateBeginFilter = null;
     dateEndFilter = null;
     diffFilter = null;
     charFilter = null;
+    challengeFilter = ChallengeFilterType.all;
     await loadData();
   }
 
@@ -171,6 +193,10 @@ class RecordListModel extends ChangeNotifier {
     // Фильтр сложности
     if (diffFilter != null) {
       result = result.where((t) => t.difficulty == diffFilter).toList();
+    }
+    // Фильтр испытаний
+    if (challengeFilter != ChallengeFilterType.all) {
+      result = result.where((t) => t.challenge == (challengeFilter == ChallengeFilterType.challenges)).toList();
     }
     // Сортировка
     switch (sorting) {

@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/enums/characteristics_ext.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
@@ -40,6 +41,10 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     final charFilterValue = context.select<RecordListModel, Characteristic?>(
       (m) => m.charFilter,
     );
+    final challengeFilterValue = context.select<RecordListModel, ChallengeFilterType>(
+      (m) => m.challengeFilter,
+    );
+    
 
     final sortField = context.select<RecordListModel, SortRecord>(
       (m) => m.sorting,
@@ -51,6 +56,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     final focusColor = Theme.of(context).focusColor;
     final disabledColor = Theme.of(context).disabledColor;
 
+    // Группировка
     final groupFilter = FilterSection(
       title: 'Группировка',
       icon: Icons.folder,
@@ -61,6 +67,23 @@ class _RecordListFiltersState extends State<RecordListFilters> {
       ),
     );
 
+    // Испытания
+    final challengeFilter = FilterSection(
+      title: 'Испытания',
+      icon: Icons.center_focus_strong,
+      children: DropdownButtonFormField<ChallengeFilterType>(
+        items: [
+          ...ChallengeFilterType.values.map((t) => DropdownMenuItem(
+            value: t,
+            child: CustomText(t.displayName),
+          ),)
+        ],
+        initialValue: challengeFilterValue,
+        onChanged: (v) => model.setChallengeFilter(v ?? ChallengeFilterType.all),
+      ),
+    );
+
+    // Характеристика
     final charFilter = FilterSection(
       title: 'Характеристика',
       icon: Icons.bar_chart,
@@ -69,7 +92,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: ActivityType.values.map((type) {
+          children: CharacteristicExt.values.map((type) {
             final color = charFilterValue == type.characteristic
                 ? type.characteristic?.color ?? focusColor
                 : disabledColor;
@@ -85,6 +108,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
       ),
     );
 
+    // Сложность
     final diffFilter = FilterSection(
       title: 'Сложность',
       icon: Icons.hotel_class,
@@ -173,7 +197,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         onPressed: hasActiveFilters ? model.clearAllFilters : null,
         child: const Text('Сбросить все фильтры'),
       ),
-      filters: [groupFilter, dateFilters, charFilter, diffFilter, sorting],
+      filters: [challengeFilter, groupFilter, dateFilters, charFilter, diffFilter, sorting],
     );
   }
 }

@@ -62,12 +62,17 @@ class RecordFormState extends State<RecordForm> {
     final char = context.select<RecordFormModel, Characteristic>(
       (m) => m.characteristic,
     );
+    final isChallenge = context.select<RecordFormModel, bool>(
+      (m) => m.challenge,
+    );
 
     final isEditing = context.select<RecordFormModel, bool>((m) => m.isEditing);
 
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
     final disabledColor = Theme.of(context).disabledColor;
+    final saveColor = Colors.greenAccent;
+    final challengeColor = Colors.orange;
 
     final diff = DifficultyLvl.values[diffIndex];
 
@@ -187,13 +192,15 @@ class RecordFormState extends State<RecordForm> {
       return null;
     }
 
-    final groupWidget = CustomTextInput(
-      header: "Группа (разделитель: '/')",
-      controller: groupController,
-      customValidator: groupValidator,
-      setText: (v) => model.setGroup(v ?? ''),
-      icon: Icons.folder,
-      lines: 1,
+    final groupWidget = Expanded(
+      child: CustomTextInput(
+        header: "Группа ('/')",
+        controller: groupController,
+        customValidator: groupValidator,
+        setText: (v) => model.setGroup(v ?? ''),
+        icon: Icons.folder,
+        lines: 1,
+      ),
     );
 
     final datePicker = Expanded(
@@ -204,17 +211,32 @@ class RecordFormState extends State<RecordForm> {
       ),
     );
 
+    final challengeStatusButton = IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          ContinuousRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(12),
+            side: BorderSide(width: 3, color: isChallenge ? challengeColor : disabledColor),
+          ),
+        ),
+      ),
+      padding: const EdgeInsets.all(14),
+      color: isChallenge ? challengeColor : disabledColor,
+      onPressed: model.changeChallengeStatus,
+      icon: Icon(Icons.center_focus_strong),
+    );
+
     final saveButton = IconButton(
       style: ButtonStyle(
         shape: WidgetStatePropertyAll(
           ContinuousRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(12),
-            side: BorderSide(width: 3, color: Colors.greenAccent),
+            side: BorderSide(width: 3, color: saveColor),
           ),
         ),
       ),
       padding: const EdgeInsets.all(14),
-      color: Colors.greenAccent,
+      color: saveColor,
       onPressed: () async {
         if (!(_formKey.currentState?.validate() ?? false)) return;
         await model.save();
@@ -258,7 +280,13 @@ class RecordFormState extends State<RecordForm> {
                 typeWidget,
                 descWidget,
                 const SizedBox(height: 8),
-                groupWidget,
+                Row(
+                  children: [
+                    groupWidget,
+                    const SizedBox(width: 8),
+                    challengeStatusButton,
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Row(
                   children: [

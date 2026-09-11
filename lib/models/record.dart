@@ -19,6 +19,7 @@ class ChronicleRecord {
   static const cDescription = "_description";
   static const cDate = "_date";
   static const cTime = "_time";
+  static const cChallenge = "_challenge";
 
   static const cControl = "_c1";
   static const cPerseverance = "_c2";
@@ -35,6 +36,7 @@ class ChronicleRecord {
           $cDescription TEXT,
           $cDate INTEGER,
           $cTime INTEGER,
+          $cChallenge INTEGER,
 
           $cControl INTEGER,
           $cPerseverance INTEGER,
@@ -54,6 +56,7 @@ class ChronicleRecord {
   DateTime date = DateTool.today(); // Дата
   int time = 0;
   String group = ""; // Группа
+  bool challenge = false; // Испытание
 
   int control = 0;
   int perseverance = 0;
@@ -72,6 +75,7 @@ class ChronicleRecord {
     required this.difficulty,
     required this.date,
     required this.time,
+    required this.challenge,
 
     required this.control,
     required this.perseverance,
@@ -87,6 +91,7 @@ class ChronicleRecord {
     String description = '',
     required DateTime date,
     int time = 0,
+    bool challenge = false,
 
     int control = 0,
     int perseverance = 0,
@@ -104,6 +109,7 @@ class ChronicleRecord {
       description: description,
       date: date,
       time: time,
+      challenge: challenge,
 
       control: control,
       perseverance: perseverance,
@@ -135,6 +141,7 @@ class ChronicleRecord {
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cTime: time,
+      cChallenge: challenge ? 1 : 0,
 
       cControl: control,
       cPerseverance: perseverance,
@@ -153,6 +160,7 @@ class ChronicleRecord {
     difficulty = DifficultyLvl.values[map[cDiffLvl]];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     time = map[cTime];
+    challenge = map[cChallenge] == 1;
 
     control = map[cControl];
     perseverance = map[cPerseverance];

@@ -30,7 +30,7 @@ extension CharacteristicsExt on Characteristic {
       case Characteristic.control:
         return Colors.greenAccent;
       case Characteristic.perseverance:
-        return Colors.orangeAccent;
+        return Colors.yellow;
       case Characteristic.courage:
         return Colors.redAccent;
       case Characteristic.durability:

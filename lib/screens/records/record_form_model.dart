@@ -15,6 +15,7 @@ class RecordFormModel extends ChangeNotifier {
   String desc = '';
   String group = '';
   int diffIndex = 0;
+  bool challenge = false;
   DateTime date = DateTool.today();
   Characteristic characteristic = Characteristic.perseverance;
 
@@ -27,6 +28,7 @@ class RecordFormModel extends ChangeNotifier {
 
     if (!softClear) {
       diffIndex = rec?.difficulty.index ?? 0;
+      challenge = rec?.challenge ?? false;
       desc = rec?.description ?? '';
       group = gr;
       characteristic = rec?.char ?? Characteristic.perseverance;
@@ -43,6 +45,7 @@ class RecordFormModel extends ChangeNotifier {
     if (record == null) return;
     isEditing = false;
     diffIndex = 0;
+    challenge = false;
     desc = '';
     group = '';
     characteristic = Characteristic.perseverance;
@@ -52,7 +55,7 @@ class RecordFormModel extends ChangeNotifier {
   }
 
   void _recalcSF() {
-    sf = DifficultyLvl.values[diffIndex].value;
+    sf = challenge ? 0 : DifficultyLvl.values[diffIndex].value;
   }
 
   final StreamController<bool> _initController =
@@ -69,6 +72,11 @@ class RecordFormModel extends ChangeNotifier {
   }
   void setDiff(int value) {
     diffIndex = value;
+    _recalcSF();
+    notifyListeners();
+  }
+  void changeChallengeStatus() {
+    challenge = !challenge;
     _recalcSF();
     notifyListeners();
   }
@@ -105,6 +113,7 @@ class RecordFormModel extends ChangeNotifier {
     record?.char = characteristic;
     record?.date = date;
     record?.difficulty = DifficultyLvl.values[diffIndex];
+    record?.challenge = challenge;
     record?.time = DateTime.now().millisecondsSinceEpoch;
 
     _recalcChars();

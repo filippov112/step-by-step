@@ -37,6 +37,7 @@ class RecordTileRecord extends RecordTreeTile {
   Widget build(BuildContext context) {
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
+    final challengeColor = Colors.orange;
 
     final selectCheckbox = isSelectionMode && record.object != null
         ? Checkbox(value: isSelected, onChanged: (v) => _onTap())
@@ -82,17 +83,28 @@ class RecordTileRecord extends RecordTreeTile {
         record.object?.char.icon,
         shadows: record.object == null
             ? null
-            : [Shadow(color: record.object!.char.color, blurRadius: 6)],
+            : [Shadow(color: record.object!.char.color, blurRadius: 15)],
         size: 15,
         color: record.object?.char.color,
       ),
     );
 
+    // ------ Испытание ---------
+
+    final challengeIcon = (record.object?.challenge ?? false) ? Padding(
+      padding: const EdgeInsetsGeometry.only(right: 4),
+      child: Icon(Icons.center_focus_strong,
+        shadows: [Shadow(color: challengeColor, blurRadius: 15)],
+        size: 15,
+        color: challengeColor,
+      ),
+    ) : null;
+
     // ====== MAIN =========
 
     final header = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [?selectCheckbox, typeIcon, dateRow, diffRang],
+      children: [?selectCheckbox, ?challengeIcon, typeIcon, dateRow, diffRang],
     );
     final descWidget = CustomText(
       record.object?.description ?? '',

@@ -69,7 +69,9 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
     final disabledColor = Theme.of(context).disabledColor;
 
     final table = CustomActivityTable(
-      activities: efforts.map((k, v) => MapEntry(k, v.getChar(typeFilter.characteristic))),
+      activities: efforts.map(
+        (k, v) => MapEntry(k, v.getChar(typeFilter.characteristic)),
+      ),
       maxValue: maxEff,
       minColor: typeFilter.characteristic?.color.withAlpha(30),
       maxColor: typeFilter.characteristic?.color,
@@ -82,20 +84,23 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
 
     final buttons = Padding(
       padding: const EdgeInsetsGeometry.only(top: 12),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: ActivityType.values.map((type) {
-          final color = typeFilter == type
-              ? type.characteristic?.color ?? focusColor
-              : disabledColor;
-          return IconButton(
-            icon: Icon(type.icon, color: color),
-            onPressed: () => setState(() {
-              typeFilter = type;
-            }),
-          );
-        }).toList(),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: ActivityType.values.map((type) {
+            final color = typeFilter == type
+                ? type.characteristic?.color ?? focusColor
+                : disabledColor;
+            return IconButton(
+              icon: Icon(type.icon, color: color),
+              onPressed: () => setState(() {
+                typeFilter = type;
+              }),
+            );
+          }).toList(),
+        ),
       ),
     );
 
@@ -103,10 +108,13 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
       title: 'Активность',
       icon: Icons.speed,
       child: SizedBox(
-        height:200,
+        height: 200,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [Expanded(child:table), buttons],
+          children: [
+            Expanded(child: table),
+            buttons,
+          ],
         ),
       ),
     );

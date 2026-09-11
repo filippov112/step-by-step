@@ -1,4 +1,8 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/enums/difficulty_lvl.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
 import 'package:chaos_control/screens/records/record_list_model.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/filters/sort_button.dart';
 import 'package:chaos_control/widgets/form/checkbox.dart';
 import 'package:chaos_control/widgets/form/datetime_picker.dart';
@@ -30,6 +34,12 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     final groupFilterValue = context.select<RecordListModel, bool>(
       (m) => m.groupFilter,
     );
+    final diffFilterValue = context.select<RecordListModel, DifficultyLvl?>(
+      (m) => m.diffFilter,
+    );
+    final charFilterValue = context.select<RecordListModel, Characteristic?>(
+      (m) => m.charFilter,
+    );
 
     final sortField = context.select<RecordListModel, SortRecord>(
       (m) => m.sorting,
@@ -38,6 +48,9 @@ class _RecordListFiltersState extends State<RecordListFilters> {
       (m) => m.sortAscending,
     );
 
+    final focusColor = Theme.of(context).focusColor;
+    final disabledColor = Theme.of(context).disabledColor;
+
     final groupFilter = FilterSection(
       title: 'Группировка',
       icon: Icons.folder,
@@ -45,6 +58,63 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         initValue: groupFilterValue,
         setValue: model.setGroupFilter,
         label: 'Объединять в группы',
+      ),
+    );
+
+    final charFilter = FilterSection(
+      title: 'Характеристика',
+      icon: Icons.bar_chart,
+      children: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: ActivityType.values.map((type) {
+            final color = charFilterValue == type.characteristic
+                ? type.characteristic?.color ?? focusColor
+                : disabledColor;
+            final shadows = charFilterValue == type.characteristic
+                ? [Shadow(color: color, blurRadius: 18)]
+                : null;
+            return IconButton(
+              icon: Icon(type.icon, color: color, shadows: shadows),
+              onPressed: () => model.setCharFilter(type.characteristic),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+
+    final diffFilter = FilterSection(
+      title: 'Сложность',
+      icon: Icons.hotel_class,
+      children: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: CustomText(
+                'All',
+                color: diffFilterValue == null ? focusColor : disabledColor,
+                weight: FontWeight.bold,
+              ),
+              onPressed: () => model.setDiffFilter(null),
+            ),
+            ...DifficultyLvl.values.map((lvl) {
+              final color = diffFilterValue == lvl ? lvl.color : disabledColor;
+              return IconButton(
+                icon: CustomText(
+                  lvl.name,
+                  color: color,
+                  weight: FontWeight.bold,
+                ),
+                onPressed: () => model.setDiffFilter(lvl),
+              );
+            }),
+          ],
+        ),
       ),
     );
 
@@ -103,7 +173,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         onPressed: hasActiveFilters ? model.clearAllFilters : null,
         child: const Text('Сбросить все фильтры'),
       ),
-      filters: [groupFilter, dateFilters, sorting],
+      filters: [groupFilter, dateFilters, charFilter, diffFilter, sorting],
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
@@ -31,13 +33,19 @@ class RecordListModel extends ChangeNotifier {
   final listModel = CustomTreeListModel<ChronicleRecord>();
 
   // Фильтрация
-  String searchQuery = '';
-  DateTime? dateBeginFilter, dateEndFilter;
+  String searchQuery = ''; // поиск
   bool visibilitySearch = false;
-  bool groupFilter = true;
+  DateTime? dateBeginFilter, dateEndFilter; // период
+  bool groupFilter = true; // группировка
+  Characteristic? charFilter; // Хар-ка
+  DifficultyLvl? diffFilter; // Сложность
+
+  // Сброс фильтров
   bool get hasActiveFilters {
     return dateBeginFilter != null ||
         dateEndFilter != null ||
+        charFilter != null ||
+        diffFilter != null ||
         searchQuery.isNotEmpty;
   }
 
@@ -107,6 +115,16 @@ class RecordListModel extends ChangeNotifier {
     await loadData();
   }
 
+  Future setDiffFilter(DifficultyLvl? value) async {
+    diffFilter = value;
+    await loadData();
+  }
+
+  Future setCharFilter(Characteristic? value) async {
+    charFilter = value;
+    await loadData();
+  }
+
   Future setGroupFilter(bool value) async {
     groupFilter = value;
     await _applyFiltersAndSort();
@@ -117,6 +135,8 @@ class RecordListModel extends ChangeNotifier {
     searchQuery = '';
     dateBeginFilter = null;
     dateEndFilter = null;
+    diffFilter = null;
+    charFilter = null;
     await loadData();
   }
 
@@ -143,6 +163,14 @@ class RecordListModel extends ChangeNotifier {
       result = result
           .where((t) => t.description.toLowerCase().contains(query))
           .toList();
+    }
+    // Фильтр хар-ки
+    if (charFilter != null) {
+      result = result.where((t) => t.char == charFilter).toList();
+    }
+    // Фильтр сложности
+    if (diffFilter != null) {
+      result = result.where((t) => t.difficulty == diffFilter).toList();
     }
     // Сортировка
     switch (sorting) {

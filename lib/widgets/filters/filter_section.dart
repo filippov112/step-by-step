@@ -17,9 +17,10 @@ class FilterSection extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ExpansionTile(
+            iconColor: Theme.of(context).focusColor,
             title: Text(
               title,
               style: TextStyle(

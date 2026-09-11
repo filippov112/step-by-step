@@ -26,6 +26,7 @@ class ProfileInfo extends StatelessWidget {
     var nameWidget = CustomText(
       user?.name ?? '',
       size: 24,
+      overflow: TextOverflow.visible,
       weight: const FontWeight(500),
       lines:2,
     );

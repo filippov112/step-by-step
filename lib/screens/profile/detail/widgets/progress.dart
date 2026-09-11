@@ -46,8 +46,12 @@ class _ProfileProgressState extends State<ProfileProgress> {
 
   @override
   Widget build(BuildContext context) {
+
+    final deltaColor = Colors.amber;
+
     return CustomCardBlock(
       icon: widget.icon,
+      iconColor: deltaColor,
       title: widget.title,
       trailing: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,15 +73,15 @@ class _ProfileProgressState extends State<ProfileProgress> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
-              boxShadow: [ const BoxShadow(blurStyle: BlurStyle.outer, color: Colors.amber, blurRadius: 12),],
-              border: Border.all(width: 2, color: Colors.amber),
+              boxShadow: [ BoxShadow(blurStyle: BlurStyle.outer, color: deltaColor, blurRadius: 12),],
+              border: Border.all(width: 2, color: deltaColor),
               borderRadius: const BorderRadius.all(Radius.circular(8))
             ),
             child: CustomText(
               NumericTool.toThousandString(widget.level),
               weight: FontWeight.bold,
-              color: Colors.amber,
-              shadow: const Shadow(color: Colors.amber, blurRadius: 6),
+              color: deltaColor,
+              shadow: Shadow(color: deltaColor, blurRadius: 6),
             ),
           ),
         ],

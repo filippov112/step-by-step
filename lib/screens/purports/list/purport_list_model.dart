@@ -10,7 +10,7 @@ class PurportListModel extends ChangeNotifier {
   final PurportRepository _purRepo = PurportRepository();
 
   List<Purport> _purports = [];
-  List<Purport> _filteredPurports = [];
+  List<Purport> _filtered = [];
   List<TreeRecord<Purport>> purports = [];
 
   final listModel = CustomTreeListModel<Purport>();
@@ -39,7 +39,7 @@ class PurportListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<TreeRecord<Purport>> transformRecords() => _filteredPurports
+  List<TreeRecord<Purport>> transformRecords() => _filtered
     .map(
       (e) => TreeRecord<Purport>(
         address: e.group,
@@ -115,7 +115,7 @@ class PurportListModel extends ChangeNotifier {
     if (!sortAscending) {
       result = result.reversed.toList();
     }
-    _filteredPurports = result;
+    _filtered = result;
     purports = listModel.openFolder(
       list: transformRecords(), 
       folder: listModel.currentFolder,
@@ -162,10 +162,11 @@ class PurportListModel extends ChangeNotifier {
   }
   
   void toggleSelectAll() {
-    if (selectedIds.length == _filteredPurports.length) {
+    final set = _filtered.where((t) => t.group.startsWith(listModel.currentAddress) ).map((t) => t.id).toSet();
+    if (selectedIds.length == set.length) {
       selectedIds = {};
     } else {
-      selectedIds = _filteredPurports.map((t) => t.id).toSet();
+      selectedIds = set;
     }
     notifyListeners();
   }

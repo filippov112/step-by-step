@@ -25,6 +25,7 @@ class CustomCardBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultBorderColor = Theme.of(context).dividerColor;
+    final focusColor = Theme.of(context).focusColor;
     final cardColor = Theme.of(context).primaryColor;
     final onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
 
@@ -50,7 +51,7 @@ class CustomCardBlock extends StatelessWidget {
                   children: [
                     // Иконка
                     if (icon != null) ...{
-                      Icon(icon, color: iconColor, size: 24),
+                      Icon(icon, color: iconColor, size: 24, shadows: [Shadow(color: iconColor ?? focusColor, blurRadius: 24)],),
                       const SizedBox(width: 8),
                     },
 

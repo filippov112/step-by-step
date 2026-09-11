@@ -3,11 +3,14 @@ import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
+import 'package:chaos_control/services/notifications/implementations/n_new_record.dart';
+import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RecordFormModel extends ChangeNotifier {
   final _recRepo = RecordRepository();
+  final ns = NotificationService();
 
   String desc = '';
   String group = '';
@@ -108,8 +111,10 @@ class RecordFormModel extends ChangeNotifier {
 
     if (isEditing) {
       await _recRepo.update(record!);
+      ns.showNotification(NNewRecord()..isUpdate=true);
     } else {
       await _recRepo.insert(record!);
+      ns.showNotification(NNewRecord());
       init(null, group, softClear: true);
     }
   }

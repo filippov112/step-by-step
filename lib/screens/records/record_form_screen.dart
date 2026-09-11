@@ -67,7 +67,6 @@ class RecordFormState extends State<RecordForm> {
 
     final cardColor = Theme.of(context).cardColor;
     final focusColor = Theme.of(context).focusColor;
-    final primaryColor = Theme.of(context).primaryColor;
     final disabledColor = Theme.of(context).disabledColor;
 
     final diff = DifficultyLvl.values[diffIndex];
@@ -205,37 +204,38 @@ class RecordFormState extends State<RecordForm> {
       ),
     );
 
-    final saveButton = InkWell(
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
-      onTap: () async {
+    final saveButton = IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          ContinuousRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(12),
+            side: BorderSide(width: 3, color: Colors.greenAccent),
+          ),
+        ),
+      ),
+      padding: const EdgeInsets.all(14),
+      color: Colors.greenAccent,
+      onPressed: () async {
         if (!(_formKey.currentState?.validate() ?? false)) return;
         await model.save();
         await listModel.loadData();
       },
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: focusColor,
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-        ),
-        child: Center(
-          child: Icon(isEditing ? Icons.save : Icons.add, color: primaryColor),
-        ),
-      ),
+      icon: Icon(isEditing ? Icons.save : Icons.add),
     );
 
-    final closeButton = InkWell(
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
-      onTap: listModel.closeForm,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: primaryColor,
-          border: Border.all(color: focusColor, width: 3),
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
+    final closeButton = IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          ContinuousRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(12),
+            side: BorderSide(width: 3, color: focusColor),
+          ),
         ),
-        child: Center(child: Icon(Icons.close, color: focusColor)),
       ),
+      padding: const EdgeInsets.all(14),
+      color: focusColor,
+      onPressed: listModel.closeForm,
+      icon: Icon(Icons.close),
     );
 
     // ==============================

@@ -118,7 +118,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                     ),
                     CustomText(
                       '(${NumericTool.toThousandString(remains)} / ${NumericTool.toThousandString(requirements)} SF)',
-                      size: 12,
+                      size: 9,
                       color: charTableMode ? deltaColor : null,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),

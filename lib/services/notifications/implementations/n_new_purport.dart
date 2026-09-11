@@ -1,0 +1,21 @@
+import 'package:chaos_control/screens/home/modules.dart';
+import 'package:chaos_control/services/notifications/notification_item.dart';
+import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+class NNewPurport extends NotificationItem {
+
+  @override
+  Widget getWidget() {
+    return Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+        Icon(AppModule.chronicle.icon),
+        CustomText('Смысл добавлен!', padding: EdgeInsets.only(left: 8),),
+      ],),
+    ],);
+  }
+}

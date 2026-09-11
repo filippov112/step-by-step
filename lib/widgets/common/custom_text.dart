@@ -45,7 +45,7 @@ class CustomText extends StatelessWidget {
               fontSize: size,
               color: color,
               fontWeight: weight,
-              shadows: noShadow ? null : [ shadow ?? Shadow(color: Theme.of(context).colorScheme.onPrimary, blurRadius: 4)],
+              shadows: noShadow ? null : [ shadow ?? Shadow(color: color ?? Theme.of(context).colorScheme.onPrimary, blurRadius: 4)],
               decoration: decoration,
             ),
       maxLines: lines,

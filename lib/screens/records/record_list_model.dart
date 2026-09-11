@@ -213,10 +213,11 @@ class RecordListModel extends ChangeNotifier {
   }
 
   void toggleSelectAll() {
-    if (selectedIds.length == _filtered.length) {
+    final set = _filtered.where((t) => t.group.startsWith(listModel.currentAddress) ).map((t) => t.id).toSet();
+    if (selectedIds.length == set.length) {
       selectedIds = {};
     } else {
-      selectedIds = _filtered.map((t) => t.id).toSet();
+      selectedIds = set;
     }
     notifyListeners();
   }

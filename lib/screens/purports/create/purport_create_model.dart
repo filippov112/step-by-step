@@ -1,7 +1,10 @@
 import 'package:chaos_control/models/purport.dart';
+import 'package:chaos_control/services/notifications/implementations/n_new_purport.dart';
+import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 
 class PurportCreateModel extends ChangeNotifier {
+  final ns = NotificationService();
 
   // -------------- Fields ----------------
   Purport purport = Purport.create(title: '');
@@ -48,6 +51,7 @@ class PurportCreateModel extends ChangeNotifier {
     purport.group = group;
     try {
       await _purportRepo.insert(purport);
+      ns.showNotification(NNewPurport());
     }
     catch (e) {
       // print(e);

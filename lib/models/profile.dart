@@ -13,14 +13,14 @@ class Profile {
   static const cIcon = "_icon";
   
   static const cControl = "_c1";
-  static const cPerseverance = "_c2";
-  static const cCourage = "_c3";
+  static const cDiligence = "_c2";
+  static const cStrategy = "_c3";
   static const cDurability = "_c4";
   static const cCreativity = "_c5";
 
   static const cBControl = "_cb1";
-  static const cBPerseverance = "_cb2";
-  static const cBCourage = "_cb3";
+  static const cBDiligence = "_cb2";
+  static const cBStrategy = "_cb3";
   static const cBDurability = "_cb4";
   static const cBCreativity = "_cb5";
 
@@ -31,14 +31,14 @@ class Profile {
           $cIcon TEXT,
           
           $cControl INTEGER,
-          $cPerseverance INTEGER,
-          $cCourage INTEGER,
+          $cDiligence INTEGER,
+          $cStrategy INTEGER,
           $cDurability INTEGER,
           $cCreativity INTEGER,
 
           $cBControl INTEGER,
-          $cBPerseverance INTEGER,
-          $cBCourage INTEGER,
+          $cBDiligence INTEGER,
+          $cBStrategy INTEGER,
           $cBDurability INTEGER,
           $cBCreativity INTEGER
         )''';
@@ -94,14 +94,14 @@ class Profile {
       cIcon: icon?.toJson(),
       
       cControl: control,
-      cPerseverance: diligence,
-      cCourage: strategy,
+      cDiligence: diligence,
+      cStrategy: strategy,
       cDurability: durability,
       cCreativity: creativity,
 
       cBControl: controlBase,
-      cBPerseverance: diligenceBase,
-      cBCourage: strategyBase,
+      cBDiligence: diligenceBase,
+      cBStrategy: strategyBase,
       cBDurability: durabilityBase,
       cBCreativity: creativityBase,
     };
@@ -117,14 +117,14 @@ class Profile {
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
    
     control = map[cControl];
-    diligence = map[cPerseverance];
-    strategy = map[cCourage];
+    diligence = map[cDiligence];
+    strategy = map[cStrategy];
     durability = map[cDurability];
     creativity = map[cCreativity];
 
     controlBase = map[cBControl];
-    diligenceBase = map[cBPerseverance];
-    strategyBase = map[cBCourage];
+    diligenceBase = map[cBDiligence];
+    strategyBase = map[cBStrategy];
     durabilityBase = map[cBDurability];
     creativityBase = map[cBCreativity];
   }

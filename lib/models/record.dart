@@ -22,8 +22,8 @@ class ChronicleRecord {
   static const cChallenge = "_challenge";
 
   static const cControl = "_c1";
-  static const cPerseverance = "_c2";
-  static const cCourage = "_c3";
+  static const cDiligence = "_c2";
+  static const cStrategy = "_c3";
   static const cDurability = "_c4";
   static const cCreativity = "_c5";
 
@@ -39,8 +39,8 @@ class ChronicleRecord {
           $cChallenge INTEGER,
 
           $cControl INTEGER,
-          $cPerseverance INTEGER,
-          $cCourage INTEGER,
+          $cDiligence INTEGER,
+          $cStrategy INTEGER,
           $cDurability INTEGER,
           $cCreativity INTEGER
         );
@@ -144,8 +144,8 @@ class ChronicleRecord {
       cChallenge: challenge ? 1 : 0,
 
       cControl: control,
-      cPerseverance: diligence,
-      cCourage: strategy,
+      cDiligence: diligence,
+      cStrategy: strategy,
       cDurability: durability,
       cCreativity: creativity,
     };
@@ -163,8 +163,8 @@ class ChronicleRecord {
     challenge = map[cChallenge] == 1;
 
     control = map[cControl];
-    diligence = map[cPerseverance];
-    strategy = map[cCourage];
+    diligence = map[cDiligence];
+    strategy = map[cStrategy];
     durability = map[cDurability];
     creativity = map[cCreativity];
   }

@@ -81,8 +81,8 @@ class SpiritCalculator {
     final user = (await userRepo.get()) ?? Profile();
     
     user.control =  getSFFromCP(user.controlBase) + (dto?.control ?? 0);
-    user.diligence =  getSFFromCP(user.diligenceBase) + (dto?.perseverance ?? 0);
-    user.strategy =  getSFFromCP(user.strategyBase) + (dto?.courage ?? 0);
+    user.diligence =  getSFFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
+    user.strategy =  getSFFromCP(user.strategyBase) + (dto?.strategy ?? 0);
     user.durability =  getSFFromCP(user.durabilityBase) + (dto?.durability ?? 0);
     user.creativity =  getSFFromCP(user.creativityBase) + (dto?.creativity ?? 0);
 

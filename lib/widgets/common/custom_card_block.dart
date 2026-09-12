@@ -9,6 +9,7 @@ class CustomCardBlock extends StatelessWidget {
   final Widget? trailing;
   final IconData? icon;
   final Color? backColor, borderColor, textColor, iconColor;
+  final EdgeInsets? padding;
 
   const CustomCardBlock({
     super.key,
@@ -20,6 +21,7 @@ class CustomCardBlock extends StatelessWidget {
     this.borderColor,
     this.iconColor,
     this.textColor,
+    this.padding
   });
 
   @override
@@ -30,7 +32,7 @@ class CustomCardBlock extends StatelessWidget {
     final onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
 
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: padding ?? const EdgeInsets.all(8),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: backColor ?? cardColor.withAlpha(220),

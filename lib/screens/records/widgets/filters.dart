@@ -1,7 +1,6 @@
 import 'package:chaos_control/models/enums/characteristics_ext.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
 import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/filters/sort_button.dart';

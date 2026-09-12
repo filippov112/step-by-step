@@ -1,6 +1,7 @@
 import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/widgets/common/app_bar_list.dart';
 import 'package:chaos_control/widgets/common/search_string.dart';
+import 'package:chaos_control/widgets/common/tree_list/move_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +35,15 @@ class RecordListAppbar extends StatelessWidget implements PreferredSizeWidget {
           value: searchQuery,
           changeCallback: model.setSearchQuery,
         ),
+        actions: [
+          // Кнопка удаления выбранных
+            if (isSelectionMode && selectedItemsCount > 0)
+              IconButton(
+                icon: const Icon(Icons.move_to_inbox),
+                onPressed: () => showMoveDialog(context, currentAddress: model.listModel.currentAddress, callback: model.moveAllTo),
+                tooltip: 'Переместить выбранные',
+              ),
+        ],
       );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/enums/difficulty_lvl.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/screens/records/record_form_model.dart';
 import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -183,20 +184,11 @@ class RecordFormState extends State<RecordForm> {
       lines: 3,
     );
 
-    String? groupValidator(String? text) {
-      if (text == null || text.isEmpty) return null;
-      var parts = text.split('/');
-      if (parts.any((e) => e.isEmpty)) {
-        return 'Части группы не могут быть пустыми';
-      }
-      return null;
-    }
-
     final groupWidget = Expanded(
       child: CustomTextInput(
         header: "Группа ('/')",
         controller: groupController,
-        customValidator: groupValidator,
+        customValidator: ChronicleRecord.groupValidator,
         setText: (v) => model.setGroup(v ?? ''),
         icon: Icons.folder,
         lines: 1,

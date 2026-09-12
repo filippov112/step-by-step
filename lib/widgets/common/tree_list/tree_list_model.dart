@@ -93,4 +93,38 @@ class CustomTreeListModel<T> {
     }
     return results;
   }
+
+  Future moveAllTo({
+    required Map<String,String> idAndGroups, 
+    required String newAddress, 
+    required bool isSaveStructure,
+    required Future Function(String,String) updateCallback
+  }) async {
+    // Если адрес не изменился и структуру не требуется сбрасывать, то не трогаем
+    if (newAddress == currentAddress && isSaveStructure) return;
+    int currentAddressSkip = currentAddress.isEmpty ? 0 : currentAddress.split('/').length;
+    for (var item in idAndGroups.entries) {
+      // Если не нужно сохранять структуру, то перебрасываем как есть.
+      if (!isSaveStructure) {
+        await updateCallback(item.key, newAddress);
+      } else {
+        List<String> struct = item.value.isEmpty ? [] : item.value.split('/');
+        // Если адрес той же длины, что текущий, то перебрасываем как есть.
+        if (struct.length == currentAddressSkip) {
+          await updateCallback(item.key, newAddress);
+        }
+        List<String> newAddressParts = [];
+        // Пустой адрес не учитываем
+        if (newAddress.isNotEmpty) {
+          newAddressParts.add(newAddress);
+        }
+        // Пропускаем части текущего адреса
+        for(var i = currentAddressSkip; i < struct.length; i++) {
+          // Подгруппы докидываем в новый адрес
+          newAddressParts.add(struct[i]);
+        }
+        await updateCallback(item.key, newAddressParts.join('/'));
+      }
+    }
+  }
 }

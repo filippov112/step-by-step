@@ -181,4 +181,34 @@ class PurportListModel extends ChangeNotifier {
     isSelectionMode = false;
     notifyListeners();
   }
+
+  Future moveItem(String id, String newAddress) async {
+    final obj = _filtered.map((ob) => ob.id).contains(id)
+        ? _filtered.firstWhere((el) => el.id == id)
+        : null;
+    if (obj == null) return;
+    obj.group = newAddress;
+    await _purRepo.update(obj);
+  }
+
+  Future moveAllTo(String newAddress, bool isSaveStructure) async {
+    final listObjects = _filtered
+        .where((el) => selectedIds.contains(el.id))
+        .toList();
+    Map<String, String> idAndGroups = {};
+    for (var obj in listObjects) {
+      idAndGroups[obj.id] = obj.group;
+    }
+    await listModel.moveAllTo(
+      idAndGroups: idAndGroups,
+      newAddress: newAddress,
+      isSaveStructure: isSaveStructure,
+      updateCallback: moveItem,
+    );
+
+    selectedIds.clear();
+    isSelectionMode = false;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
 }

@@ -59,7 +59,7 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
                 tooltip: 'Выбрать все',
               ),
             // Кнопка удаления выбранных
-            if (selectionParams!.isSelectionMode)
+            if (selectionParams!.isSelectionMode && selectionParams!.selectedItemsCount > 0)
               IconButton(
                 icon: const Icon(Icons.delete_outline),
                 onPressed: () =>
@@ -78,9 +78,9 @@ class ListAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: searchField ?? titleWidget,
       actions: [
-        ...?selectionActions,
         ...?actions,
-
+        ...?selectionActions,
+        
         // Поиск
         if (selectionParams?.isSelectionMode != true &&
             searchWidget != null &&

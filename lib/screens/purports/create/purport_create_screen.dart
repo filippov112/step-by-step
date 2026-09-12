@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/screens/purports/create/purport_create_model.dart';
 import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _PurportCreateScreenState extends State<PurportCreateScreen> {
       icon: Icons.folder,
       setText: model.setGroup,
       lines: 1,
-      customValidator: model.groupValidator,
+      customValidator: Purport.groupValidator,
     );
     final descField = CustomTextInput(
       header: 'Суть',

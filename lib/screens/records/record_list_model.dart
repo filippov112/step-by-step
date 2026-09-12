@@ -7,7 +7,9 @@ import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
 enum SortRecord { date, time }
-enum ChallengeFilterType {all, challenges, chronicles}
+
+enum ChallengeFilterType { all, challenges, chronicles }
+
 extension ChallengeFilterTypeExt on ChallengeFilterType {
   String get displayName {
     switch (this) {
@@ -22,7 +24,7 @@ extension ChallengeFilterTypeExt on ChallengeFilterType {
 }
 
 class RecordListModel extends ChangeNotifier {
-  final _taskRepo = RecordRepository();
+  final _recordRepo = RecordRepository();
 
   List<ChronicleRecord> _records = [];
   List<ChronicleRecord> _filtered = [];
@@ -75,7 +77,7 @@ class RecordListModel extends ChangeNotifier {
   // ---------- Загрузка данных ------------
 
   Future loadData() async {
-    _records = await _taskRepo.getAllByDate(
+    _records = await _recordRepo.getAllByDate(
       startDate: DateTool.datetimeToDays(dateBeginFilter),
       endDate: DateTool.datetimeToDays(dateEndFilter),
     );
@@ -196,7 +198,13 @@ class RecordListModel extends ChangeNotifier {
     }
     // Фильтр испытаний
     if (challengeFilter != ChallengeFilterType.all) {
-      result = result.where((t) => t.challenge == (challengeFilter == ChallengeFilterType.challenges)).toList();
+      result = result
+          .where(
+            (t) =>
+                t.challenge ==
+                (challengeFilter == ChallengeFilterType.challenges),
+          )
+          .toList();
     }
     // Сортировка
     switch (sorting) {
@@ -223,7 +231,7 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future update(ChronicleRecord trg) async {
-    await _taskRepo.update(trg);
+    await _recordRepo.update(trg);
     final index = _records.indexWhere((t) => t.id == trg.id);
     if (index != -1) {
       _records[index] = trg;
@@ -233,7 +241,7 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future delete(String id) async {
-    await _taskRepo.delete(id);
+    await _recordRepo.delete(id);
     _records.removeWhere((t) => t.id == id);
     selectedIds.remove(id);
     await _applyFiltersAndSort();
@@ -242,7 +250,7 @@ class RecordListModel extends ChangeNotifier {
 
   Future deleteAllSelected() async {
     for (final id in selectedIds) {
-      await _taskRepo.delete(id);
+      await _recordRepo.delete(id);
       _records.removeWhere((t) => t.id == id);
     }
     selectedIds.clear();
@@ -261,7 +269,15 @@ class RecordListModel extends ChangeNotifier {
   }
 
   void toggleSelectAll() {
-    final set = _filtered.where((t) => t.group.startsWith('${listModel.currentAddress}/') || t.group == listModel.currentAddress || listModel.currentAddress.isEmpty).map((t) => t.id).toSet();
+    final set = _filtered
+        .where(
+          (t) =>
+              t.group.startsWith('${listModel.currentAddress}/') ||
+              t.group == listModel.currentAddress ||
+              listModel.currentAddress.isEmpty,
+        )
+        .map((t) => t.id)
+        .toSet();
     if (selectedIds.length == set.length) {
       selectedIds = {};
     } else {
@@ -287,6 +303,36 @@ class RecordListModel extends ChangeNotifier {
   void clearSelection() {
     selectedIds = {};
     isSelectionMode = false;
+    notifyListeners();
+  }
+
+  Future moveItem(String id, String newAddress) async {
+    final obj = _filtered.map((ob) => ob.id).contains(id)
+        ? _filtered.firstWhere((el) => el.id == id)
+        : null;
+    if (obj == null) return;
+    obj.group = newAddress;
+    await _recordRepo.update(obj);
+  }
+
+  Future moveAllTo(String newAddress, bool isSaveStructure) async {
+    final listObjects = _filtered
+        .where((el) => selectedIds.contains(el.id))
+        .toList();
+    Map<String, String> idAndGroups = {};
+    for (var obj in listObjects) {
+      idAndGroups[obj.id] = obj.group;
+    }
+    await listModel.moveAllTo(
+      idAndGroups: idAndGroups,
+      newAddress: newAddress,
+      isSaveStructure: isSaveStructure,
+      updateCallback: moveItem,
+    );
+
+    selectedIds.clear();
+    isSelectionMode = false;
+    await _applyFiltersAndSort();
     notifyListeners();
   }
 }

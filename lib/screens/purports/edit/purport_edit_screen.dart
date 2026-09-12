@@ -55,7 +55,7 @@ class _PurportEditScreenState extends State<PurportEditScreen> {
           icon: Icons.folder,
           setText: model.setGroup,
           lines:1,
-          customValidator: model.groupValidator,
+          customValidator: Purport.groupValidator,
         ),
         const SizedBox(height: 12),
 

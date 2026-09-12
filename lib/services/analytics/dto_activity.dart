@@ -11,8 +11,8 @@ class DtoActivity {
   static const cCreativity = 'total_5';
 
   final int date;
-  final int control, perseverance, courage, durability, creativity;
-  int get totalExperience => control + perseverance + courage + durability + creativity;
+  final int control, diligence, strategy, durability, creativity;
+  int get totalExperience => control + diligence + strategy + durability + creativity;
 
   DateTime? get dateTime => DateTool.joinDateTime(date: date);
 
@@ -20,8 +20,8 @@ class DtoActivity {
     required this.date,
 
     required this.control,
-    required this.perseverance,
-    required this.courage,
+    required this.diligence,
+    required this.strategy,
     required this.durability,
     required this.creativity,
   });
@@ -31,10 +31,10 @@ class DtoActivity {
     switch (ch) {
       case Characteristic.control:
         return control;
-      case Characteristic.perseverance:
-        return perseverance;
-      case Characteristic.courage:
-        return courage;
+      case Characteristic.diligence:
+        return diligence;
+      case Characteristic.strategy:
+        return strategy;
       case Characteristic.durability:
         return durability;
       case Characteristic.creativity:
@@ -47,8 +47,8 @@ class DtoActivity {
       date: map[ChronicleRecord.cDate] as int,
 
       control: map[cControl] as int? ?? 0,
-      perseverance: map[cPerseverance] as int? ?? 0,
-      courage: map[cCourage] as int? ?? 0,
+      diligence: map[cPerseverance] as int? ?? 0,
+      strategy: map[cCourage] as int? ?? 0,
       durability: map[cDurability] as int? ?? 0,
       creativity: map[cCreativity] as int? ?? 0,
     );

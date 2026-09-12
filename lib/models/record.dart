@@ -51,7 +51,7 @@ class ChronicleRecord {
   String id = '';
   
   String description = ""; // Описание
-  Characteristic char = Characteristic.perseverance; // Характеристика
+  Characteristic char = Characteristic.diligence; // Характеристика
   DifficultyLvl difficulty = DifficultyLvl.F; // Уровень сложности
   DateTime date = DateTool.today(); // Дата
   int time = 0;
@@ -59,8 +59,8 @@ class ChronicleRecord {
   bool challenge = false; // Испытание
 
   int control = 0;
-  int perseverance = 0;
-  int courage = 0;
+  int diligence = 0;
+  int strategy = 0;
   int durability = 0;
   int creativity = 0;
 
@@ -78,15 +78,15 @@ class ChronicleRecord {
     required this.challenge,
 
     required this.control,
-    required this.perseverance,
-    required this.courage,
+    required this.diligence,
+    required this.strategy,
     required this.durability,
     required this.creativity,
   });
 
   factory ChronicleRecord.create({
     String group = '',
-    Characteristic char = Characteristic.perseverance,
+    Characteristic char = Characteristic.diligence,
     DifficultyLvl difficulty = DifficultyLvl.F,
     String description = '',
     required DateTime date,
@@ -94,8 +94,8 @@ class ChronicleRecord {
     bool challenge = false,
 
     int control = 0,
-    int perseverance = 0,
-    int courage = 0,
+    int diligence = 0,
+    int strategy = 0,
     int durability = 0,
     int creativity = 0,
   }) {
@@ -112,8 +112,8 @@ class ChronicleRecord {
       challenge: challenge,
 
       control: control,
-      perseverance: perseverance,
-      courage: courage,
+      diligence: diligence,
+      strategy: strategy,
       durability: durability,
       creativity: creativity,
     );
@@ -121,14 +121,14 @@ class ChronicleRecord {
 
   Map<Characteristic, int> get chars => <Characteristic, int>{
     Characteristic.control: control,
-    Characteristic.perseverance: perseverance,
-    Characteristic.courage: courage,
+    Characteristic.diligence: diligence,
+    Characteristic.strategy: strategy,
     Characteristic.durability: durability,
     Characteristic.creativity: creativity,
   };
 
   int get spiritFragments =>
-      control + perseverance + courage + durability + creativity;
+      control + diligence + strategy + durability + creativity;
 
   // ------------ Сериализация ------------
   Map<String, Object?> toMap() {
@@ -144,8 +144,8 @@ class ChronicleRecord {
       cChallenge: challenge ? 1 : 0,
 
       cControl: control,
-      cPerseverance: perseverance,
-      cCourage: courage,
+      cPerseverance: diligence,
+      cCourage: strategy,
       cDurability: durability,
       cCreativity: creativity,
     };
@@ -163,8 +163,8 @@ class ChronicleRecord {
     challenge = map[cChallenge] == 1;
 
     control = map[cControl];
-    perseverance = map[cPerseverance];
-    courage = map[cCourage];
+    diligence = map[cPerseverance];
+    strategy = map[cCourage];
     durability = map[cDurability];
     creativity = map[cCreativity];
   }

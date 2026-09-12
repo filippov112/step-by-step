@@ -17,7 +17,7 @@ class RecordFormModel extends ChangeNotifier {
   int diffIndex = 0;
   bool challenge = false;
   DateTime date = DateTool.today();
-  Characteristic characteristic = Characteristic.perseverance;
+  Characteristic characteristic = Characteristic.diligence;
 
   int sf = 0;
   ChronicleRecord? record;
@@ -31,7 +31,7 @@ class RecordFormModel extends ChangeNotifier {
       challenge = rec?.challenge ?? false;
       desc = rec?.description ?? '';
       group = gr;
-      characteristic = rec?.char ?? Characteristic.perseverance;
+      characteristic = rec?.char ?? Characteristic.diligence;
       date = rec?.date ?? DateTool.today();
     }
   
@@ -48,7 +48,7 @@ class RecordFormModel extends ChangeNotifier {
     challenge = false;
     desc = '';
     group = '';
-    characteristic = Characteristic.perseverance;
+    characteristic = Characteristic.diligence;
     date = DateTool.today();
     record = null;
     sf = 0;
@@ -94,10 +94,10 @@ class RecordFormModel extends ChangeNotifier {
     switch (characteristic) {
       case Characteristic.control:
         record?.control = sf;
-      case Characteristic.perseverance:
-        record?.perseverance = sf;
-      case Characteristic.courage:
-        record?.courage = sf;
+      case Characteristic.diligence:
+        record?.diligence = sf;
+      case Characteristic.strategy:
+        record?.strategy = sf;
       case Characteristic.durability:
         record?.durability = sf;
       case Characteristic.creativity:

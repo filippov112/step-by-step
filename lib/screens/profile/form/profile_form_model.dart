@@ -42,10 +42,10 @@ class ProfileFormModel extends ChangeNotifier {
     switch (char) {
       case Characteristic.control:
         profile?.controlBase = value;
-      case Characteristic.perseverance:
-        profile?.perseveranceBase = value;
-      case Characteristic.courage:
-        profile?.courageBase = value;
+      case Characteristic.diligence:
+        profile?.diligenceBase = value;
+      case Characteristic.strategy:
+        profile?.strategyBase = value;
       case Characteristic.durability:
         profile?.durabilityBase = value;
       case Characteristic.creativity:

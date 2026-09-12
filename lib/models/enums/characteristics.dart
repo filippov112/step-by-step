@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 enum Characteristic {
   control,
-  perseverance,
-  courage,
+  diligence,
+  strategy,
   durability,
   creativity
 }
@@ -14,10 +14,10 @@ extension CharacteristicsExt on Characteristic {
     switch (this) {
       case Characteristic.control:
         return 'Контроль';
-      case Characteristic.perseverance:
-        return 'Упорство';
-        case Characteristic.courage:
-        return 'Смелость';
+      case Characteristic.diligence:
+        return 'Усердие';
+        case Characteristic.strategy:
+        return 'Стратегия';
       case Characteristic.durability:
         return 'Стойкость';
       case Characteristic.creativity:
@@ -29,9 +29,9 @@ extension CharacteristicsExt on Characteristic {
     switch (this) {
       case Characteristic.control:
         return Colors.greenAccent;
-      case Characteristic.perseverance:
+      case Characteristic.diligence:
         return Colors.yellow;
-      case Characteristic.courage:
+      case Characteristic.strategy:
         return Colors.redAccent;
       case Characteristic.durability:
         return Colors.white;
@@ -44,10 +44,10 @@ extension CharacteristicsExt on Characteristic {
     switch (this) {
       case Characteristic.control:
         return Icons.self_improvement;
-      case Characteristic.perseverance:
+      case Characteristic.diligence:
         return Icons.construction;
-      case Characteristic.courage:
-        return Icons.favorite;
+      case Characteristic.strategy:
+        return Icons.account_tree;
       case Characteristic.durability:
         return Icons.diamond;
       case Characteristic.creativity:
@@ -59,14 +59,14 @@ extension CharacteristicsExt on Characteristic {
     switch (this) {
       case Characteristic.control:
         return '🎯';
-      case Characteristic.perseverance:
-        return '🔥';
-      case Characteristic.courage:
-        return '⚔️';
+      case Characteristic.diligence:
+        return '💪';
+      case Characteristic.strategy:
+        return '🧠';
       case Characteristic.durability:
         return '🛡️';
       case Characteristic.creativity:
-        return '🧠';
+        return '✨';
     }
   }
 }

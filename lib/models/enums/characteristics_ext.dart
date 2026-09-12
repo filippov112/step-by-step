@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 enum CharacteristicExt {
   all,
   control,
-  perseverance,
-  courage,
+  diligence,
+  strategy,
   durability,
   creativity,
 }
@@ -15,10 +15,10 @@ extension ActivityTypeExt on CharacteristicExt {
     switch (this) {
       case CharacteristicExt.control:
         return Characteristic.control;
-      case CharacteristicExt.perseverance:
-        return Characteristic.perseverance;
-      case CharacteristicExt.courage:
-        return Characteristic.courage;
+      case CharacteristicExt.diligence:
+        return Characteristic.diligence;
+      case CharacteristicExt.strategy:
+        return Characteristic.strategy;
       case CharacteristicExt.durability:
         return Characteristic.durability;
       case CharacteristicExt.creativity:

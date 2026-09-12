@@ -49,41 +49,41 @@ class Profile {
 
   // Кэш
   int control = 0;
-  int perseverance = 0;
-  int courage = 0;
+  int diligence = 0;
+  int strategy = 0;
   int durability = 0;
   int creativity = 0;
   
   // Базовые значения
   int controlBase = 0;
-  int perseveranceBase = 0;
-  int courageBase = 0;
+  int diligenceBase = 0;
+  int strategyBase = 0;
   int durabilityBase = 0;
   int creativityBase = 0;
 
-  int get spiritFragments => control + perseverance + courage + durability + creativity;
+  int get spiritFragments => control + diligence + strategy + durability + creativity;
 
   Profile({
     this.name = "",
     this.icon,
     
     this.control = 0,
-    this.perseverance = 0,
-    this.courage = 0,
+    this.diligence = 0,
+    this.strategy = 0,
     this.durability = 0,
     this.creativity = 0,
 
     this.controlBase = 0,
-    this.perseveranceBase = 0,
-    this.courageBase = 0,
+    this.diligenceBase = 0,
+    this.strategyBase = 0,
     this.durabilityBase = 0,
     this.creativityBase = 0
   });
 
   Map<Characteristic,int> get chars => <Characteristic,int>{
     Characteristic.control: control,
-    Characteristic.perseverance: perseverance,
-    Characteristic.courage: courage,
+    Characteristic.diligence: diligence,
+    Characteristic.strategy: strategy,
     Characteristic.durability: durability,
     Characteristic.creativity: creativity
   };
@@ -94,14 +94,14 @@ class Profile {
       cIcon: icon?.toJson(),
       
       cControl: control,
-      cPerseverance: perseverance,
-      cCourage: courage,
+      cPerseverance: diligence,
+      cCourage: strategy,
       cDurability: durability,
       cCreativity: creativity,
 
       cBControl: controlBase,
-      cBPerseverance: perseveranceBase,
-      cBCourage: courageBase,
+      cBPerseverance: diligenceBase,
+      cBCourage: strategyBase,
       cBDurability: durabilityBase,
       cBCreativity: creativityBase,
     };
@@ -117,22 +117,22 @@ class Profile {
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
    
     control = map[cControl];
-    perseverance = map[cPerseverance];
-    courage = map[cCourage];
+    diligence = map[cPerseverance];
+    strategy = map[cCourage];
     durability = map[cDurability];
     creativity = map[cCreativity];
 
     controlBase = map[cBControl];
-    perseveranceBase = map[cBPerseverance];
-    courageBase = map[cBCourage];
+    diligenceBase = map[cBPerseverance];
+    strategyBase = map[cBCourage];
     durabilityBase = map[cBDurability];
     creativityBase = map[cBCreativity];
   }
 
   void setChars(Map<Characteristic, int> newUserChars) {
     control = newUserChars[Characteristic.control] ?? 0;
-    perseverance = newUserChars[Characteristic.perseverance] ?? 0;
-    courage = newUserChars[Characteristic.courage] ?? 0;
+    diligence = newUserChars[Characteristic.diligence] ?? 0;
+    strategy = newUserChars[Characteristic.strategy] ?? 0;
     durability = newUserChars[Characteristic.durability] ?? 0;
     creativity = newUserChars[Characteristic.creativity] ?? 0;
   }

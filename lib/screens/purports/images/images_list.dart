@@ -8,37 +8,11 @@ import 'package:provider/provider.dart';
 class ImagesList extends StatelessWidget {
   const ImagesList({super.key});
 
-  void add() {
-    // todo
-  }
-
   @override
   Widget build(BuildContext context) {
     final images = context.select<PurportImagesModel, List<PurImage>>(
       (m) => m.images,
     );
-    // final images = [
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    //   "C:\\Users\\ilya\\Documents/icons/icon_01a08b8c-a92f-790c-bf8f-74cdfae4d6fa.jpg",
-    // ];
     final isSelectionMode = context.select<PurportImagesModel, bool>(
       (m) => m.isSelectionMode,
     );

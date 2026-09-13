@@ -1,35 +1,35 @@
 import 'dart:io';
-import 'package:chaos_control/models/pur_image.dart';
-import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
+import 'package:chaos_control/models/pur_sound.dart';
+import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
 import 'package:chaos_control/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 
-class ImageEditForm extends StatefulWidget {
-  final PurImage image;
+class SoundEditForm extends StatefulWidget {
+  final PurSound sound;
 
-  const ImageEditForm({super.key, required this.image});
+  const SoundEditForm({super.key, required this.sound});
 
   @override
-  State<ImageEditForm> createState() => _ImageEditFormState();
+  State<SoundEditForm> createState() => _SoundEditFormState();
 }
 
-class _ImageEditFormState extends State<ImageEditForm> {
+class _SoundEditFormState extends State<SoundEditForm> {
   final _formKey = GlobalKey<FormState>();
-  late PurportImagesModel model;
+  late PurportSoundsModel model;
 
-  String name = '';
-  String desc = '';
+  String title = '';
+  String artist = '';
 
 
   @override
   void initState() {
     super.initState();
-    model = context.read<PurportImagesModel>();
-    name = widget.image.name;
-    desc = widget.image.desc;
+    model = context.read<PurportSoundsModel>();
+    title = widget.sound.title;
+    artist = widget.sound.artist ?? '';
   }
 
   @override
@@ -49,7 +49,7 @@ class _ImageEditFormState extends State<ImageEditForm> {
             border: Border.all(color: Theme.of(context).dividerColor, width: 2),
             borderRadius: const BorderRadius.all(Radius.circular(12))
           ),
-          child: Image.file(File(widget.image.path), height: 200),
+          child: Image.file(File(widget.sound.path), height: 200),
         ),
         
         const SizedBox(height: 12),
@@ -57,19 +57,19 @@ class _ImageEditFormState extends State<ImageEditForm> {
         // Название
         CustomTextInput(
           header: 'Название',
-          initialValue: name,
+          initialValue: title,
           icon: Icons.title,
-          setText: (v) {name = v ?? '';},
+          setText: (v) {title = v ?? '';},
         ),
         const SizedBox(height: 12),
 
-        // Описание
+        // Артист
         CustomTextInput(
-          header: 'Описание',
-          initialValue: desc,
+          header: 'Артист',
+          initialValue: artist,
           action: null,
-          icon: Icons.description,
-          setText: (v) {desc = v ?? '';},
+          icon: Icons.person,
+          setText: (v) {artist = v ?? '';},
           lines:5
         ),
       ],
@@ -77,11 +77,11 @@ class _ImageEditFormState extends State<ImageEditForm> {
   }
 
   Future _save() async {
-    widget.image.name = name;
-    widget.image.desc = desc;
-    await model.update(widget.image);
+    widget.sound.title = title;
+    widget.sound.artist = artist;
+    await model.update(widget.sound);
     if (mounted) {
-      Navigator.pop(context, widget.image);
+      Navigator.pop(context, widget.sound);
     }
   }
 
@@ -93,7 +93,7 @@ class _ImageEditFormState extends State<ImageEditForm> {
 
   Future _delete() async {
     if (await showConfirmDialog(context) == true && context.mounted) {
-      await model.delete(widget.image.id);
+      await model.delete(widget.sound.id);
       _close();
     }
   }

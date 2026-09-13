@@ -53,7 +53,7 @@ class ImageViewState extends State<ImageView> {
 
   Future _deleteThis() async {
     if (await showConfirmDialog(context) == true && context.mounted) {
-      await model.deleteImage(image.id);
+      await model.delete(image.id);
       _close();
     }
   }

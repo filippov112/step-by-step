@@ -95,7 +95,7 @@ class ChronicleRecord {
 
     int happiness = 0,
     int diligence = 0,
-    int strategy = 0,
+    int intellection = 0,
     int durability = 0,
     int potencial = 0,
   }) {
@@ -113,7 +113,7 @@ class ChronicleRecord {
 
       happiness: happiness,
       diligence: diligence,
-      intellection: strategy,
+      intellection: intellection,
       durability: durability,
       potencial: potencial,
     );

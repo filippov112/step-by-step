@@ -22,7 +22,7 @@ class PurportImagesModel extends ChangeNotifier {
 
   // ----------- CRUD -------------
 
-  Future addImage(String? path) async {
+  Future add(String? path) async {
     if (path == null || purport == null) return;
     final newImage = PurImage.create(purportId: purport?.id ?? '', path: path, name: purport?.title ?? '');
     await _imageRepo.insert(newImage);
@@ -40,13 +40,13 @@ class PurportImagesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateImage(PurImage image) async {
+  Future update(PurImage image) async {
     await _imageRepo.update(image);
     await _reload();
     notifyListeners();
   }
 
-  Future deleteImage(String id) async {
+  Future delete(String id) async {
     await _imageRepo.delete(id);
     await _reload();
     notifyListeners();

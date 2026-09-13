@@ -1,27 +1,35 @@
 // lib/services/file_storage_service.dart
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
+
+enum SupportedFileType { images, sounds }
 
 class FileService {
 
-  // Сохраняет иконку
-  static Future<String?> saveImage(File imageFile) async {
+  // Сохраняет файл
+  static Future<(String, String)?> saveFile(String? sourcePath, SupportedFileType type) async {
     try {
+      if (sourcePath == null) throw 'Файл не найден';
       final appDir = await getApplicationDocumentsDirectory();
-      final iconDir = Directory('${appDir.path}/icons');
-      if (!await iconDir.exists()) {
-        await iconDir.create(recursive: true);
+      final audioDir = Directory(p.join(appDir.path, type.name));
+      if (!await audioDir.exists()) {
+        await audioDir.create(recursive: true);
       }
+
       final guid = const Uuid().v7();
-      final fileName = 'icon_$guid.jpg';
-      final newPath = '${iconDir.path}/$fileName';
-      final newFile = await imageFile.copy(newPath);
       
-      return newFile.path;
+      final name = p.basename(sourcePath);
+      final fileName = '${type.name}_$guid.jpg';
+      final destPath = p.join(audioDir.path, fileName);
+  
+      await File(sourcePath).copy(destPath);
+      return (name, destPath);
     } catch (e) {
-      // print('Ошибка сохранения иконки смысла: $e');
       return null;
     }
   }
@@ -38,8 +46,24 @@ class FileService {
       // print('Ошибка удаления файла: $e');
     }
   }
+
+  // Загрузка аудио
+  static Future<PlatformFile?> pickAudioFile() async {
+    if (!await _requestAudioPermission()) return null;
+    final result = await FilePicker.pickFiles(
+      type: FileType.audio,
+    );
+    return result.first;
+  }
+  static Future<bool> _requestAudioPermission() async {
+    if (Platform.isAndroid) {
+      final status = await Permission.audio.request();
+      return status.isGranted;
+    }
+    return true;
+  }
   
-  // Выбор изображения из галереи
+  // Загрузка изображения
   static Future<File?> pickImageFromGallery({bool full = false}) async {
     try {
       final ImagePicker picker = ImagePicker();

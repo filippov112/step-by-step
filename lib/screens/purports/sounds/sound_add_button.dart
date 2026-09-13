@@ -1,21 +1,21 @@
-import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
+import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/services/file_storage_service.dart';
 import 'package:chaos_control/widgets/common/custom_floating_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ImageAddButton extends StatelessWidget {
-  const ImageAddButton({super.key});
+class SoundAddButton extends StatelessWidget {
+  const SoundAddButton({super.key});
 
   // Выбор изображения
-  Future<bool> pickImage(BuildContext context, Function(String?) callback) async {
+  Future<bool> pickImage(BuildContext context, Function(String?, String?) callback) async {
     try {
-      final file = await FileService.pickImageFromGallery(full: true);
+      final file = await FileService.pickAudioFile();
       if (file == null) return false;
 
-      final savedPath = await FileService.saveFile(file.path, SupportedFileType.images);
+      final savedPath = await FileService.saveFile(file.path, SupportedFileType.sounds);
       if (savedPath != null) {
-        callback(savedPath.$2);
+        callback(savedPath.$1, savedPath.$2);
       }
       return false;
     } catch (e) {
@@ -25,7 +25,7 @@ class ImageAddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.read<PurportImagesModel>();
+    final model = context.read<PurportSoundsModel>();
 
     return CustomFloatingActionButton(callback: () => pickImage(context, model.add), tooltip: '');
   }

@@ -32,7 +32,7 @@ extension CharacteristicsExt on Characteristic {
       case Characteristic.diligence:
         return Colors.red;
       case Characteristic.strategy:
-        return Colors.redAccent;
+        return Colors.purple;
       case Characteristic.durability:
         return Colors.white;
       case Characteristic.potencial:

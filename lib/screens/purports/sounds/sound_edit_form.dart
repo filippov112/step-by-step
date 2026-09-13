@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:chaos_control/models/pur_sound.dart';
 import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:flutter/material.dart';
@@ -41,18 +40,6 @@ class _SoundEditFormState extends State<SoundEditForm> {
       deleteCallback: () => _delete(),
       formKey: _formKey,
       children: [
-        // Иконка
-        Container(
-          height: 200,
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            border: Border.all(color: Theme.of(context).dividerColor, width: 2),
-            borderRadius: const BorderRadius.all(Radius.circular(12))
-          ),
-          child: Image.file(File(widget.sound.path), height: 200),
-        ),
-        
-        const SizedBox(height: 12),
 
         // Название
         CustomTextInput(

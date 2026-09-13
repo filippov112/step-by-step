@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chaos_control/models/pur_image.dart';
+import 'package:chaos_control/models/pur_sound.dart';
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/models/profile.dart';
@@ -34,6 +35,7 @@ class DB {
       await db.execute(Purport.init);
       await db.execute(ChronicleRecord.init);
       await db.execute(PurImage.init);
+      await db.execute(PurSound.init);
     });
   }
 

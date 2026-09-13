@@ -3,6 +3,7 @@ import 'package:chaos_control/screens/purports/detail/purport_detail_screen.dart
 import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
 import 'package:chaos_control/screens/purports/list/purport_list_model.dart';
 import 'package:chaos_control/screens/purports/list/widgets/add_button.dart';
+import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ class PurportListList extends StatelessWidget {
     if (purport == null) return;
     final imagesModel = context.read<PurportImagesModel>();
     await imagesModel.init(purport);
+    if (!context.mounted) return;
+    final soundsModel = context.read<PurportSoundsModel>();
+    await soundsModel.init(purport);
     if (context.mounted) {
       Navigator.push(
         context,

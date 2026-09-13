@@ -1,3 +1,6 @@
+import 'package:chaos_control/screens/purports/sounds/sound_appbar.dart';
+import 'package:chaos_control/screens/purports/sounds/sound_list.dart';
+import 'package:chaos_control/screens/purports/sounds/sound_player.dart';
 import 'package:flutter/material.dart';
 
 class PurportDetailTabSounds extends StatelessWidget {
@@ -6,16 +9,12 @@ class PurportDetailTabSounds extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return SizedBox();
-
-    // return CustomTreeList<Target>(
-    //   emptyTitle: 'Цели не найдены',
-    //   currentAddress: currentAddress,
-    //   visualList: targets,
-    //   tileIcon: Icons.center_focus_strong,
-    //   openRecordCallback: (trg) => _open(context, trg, model.reloadTargets),
-    //   openFolderCallback: model.openTargetsFolder,
-    //   tileFabric: TargetTreeFabric(),
-    // );
+    return Column(
+      children: [
+        const SoundAppbar(),
+        const SoundList(),
+        const SoundPlayer()
+      ],
+    );
   }
 }

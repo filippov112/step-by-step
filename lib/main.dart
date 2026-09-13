@@ -4,6 +4,7 @@ import 'package:chaos_control/screens/purports/images/purport_images_model.dart'
 import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/screens/purports/edit/purport_edit_model.dart';
 import 'package:chaos_control/screens/records/record_form_model.dart';
+import 'package:chaos_control/services/audio/audio_player.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
@@ -15,19 +16,20 @@ import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/themes/solo_leveling_theme.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 import 'package:provider/provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await DB.initDb();
-
+  JustAudioMediaKit.ensureInitialized(linux: true, windows: true);
   runApp(
     MultiProvider(
       providers: [
         // Home
         ChangeNotifierProvider<NotificationService>(create: (_) => NotificationService()),
+        ChangeNotifierProvider<AudioPlayerService>(create: (_) => AudioPlayerService()),
         ChangeNotifierProvider<HomeModel>(create: (_) { return HomeModel(); }),
 
         // Records

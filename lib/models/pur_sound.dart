@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/purport.dart';
@@ -9,7 +8,7 @@ import 'package:uuid/uuid.dart';
 // Аудио-смыслы
 class PurSound {
   // ------------ Схема ------------
-  static const tn = "pur_images";
+  static const tn = "pur_sounds";
   
   static const cId = "_id";
   static const cPurportId = "_purport_id";
@@ -17,7 +16,6 @@ class PurSound {
   static const cTitle = "_title";
   static const cArtist = "_artist";
   static const cDuration = "_duration";
-  static const cArtwork = "_artwork";
 
   static const init = '''CREATE TABLE $tn (
     $cId TEXT PRIMARY KEY, 
@@ -26,7 +24,6 @@ class PurSound {
     $cTitle TEXT,
     $cArtist TEXT,
     $cDuration INTEGER,
-    $cArtwork TEXT,
     
     FOREIGN KEY ($cPurportId) REFERENCES ${Purport.tn}(${Purport.cId}) ON DELETE CASCADE
   );
@@ -40,7 +37,6 @@ class PurSound {
   String title;
   String? artist;
   final Duration? duration;
-  final Uint8List? artwork;  // Обложка
 
   // ------------ Конструкторы ------------
 
@@ -50,8 +46,7 @@ class PurSound {
     required this.path,
     required this.title,
     this.artist,
-    this.duration,
-    this.artwork,
+    this.duration
   });
 
   factory PurSound.create({
@@ -60,7 +55,6 @@ class PurSound {
     required String title,
     String? artist = '',
     Duration? duration,
-    Uint8List? artwork,
   }) {
     final guid = const Uuid().v4();
     return PurSound(
@@ -69,8 +63,7 @@ class PurSound {
       path: path,
       title: title,
       artist: artist,
-      duration: duration,
-      artwork: artwork
+      duration: duration
     );
   }
 
@@ -83,7 +76,6 @@ class PurSound {
         cTitle: title,
         cArtist: artist,
         cDuration: duration?.inMilliseconds,
-        cArtwork: artwork,
       };
 
   factory PurSound.fromMap(Map map) => PurSound(
@@ -95,7 +87,6 @@ class PurSound {
         duration: map[cDuration] != null
             ? Duration(milliseconds: map[cDuration] as int)
             : null,
-        artwork: map[cArtwork] as Uint8List?,
       );
 }
 

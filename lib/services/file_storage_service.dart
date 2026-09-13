@@ -22,9 +22,9 @@ class FileService {
       }
 
       final guid = const Uuid().v7();
-      
-      final name = p.basename(sourcePath);
-      final fileName = '${type.name}_$guid.jpg';
+      final name = p.basenameWithoutExtension(sourcePath);
+      final ext = p.extension(sourcePath);
+      final fileName = '${type.name}_$guid.$ext';
       final destPath = p.join(audioDir.path, fileName);
   
       await File(sourcePath).copy(destPath);

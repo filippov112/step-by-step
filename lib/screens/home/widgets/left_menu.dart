@@ -1,3 +1,4 @@
+import 'package:chaos_control/screens/purports/sounds/sound_player.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/home/home_model.dart';
 import 'package:chaos_control/screens/home/modules.dart';
@@ -15,6 +16,7 @@ class MainMenuDrawer extends StatelessWidget {
 
     return Drawer(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Список пунктов меню
           Expanded(
@@ -32,6 +34,7 @@ class MainMenuDrawer extends StatelessWidget {
                   .toList(),
             ),
           ),
+          const SoundPlayer()
         ],
       ),
     );

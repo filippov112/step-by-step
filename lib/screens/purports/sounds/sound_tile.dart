@@ -8,7 +8,6 @@ import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class SoundTile extends StatelessWidget {
   final PurSound sound;
   const SoundTile({super.key, required this.sound});
@@ -23,22 +22,22 @@ class SoundTile extends StatelessWidget {
     final selectedImages = context.select<PurportSoundsModel, Set<String>>(
       (m) => m.selectedIds,
     );
+    final isCurrent = context.select<AudioPlayerService,bool>((m) => m.current?.id == sound.id);
 
     final bRadius = const BorderRadius.all(Radius.circular(16));
     Color? containterColor = Theme.of(
       context,
     ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.9);
 
-    final dividerColor = Theme.of(context).dividerColor;
+    final focusColor = Theme.of(context).focusColor;
     Color titleColor = Theme.of(context).colorScheme.onPrimary;
 
-    
     void select() {
       model.toggleSelect(sound.id);
     }
 
     void play() {
-      player.playFile(sound.path);
+      player.playFile(sound, model.sounds);
     }
 
     void edit() {
@@ -50,9 +49,9 @@ class SoundTile extends StatelessWidget {
 
     // Иконка
     final iconWidget = Padding(
-      padding: const EdgeInsetsGeometry.fromLTRB(12, 12, 0, 12),
+      padding: const EdgeInsetsGeometry.only(top: 12, bottom: 12),
       child: CustomImageIcon(
-        CustomImageData.fromIcon(Icons.music_note),
+        CustomImageData.fromIcon(isCurrent ? Icons.play_arrow : Icons.music_note),
         altIcon: Icons.music_note,
         width: 40,
         height: 40,
@@ -61,21 +60,23 @@ class SoundTile extends StatelessWidget {
 
     // Чекбокс выделения записи
     final checkboxWidget = isSelectionMode
-        ? Checkbox(
-            value: selectedImages.contains(sound.id),
-            onChanged: (_) => model.toggleSelect(sound.id),
+        ? Padding(
+            padding: const EdgeInsetsGeometry.only(right: 12),
+            child: Checkbox(
+              value: selectedImages.contains(sound.id),
+              onChanged: (_) => model.toggleSelect(sound.id),
+            ),
           )
         : null;
 
     // Редактировать
-    final editButton = IconButton(icon: Icon(Icons.edit), onPressed: edit,);
+    final editButton = IconButton(icon: Icon(Icons.edit), onPressed: edit);
 
     // Название
     final titleWidget = CustomText(
       sound.title,
       size: 17,
-      expanded: true,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
       overflow: TextOverflow.ellipsis,
       color: titleColor,
     );
@@ -84,10 +85,9 @@ class SoundTile extends StatelessWidget {
     final artistWidget = CustomText(
       sound.artist ?? '',
       size: 12,
-      expanded: true,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 12),
       overflow: TextOverflow.ellipsis,
-      color: dividerColor,
+      color: focusColor.withAlpha(120),
     );
 
     // Итоговая карточка
@@ -96,6 +96,7 @@ class SoundTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: bRadius,
+          border: isCurrent ? Border.all(color: focusColor, width: 1) : null,
           color: containterColor,
         ),
         child: InkWell(
@@ -103,7 +104,7 @@ class SoundTile extends StatelessWidget {
           onTap: isSelectionMode ? select : play,
           onLongPress: select,
           child: Padding(
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               children: [
                 // Чекбокс для выделения или статуса
@@ -121,7 +122,7 @@ class SoundTile extends StatelessWidget {
                 ),
 
                 // Редактировать
-                editButton
+                editButton,
               ],
             ),
           ),

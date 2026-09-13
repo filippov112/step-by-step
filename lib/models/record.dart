@@ -23,7 +23,7 @@ class ChronicleRecord {
 
   static const cHappiness = "_c1";
   static const cDiligence = "_c2";
-  static const cStrategy = "_c3";
+  static const cIntellection = "_c3";
   static const cDurability = "_c4";
   static const cPotencial = "_c5";
 
@@ -40,7 +40,7 @@ class ChronicleRecord {
 
           $cHappiness INTEGER,
           $cDiligence INTEGER,
-          $cStrategy INTEGER,
+          $cIntellection INTEGER,
           $cDurability INTEGER,
           $cPotencial INTEGER
         );
@@ -60,7 +60,7 @@ class ChronicleRecord {
 
   int happiness = 0;
   int diligence = 0;
-  int strategy = 0;
+  int intellection = 0;
   int durability = 0;
   int potencial = 0;
 
@@ -79,7 +79,7 @@ class ChronicleRecord {
 
     required this.happiness,
     required this.diligence,
-    required this.strategy,
+    required this.intellection,
     required this.durability,
     required this.potencial,
   });
@@ -113,7 +113,7 @@ class ChronicleRecord {
 
       happiness: happiness,
       diligence: diligence,
-      strategy: strategy,
+      intellection: strategy,
       durability: durability,
       potencial: potencial,
     );
@@ -122,13 +122,13 @@ class ChronicleRecord {
   Map<Characteristic, int> get chars => <Characteristic, int>{
     Characteristic.happiness: happiness,
     Characteristic.diligence: diligence,
-    Characteristic.strategy: strategy,
+    Characteristic.intellection: intellection,
     Characteristic.durability: durability,
     Characteristic.potencial: potencial,
   };
 
   int get spiritFragments =>
-      happiness + diligence + strategy + durability + potencial;
+      happiness + diligence + intellection + durability + potencial;
 
   // ------------ Сериализация ------------
   Map<String, Object?> toMap() {
@@ -145,7 +145,7 @@ class ChronicleRecord {
 
       cHappiness: happiness,
       cDiligence: diligence,
-      cStrategy: strategy,
+      cIntellection: intellection,
       cDurability: durability,
       cPotencial: potencial,
     };
@@ -164,7 +164,7 @@ class ChronicleRecord {
 
     happiness = map[cHappiness];
     diligence = map[cDiligence];
-    strategy = map[cStrategy];
+    intellection = map[cIntellection];
     durability = map[cDurability];
     potencial = map[cPotencial];
   }

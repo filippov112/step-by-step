@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum Characteristic {
   happiness,
   diligence,
-  strategy,
+  intellection,
   durability,
   potencial
 }
@@ -16,8 +16,8 @@ extension CharacteristicsExt on Characteristic {
         return 'Счастье';
       case Characteristic.diligence:
         return 'Усердие';
-        case Characteristic.strategy:
-        return 'Стратегия';
+        case Characteristic.intellection:
+        return 'Мышление';
       case Characteristic.durability:
         return 'Стойкость';
       case Characteristic.potencial:
@@ -31,7 +31,7 @@ extension CharacteristicsExt on Characteristic {
         return Colors.yellow;
       case Characteristic.diligence:
         return Colors.red;
-      case Characteristic.strategy:
+      case Characteristic.intellection:
         return Colors.purple;
       case Characteristic.durability:
         return Colors.white;
@@ -46,7 +46,7 @@ extension CharacteristicsExt on Characteristic {
         return Icons.light_mode;
       case Characteristic.diligence:
         return Icons.construction;
-      case Characteristic.strategy:
+      case Characteristic.intellection:
         return Icons.account_tree;
       case Characteristic.durability:
         return Icons.diamond;
@@ -61,7 +61,7 @@ extension CharacteristicsExt on Characteristic {
         return 'MP';
       case Characteristic.diligence:
         return 'STR';
-      case Characteristic.strategy:
+      case Characteristic.intellection:
         return 'INT';
       case Characteristic.durability:
         return 'DEF';

@@ -81,8 +81,8 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
           return profile?.happinessBase ?? 0;
         case Characteristic.diligence:
           return profile?.diligenceBase ?? 0;
-        case Characteristic.strategy:
-          return profile?.strategyBase ?? 0;
+        case Characteristic.intellection:
+          return profile?.intellectionBase ?? 0;
         case Characteristic.durability:
           return profile?.durabilityBase ?? 0;
         case Characteristic.potencial:

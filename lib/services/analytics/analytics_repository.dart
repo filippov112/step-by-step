@@ -43,8 +43,8 @@ class AnalyticsRepository {
       SELECT 
         ${ChronicleRecord.cDate},
         COALESCE(SUM( ${ChronicleRecord.cHappiness} ), 0) AS ${DtoActivity.cHappiness},
-        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoActivity.cPerseverance},
-        COALESCE(SUM( ${ChronicleRecord.cStrategy} ), 0) AS ${DtoActivity.cCourage},
+        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoActivity.cDiligence},
+        COALESCE(SUM( ${ChronicleRecord.cIntellection} ), 0) AS ${DtoActivity.cIntellection},
         COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoActivity.cDurability},
         COALESCE(SUM( ${ChronicleRecord.cPotencial} ), 0) AS ${DtoActivity.cPotencial}
       FROM ${ChronicleRecord.tn}
@@ -63,8 +63,8 @@ class AnalyticsRepository {
         '''
       SELECT
         COALESCE(SUM( ${ChronicleRecord.cHappiness} ), 0) AS ${DtoStats.cHappiness},
-        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoStats.cPerseverance},
-        COALESCE(SUM( ${ChronicleRecord.cStrategy} ), 0) AS ${DtoStats.cCourage},
+        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoStats.cDiligence},
+        COALESCE(SUM( ${ChronicleRecord.cIntellection} ), 0) AS ${DtoStats.cIntellection},
         COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoStats.cDurability},
         COALESCE(SUM( ${ChronicleRecord.cPotencial} ), 0) AS ${DtoStats.cPotencial}
       FROM ${ChronicleRecord.tn}

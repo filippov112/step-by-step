@@ -82,7 +82,7 @@ class SpiritCalculator {
     
     user.happiness =  getSFFromCP(user.happinessBase) + (dto?.happiness ?? 0);
     user.diligence =  getSFFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
-    user.strategy =  getSFFromCP(user.strategyBase) + (dto?.strategy ?? 0);
+    user.intellection =  getSFFromCP(user.intellectionBase) + (dto?.intellection ?? 0);
     user.durability =  getSFFromCP(user.durabilityBase) + (dto?.durability ?? 0);
     user.potencial =  getSFFromCP(user.potencialBase) + (dto?.potencial ?? 0);
 

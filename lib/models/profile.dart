@@ -14,13 +14,13 @@ class Profile {
   
   static const cHappiness = "_c1";
   static const cDiligence = "_c2";
-  static const cStrategy = "_c3";
+  static const cIntellection = "_c3";
   static const cDurability = "_c4";
   static const cPotencial = "_c5";
 
   static const cBHappiness = "_cb1";
   static const cBDiligence = "_cb2";
-  static const cBStrategy = "_cb3";
+  static const cBIntellection = "_cb3";
   static const cBDurability = "_cb4";
   static const cBPotencial = "_cb5";
 
@@ -32,13 +32,13 @@ class Profile {
           
           $cHappiness INTEGER,
           $cDiligence INTEGER,
-          $cStrategy INTEGER,
+          $cIntellection INTEGER,
           $cDurability INTEGER,
           $cPotencial INTEGER,
 
           $cBHappiness INTEGER,
           $cBDiligence INTEGER,
-          $cBStrategy INTEGER,
+          $cBIntellection INTEGER,
           $cBDurability INTEGER,
           $cBPotencial INTEGER
         )''';
@@ -50,18 +50,18 @@ class Profile {
   // Кэш
   int happiness = 0;
   int diligence = 0;
-  int strategy = 0;
+  int intellection = 0;
   int durability = 0;
   int potencial = 0;
   
   // Базовые значения
   int happinessBase = 0;
   int diligenceBase = 0;
-  int strategyBase = 0;
+  int intellectionBase = 0;
   int durabilityBase = 0;
   int potencialBase = 0;
 
-  int get spiritFragments => happiness + diligence + strategy + durability + potencial;
+  int get spiritFragments => happiness + diligence + intellection + durability + potencial;
 
   Profile({
     this.name = "",
@@ -69,13 +69,13 @@ class Profile {
     
     this.happiness = 0,
     this.diligence = 0,
-    this.strategy = 0,
+    this.intellection = 0,
     this.durability = 0,
     this.potencial = 0,
 
     this.happinessBase = 0,
     this.diligenceBase = 0,
-    this.strategyBase = 0,
+    this.intellectionBase = 0,
     this.durabilityBase = 0,
     this.potencialBase = 0
   });
@@ -83,7 +83,7 @@ class Profile {
   Map<Characteristic,int> get chars => <Characteristic,int>{
     Characteristic.happiness: happiness,
     Characteristic.diligence: diligence,
-    Characteristic.strategy: strategy,
+    Characteristic.intellection: intellection,
     Characteristic.durability: durability,
     Characteristic.potencial: potencial
   };
@@ -95,13 +95,13 @@ class Profile {
       
       cHappiness: happiness,
       cDiligence: diligence,
-      cStrategy: strategy,
+      cIntellection: intellection,
       cDurability: durability,
       cPotencial: potencial,
 
       cBHappiness: happinessBase,
       cBDiligence: diligenceBase,
-      cBStrategy: strategyBase,
+      cBIntellection: intellectionBase,
       cBDurability: durabilityBase,
       cBPotencial: potencialBase,
     };
@@ -118,13 +118,13 @@ class Profile {
    
     happiness = map[cHappiness];
     diligence = map[cDiligence];
-    strategy = map[cStrategy];
+    intellection = map[cIntellection];
     durability = map[cDurability];
     potencial = map[cPotencial];
 
     happinessBase = map[cBHappiness];
     diligenceBase = map[cBDiligence];
-    strategyBase = map[cBStrategy];
+    intellectionBase = map[cBIntellection];
     durabilityBase = map[cBDurability];
     potencialBase = map[cBPotencial];
   }
@@ -132,7 +132,7 @@ class Profile {
   void setChars(Map<Characteristic, int> newUserChars) {
     happiness = newUserChars[Characteristic.happiness] ?? 0;
     diligence = newUserChars[Characteristic.diligence] ?? 0;
-    strategy = newUserChars[Characteristic.strategy] ?? 0;
+    intellection = newUserChars[Characteristic.intellection] ?? 0;
     durability = newUserChars[Characteristic.durability] ?? 0;
     potencial = newUserChars[Characteristic.potencial] ?? 0;
   }

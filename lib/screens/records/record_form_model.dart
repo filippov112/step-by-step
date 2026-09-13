@@ -96,8 +96,8 @@ class RecordFormModel extends ChangeNotifier {
         record?.happiness = sf;
       case Characteristic.diligence:
         record?.diligence = sf;
-      case Characteristic.strategy:
-        record?.strategy = sf;
+      case Characteristic.intellection:
+        record?.intellection = sf;
       case Characteristic.durability:
         record?.durability = sf;
       case Characteristic.potencial:

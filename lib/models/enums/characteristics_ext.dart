@@ -5,7 +5,7 @@ enum CharacteristicExt {
   all,
   happiness,
   diligence,
-  strategy,
+  intellection,
   durability,
   potencial,
 }
@@ -17,8 +17,8 @@ extension ActivityTypeExt on CharacteristicExt {
         return Characteristic.happiness;
       case CharacteristicExt.diligence:
         return Characteristic.diligence;
-      case CharacteristicExt.strategy:
-        return Characteristic.strategy;
+      case CharacteristicExt.intellection:
+        return Characteristic.intellection;
       case CharacteristicExt.durability:
         return Characteristic.durability;
       case CharacteristicExt.potencial:

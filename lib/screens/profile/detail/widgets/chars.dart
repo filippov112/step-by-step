@@ -37,7 +37,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
 
     final radarFull = CustomRadarChart(
       padding: EdgeInsets.all(8),
-      labels: chars?.keys.map((k) => k.emoji).toList() ?? [],
+      labels: chars?.keys.map((k) => k.abr).toList() ?? [],
       values: [
         if (!isDeltaTab)
           RadarSeries(
@@ -107,7 +107,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                   children: [
                     Icon(ch.icon, color: ch.color, size: 14),
                     CustomText(
-                      '${ch.displayName} (${ch.emoji})',
+                      '${ch.displayName} (${ch.abr})',
                       expanded: true,
                       size: 12,
                       padding: const EdgeInsets.only(bottom: 3, left: 12),

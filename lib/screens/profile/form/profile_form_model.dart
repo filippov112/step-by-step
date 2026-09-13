@@ -44,8 +44,8 @@ class ProfileFormModel extends ChangeNotifier {
         profile?.happinessBase = value;
       case Characteristic.diligence:
         profile?.diligenceBase = value;
-      case Characteristic.strategy:
-        profile?.strategyBase = value;
+      case Characteristic.intellection:
+        profile?.intellectionBase = value;
       case Characteristic.durability:
         profile?.durabilityBase = value;
       case Characteristic.potencial:

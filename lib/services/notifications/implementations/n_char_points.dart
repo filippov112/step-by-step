@@ -19,6 +19,6 @@ class NCharPoints extends NotificationItem {
     ],);
   }
 
-  Characteristic char = Characteristic.control;
+  Characteristic char = Characteristic.happiness;
   int value = 0;
 }

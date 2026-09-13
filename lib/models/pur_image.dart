@@ -63,6 +63,7 @@ class PurImage {
   }
 
   // ------------ Сериализация ------------
+  
   Map<String, Object?> toMap() {
     return {
       cId: id,

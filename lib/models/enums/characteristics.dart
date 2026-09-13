@@ -1,72 +1,72 @@
 import 'package:flutter/material.dart';
 
 enum Characteristic {
-  control,
+  happiness,
   diligence,
   strategy,
   durability,
-  creativity
+  potencial
 }
 
 extension CharacteristicsExt on Characteristic {
 
   String get displayName {
     switch (this) {
-      case Characteristic.control:
-        return 'Контроль';
+      case Characteristic.happiness:
+        return 'Счастье';
       case Characteristic.diligence:
         return 'Усердие';
         case Characteristic.strategy:
         return 'Стратегия';
       case Characteristic.durability:
         return 'Стойкость';
-      case Characteristic.creativity:
-        return 'Креативность';
+      case Characteristic.potencial:
+        return 'Потенциал';
     }
   }
 
   Color get color {
     switch (this) {
-      case Characteristic.control:
-        return Colors.greenAccent;
-      case Characteristic.diligence:
+      case Characteristic.happiness:
         return Colors.yellow;
+      case Characteristic.diligence:
+        return Colors.red;
       case Characteristic.strategy:
         return Colors.redAccent;
       case Characteristic.durability:
         return Colors.white;
-      case Characteristic.creativity:
-        return Colors.purpleAccent;
+      case Characteristic.potencial:
+        return Colors.greenAccent;
     }
   }
 
   IconData get icon {
     switch (this) {
-      case Characteristic.control:
-        return Icons.self_improvement;
+      case Characteristic.happiness:
+        return Icons.light_mode;
       case Characteristic.diligence:
         return Icons.construction;
       case Characteristic.strategy:
         return Icons.account_tree;
       case Characteristic.durability:
         return Icons.diamond;
-      case Characteristic.creativity:
-        return Icons.visibility;
+      case Characteristic.potencial:
+        return Icons.local_hospital;
     }
   }
 
-  String get emoji {
+  String get abr {
     switch (this) {
-      case Characteristic.control:
-        return '🎯';
+      case Characteristic.happiness:
+        return 'MP';
       case Characteristic.diligence:
-        return '💪';
+        return 'STR';
       case Characteristic.strategy:
-        return '🧠';
+        return 'INT';
       case Characteristic.durability:
-        return '🛡️';
-      case Characteristic.creativity:
-        return '✨';
+        return 'DEF';
+      case Characteristic.potencial:
+        return 'VIT';
     }
   }
 }

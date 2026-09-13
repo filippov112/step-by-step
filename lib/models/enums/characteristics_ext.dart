@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 
 enum CharacteristicExt {
   all,
-  control,
+  happiness,
   diligence,
   strategy,
   durability,
-  creativity,
+  potencial,
 }
 
 extension ActivityTypeExt on CharacteristicExt {
   Characteristic? get characteristic {
     switch (this) {
-      case CharacteristicExt.control:
-        return Characteristic.control;
+      case CharacteristicExt.happiness:
+        return Characteristic.happiness;
       case CharacteristicExt.diligence:
         return Characteristic.diligence;
       case CharacteristicExt.strategy:
         return Characteristic.strategy;
       case CharacteristicExt.durability:
         return Characteristic.durability;
-      case CharacteristicExt.creativity:
-        return Characteristic.creativity;
+      case CharacteristicExt.potencial:
+        return Characteristic.potencial;
       default:
         return null;
     }

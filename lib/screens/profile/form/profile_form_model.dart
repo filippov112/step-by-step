@@ -40,16 +40,16 @@ class ProfileFormModel extends ChangeNotifier {
   }
   void setChar(Characteristic char, int value) {
     switch (char) {
-      case Characteristic.control:
-        profile?.controlBase = value;
+      case Characteristic.happiness:
+        profile?.happinessBase = value;
       case Characteristic.diligence:
         profile?.diligenceBase = value;
       case Characteristic.strategy:
         profile?.strategyBase = value;
       case Characteristic.durability:
         profile?.durabilityBase = value;
-      case Characteristic.creativity:
-        profile?.creativityBase = value;
+      case Characteristic.potencial:
+        profile?.potencialBase = value;
     }
     notifyListeners();
   }

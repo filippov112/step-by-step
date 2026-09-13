@@ -123,11 +123,11 @@ class ProfileDetailModel extends ChangeNotifier {
     activityData = {};
     graphData = [];
     deltaChars = {
-      Characteristic.control: 0,
+      Characteristic.happiness: 0,
       Characteristic.diligence: 0,
       Characteristic.strategy: 0,
       Characteristic.durability: 0,
-      Characteristic.creativity: 0,
+      Characteristic.potencial: 0,
     };
     deltaSF = 0;
     maxSF = 0;

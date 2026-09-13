@@ -92,16 +92,16 @@ class RecordFormModel extends ChangeNotifier {
 
   void _recalcChars() {
     switch (characteristic) {
-      case Characteristic.control:
-        record?.control = sf;
+      case Characteristic.happiness:
+        record?.happiness = sf;
       case Characteristic.diligence:
         record?.diligence = sf;
       case Characteristic.strategy:
         record?.strategy = sf;
       case Characteristic.durability:
         record?.durability = sf;
-      case Characteristic.creativity:
-        record?.creativity = sf;
+      case Characteristic.potencial:
+        record?.potencial = sf;
     }
   }
 

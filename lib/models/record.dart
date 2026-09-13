@@ -21,11 +21,11 @@ class ChronicleRecord {
   static const cTime = "_time";
   static const cChallenge = "_challenge";
 
-  static const cControl = "_c1";
+  static const cHappiness = "_c1";
   static const cDiligence = "_c2";
   static const cStrategy = "_c3";
   static const cDurability = "_c4";
-  static const cCreativity = "_c5";
+  static const cPotencial = "_c5";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -38,11 +38,11 @@ class ChronicleRecord {
           $cTime INTEGER,
           $cChallenge INTEGER,
 
-          $cControl INTEGER,
+          $cHappiness INTEGER,
           $cDiligence INTEGER,
           $cStrategy INTEGER,
           $cDurability INTEGER,
-          $cCreativity INTEGER
+          $cPotencial INTEGER
         );
         ''';
 
@@ -58,11 +58,11 @@ class ChronicleRecord {
   String group = ""; // Группа
   bool challenge = false; // Испытание
 
-  int control = 0;
+  int happiness = 0;
   int diligence = 0;
   int strategy = 0;
   int durability = 0;
-  int creativity = 0;
+  int potencial = 0;
 
   // ------------ Конструкторы ------------
 
@@ -77,11 +77,11 @@ class ChronicleRecord {
     required this.time,
     required this.challenge,
 
-    required this.control,
+    required this.happiness,
     required this.diligence,
     required this.strategy,
     required this.durability,
-    required this.creativity,
+    required this.potencial,
   });
 
   factory ChronicleRecord.create({
@@ -93,11 +93,11 @@ class ChronicleRecord {
     int time = 0,
     bool challenge = false,
 
-    int control = 0,
+    int happiness = 0,
     int diligence = 0,
     int strategy = 0,
     int durability = 0,
-    int creativity = 0,
+    int potencial = 0,
   }) {
     final guid = const Uuid().v4();
     return ChronicleRecord(
@@ -111,24 +111,24 @@ class ChronicleRecord {
       time: time,
       challenge: challenge,
 
-      control: control,
+      happiness: happiness,
       diligence: diligence,
       strategy: strategy,
       durability: durability,
-      creativity: creativity,
+      potencial: potencial,
     );
   }
 
   Map<Characteristic, int> get chars => <Characteristic, int>{
-    Characteristic.control: control,
+    Characteristic.happiness: happiness,
     Characteristic.diligence: diligence,
     Characteristic.strategy: strategy,
     Characteristic.durability: durability,
-    Characteristic.creativity: creativity,
+    Characteristic.potencial: potencial,
   };
 
   int get spiritFragments =>
-      control + diligence + strategy + durability + creativity;
+      happiness + diligence + strategy + durability + potencial;
 
   // ------------ Сериализация ------------
   Map<String, Object?> toMap() {
@@ -143,11 +143,11 @@ class ChronicleRecord {
       cTime: time,
       cChallenge: challenge ? 1 : 0,
 
-      cControl: control,
+      cHappiness: happiness,
       cDiligence: diligence,
       cStrategy: strategy,
       cDurability: durability,
-      cCreativity: creativity,
+      cPotencial: potencial,
     };
   }
 
@@ -162,11 +162,11 @@ class ChronicleRecord {
     time = map[cTime];
     challenge = map[cChallenge] == 1;
 
-    control = map[cControl];
+    happiness = map[cHappiness];
     diligence = map[cDiligence];
     strategy = map[cStrategy];
     durability = map[cDurability];
-    creativity = map[cCreativity];
+    potencial = map[cPotencial];
   }
 
   // ------- Другое ---------

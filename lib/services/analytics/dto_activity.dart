@@ -4,41 +4,41 @@ import 'package:chaos_control/services/datetool.dart';
 
 /// Модель для агрегированных данных по дате
 class DtoActivity {
-  static const cControl = 'total_1';
+  static const cHappiness = 'total_1';
   static const cPerseverance = 'total_2';
   static const cCourage = 'total_3';
   static const cDurability = 'total_4';
-  static const cCreativity = 'total_5';
+  static const cPotencial = 'total_5';
 
   final int date;
-  final int control, diligence, strategy, durability, creativity;
-  int get totalExperience => control + diligence + strategy + durability + creativity;
+  final int happiness, diligence, strategy, durability, potencial;
+  int get totalExperience => happiness + diligence + strategy + durability + potencial;
 
   DateTime? get dateTime => DateTool.joinDateTime(date: date);
 
   DtoActivity({
     required this.date,
 
-    required this.control,
+    required this.happiness,
     required this.diligence,
     required this.strategy,
     required this.durability,
-    required this.creativity,
+    required this.potencial,
   });
 
   int getChar(Characteristic? ch) {
     if (ch == null) return totalExperience;
     switch (ch) {
-      case Characteristic.control:
-        return control;
+      case Characteristic.happiness:
+        return happiness;
       case Characteristic.diligence:
         return diligence;
       case Characteristic.strategy:
         return strategy;
       case Characteristic.durability:
         return durability;
-      case Characteristic.creativity:
-        return creativity;
+      case Characteristic.potencial:
+        return potencial;
     }
   }
 
@@ -46,11 +46,11 @@ class DtoActivity {
     return DtoActivity(
       date: map[ChronicleRecord.cDate] as int,
 
-      control: map[cControl] as int? ?? 0,
+      happiness: map[cHappiness] as int? ?? 0,
       diligence: map[cPerseverance] as int? ?? 0,
       strategy: map[cCourage] as int? ?? 0,
       durability: map[cDurability] as int? ?? 0,
-      creativity: map[cCreativity] as int? ?? 0,
+      potencial: map[cPotencial] as int? ?? 0,
     );
   }
 }

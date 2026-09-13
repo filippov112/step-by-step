@@ -12,17 +12,17 @@ class Profile {
   static const cName = "_name";
   static const cIcon = "_icon";
   
-  static const cControl = "_c1";
+  static const cHappiness = "_c1";
   static const cDiligence = "_c2";
   static const cStrategy = "_c3";
   static const cDurability = "_c4";
-  static const cCreativity = "_c5";
+  static const cPotencial = "_c5";
 
-  static const cBControl = "_cb1";
+  static const cBHappiness = "_cb1";
   static const cBDiligence = "_cb2";
   static const cBStrategy = "_cb3";
   static const cBDurability = "_cb4";
-  static const cBCreativity = "_cb5";
+  static const cBPotencial = "_cb5";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -30,17 +30,17 @@ class Profile {
           $cName TEXT NOT NULL, 
           $cIcon TEXT,
           
-          $cControl INTEGER,
+          $cHappiness INTEGER,
           $cDiligence INTEGER,
           $cStrategy INTEGER,
           $cDurability INTEGER,
-          $cCreativity INTEGER,
+          $cPotencial INTEGER,
 
-          $cBControl INTEGER,
+          $cBHappiness INTEGER,
           $cBDiligence INTEGER,
           $cBStrategy INTEGER,
           $cBDurability INTEGER,
-          $cBCreativity INTEGER
+          $cBPotencial INTEGER
         )''';
 
   int? id;
@@ -48,44 +48,44 @@ class Profile {
   CustomImageData? icon; // Аватар
 
   // Кэш
-  int control = 0;
+  int happiness = 0;
   int diligence = 0;
   int strategy = 0;
   int durability = 0;
-  int creativity = 0;
+  int potencial = 0;
   
   // Базовые значения
-  int controlBase = 0;
+  int happinessBase = 0;
   int diligenceBase = 0;
   int strategyBase = 0;
   int durabilityBase = 0;
-  int creativityBase = 0;
+  int potencialBase = 0;
 
-  int get spiritFragments => control + diligence + strategy + durability + creativity;
+  int get spiritFragments => happiness + diligence + strategy + durability + potencial;
 
   Profile({
     this.name = "",
     this.icon,
     
-    this.control = 0,
+    this.happiness = 0,
     this.diligence = 0,
     this.strategy = 0,
     this.durability = 0,
-    this.creativity = 0,
+    this.potencial = 0,
 
-    this.controlBase = 0,
+    this.happinessBase = 0,
     this.diligenceBase = 0,
     this.strategyBase = 0,
     this.durabilityBase = 0,
-    this.creativityBase = 0
+    this.potencialBase = 0
   });
 
   Map<Characteristic,int> get chars => <Characteristic,int>{
-    Characteristic.control: control,
+    Characteristic.happiness: happiness,
     Characteristic.diligence: diligence,
     Characteristic.strategy: strategy,
     Characteristic.durability: durability,
-    Characteristic.creativity: creativity
+    Characteristic.potencial: potencial
   };
 
   Map<String, Object?> toMap() {
@@ -93,17 +93,17 @@ class Profile {
       cName: name,
       cIcon: icon?.toJson(),
       
-      cControl: control,
+      cHappiness: happiness,
       cDiligence: diligence,
       cStrategy: strategy,
       cDurability: durability,
-      cCreativity: creativity,
+      cPotencial: potencial,
 
-      cBControl: controlBase,
+      cBHappiness: happinessBase,
       cBDiligence: diligenceBase,
       cBStrategy: strategyBase,
       cBDurability: durabilityBase,
-      cBCreativity: creativityBase,
+      cBPotencial: potencialBase,
     };
     if (id != null) {
       map[cId] = id;
@@ -116,25 +116,25 @@ class Profile {
     name = map[cName];
     icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
    
-    control = map[cControl];
+    happiness = map[cHappiness];
     diligence = map[cDiligence];
     strategy = map[cStrategy];
     durability = map[cDurability];
-    creativity = map[cCreativity];
+    potencial = map[cPotencial];
 
-    controlBase = map[cBControl];
+    happinessBase = map[cBHappiness];
     diligenceBase = map[cBDiligence];
     strategyBase = map[cBStrategy];
     durabilityBase = map[cBDurability];
-    creativityBase = map[cBCreativity];
+    potencialBase = map[cBPotencial];
   }
 
   void setChars(Map<Characteristic, int> newUserChars) {
-    control = newUserChars[Characteristic.control] ?? 0;
+    happiness = newUserChars[Characteristic.happiness] ?? 0;
     diligence = newUserChars[Characteristic.diligence] ?? 0;
     strategy = newUserChars[Characteristic.strategy] ?? 0;
     durability = newUserChars[Characteristic.durability] ?? 0;
-    creativity = newUserChars[Characteristic.creativity] ?? 0;
+    potencial = newUserChars[Characteristic.potencial] ?? 0;
   }
 }
 

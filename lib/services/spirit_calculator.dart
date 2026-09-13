@@ -80,11 +80,11 @@ class SpiritCalculator {
     final dto = await analRepo.getChars();
     final user = (await userRepo.get()) ?? Profile();
     
-    user.control =  getSFFromCP(user.controlBase) + (dto?.control ?? 0);
+    user.happiness =  getSFFromCP(user.happinessBase) + (dto?.happiness ?? 0);
     user.diligence =  getSFFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
     user.strategy =  getSFFromCP(user.strategyBase) + (dto?.strategy ?? 0);
     user.durability =  getSFFromCP(user.durabilityBase) + (dto?.durability ?? 0);
-    user.creativity =  getSFFromCP(user.creativityBase) + (dto?.creativity ?? 0);
+    user.potencial =  getSFFromCP(user.potencialBase) + (dto?.potencial ?? 0);
 
     userRepo.update(user);
   }

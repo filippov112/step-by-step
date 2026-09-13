@@ -77,16 +77,16 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
 
     int getChar(Characteristic ch) {
       switch (ch) {
-        case Characteristic.control:
-          return profile?.controlBase ?? 0;
+        case Characteristic.happiness:
+          return profile?.happinessBase ?? 0;
         case Characteristic.diligence:
           return profile?.diligenceBase ?? 0;
         case Characteristic.strategy:
           return profile?.strategyBase ?? 0;
         case Characteristic.durability:
           return profile?.durabilityBase ?? 0;
-        case Characteristic.creativity:
-          return profile?.creativityBase ?? 0;
+        case Characteristic.potencial:
+          return profile?.potencialBase ?? 0;
       }
     }
 

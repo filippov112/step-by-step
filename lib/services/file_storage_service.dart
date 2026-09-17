@@ -1,5 +1,6 @@
 // lib/services/file_storage_service.dart
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -57,12 +58,27 @@ class FileService {
   }
   static Future<bool> _requestAudioPermission() async {
     if (Platform.isAndroid) {
-      final status = await Permission.audio.request();
+      PermissionStatus status;
+      // Android 13 (API 33) и выше используют Permission.audio
+      if (await _getAndroidVersion() >= 33) {
+        status = await Permission.audio.request();
+      } else {
+        // Android 12 и ниже используют Permission.storage (READ_EXTERNAL_STORAGE)
+        status = await Permission.storage.request();
+      }
       return status.isGranted;
     }
     return true;
   }
-  
+
+  static Future<int> _getAndroidVersion() async {
+    if (Platform.isAndroid) {
+      final info = await DeviceInfoPlugin().androidInfo;
+      return info.version.sdkInt;
+    }
+    return 0;
+  }
+    
   // Загрузка изображения
   static Future<File?> pickImageFromGallery({bool full = false}) async {
     try {

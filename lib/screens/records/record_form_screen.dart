@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/screens/records/record_form_model.dart';
 import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/services/datetool.dart';
-import 'package:chaos_control/services/numerictool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
 import 'package:chaos_control/widgets/form/datetime_picker.dart';
@@ -51,17 +49,24 @@ class RecordFormState extends State<RecordForm> {
     groupController.text = model.group;
   }
 
+  List<int> toggleCharType(List<int> charTypes, int id) {
+    if (charTypes.contains(id)) {
+      return charTypes.where((el) => el != id).toList();
+    } else {
+      return [...charTypes, id];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final visibility = context.select<RecordListModel, bool>(
       (m) => m.visibilityForm,
     );
     if (!visibility) return const SizedBox();
-    final diffIndex = context.select<RecordFormModel, int>((m) => m.diffIndex);
+    final hours = context.select<RecordFormModel, int>((m) => m.hours);
     final date = context.select<RecordFormModel, DateTime>((m) => m.date);
-    final sf = context.select<RecordFormModel, int>((m) => m.sf);
-    final char = context.select<RecordFormModel, Characteristic>(
-      (m) => m.characteristic,
+    final charTypes = context.select<RecordFormModel, List<int>>(
+      (m) => m.charTypes,
     );
     final isChallenge = context.select<RecordFormModel, bool>(
       (m) => m.challenge,
@@ -75,42 +80,37 @@ class RecordFormState extends State<RecordForm> {
     final saveColor = Colors.greenAccent;
     final challengeColor = Colors.orange;
 
-    final diff = DifficultyLvl.values[diffIndex];
 
-    // --------- Сложность ---------
+    // --------- Длительность ---------
 
-    final diffSlider = Slider(
-      value: diffIndex.toDouble(),
-      label: 'Сложность',
-      activeColor: diff.color,
-      inactiveColor: diff.color.withAlpha(40),
+    final hoursSlider = Slider(
+      value: hours.toDouble(),
+      label: 'Длительность',
+      activeColor: focusColor,
+      inactiveColor: focusColor.withAlpha(50),
       padding: const EdgeInsets.all(6),
       min: 0,
-      divisions: DifficultyLvl.values.length - 1,
-      max: DifficultyLvl.values.length - 1,
+      divisions: 12,
+      max: 12,
       showValueIndicator: ShowValueIndicator.onDrag,
-      onChanged: (v) => model.setDiff(v.round()),
+      onChanged: (v) => model.setHours(v.round()),
     );
-    final diffIcon = Padding(
+    final hoursIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
       child: Icon(
-        Icons.hotel_class,
-        shadows: [Shadow(color: diff.color, blurRadius: 6)],
+        Icons.timer,
+        shadows: [Shadow(color: focusColor, blurRadius: 6)],
         size: 15,
-        color: diff.color,
+        color: focusColor,
       ),
     );
-    final diffRang = CustomText(
-      diff.name,
+    final hoursValue = CustomText(
+      '$hours h.',
       size: 16,
-      shadow: Shadow(color: diff.color, blurRadius: 6),
-      color: diff.color,
+      shadow: Shadow(color: focusColor, blurRadius: 6),
+      color: focusColor,
       weight: FontWeight.bold,
       padding: const EdgeInsets.only(left: 4, right: 8, bottom: 1),
-    );
-    final diffName = CustomText(
-      diff.displayName,
-      padding: const EdgeInsets.only(right: 8, bottom: 1),
     );
 
     // --------- SF ----------
@@ -119,55 +119,37 @@ class RecordFormState extends State<RecordForm> {
       padding: const EdgeInsetsGeometry.only(right: 4),
       child: Icon(
         Icons.local_fire_department,
-        shadows: [Shadow(color: focusColor, blurRadius: 6)],
-        size: 14,
+        color: isChallenge ? disabledColor : challengeColor,
+        shadows: [Shadow(color: isChallenge ? disabledColor : challengeColor, blurRadius: 6)],
+        size: 17,
       ),
-    );
-    final spiritFragments = Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        CustomText(
-          NumericTool.toThousandString(sf),
-          size: 16,
-          padding: const EdgeInsets.only(bottom: 3),
-          color: focusColor,
-        ),
-        CustomText(
-          'SF',
-          size: 12,
-          padding: const EdgeInsets.only(left: 2, bottom: 5),
-          color: focusColor,
-        ),
-      ],
     );
 
     // ========== MAIN =============
 
     final statisticsRow = Row(
       children: [
-        diffIcon,
-        diffRang,
-        diffName,
-        const Expanded(child: SizedBox()),
         spiritIcon,
-        spiritFragments,
+        hoursIcon,
+        hoursValue,
+        const Expanded(child: SizedBox()),
       ],
     );
 
-    final typeWidget = Padding(
+    final charTypesWidget = Padding(
       padding: const EdgeInsetsGeometry.all(2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ...Characteristic.values.map(
             (ch) => IconButton(
-              onPressed: () => model.setChar(ch),
+              onPressed: () => model.setCharTypes(toggleCharType(charTypes, ch.index)),
               icon: Icon(
                 ch.icon,
-                shadows: char == ch
+                shadows: charTypes.contains(ch.index)
                     ? [Shadow(color: ch.color, blurRadius: 8)]
                     : null,
-                color: char == ch ? ch.color : disabledColor,
+                color: charTypes.contains(ch.index) ? ch.color : disabledColor,
               ),
             ),
           ),
@@ -268,8 +250,8 @@ class RecordFormState extends State<RecordForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 statisticsRow,
-                diffSlider,
-                typeWidget,
+                hoursSlider,
+                charTypesWidget,
                 descWidget,
                 const SizedBox(height: 8),
                 Row(

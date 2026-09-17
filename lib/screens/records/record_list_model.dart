@@ -1,5 +1,4 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
@@ -53,7 +52,6 @@ class RecordListModel extends ChangeNotifier {
   DateTime? dateBeginFilter, dateEndFilter; // период
   bool groupFilter = true; // группировка
   Characteristic? charFilter; // Хар-ка
-  DifficultyLvl? diffFilter; // Сложность
   ChallengeFilterType challengeFilter = ChallengeFilterType.all; // Испытания
 
   // Сброс фильтров
@@ -61,7 +59,6 @@ class RecordListModel extends ChangeNotifier {
     return dateBeginFilter != null ||
         dateEndFilter != null ||
         charFilter != null ||
-        diffFilter != null ||
         challengeFilter != ChallengeFilterType.all ||
         searchQuery.isNotEmpty;
   }
@@ -132,11 +129,6 @@ class RecordListModel extends ChangeNotifier {
     await loadData();
   }
 
-  Future setDiffFilter(DifficultyLvl? value) async {
-    diffFilter = value;
-    await loadData();
-  }
-
   Future setCharFilter(Characteristic? value) async {
     charFilter = value;
     await loadData();
@@ -158,7 +150,6 @@ class RecordListModel extends ChangeNotifier {
     searchQuery = '';
     dateBeginFilter = null;
     dateEndFilter = null;
-    diffFilter = null;
     charFilter = null;
     challengeFilter = ChallengeFilterType.all;
     await loadData();
@@ -190,11 +181,7 @@ class RecordListModel extends ChangeNotifier {
     }
     // Фильтр хар-ки
     if (charFilter != null) {
-      result = result.where((t) => t.char == charFilter).toList();
-    }
-    // Фильтр сложности
-    if (diffFilter != null) {
-      result = result.where((t) => t.difficulty == diffFilter).toList();
+      result = result.where((t) => t.charTypes == charFilter).toList();
     }
     // Фильтр испытаний
     if (challengeFilter != ChallengeFilterType.all) {

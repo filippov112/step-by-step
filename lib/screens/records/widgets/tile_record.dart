@@ -1,5 +1,4 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/screens/records/widgets/tile.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
@@ -62,32 +61,32 @@ class RecordTileRecord extends RecordTreeTile {
       ),
     );
 
-    // --------- Сложность ---------
+    // --------- Длительность ---------
 
-    final diffRang = CustomText(
-      record.object?.difficulty.name ?? '',
+    final hoursCount = CustomText(
+      '${(record.object?.hours ?? 0).toString()} h.',
       size: 16,
       shadow: record.object == null
           ? null
-          : Shadow(color: record.object!.difficulty.color, blurRadius: 6),
-      color: record.object?.difficulty.color,
+          : Shadow(color: focusColor, blurRadius: 6),
+      color: focusColor,
       weight: FontWeight.bold,
       padding: const EdgeInsets.only(left: 4, right: 8, bottom: 1),
     );
 
-    // ------ Тип ---------
+    // ------ Типы характеристик ---------
 
-    final typeIcon = Padding(
+    final charTypesIcons = record.object?.charTypes.map((type) => Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
       child: Icon(
-        record.object?.char.icon,
+        Characteristic.values[type].icon,
         shadows: record.object == null
             ? null
-            : [Shadow(color: record.object!.char.color, blurRadius: 15)],
+            : [Shadow(color: Characteristic.values[type].color, blurRadius: 15)],
         size: 15,
-        color: record.object?.char.color,
+        color: Characteristic.values[type].color,
       ),
-    );
+    ));
 
     // ------ Испытание ---------
 
@@ -104,7 +103,7 @@ class RecordTileRecord extends RecordTreeTile {
 
     final header = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [?selectCheckbox, ?challengeIcon, typeIcon, dateRow, diffRang],
+      children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons, dateRow, hoursCount],
     );
     final descWidget = CustomText(
       record.object?.description ?? '',

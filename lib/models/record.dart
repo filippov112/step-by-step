@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:chaos_control/services/datetool.dart';
@@ -14,8 +15,8 @@ class ChronicleRecord {
 
   static const cId = "_id";
   static const cGroup = "_group";
-  static const cDiffLvl = "_diff";
-  static const cCharacteristic = "_char";
+  static const cHours = "_hours";
+  static const cCharTypes = "_chars";
   static const cDescription = "_description";
   static const cDate = "_date";
   static const cTime = "_time";
@@ -31,8 +32,8 @@ class ChronicleRecord {
       '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
           $cGroup TEXT,
-          $cCharacteristic INTEGER,
-          $cDiffLvl INTEGER,
+          $cCharTypes TEXT,
+          $cHours INTEGER,
           $cDescription TEXT,
           $cDate INTEGER,
           $cTime INTEGER,
@@ -51,8 +52,8 @@ class ChronicleRecord {
   String id = '';
   
   String description = ""; // Описание
-  Characteristic char = Characteristic.diligence; // Характеристика
-  DifficultyLvl difficulty = DifficultyLvl.F; // Уровень сложности
+  List<int> charTypes = []; // Характеристики
+  int hours = 0; // Продолжительность
   DateTime date = DateTool.today(); // Дата
   int time = 0;
   String group = ""; // Группа
@@ -71,8 +72,8 @@ class ChronicleRecord {
 
     required this.description,
     required this.group,
-    required this.char,
-    required this.difficulty,
+    required this.charTypes,
+    required this.hours,
     required this.date,
     required this.time,
     required this.challenge,
@@ -86,8 +87,8 @@ class ChronicleRecord {
 
   factory ChronicleRecord.create({
     String group = '',
-    Characteristic char = Characteristic.diligence,
-    DifficultyLvl difficulty = DifficultyLvl.F,
+    List<int>? char,
+    int hours = 0,
     String description = '',
     required DateTime date,
     int time = 0,
@@ -104,8 +105,8 @@ class ChronicleRecord {
       id: guid,
 
       group: group,
-      char: char,
-      difficulty: difficulty,
+      charTypes: char ?? [],
+      hours: hours,
       description: description,
       date: date,
       time: time,
@@ -146,8 +147,8 @@ class ChronicleRecord {
       cId: id,
 
       cGroup: group,
-      cCharacteristic: char.index,
-      cDiffLvl: difficulty.index,
+      cCharTypes: jsonEncode(charTypes),
+      cHours: hours,
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cTime: time,
@@ -166,8 +167,8 @@ class ChronicleRecord {
     
     description = map[cDescription];
     group = map[cGroup];
-    char = Characteristic.values[map[cCharacteristic]];
-    difficulty = DifficultyLvl.values[map[cDiffLvl]];
+    charTypes = map[cCharTypes] == null ? [] : List<int>.from(jsonDecode(map[cCharTypes]));
+    hours = map[cHours];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     time = map[cTime];
     challenge = map[cChallenge] == 1;

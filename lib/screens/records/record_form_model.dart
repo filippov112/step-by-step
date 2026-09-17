@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_record.dart';
@@ -14,10 +13,10 @@ class RecordFormModel extends ChangeNotifier {
 
   String desc = '';
   String group = '';
-  int diffIndex = 0;
+  int hours = 0;
   bool challenge = false;
   DateTime date = DateTool.today();
-  Characteristic characteristic = Characteristic.diligence;
+  List<int> charTypes = [];
 
   int sf = 0;
   ChronicleRecord? record;
@@ -27,11 +26,11 @@ class RecordFormModel extends ChangeNotifier {
     isEditing = rec != null;
 
     if (!softClear) {
-      diffIndex = rec?.difficulty.index ?? 0;
+      hours = rec?.hours ?? 0;
       challenge = rec?.challenge ?? false;
       desc = rec?.description ?? '';
       group = gr;
-      characteristic = rec?.char ?? Characteristic.diligence;
+      charTypes = rec?.charTypes ?? [];
       date = rec?.date ?? DateTool.today();
     }
   
@@ -44,18 +43,18 @@ class RecordFormModel extends ChangeNotifier {
   void clearModel() {
     if (record == null) return;
     isEditing = false;
-    diffIndex = 0;
+    hours = 0;
     challenge = false;
     desc = '';
     group = '';
-    characteristic = Characteristic.diligence;
+    charTypes = [];
     date = DateTool.today();
     record = null;
     sf = 0;
   }
 
   void _recalcSF() {
-    sf = challenge ? 0 : DifficultyLvl.values[diffIndex].value;
+    sf = challenge ? 0 : hours;
   }
 
   final StreamController<bool> _initController =
@@ -70,8 +69,8 @@ class RecordFormModel extends ChangeNotifier {
     group = value;
     notifyListeners();
   }
-  void setDiff(int value) {
-    diffIndex = value;
+  void setHours(int value) {
+    hours = value;
     _recalcSF();
     notifyListeners();
   }
@@ -80,8 +79,8 @@ class RecordFormModel extends ChangeNotifier {
     _recalcSF();
     notifyListeners();
   }
-  void setChar(Characteristic value) {
-    characteristic = value;
+  void setCharTypes(List<int> value) {
+    charTypes = value;
     _recalcSF();
     notifyListeners();
   }
@@ -92,17 +91,20 @@ class RecordFormModel extends ChangeNotifier {
 
   void _recalcChars() {
     record?.clearChars();
-    switch (characteristic) {
-      case Characteristic.happiness:
-        record?.happiness = sf;
-      case Characteristic.diligence:
-        record?.diligence = sf;
-      case Characteristic.intellection:
-        record?.intellection = sf;
-      case Characteristic.durability:
-        record?.durability = sf;
-      case Characteristic.potencial:
-        record?.potencial = sf;
+    for (var type in charTypes) {
+      Characteristic charType = Characteristic.values[type];
+      switch (charType) {
+        case Characteristic.happiness:
+          record?.happiness = sf;
+        case Characteristic.diligence:
+          record?.diligence = sf;
+        case Characteristic.intellection:
+          record?.intellection = sf;
+        case Characteristic.durability:
+          record?.durability = sf;
+        case Characteristic.potencial:
+          record?.potencial = sf;
+      }
     }
   }
 
@@ -111,9 +113,9 @@ class RecordFormModel extends ChangeNotifier {
 
     record?.description = desc;
     record?.group = group;
-    record?.char = characteristic;
+    record?.charTypes = charTypes;
     record?.date = date;
-    record?.difficulty = DifficultyLvl.values[diffIndex];
+    record?.hours = hours;
     record?.challenge = challenge;
     record?.time = DateTime.now().millisecondsSinceEpoch;
 

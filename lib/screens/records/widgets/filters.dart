@@ -1,6 +1,5 @@
 import 'package:chaos_control/models/enums/characteristics_ext.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/enums/difficulty_lvl.dart';
 import 'package:chaos_control/screens/records/record_list_model.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/filters/sort_button.dart';
@@ -33,9 +32,6 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     );
     final groupFilterValue = context.select<RecordListModel, bool>(
       (m) => m.groupFilter,
-    );
-    final diffFilterValue = context.select<RecordListModel, DifficultyLvl?>(
-      (m) => m.diffFilter,
     );
     final charFilterValue = context.select<RecordListModel, Characteristic?>(
       (m) => m.charFilter,
@@ -107,40 +103,6 @@ class _RecordListFiltersState extends State<RecordListFilters> {
       ),
     );
 
-    // Сложность
-    final diffFilter = FilterSection(
-      title: 'Сложность',
-      icon: Icons.hotel_class,
-      children: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: CustomText(
-                'All',
-                color: diffFilterValue == null ? focusColor : disabledColor,
-                weight: FontWeight.bold,
-              ),
-              onPressed: () => model.setDiffFilter(null),
-            ),
-            ...DifficultyLvl.values.map((lvl) {
-              final color = diffFilterValue == lvl ? lvl.color : disabledColor;
-              return IconButton(
-                icon: CustomText(
-                  lvl.name,
-                  color: color,
-                  weight: FontWeight.bold,
-                ),
-                onPressed: () => model.setDiffFilter(lvl),
-              );
-            }),
-          ],
-        ),
-      ),
-    );
-
     // Период
     final dateFilters = FilterSection(
       title: 'Период',
@@ -196,7 +158,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         onPressed: hasActiveFilters ? model.clearAllFilters : null,
         child: const Text('Сбросить все фильтры'),
       ),
-      filters: [challengeFilter, groupFilter, dateFilters, charFilter, diffFilter, sorting],
+      filters: [challengeFilter, groupFilter, dateFilters, charFilter, sorting],
     );
   }
 }

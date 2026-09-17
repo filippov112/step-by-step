@@ -7,7 +7,7 @@ import 'package:chaos_control/services/notifications/implementations/n_new_level
 import 'package:chaos_control/services/notifications/notification_service.dart';
 
 class SpiritCalculator {
-  static int sf_1 = 1000;
+  static int sf_1 = 50;
 
   static List<double> koefs = [1.1, 1.03,  1.002];
 
@@ -19,13 +19,13 @@ class SpiritCalculator {
   static int getLevelRemains(int sf) => _calc(sf).$2;
   
   // Очки хар-к
-  static int getCharPoints(int char) => (char.toDouble() / 1000).toInt();
+  static int getCharPoints(int char) => (char.toDouble() / 24).toInt();
   // Требование для следующего уровня
-  static int getCharPointsRequirements(int char) => 1000;
+  static int getCharPointsRequirements(int char) => 24;
   // Свободный опыт
-  static int getCharPointsRemains(int char) => char % 1000;
+  static int getCharPointsRemains(int char) => char % 24;
   // Очки в опыт
-  static int getSFFromCP(int cp) => cp * 1000;
+  static int getSFFromCP(int cp) => cp * 24;
   
 
   static (int, int, int) _calc(int sf) {

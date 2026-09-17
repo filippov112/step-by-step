@@ -119,6 +119,8 @@ class ChronicleRecord {
     );
   }
 
+  // ------- Методы ------------
+
   Map<Characteristic, int> get chars => <Characteristic, int>{
     Characteristic.happiness: happiness,
     Characteristic.diligence: diligence,
@@ -126,6 +128,14 @@ class ChronicleRecord {
     Characteristic.durability: durability,
     Characteristic.potencial: potencial,
   };
+
+  void clearChars() {
+    happiness = 0;
+    diligence = 0;
+    intellection = 0;
+    durability = 0;
+    potencial = 0;
+  }
 
   int get spiritFragments =>
       happiness + diligence + intellection + durability + potencial;

@@ -91,6 +91,7 @@ class RecordFormModel extends ChangeNotifier {
   }
 
   void _recalcChars() {
+    record?.clearChars();
     switch (characteristic) {
       case Characteristic.happiness:
         record?.happiness = sf;

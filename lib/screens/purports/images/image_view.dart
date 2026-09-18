@@ -131,12 +131,10 @@ class ImageViewState extends State<ImageView> {
       title: image.name,
       child: Stack(
         children: [
-          Center(
-            child: InteractiveViewer(
-              minScale: 1,
-              maxScale: 4.0,
-              child: Image.file(File(image.path)),
-            ),
+          InteractiveViewer(
+            minScale: 1,
+            maxScale: 4.0,
+            child: Center(child: Image.file(File(image.path))),
           ),
 
           if (image.desc.isNotEmpty && descVisiblity) descBlock,

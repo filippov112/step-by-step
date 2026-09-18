@@ -79,12 +79,12 @@ class RecordTileFolder extends RecordTreeTile {
     final sfWidget = record.children == null ? null : Row(
       children: [
         Icon(
-          Icons.local_fire_department,
+          Icons.timer,
           size: 12,
           shadows: [Shadow(color: focusColor, blurRadius: 12)],
         ),
         const SizedBox(width: 4),
-        CustomText(NumericTool.toThousandString(getSumSF(record.children)), color: focusColor, size: 11,),
+        CustomText('${NumericTool.toThousandString(getSumSF(record.children))} h.', color: focusColor, size: 11,),
       ],
     );
 

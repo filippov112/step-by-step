@@ -37,6 +37,7 @@ class RecordTileRecord extends RecordTreeTile {
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
     final challengeColor = Colors.orange;
+    final favoriteColor = Colors.amberAccent;
 
     final selectCheckbox = isSelectionMode && record.object != null
         ? Checkbox(value: isSelected, onChanged: (v) => _onTap())
@@ -63,14 +64,18 @@ class RecordTileRecord extends RecordTreeTile {
 
     // --------- Длительность ---------
 
-    final hoursCount = CustomText(
-      '${(record.object?.hours ?? 0).toString()} h.',
-      size: 16,
-      shadow: record.object == null
+    final hoursIcon = Icon(
+      Icons.timer,
+      shadows: record.object == null
           ? null
-          : Shadow(color: focusColor, blurRadius: 6),
+          : [Shadow(color: focusColor, blurRadius: 15)],
+      size: 15,
       color: focusColor,
-      weight: FontWeight.bold,
+    );
+    final hoursCount = CustomText(
+      '${(record.object?.hours ?? 0)} h.',
+      size: 14,
+      weight: const FontWeight(500),
       padding: const EdgeInsets.only(left: 4, right: 8, bottom: 1),
     );
 
@@ -98,12 +103,23 @@ class RecordTileRecord extends RecordTreeTile {
         color: challengeColor,
       ),
     ) : null;
+    
+    // ------ Избранное ---------
+
+    final favoriteIcon = (record.object?.favorite ?? false) ? Padding(
+      padding: const EdgeInsetsGeometry.only(right: 4),
+      child: Icon(Icons.star,
+        shadows: [Shadow(color: favoriteColor, blurRadius: 15)],
+        size: 15,
+        color: favoriteColor,
+      ),
+    ) : null;
 
     // ====== MAIN =========
 
     final header = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons, dateRow, hoursCount],
+      children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons, dateRow, ?favoriteIcon, hoursIcon, hoursCount],
     );
     final descWidget = CustomText(
       record.object?.description ?? '',

@@ -9,6 +9,8 @@ enum SortRecord { date, time }
 
 enum ChallengeFilterType { all, challenges, chronicles }
 
+enum FavoriteFilterType { all, favorites, other }
+
 extension ChallengeFilterTypeExt on ChallengeFilterType {
   String get displayName {
     switch (this) {
@@ -18,6 +20,19 @@ extension ChallengeFilterTypeExt on ChallengeFilterType {
         return 'Испытания';
       case ChallengeFilterType.chronicles:
         return 'Хроники';
+    }
+  }
+}
+
+extension FavoriteFilterTypeExt on FavoriteFilterType {
+  String get displayName {
+    switch (this) {
+      case FavoriteFilterType.all:
+        return 'Все записи';
+      case FavoriteFilterType.favorites:
+        return 'Избранные';
+      case FavoriteFilterType.other:
+        return 'Прочие';
     }
   }
 }
@@ -53,6 +68,7 @@ class RecordListModel extends ChangeNotifier {
   bool groupFilter = true; // группировка
   Characteristic? charFilter; // Хар-ка
   ChallengeFilterType challengeFilter = ChallengeFilterType.all; // Испытания
+  FavoriteFilterType favoriteFilter = FavoriteFilterType.all; // Избранные
 
   // Сброс фильтров
   bool get hasActiveFilters {
@@ -60,6 +76,7 @@ class RecordListModel extends ChangeNotifier {
         dateEndFilter != null ||
         charFilter != null ||
         challengeFilter != ChallengeFilterType.all ||
+        favoriteFilter != FavoriteFilterType.all ||
         searchQuery.isNotEmpty;
   }
 
@@ -146,12 +163,19 @@ class RecordListModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future setFavoriteFilter(FavoriteFilterType value) async {
+    favoriteFilter = value;
+    await _applyFiltersAndSort();
+    notifyListeners();
+  }
+
   Future clearAllFilters() async {
     searchQuery = '';
     dateBeginFilter = null;
     dateEndFilter = null;
     charFilter = null;
     challengeFilter = ChallengeFilterType.all;
+    favoriteFilter = FavoriteFilterType.all;
     await loadData();
   }
 
@@ -182,6 +206,15 @@ class RecordListModel extends ChangeNotifier {
     // Фильтр хар-ки
     if (charFilter != null) {
       result = result.where((t) => t.charTypes == charFilter).toList();
+    }
+    // Фильтр избранного
+    if (favoriteFilter != FavoriteFilterType.all) {
+      result = result
+          .where(
+            (t) =>
+                t.favorite == (favoriteFilter == FavoriteFilterType.favorites),
+          )
+          .toList();
     }
     // Фильтр испытаний
     if (challengeFilter != ChallengeFilterType.all) {

@@ -14,7 +14,7 @@ class RecordFormModel extends ChangeNotifier {
   String desc = '';
   String group = '';
   int hours = 0;
-  bool challenge = false;
+  bool challenge = false, favorite = false;
   DateTime date = DateTool.today();
   List<int> charTypes = [];
 
@@ -28,6 +28,7 @@ class RecordFormModel extends ChangeNotifier {
     if (!softClear) {
       hours = rec?.hours ?? 0;
       challenge = rec?.challenge ?? false;
+      favorite = rec?.favorite ?? false;
       desc = rec?.description ?? '';
       group = gr;
       charTypes = rec?.charTypes ?? [];
@@ -45,6 +46,7 @@ class RecordFormModel extends ChangeNotifier {
     isEditing = false;
     hours = 0;
     challenge = false;
+    favorite = false;
     desc = '';
     group = '';
     charTypes = [];
@@ -79,6 +81,10 @@ class RecordFormModel extends ChangeNotifier {
     _recalcSF();
     notifyListeners();
   }
+  void changeFavoriteStatus() {
+    favorite = !favorite;
+    notifyListeners();
+  }
   void setCharTypes(List<int> value) {
     charTypes = value;
     _recalcSF();
@@ -89,37 +95,29 @@ class RecordFormModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _recalcChars() {
-    record?.clearChars();
+  void _recalcChars(ChronicleRecord rec) {
+    rec.clearChars();
     for (var type in charTypes) {
       Characteristic charType = Characteristic.values[type];
       switch (charType) {
         case Characteristic.happiness:
-          record?.happiness = sf;
+          rec.happiness = sf;
         case Characteristic.diligence:
-          record?.diligence = sf;
+          rec.diligence = sf;
         case Characteristic.intellection:
-          record?.intellection = sf;
+          rec.intellection = sf;
         case Characteristic.durability:
-          record?.durability = sf;
+          rec.durability = sf;
         case Characteristic.potencial:
-          record?.potencial = sf;
+          rec.potencial = sf;
       }
     }
   }
 
+  // Изменить / Создать запись
   Future save() async {
     if (record == null) return;
-
-    record?.description = desc;
-    record?.group = group;
-    record?.charTypes = charTypes;
-    record?.date = date;
-    record?.hours = hours;
-    record?.challenge = challenge;
-    record?.time = DateTime.now().millisecondsSinceEpoch;
-
-    _recalcChars();
+    record = _fillRecord(record!);
 
     if (isEditing) {
       await _recRepo.update(record!);
@@ -129,6 +127,28 @@ class RecordFormModel extends ChangeNotifier {
       ns.showNotification(NNewRecord());
       init(null, group, softClear: true);
     }
+  }
+
+  // Копировать существующую запись
+  Future copy() async {
+    var newRecord = ChronicleRecord.create(date: date);
+    newRecord = _fillRecord(newRecord);
+
+    await _recRepo.insert(newRecord);
+    ns.showNotification(NNewRecord());
+  }
+
+  ChronicleRecord _fillRecord(ChronicleRecord rec) {    
+    rec.description = desc;
+    rec.group = group;
+    rec.charTypes = charTypes;
+    rec.date = date;
+    rec.hours = hours;
+    rec.challenge = challenge;
+    rec.favorite = favorite;
+    rec.time = DateTime.now().millisecondsSinceEpoch;
+    _recalcChars(rec);
+    return rec;
   }
 
   @override

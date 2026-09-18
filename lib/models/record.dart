@@ -14,13 +14,16 @@ class ChronicleRecord {
   static const tn = "records";
 
   static const cId = "_id";
-  static const cGroup = "_group";
-  static const cHours = "_hours";
-  static const cCharTypes = "_chars";
   static const cDescription = "_description";
+  static const cGroup = "_group";
+  static const cChallenge = "_challenge";
+  static const cFavorite = "_favorite";
+
   static const cDate = "_date";
   static const cTime = "_time";
-  static const cChallenge = "_challenge";
+  
+  static const cCharTypes = "_chars";
+  static const cHours = "_hours";
 
   static const cHappiness = "_c1";
   static const cDiligence = "_c2";
@@ -38,6 +41,7 @@ class ChronicleRecord {
           $cDate INTEGER,
           $cTime INTEGER,
           $cChallenge INTEGER,
+          $cFavorite INTEGER,
 
           $cHappiness INTEGER,
           $cDiligence INTEGER,
@@ -52,13 +56,17 @@ class ChronicleRecord {
   String id = '';
   
   String description = ""; // Описание
-  List<int> charTypes = []; // Характеристики
-  int hours = 0; // Продолжительность
-  DateTime date = DateTool.today(); // Дата
-  int time = 0;
   String group = ""; // Группа
   bool challenge = false; // Испытание
+  bool favorite = false; // Избранное
 
+  DateTime date = DateTool.today(); // Дата
+  int time = 0; // Время (только для сортировки)
+
+  List<int> charTypes = []; // Характеристики
+  int hours = 0; // Продолжительность
+
+  // Хар-ки
   int happiness = 0;
   int diligence = 0;
   int intellection = 0;
@@ -77,6 +85,7 @@ class ChronicleRecord {
     required this.date,
     required this.time,
     required this.challenge,
+    required this.favorite,
 
     required this.happiness,
     required this.diligence,
@@ -93,6 +102,7 @@ class ChronicleRecord {
     required DateTime date,
     int time = 0,
     bool challenge = false,
+    bool favorite = false,
 
     int happiness = 0,
     int diligence = 0,
@@ -111,6 +121,7 @@ class ChronicleRecord {
       date: date,
       time: time,
       challenge: challenge,
+      favorite: favorite,
 
       happiness: happiness,
       diligence: diligence,
@@ -153,6 +164,7 @@ class ChronicleRecord {
       cDate: DateTool.datetimeToDays(date),
       cTime: time,
       cChallenge: challenge ? 1 : 0,
+      cFavorite: favorite ? 1 : 0,
 
       cHappiness: happiness,
       cDiligence: diligence,
@@ -172,6 +184,7 @@ class ChronicleRecord {
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     time = map[cTime];
     challenge = map[cChallenge] == 1;
+    favorite = map[cFavorite] == 1;
 
     happiness = map[cHappiness];
     diligence = map[cDiligence];

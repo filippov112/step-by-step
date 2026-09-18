@@ -39,6 +39,9 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     final challengeFilterValue = context.select<RecordListModel, ChallengeFilterType>(
       (m) => m.challengeFilter,
     );
+    final favoriteFilterValue = context.select<RecordListModel, FavoriteFilterType>(
+      (m) => m.favoriteFilter,
+    );
     
 
     final sortField = context.select<RecordListModel, SortRecord>(
@@ -75,6 +78,22 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         ],
         initialValue: challengeFilterValue,
         onChanged: (v) => model.setChallengeFilter(v ?? ChallengeFilterType.all),
+      ),
+    );
+
+    // Избранное
+    final favoriteFilter = FilterSection(
+      title: 'Избранные',
+      icon: Icons.star,
+      children: DropdownButtonFormField<FavoriteFilterType>(
+        items: [
+          ...FavoriteFilterType.values.map((t) => DropdownMenuItem(
+            value: t,
+            child: CustomText(t.displayName),
+          ),)
+        ],
+        initialValue: favoriteFilterValue,
+        onChanged: (v) => model.setFavoriteFilter(v ?? FavoriteFilterType.all),
       ),
     );
 
@@ -158,7 +177,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         onPressed: hasActiveFilters ? model.clearAllFilters : null,
         child: const Text('Сбросить все фильтры'),
       ),
-      filters: [challengeFilter, groupFilter, dateFilters, charFilter, sorting],
+      filters: [favoriteFilter, challengeFilter, groupFilter, dateFilters, charFilter, sorting],
     );
   }
 }

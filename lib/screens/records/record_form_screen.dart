@@ -71,6 +71,7 @@ class RecordFormState extends State<RecordForm> {
     final isChallenge = context.select<RecordFormModel, bool>(
       (m) => m.challenge,
     );
+    final isFavorite = context.select<RecordFormModel, bool>((m) => m.favorite);
 
     final isEditing = context.select<RecordFormModel, bool>((m) => m.isEditing);
 
@@ -79,6 +80,7 @@ class RecordFormState extends State<RecordForm> {
     final disabledColor = Theme.of(context).disabledColor;
     final saveColor = Colors.greenAccent;
     final challengeColor = Colors.orange;
+    final favoriteColor = Colors.amberAccent;
 
 
     // --------- Длительность ---------
@@ -107,9 +109,7 @@ class RecordFormState extends State<RecordForm> {
     final hoursValue = CustomText(
       '$hours h.',
       size: 16,
-      shadow: Shadow(color: focusColor, blurRadius: 6),
-      color: focusColor,
-      weight: FontWeight.bold,
+      weight: const FontWeight(500),
       padding: const EdgeInsets.only(left: 4, right: 8, bottom: 1),
     );
 
@@ -127,14 +127,7 @@ class RecordFormState extends State<RecordForm> {
 
     // ========== MAIN =============
 
-    final statisticsRow = Row(
-      children: [
-        spiritIcon,
-        hoursIcon,
-        hoursValue,
-        const Expanded(child: SizedBox()),
-      ],
-    );
+    
 
     final charTypesWidget = Padding(
       padding: const EdgeInsetsGeometry.all(2),
@@ -164,6 +157,7 @@ class RecordFormState extends State<RecordForm> {
       icon: Icons.description,
       action: null,
       lines: 3,
+      length: 1000,
     );
 
     final groupWidget = Expanded(
@@ -200,6 +194,21 @@ class RecordFormState extends State<RecordForm> {
       icon: Icon(Icons.center_focus_strong),
     );
 
+    final favoriteStatusButton = IconButton(
+      style: ButtonStyle(
+        shape: WidgetStatePropertyAll(
+          ContinuousRectangleBorder(
+            borderRadius: BorderRadiusGeometry.circular(12),
+            side: BorderSide(width: 3, color: isFavorite ? favoriteColor : disabledColor),
+          ),
+        ),
+      ),
+      padding: const EdgeInsets.all(14),
+      color: isFavorite ? favoriteColor : disabledColor,
+      onPressed: model.changeFavoriteStatus,
+      icon: Icon(Icons.star),
+    );
+
     final saveButton = IconButton(
       style: ButtonStyle(
         shape: WidgetStatePropertyAll(
@@ -219,19 +228,39 @@ class RecordFormState extends State<RecordForm> {
       icon: Icon(isEditing ? Icons.save : Icons.add),
     );
 
-    final closeButton = IconButton(
+    final copyButton = IconButton(
       style: ButtonStyle(
         shape: WidgetStatePropertyAll(
           ContinuousRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(12),
-            side: BorderSide(width: 3, color: focusColor),
+            side: BorderSide(width: 3, color: saveColor),
           ),
         ),
       ),
       padding: const EdgeInsets.all(14),
+      color: saveColor,
+      onPressed: () async {
+        if (!(_formKey.currentState?.validate() ?? false)) return;
+        await model.copy();
+        await listModel.loadData();
+      },
+      icon: Icon(Icons.copy),
+    );
+
+    final closeButton = IconButton(
       color: focusColor,
       onPressed: listModel.closeForm,
       icon: Icon(Icons.close),
+    );
+
+    final statisticsRow = Row(
+      children: [
+        spiritIcon,
+        hoursIcon,
+        hoursValue,
+        const Expanded(child: SizedBox()),
+        closeButton
+      ],
     );
 
     // ==============================
@@ -258,6 +287,8 @@ class RecordFormState extends State<RecordForm> {
                   children: [
                     groupWidget,
                     const SizedBox(width: 8),
+                    favoriteStatusButton,
+                    const SizedBox(width: 8),
                     challengeStatusButton,
                   ],
                 ),
@@ -265,10 +296,12 @@ class RecordFormState extends State<RecordForm> {
                 Row(
                   children: [
                     datePicker,
+                    if (isEditing) ...{
+                      const SizedBox(width: 8),
+                      copyButton,
+                    },
                     const SizedBox(width: 8),
                     saveButton,
-                    const SizedBox(width: 8),
-                    closeButton,
                   ],
                 ),
               ],

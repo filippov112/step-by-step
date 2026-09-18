@@ -50,6 +50,7 @@ dependencies:
   permission_handler: ^12.0.3
   just_audio_media_kit: ^2.1.0
   device_info_plus: ^13.2.0
+  image_cropper: ^12.2.1
 media_kit_video:
     git:
       url: https://github.com/kaankoken/media-kit.git 

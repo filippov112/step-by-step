@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:chaos_control/themes/solo_leveling_theme.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -98,12 +100,44 @@ class FileService {
       }
       
       if (image != null) {
-        return File(image.path);
+        if (!Platform.isAndroid && !Platform.isIOS) {
+          return File(image.path);
+        }
+        var croppedFile = await ImageCropper().cropImage(
+          compressFormat: ImageCompressFormat.png,
+          compressQuality: 100,
+          sourcePath: image.path,
+          
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Обрезка',
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false,
+              toolbarColor: SoloLevelingTheme.back1,
+              statusBarLight: false,
+              navBarLight: false,
+              toolbarWidgetColor: SoloLevelingTheme.text1,
+              backgroundColor: SoloLevelingTheme.back2,
+              cropFrameColor: SoloLevelingTheme.back2,
+              activeControlsWidgetColor: SoloLevelingTheme.active1,
+              dimmedLayerColor: SoloLevelingTheme.back1
+            ),
+            IOSUiSettings(
+              title: 'Обрезка',
+            ),
+          ],
+        );
+        if (croppedFile != null) {
+          return File(croppedFile.path);
+        }
+        return null;
       }
       return null;
     } catch (e) {
-      // print('Ошибка выбора изображения: $e');
+      print('Ошибка выбора изображения: $e');
       return null;
     }
   }
+
+
 }

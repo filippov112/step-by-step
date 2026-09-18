@@ -24,6 +24,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
   @override
   Widget build(BuildContext context) {
     final deltaColor = Colors.amber;
+    final spiritCalc = context.read<SpiritCalculator>();
 
     final Map<Characteristic, int>? chars = context
         .select<ProfileDetailModel, Map<Characteristic, int>?>(
@@ -96,9 +97,9 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
         children: [
           ...Characteristic.values.map((ch) {
             final sf = isDeltaTab ? (deltaChars?[ch] ?? 0) : (chars?[ch] ?? 0);
-            final points = SpiritCalculator.getCharPoints(sf);
-            final remains = SpiritCalculator.getCharPointsRemains(sf);
-            final requirements = SpiritCalculator.getCharPointsRequirements(sf);
+            final points = spiritCalc.getCharPoints(sf);
+            final remains = spiritCalc.getCharPointsRemains(sf);
+            final requirements = spiritCalc.getCharPointsRequirements(sf);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

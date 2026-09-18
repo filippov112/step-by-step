@@ -8,8 +8,10 @@ import 'package:snap_chart/snap_chart.dart';
 class ProfileDetailSpirit extends StatelessWidget {
   const ProfileDetailSpirit({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    final spiritCalc = context.read<SpiritCalculator>();
     final eff = context.select<ProfileDetailModel, int>((model) => model.user?.spiritFragments ?? 0);
 
     final int deltaEff = context.select<ProfileDetailModel, int>(
@@ -27,11 +29,11 @@ class ProfileDetailSpirit extends StatelessWidget {
         );
 
     return ProfileProgress(
-      level: SpiritCalculator.getLevel(eff),
+      level: spiritCalc.getLevel(eff),
       deltaValue: deltaEff,
-      currentValue: SpiritCalculator.getLevelRemains(eff),
+      currentValue: spiritCalc.getLevelRemains(eff),
       title: 'Дух',
-      nextLevel: SpiritCalculator.getLevelRequirements(eff),
+      nextLevel: spiritCalc.getLevelRequirements(eff),
       icon: Icons.local_fire_department,
       data: progressData,
       firstDay: firstDay,

@@ -1,6 +1,7 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,11 @@ extension FavoriteFilterTypeExt on FavoriteFilterType {
 }
 
 class RecordListModel extends ChangeNotifier {
-  final _recordRepo = RecordRepository();
+  final SpiritCalculator calculator;
+  RecordListModel(this.calculator) {
+    _recordRepo = RecordRepository(calculator);
+  }
+  late final RecordRepository _recordRepo;
 
   List<ChronicleRecord> _records = [];
   List<ChronicleRecord> _filtered = [];

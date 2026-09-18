@@ -42,10 +42,13 @@ extension StatPeriodExt on PeriodFilterType {
 }
 
 class ProfileDetailModel extends ChangeNotifier {
+  late final SpiritCalculator calculator;
   final _userRepo = ProfileRepository();
   final _analRepo = AnalyticsRepository();
   Profile? user;
   Map<Characteristic,int>? chars;
+
+  ProfileDetailModel(this.calculator);
 
   // Наборы данных за выбранный период
   Map<DateTime, DtoActivity> activityData = {};
@@ -88,7 +91,7 @@ class ProfileDetailModel extends ChangeNotifier {
 
   // Перерасчет характеристик
   Future recalcStats() async {
-    await SpiritCalculator.recalcUserChars();
+    await calculator.recalcUserChars();
     await loadData();
   }
 

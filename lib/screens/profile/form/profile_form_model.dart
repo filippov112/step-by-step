@@ -5,9 +5,12 @@ import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/profile.dart';
 
 class ProfileFormModel extends ChangeNotifier {
+  late final SpiritCalculator calculator;
   final ProfileRepository _userRepo = ProfileRepository();
   Profile? profile;
   bool _isEdit = false;
+
+  ProfileFormModel(this.calculator);
 
   void loadData(Profile? p) {
     profile = p ?? Profile();
@@ -27,7 +30,7 @@ class ProfileFormModel extends ChangeNotifier {
       } else {
         await _userRepo.update(profile!);
       }
-      await SpiritCalculator.recalcUserChars();
+      await calculator.recalcUserChars();
     } 
     catch (e) {
       return e.toString();

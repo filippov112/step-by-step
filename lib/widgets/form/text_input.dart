@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class CustomTextInput extends StatelessWidget {
   final TextEditingController? controller;
   final String? header;
-  final IconData icon;
+  final IconData? icon;
   final String? requiredErrorText;
   final Function(String?) setText;
   final int? lines;
@@ -19,7 +19,7 @@ class CustomTextInput extends StatelessWidget {
     required this.header,
     this.controller,
     required this.setText,
-    required this.icon,
+    this.icon,
     this.requiredErrorText,
     this.lines,
     this.customValidator,
@@ -44,7 +44,7 @@ class CustomTextInput extends StatelessWidget {
       decoration: InputDecoration(
         labelText: header,
         border: const OutlineInputBorder(),
-        prefixIcon: Icon(icon),
+        prefixIcon: icon == null ? null : Icon(icon),
       ),
       maxLines: lines,
       validator: customValidator ?? (value) {

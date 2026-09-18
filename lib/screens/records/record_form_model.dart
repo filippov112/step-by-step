@@ -4,11 +4,16 @@ import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_record.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
+import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RecordFormModel extends ChangeNotifier {
-  final _recRepo = RecordRepository();
+  final SpiritCalculator calculator;
+  RecordFormModel(this.calculator) {
+    _recRepo = RecordRepository(calculator);
+  }
+  late RecordRepository _recRepo;
   final ns = NotificationService();
 
   String desc = '';

@@ -205,6 +205,8 @@ class ChronicleRecord {
 
 // Базовый репозиторий
 class RecordRepository {
+  final SpiritCalculator calculator;
+  RecordRepository(this.calculator);
   Database db = DB.db!;
   final userRepo = ProfileRepository();
 
@@ -337,7 +339,7 @@ class RecordRepository {
     for (var ch in Characteristic.values) {
       newUserChars[ch] = (userChars[ch] ?? 0) + (deltaChars[ch] ?? 0);
     }
-    await SpiritCalculator.checkNotifications(userChars, newUserChars);
+    calculator.checkNotifications(userChars, newUserChars);
     user.setChars(newUserChars);
     await userRepo.update(user);
   }

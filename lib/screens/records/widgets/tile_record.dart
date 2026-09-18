@@ -1,5 +1,7 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/screens/records/widgets/tile.dart';
+import 'package:chaos_control/screens/records/widgets/view.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:chaos_control/widgets/common/custom_tile.dart';
@@ -36,6 +38,7 @@ class RecordTileRecord extends RecordTreeTile {
   Widget build(BuildContext context) {
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
+    final onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
     final challengeColor = Colors.orange;
     final favoriteColor = Colors.amberAccent;
 
@@ -43,23 +46,15 @@ class RecordTileRecord extends RecordTreeTile {
         ? Checkbox(value: isSelected, onChanged: (v) => _onTap())
         : null;
 
-    // -------- Дата и статус -----------
+    // -------- Дата -----------
 
-    final dateIcon = Padding(
-      padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(Icons.calendar_month, size: 12, color: focusColor),
-    );
     final dateWidget = CustomText(
       DateTool.shortDateFormat(record.object?.date),
       color: focusColor,
+      expanded: true,
+      align: TextAlign.center,
       size: 12,
       padding: const EdgeInsets.only(bottom: 2),
-    );
-    final dateRow = Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [dateIcon, dateWidget],
-      ),
     );
 
     // --------- Длительность ---------
@@ -81,52 +76,94 @@ class RecordTileRecord extends RecordTreeTile {
 
     // ------ Типы характеристик ---------
 
-    final charTypesIcons = record.object?.charTypes.map((type) => Padding(
-      padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(
-        Characteristic.values[type].icon,
-        shadows: record.object == null
-            ? null
-            : [Shadow(color: Characteristic.values[type].color, blurRadius: 15)],
-        size: 15,
-        color: Characteristic.values[type].color,
+    final charTypesIcons = record.object?.charTypes.map(
+      (type) => Padding(
+        padding: const EdgeInsetsGeometry.only(right: 4),
+        child: Icon(
+          Characteristic.values[type].icon,
+          shadows: record.object == null
+              ? null
+              : [
+                  Shadow(
+                    color: Characteristic.values[type].color,
+                    blurRadius: 15,
+                  ),
+                ],
+          size: 15,
+          color: Characteristic.values[type].color,
+        ),
       ),
-    ));
+    );
 
     // ------ Испытание ---------
 
-    final challengeIcon = (record.object?.challenge ?? false) ? Padding(
-      padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(Icons.center_focus_strong,
-        shadows: [Shadow(color: challengeColor, blurRadius: 15)],
-        size: 15,
-        color: challengeColor,
-      ),
-    ) : null;
-    
+    final challengeIcon = (record.object?.challenge ?? false)
+        ? Padding(
+            padding: const EdgeInsetsGeometry.only(right: 4),
+            child: Icon(
+              Icons.center_focus_strong,
+              shadows: [Shadow(color: challengeColor, blurRadius: 15)],
+              size: 15,
+              color: challengeColor,
+            ),
+          )
+        : null;
+
     // ------ Избранное ---------
 
-    final favoriteIcon = (record.object?.favorite ?? false) ? Padding(
-      padding: const EdgeInsetsGeometry.only(right: 4),
-      child: Icon(Icons.star,
-        shadows: [Shadow(color: favoriteColor, blurRadius: 15)],
-        size: 15,
-        color: favoriteColor,
-      ),
-    ) : null;
+    final favoriteIcon = (record.object?.favorite ?? false)
+        ? Padding(
+            padding: const EdgeInsetsGeometry.only(right: 4),
+            child: Icon(
+              Icons.star,
+              shadows: [Shadow(color: favoriteColor, blurRadius: 15)],
+              size: 15,
+              color: favoriteColor,
+            ),
+          )
+        : null;
 
     // ====== MAIN =========
 
     final header = Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons, dateRow, ?favoriteIcon, hoursIcon, hoursCount],
+      children: [
+        Expanded(
+          child: Wrap(
+            children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons],
+          ),
+        ),
+        dateWidget,
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [?favoriteIcon, hoursIcon, hoursCount],
+          ),
+        ),
+      ],
     );
+
     final descWidget = CustomText(
       record.object?.description ?? '',
       padding: const EdgeInsets.all(8),
       overflow: TextOverflow.visible,
-      shadow: Shadow(color: Theme.of(context).colorScheme.onPrimary, blurRadius: 3),
-      lines: null,
+      shadow: Shadow(
+        color: Theme.of(context).colorScheme.onPrimary,
+        blurRadius: 3,
+      ),
+      expanded: true,
+      lines: 3,
+    );
+
+    final detailButton =  isSelectionMode ? null : IconButton(
+      color: onPrimaryColor.withAlpha(50),
+      icon: Icon(Icons.info),
+      onPressed: () => showDialog(
+        context: context,
+        builder: (context) => RecordView(
+          record:
+              record.object ?? ChronicleRecord.create(date: DateTool.today()),
+        ),
+      ),
     );
 
     return Padding(
@@ -142,7 +179,7 @@ class RecordTileRecord extends RecordTreeTile {
           children: [
             header,
             Divider(color: dividerColor, height: 2),
-            descWidget,
+            Row(children: [descWidget, ?detailButton]),
           ],
         ),
       ),

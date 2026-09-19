@@ -65,11 +65,14 @@ class RecordListModel extends ChangeNotifier {
   // ------
 
   final listModel = CustomTreeListModel<ChronicleRecord>();
+  final defaulBeginDate = DateTool.today().subtract(Duration(days: 30));
 
   // Фильтрация
   String searchQuery = ''; // поиск
   bool visibilitySearch = false;
-  DateTime? dateBeginFilter, dateEndFilter; // период
+  // Период
+  DateTime? dateBeginFilter = DateTool.today().subtract(Duration(days: 30));
+  DateTime? dateEndFilter; 
   bool groupFilter = true; // группировка
   Characteristic? charFilter; // Хар-ка
   TargetFilterType targetFilter = TargetFilterType.all; // Цели
@@ -77,7 +80,7 @@ class RecordListModel extends ChangeNotifier {
 
   // Сброс фильтров
   bool get hasActiveFilters {
-    return dateBeginFilter != null ||
+    return dateBeginFilter != defaulBeginDate ||
         dateEndFilter != null ||
         charFilter != null ||
         targetFilter != TargetFilterType.all ||
@@ -176,7 +179,7 @@ class RecordListModel extends ChangeNotifier {
 
   Future clearAllFilters() async {
     searchQuery = '';
-    dateBeginFilter = null;
+    dateBeginFilter = defaulBeginDate;
     dateEndFilter = null;
     charFilter = null;
     targetFilter = TargetFilterType.all;

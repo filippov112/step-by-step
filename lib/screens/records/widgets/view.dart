@@ -13,7 +13,7 @@ class RecordView extends StatelessWidget {
   Widget build(BuildContext context) {
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
-    final challengeColor = Colors.orange;
+    final targetColor = Colors.orange;
     final favoriteColor = Colors.amberAccent;
 
     // -------- Дата -----------
@@ -58,16 +58,16 @@ class RecordView extends StatelessWidget {
       ),
     );
 
-    // ------ Испытание ---------
+    // ------ Цель ---------
 
-    final challengeIcon = record.challenge
+    final targetIcon = record.target
         ? Padding(
             padding: const EdgeInsetsGeometry.only(right: 4),
             child: Icon(
               Icons.center_focus_strong,
-              shadows: [Shadow(color: challengeColor, blurRadius: 15)],
+              shadows: [Shadow(color: targetColor, blurRadius: 15)],
               size: 15,
-              color: challengeColor,
+              color: targetColor,
             ),
           )
         : null;
@@ -92,7 +92,7 @@ class RecordView extends StatelessWidget {
       padding: const EdgeInsetsGeometry.all(12),
       child: Row(
         children: [
-          Expanded(child: Wrap(children: [?challengeIcon, ...charTypesIcons])),
+          Expanded(child: Wrap(children: [?targetIcon, ...charTypesIcons])),
           dateWidget,
           Expanded(
             child: Row(

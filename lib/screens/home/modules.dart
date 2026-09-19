@@ -8,7 +8,6 @@ enum AppModule {
   profile,
   chronicle,
   purports,
-  log,
   settings,
 }
 
@@ -34,9 +33,6 @@ extension AppModuleExt on AppModule {
         return PurportListScreen();
       case AppModule.settings:
         return SettingListScreen();
-
-      case AppModule.log:
-        return SettingListScreen();
     }
   }
 
@@ -48,8 +44,6 @@ extension AppModuleExt on AppModule {
         return 'Хроники';
       case AppModule.purports:
         return 'Смыслы';
-      case AppModule.log:
-        return 'Логи';
       case AppModule.settings:
         return 'Настройки';
     }
@@ -63,8 +57,6 @@ extension AppModuleExt on AppModule {
         return Icons.auto_stories;
       case AppModule.purports:
         return Icons.local_fire_department;
-      case AppModule.log:
-        return Icons.timelapse;
       case AppModule.settings:
         return Icons.settings;
     }

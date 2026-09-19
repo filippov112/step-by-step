@@ -8,18 +8,18 @@ import 'package:flutter/material.dart';
 
 enum SortRecord { date, time }
 
-enum ChallengeFilterType { all, challenges, chronicles }
+enum TargetFilterType { all, targets, chronicles }
 
 enum FavoriteFilterType { all, favorites, other }
 
-extension ChallengeFilterTypeExt on ChallengeFilterType {
+extension TargetFilterTypeExt on TargetFilterType {
   String get displayName {
     switch (this) {
-      case ChallengeFilterType.all:
+      case TargetFilterType.all:
         return 'Все записи';
-      case ChallengeFilterType.challenges:
-        return 'Испытания';
-      case ChallengeFilterType.chronicles:
+      case TargetFilterType.targets:
+        return 'Цели';
+      case TargetFilterType.chronicles:
         return 'Хроники';
     }
   }
@@ -72,7 +72,7 @@ class RecordListModel extends ChangeNotifier {
   DateTime? dateBeginFilter, dateEndFilter; // период
   bool groupFilter = true; // группировка
   Characteristic? charFilter; // Хар-ка
-  ChallengeFilterType challengeFilter = ChallengeFilterType.all; // Испытания
+  TargetFilterType targetFilter = TargetFilterType.all; // Цели
   FavoriteFilterType favoriteFilter = FavoriteFilterType.all; // Избранные
 
   // Сброс фильтров
@@ -80,7 +80,7 @@ class RecordListModel extends ChangeNotifier {
     return dateBeginFilter != null ||
         dateEndFilter != null ||
         charFilter != null ||
-        challengeFilter != ChallengeFilterType.all ||
+        targetFilter != TargetFilterType.all ||
         favoriteFilter != FavoriteFilterType.all ||
         searchQuery.isNotEmpty;
   }
@@ -162,8 +162,8 @@ class RecordListModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future setChallengeFilter(ChallengeFilterType value) async {
-    challengeFilter = value;
+  Future setTargetFilter(TargetFilterType value) async {
+    targetFilter = value;
     await _applyFiltersAndSort();
     notifyListeners();
   }
@@ -179,7 +179,7 @@ class RecordListModel extends ChangeNotifier {
     dateBeginFilter = null;
     dateEndFilter = null;
     charFilter = null;
-    challengeFilter = ChallengeFilterType.all;
+    targetFilter = TargetFilterType.all;
     favoriteFilter = FavoriteFilterType.all;
     await loadData();
   }
@@ -221,13 +221,13 @@ class RecordListModel extends ChangeNotifier {
           )
           .toList();
     }
-    // Фильтр испытаний
-    if (challengeFilter != ChallengeFilterType.all) {
+    // Фильтр целей
+    if (targetFilter != TargetFilterType.all) {
       result = result
           .where(
             (t) =>
-                t.challenge ==
-                (challengeFilter == ChallengeFilterType.challenges),
+                t.target ==
+                (targetFilter == TargetFilterType.targets),
           )
           .toList();
     }

@@ -68,8 +68,8 @@ class RecordFormState extends State<RecordForm> {
     final charTypes = context.select<RecordFormModel, List<int>>(
       (m) => m.charTypes,
     );
-    final isChallenge = context.select<RecordFormModel, bool>(
-      (m) => m.challenge,
+    final isTarget = context.select<RecordFormModel, bool>(
+      (m) => m.target,
     );
     final isFavorite = context.select<RecordFormModel, bool>((m) => m.favorite);
 
@@ -79,7 +79,7 @@ class RecordFormState extends State<RecordForm> {
     final focusColor = Theme.of(context).focusColor;
     final disabledColor = Theme.of(context).disabledColor;
     final saveColor = Colors.greenAccent;
-    final challengeColor = Colors.orange;
+    final targetColor = Colors.orange;
     final favoriteColor = Colors.amberAccent;
 
 
@@ -119,8 +119,8 @@ class RecordFormState extends State<RecordForm> {
       padding: const EdgeInsetsGeometry.only(right: 4),
       child: Icon(
         Icons.local_fire_department,
-        color: isChallenge ? disabledColor : challengeColor,
-        shadows: [Shadow(color: isChallenge ? disabledColor : challengeColor, blurRadius: 6)],
+        color: isTarget ? disabledColor : targetColor,
+        shadows: [Shadow(color: isTarget ? disabledColor : targetColor, blurRadius: 6)],
         size: 17,
       ),
     );
@@ -179,18 +179,18 @@ class RecordFormState extends State<RecordForm> {
       ),
     );
 
-    final challengeStatusButton = IconButton(
+    final targetStatusButton = IconButton(
       style: ButtonStyle(
         shape: WidgetStatePropertyAll(
           ContinuousRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(12),
-            side: BorderSide(width: 3, color: isChallenge ? challengeColor : disabledColor),
+            side: BorderSide(width: 3, color: isTarget ? targetColor : disabledColor),
           ),
         ),
       ),
       padding: const EdgeInsets.all(14),
-      color: isChallenge ? challengeColor : disabledColor,
-      onPressed: model.changeChallengeStatus,
+      color: isTarget ? targetColor : disabledColor,
+      onPressed: model.changeTargetStatus,
       icon: Icon(Icons.center_focus_strong),
     );
 
@@ -289,7 +289,7 @@ class RecordFormState extends State<RecordForm> {
                     const SizedBox(width: 8),
                     favoriteStatusButton,
                     const SizedBox(width: 8),
-                    challengeStatusButton,
+                    targetStatusButton,
                   ],
                 ),
                 const SizedBox(height: 8),

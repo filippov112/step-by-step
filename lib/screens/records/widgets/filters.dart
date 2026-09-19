@@ -36,8 +36,8 @@ class _RecordListFiltersState extends State<RecordListFilters> {
     final charFilterValue = context.select<RecordListModel, Characteristic?>(
       (m) => m.charFilter,
     );
-    final challengeFilterValue = context.select<RecordListModel, ChallengeFilterType>(
-      (m) => m.challengeFilter,
+    final targetFilterValue = context.select<RecordListModel, TargetFilterType>(
+      (m) => m.targetFilter,
     );
     final favoriteFilterValue = context.select<RecordListModel, FavoriteFilterType>(
       (m) => m.favoriteFilter,
@@ -65,19 +65,19 @@ class _RecordListFiltersState extends State<RecordListFilters> {
       ),
     );
 
-    // Испытания
-    final challengeFilter = FilterSection(
-      title: 'Испытания',
+    // Цели
+    final targetFilter = FilterSection(
+      title: 'Цели',
       icon: Icons.center_focus_strong,
-      children: DropdownButtonFormField<ChallengeFilterType>(
+      children: DropdownButtonFormField<TargetFilterType>(
         items: [
-          ...ChallengeFilterType.values.map((t) => DropdownMenuItem(
+          ...TargetFilterType.values.map((t) => DropdownMenuItem(
             value: t,
             child: CustomText(t.displayName),
           ),)
         ],
-        initialValue: challengeFilterValue,
-        onChanged: (v) => model.setChallengeFilter(v ?? ChallengeFilterType.all),
+        initialValue: targetFilterValue,
+        onChanged: (v) => model.setTargetFilter(v ?? TargetFilterType.all),
       ),
     );
 
@@ -177,7 +177,7 @@ class _RecordListFiltersState extends State<RecordListFilters> {
         onPressed: hasActiveFilters ? model.clearAllFilters : null,
         child: const Text('Сбросить все фильтры'),
       ),
-      filters: [favoriteFilter, challengeFilter, groupFilter, dateFilters, charFilter, sorting],
+      filters: [favoriteFilter, targetFilter, groupFilter, dateFilters, charFilter, sorting],
     );
   }
 }

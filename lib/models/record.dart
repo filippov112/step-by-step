@@ -16,7 +16,7 @@ class ChronicleRecord {
   static const cId = "_id";
   static const cDescription = "_description";
   static const cGroup = "_group";
-  static const cChallenge = "_challenge";
+  static const cTarget = "_target";
   static const cFavorite = "_favorite";
 
   static const cDate = "_date";
@@ -40,7 +40,7 @@ class ChronicleRecord {
           $cDescription TEXT,
           $cDate INTEGER,
           $cTime INTEGER,
-          $cChallenge INTEGER,
+          $cTarget INTEGER,
           $cFavorite INTEGER,
 
           $cHappiness INTEGER,
@@ -57,7 +57,7 @@ class ChronicleRecord {
   
   String description = ""; // Описание
   String group = ""; // Группа
-  bool challenge = false; // Испытание
+  bool target = false; // Цель
   bool favorite = false; // Избранное
 
   DateTime date = DateTool.today(); // Дата
@@ -84,7 +84,7 @@ class ChronicleRecord {
     required this.hours,
     required this.date,
     required this.time,
-    required this.challenge,
+    required this.target,
     required this.favorite,
 
     required this.happiness,
@@ -101,7 +101,7 @@ class ChronicleRecord {
     String description = '',
     required DateTime date,
     int time = 0,
-    bool challenge = false,
+    bool target = false,
     bool favorite = false,
 
     int happiness = 0,
@@ -120,7 +120,7 @@ class ChronicleRecord {
       description: description,
       date: date,
       time: time,
-      challenge: challenge,
+      target: target,
       favorite: favorite,
 
       happiness: happiness,
@@ -163,7 +163,7 @@ class ChronicleRecord {
       cDescription: description,
       cDate: DateTool.datetimeToDays(date),
       cTime: time,
-      cChallenge: challenge ? 1 : 0,
+      cTarget: target ? 1 : 0,
       cFavorite: favorite ? 1 : 0,
 
       cHappiness: happiness,
@@ -183,7 +183,7 @@ class ChronicleRecord {
     hours = map[cHours];
     date = DateTool.joinDateTime(date: map[cDate]) ?? DateTool.today();
     time = map[cTime];
-    challenge = map[cChallenge] == 1;
+    target = map[cTarget] == 1;
     favorite = map[cFavorite] == 1;
 
     happiness = map[cHappiness];

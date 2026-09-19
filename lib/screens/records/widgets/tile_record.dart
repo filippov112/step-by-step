@@ -39,7 +39,7 @@ class RecordTileRecord extends RecordTreeTile {
     final dividerColor = Theme.of(context).dividerColor;
     final focusColor = Theme.of(context).focusColor;
     final onPrimaryColor = Theme.of(context).colorScheme.onPrimary;
-    final challengeColor = Colors.orange;
+    final targetColor = Colors.orange;
     final favoriteColor = Colors.amberAccent;
 
     final selectCheckbox = isSelectionMode && record.object != null
@@ -95,16 +95,16 @@ class RecordTileRecord extends RecordTreeTile {
       ),
     );
 
-    // ------ Испытание ---------
+    // ------ Цель ---------
 
-    final challengeIcon = (record.object?.challenge ?? false)
+    final targetIcon = (record.object?.target ?? false)
         ? Padding(
             padding: const EdgeInsetsGeometry.only(right: 4),
             child: Icon(
               Icons.center_focus_strong,
-              shadows: [Shadow(color: challengeColor, blurRadius: 15)],
+              shadows: [Shadow(color: targetColor, blurRadius: 15)],
               size: 15,
-              color: challengeColor,
+              color: targetColor,
             ),
           )
         : null;
@@ -129,7 +129,7 @@ class RecordTileRecord extends RecordTreeTile {
       children: [
         Expanded(
           child: Wrap(
-            children: [?selectCheckbox, ?challengeIcon, ...?charTypesIcons],
+            children: [?selectCheckbox, ?targetIcon, ...?charTypesIcons],
           ),
         ),
         dateWidget,

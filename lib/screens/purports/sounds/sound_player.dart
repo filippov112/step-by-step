@@ -105,10 +105,10 @@ class SoundPlayer extends StatelessWidget {
             child: CustomText(
               currentSound == null
                   ? ''
-                  : currentSound!.artist == null ||
-                        currentSound!.artist!.isEmpty
-                  ? (currentSound?.title ?? '')
-                  : '${currentSound!.artist} - ${currentSound!.title}',
+                  : currentSound.artist == null ||
+                        currentSound.artist!.isEmpty
+                  ? (currentSound.title ?? '')
+                  : '${currentSound.artist} - ${currentSound.title}',
               size: 12,
             ),
           ),

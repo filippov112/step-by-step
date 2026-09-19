@@ -15,38 +15,36 @@ class SettingsScaffold extends StatelessWidget {
     required this.children,
     this.bottomBar,
     this.drawer,
-    required this.cancelCallback
+    required this.cancelCallback,
   });
 
   @override
   Widget build(BuildContext context) {
     final model = context.read<SettingListModel>();
-    final hasChanged = context.select<SettingListModel,bool>((m) => m.hasChanged);
-    final saveButton = hasChanged ? IconButton(onPressed: model.save, icon: Icon(Icons.save)) : null;
-    final cancelButton = hasChanged ? IconButton(onPressed: cancelCallback, icon: Icon(Icons.cancel)) : null;
+    final hasChanged = context.select<SettingListModel, bool>(
+      (m) => m.hasChanged,
+    );
+    final saveButton = hasChanged
+        ? IconButton(onPressed: model.save, icon: Icon(Icons.save))
+        : null;
+    final cancelButton = hasChanged
+        ? IconButton(onPressed: cancelCallback, icon: Icon(Icons.cancel))
+        : null;
 
     return Scaffold(
-      appBar: AppBar(title: CustomText(title), actions: [
-        ?cancelButton, ?saveButton
-      ],),
+      appBar: AppBar(
+        title: CustomText(title),
+        actions: [?cancelButton, ?saveButton],
+      ),
       drawer: drawer,
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                Padding(
-                  padding: EdgeInsetsGeometry.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [...children],
-                  ),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [...children],
           ),
-        ],
+        ),
       ),
       bottomNavigationBar: bottomBar,
     );

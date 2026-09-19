@@ -19,7 +19,7 @@ class RecordFormModel extends ChangeNotifier {
   String desc = '';
   String group = '';
   int hours = 0;
-  bool challenge = false, favorite = false;
+  bool target = false, favorite = false;
   DateTime date = DateTool.today();
   List<int> charTypes = [];
 
@@ -32,7 +32,7 @@ class RecordFormModel extends ChangeNotifier {
 
     if (!softClear) {
       hours = rec?.hours ?? 0;
-      challenge = rec?.challenge ?? false;
+      target = rec?.target ?? false;
       favorite = rec?.favorite ?? false;
       desc = rec?.description ?? '';
       group = gr;
@@ -50,7 +50,7 @@ class RecordFormModel extends ChangeNotifier {
     if (record == null) return;
     isEditing = false;
     hours = 0;
-    challenge = false;
+    target = false;
     favorite = false;
     desc = '';
     group = '';
@@ -61,7 +61,7 @@ class RecordFormModel extends ChangeNotifier {
   }
 
   void _recalcSF() {
-    sf = challenge ? 0 : hours;
+    sf = target ? 0 : hours;
   }
 
   final StreamController<bool> _initController =
@@ -81,8 +81,8 @@ class RecordFormModel extends ChangeNotifier {
     _recalcSF();
     notifyListeners();
   }
-  void changeChallengeStatus() {
-    challenge = !challenge;
+  void changeTargetStatus() {
+    target = !target;
     _recalcSF();
     notifyListeners();
   }
@@ -149,7 +149,7 @@ class RecordFormModel extends ChangeNotifier {
     rec.charTypes = charTypes;
     rec.date = date;
     rec.hours = hours;
-    rec.challenge = challenge;
+    rec.target = target;
     rec.favorite = favorite;
     rec.time = DateTime.now().millisecondsSinceEpoch;
     _recalcChars(rec);

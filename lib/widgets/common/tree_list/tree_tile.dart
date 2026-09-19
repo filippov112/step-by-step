@@ -55,6 +55,8 @@ class DefaultTreeTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bRadius = const BorderRadius.all(Radius.circular(16));
+    final focusColor = Theme.of(context).focusColor;
+    
     Color? containterColor = Theme.of(context)
         .colorScheme
         .surfaceContainerHighest
@@ -75,6 +77,8 @@ class DefaultTreeTile<T> extends StatelessWidget {
         record.isFolder ? null : record.customIconData,
         altIcon: customAltIcon,
         color: record.color,
+        borderColor: focusColor,
+        borderWidth: 1,
         width: 40,
         height: 40,
       ),

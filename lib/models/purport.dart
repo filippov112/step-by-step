@@ -1,4 +1,6 @@
 import 'package:chaos_control/data/db.dart';
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/services/file_storage_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
@@ -13,11 +15,13 @@ class Purport {
   static const cTitle = "_title";
   static const cDescription = "_description";
   static const cGroup = "_group";
+  static const cIcon = "_icon";
 
   static const init = '''CREATE TABLE $tn (
           $cId TEXT PRIMARY KEY, 
 
           $cTitle TEXT NOT NULL, 
+          $cIcon TEXT,
           $cDescription TEXT,
           $cGroup TEXT
         );
@@ -26,27 +30,31 @@ class Purport {
   // ------------ Поля ------------
   String id = "";
 
-  String title = "";
-  String description = "";
-  String group = "";
+  String title = ""; // Заголовок
+  String description = ""; // Описание
+  String group = ""; // Группа
+  CustomImageData? icon; // Иконка
 
   // ------------ Конструкторы ------------
+
   Purport({
     required this.id,
     required this.title,
     required this.group,
-    required this.description
+    required this.description,
+    this.icon,
   });
 
   factory Purport.create({
     required String title,
     String description = "",
-    String group = ""
+    String group = "",
+    CustomImageData? icon,
   }) {
     final guid = const Uuid().v4();
     return Purport(
       id: guid,
-
+      icon: icon,
       title: title,
       description: description,
       group: group
@@ -57,7 +65,7 @@ class Purport {
   Map<String, Object?> toMap() {
     return {
       cId: id,
-
+      cIcon: icon?.toJson(),
       cTitle: title,
       cDescription: description,
       cGroup: group
@@ -66,7 +74,7 @@ class Purport {
 
   Purport.fromMap(Map map) {
     id = map[cId];
-
+    icon = map[cIcon] == null ? null : CustomImageData.fromJson(map[cIcon]);
     title = map[cTitle];
     description = map[cDescription] ?? "";
     group = map[cGroup];
@@ -115,11 +123,37 @@ class PurportRepository {
   }
 
   Future<int?> delete(String id) async {
+    await deleteIconIfSetupNull(id:id);
     return await db.delete(Purport.tn, where: '${Purport.cId} = ?', whereArgs: [id]);
   }
 
   Future<int?> update(Purport pur) async {
+    await deleteIconIfSetupNull(obj:pur);
     return await db.update(Purport.tn, pur.toMap(),
         where: '${Purport.cId} = ?', whereArgs: [pur.id]);
+  }
+
+  Future deleteIconIfSetupNull({String? id, Purport? obj}) async {
+    // Если удаление
+    if (id != null) {
+      var oldObject = await get(id);
+      // Удаляем, если было
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
+      }
+    }
+    // Если обновление
+    else if (obj != null) {
+      var oldObject = await get(obj.id);
+      // Удаляем, если было и изменилось
+      if (oldObject != null &&
+          oldObject.icon != null &&
+          oldObject.icon!.imagePath != obj.icon?.imagePath &&
+          oldObject.icon!.isImage) {
+        await FileService.deleteOldFile(oldObject.icon!.imagePath);
+      }
+    }
   }
 }

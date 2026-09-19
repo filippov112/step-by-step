@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/other/image.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/purport.dart';
 
@@ -34,6 +35,10 @@ class PurportEditModel extends ChangeNotifier {
   }
   void setGroup(String? group) {
     this.group = group ?? '';
+    notifyListeners();
+  }
+  void setIcon(CustomImageData? value) {
+    purport?.icon = value;
     notifyListeners();
   }
 

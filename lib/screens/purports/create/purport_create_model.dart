@@ -1,3 +1,4 @@
+import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_purport.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
@@ -35,6 +36,10 @@ class PurportCreateModel extends ChangeNotifier {
     group = value ?? '';
     notifyListeners();
   }
+  void setIcon(CustomImageData? value) {
+    purport.icon = value;
+    notifyListeners();
+  }
 
   // ---------- CRUD ---------------------
 
@@ -47,7 +52,6 @@ class PurportCreateModel extends ChangeNotifier {
       ns.showNotification(NNewPurport());
     }
     catch (e) {
-      // print(e);
       return false;
     }
     return true;

@@ -45,6 +45,7 @@ class PurportListModel extends ChangeNotifier {
         address: e.group,
         object: e,
         name: e.title,
+        customIconData: e.icon
       ),
     )
     .toList();

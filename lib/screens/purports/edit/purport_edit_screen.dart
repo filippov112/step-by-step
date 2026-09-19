@@ -1,3 +1,5 @@
+import 'package:chaos_control/models/other/image.dart';
+import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
@@ -28,8 +30,49 @@ class _PurportEditScreenState extends State<PurportEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var save = model.save;
-    var delete = model.delete;
+    final save = model.save;
+    final delete = model.delete;
+    final iconData = context.select<PurportEditModel, CustomImageData?>(
+      (m) => m.purport?.icon,
+    );
+
+    // Иконка
+    final iconField = Center(
+      child: CustomIconPicker(
+        selectedIcon: iconData,
+        setIcon: model.setIcon,
+        size: 100,
+        borderWidth: 3,
+      ),
+    );
+
+    // Название
+    final nameField = CustomTextInput(
+      requiredErrorText: 'Введите название',
+      header: 'Название',
+      initialValue: model.title,
+      icon: Icons.title,
+      setText: model.setTitle,
+    );
+
+    // Группа
+    final groupField = CustomTextInput(
+      header: 'Группа',
+      initialValue: model.group,
+      icon: Icons.folder,
+      setText: model.setGroup,
+      lines: 1,
+      customValidator: Purport.groupValidator,
+    );
+
+    // Описание
+    final descField = CustomTextInput(
+      header: 'Смысл',
+      initialValue: model.desc,
+      icon: Icons.mode_standby,
+      setText: model.setTarget,
+      lines: 4,
+    );
 
     return EntityScreen(
       title: '',
@@ -37,38 +80,17 @@ class _PurportEditScreenState extends State<PurportEditScreen> {
       deleteCallback: () => _delete(delete),
       formKey: _formKey,
       children: [
-
-        // Название
-        CustomTextInput(
-          requiredErrorText: 'Введите название',
-          header: 'Название',
-          initialValue: model.title,
-          icon: Icons.title,
-          setText: model.setTitle,
-        ),
+        iconField,
         const SizedBox(height: 12),
 
-        // Группа
-        CustomTextInput(
-          header: 'Группа',
-          initialValue: model.group,
-          icon: Icons.folder,
-          setText: model.setGroup,
-          lines:1,
-          customValidator: Purport.groupValidator,
-        ),
+        nameField,
         const SizedBox(height: 12),
 
-        // Описание
-        CustomTextInput(
-          header: 'Смысл',
-          initialValue: model.desc,
-          icon: Icons.mode_standby,
-          setText: model.setTarget,
-          lines:4
-        ),
+        groupField,
         const SizedBox(height: 12),
 
+        descField,
+        const SizedBox(height: 12),
       ],
     );
   }

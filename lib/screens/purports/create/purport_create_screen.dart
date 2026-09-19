@@ -1,10 +1,11 @@
+import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/purport.dart';
 import 'package:chaos_control/screens/purports/create/purport_create_model.dart';
 import 'package:chaos_control/widgets/dialogs/bottom_modal_form.dart';
+import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/widgets/form/text_input.dart';
 import 'package:provider/provider.dart';
-
 
 class PurportCreateScreen extends StatefulWidget {
   final String group;
@@ -30,6 +31,17 @@ class _PurportCreateScreenState extends State<PurportCreateScreen> {
   Widget build(BuildContext context) {
     final saveCallback = model.save;
     final group = context.select<PurportCreateModel, String>((m) => m.group);
+    final iconData = context.select<PurportCreateModel, CustomImageData?>(
+      (m) => m.purport.icon,
+    );
+
+    // Иконка
+    final iconField = CustomIconPicker(
+      selectedIcon: iconData,
+      setIcon: model.setIcon,
+      size: 60,
+      borderWidth: 1,
+    );
 
     final nameField = CustomTextInput(
       requiredErrorText: 'Введите название',
@@ -62,9 +74,16 @@ class _PurportCreateScreenState extends State<PurportCreateScreen> {
         // Название
         nameField,
         const SizedBox(height: 12),
-        
-        // Описание
-        descField,
+
+        Row(
+          children: [
+            // Описание
+            Expanded(child: descField),
+            const SizedBox(width: 8,),
+            // Иконка
+            iconField,
+          ],
+        ),
         const SizedBox(height: 12),
 
         // Группа

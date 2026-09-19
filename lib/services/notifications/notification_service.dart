@@ -50,6 +50,7 @@ class NotificationService extends ChangeNotifier {
       builder: (context) => NotificationWidget(
         item: item.getWidget(),
         duration: _duration,
+        soundType: item.soundType,
         onDismiss: () => _dismissCurrent(context),
       ),
     );

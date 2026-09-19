@@ -7,6 +7,7 @@ import 'package:chaos_control/screens/records/record_form_model.dart';
 import 'package:chaos_control/services/audio/audio_player.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:chaos_control/services/settings/settings_service.dart';
+import 'package:chaos_control/services/sound_service.dart';
 import 'package:chaos_control/services/spirit_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/data/db.dart';
@@ -23,10 +24,13 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   final settingsService = await SettingsService.create();
   final calculator = SpiritCalculator(settingsService);
-
+  final soundService = SoundService();
+  await soundService.init();
   await DB.initDb();
+
   JustAudioMediaKit.ensureInitialized(linux: true, windows: true);
   runApp(
     MultiProvider(
@@ -47,6 +51,7 @@ void main() async {
         // Settings
         ChangeNotifierProvider<SettingListModel>(create: (_) { return SettingListModel(settingsService); }),
         ChangeNotifierProvider<SpiritCalculator>(create: (_) { return calculator;}),
+        ChangeNotifierProvider<SoundService>(create: (_) { return soundService; }),
 
         // Purports
         ChangeNotifierProvider<PurportListModel>(create: (_) { return PurportListModel(); }),

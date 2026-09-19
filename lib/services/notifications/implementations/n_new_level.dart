@@ -1,9 +1,14 @@
 import 'package:chaos_control/services/notifications/notification_item.dart';
 import 'package:chaos_control/services/numerictool.dart';
+import 'package:chaos_control/services/sound_service.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class NNewLevel extends NotificationItem {
+
+  NNewLevel() {
+    soundType = SoundType.levelUp;
+  }
 
   @override
   Widget getWidget() {

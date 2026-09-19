@@ -28,10 +28,6 @@ class CustomRadarChart extends StatelessWidget {
           tickCount: 5,
           gridType: RadarGridType.circular,
         ),
-        animation: const ChartAnimation(
-          duration: Duration(milliseconds: 1000),
-          curve: Curves.easeOutCubic,
-        ),
       ),
     );
   }

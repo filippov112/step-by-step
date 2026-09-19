@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
@@ -9,6 +10,7 @@ import 'package:chaos_control/services/datetool.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 enum PeriodFilterType { year, threeMonth, oneMonth, oneWeek, oneDay }
+
 extension StatPeriodExt on PeriodFilterType {
   String get displayName {
     switch (this) {
@@ -26,7 +28,7 @@ extension StatPeriodExt on PeriodFilterType {
   }
 
   int get days {
-     switch (this) {
+    switch (this) {
       case PeriodFilterType.year:
         return 365;
       case PeriodFilterType.threeMonth:
@@ -42,55 +44,62 @@ extension StatPeriodExt on PeriodFilterType {
 }
 
 class ProfileDetailModel extends ChangeNotifier {
-  late final SpiritCalculator calculator;
+  late final HoursCalculator calculator;
   final _userRepo = ProfileRepository();
   final _analRepo = AnalyticsRepository();
   Profile? user;
-  Map<Characteristic,int>? chars;
+  Map<Characteristic, int>? chars;
+  bool isLoading = false;
 
   ProfileDetailModel(this.calculator);
 
   // Наборы данных за выбранный период
   Map<DateTime, DtoActivity> activityData = {};
   List<SnapSpot> graphData = [];
-  Map<Characteristic,int>? deltaChars;
+  Map<Characteristic, int>? deltaChars;
 
-  int deltaSF = 0;
-  int maxSF = 0;
+  int deltaHours = 0;
+  int maxHours = 0;
 
   // Фильтр периода
   DateTime firstDay = DateTime(0), lastDay = DateTime(0);
   PeriodFilterType periodFilter = PeriodFilterType.oneMonth;
-
-  // Сброс фильтров
+  // Наличие измененных фильтров
   bool get hasActiveFilters {
     return groupFilter.isNotEmpty || periodFilter != PeriodFilterType.oneMonth;
   }
+
+  // Сброс фильтров
   Future clearAllFilters() async {
     groupFilter = '';
     periodFilter = PeriodFilterType.oneMonth;
-    await _loadSFData();
+    isLoading = true;
     notifyListeners();
+    await _loadHoursData();
   }
 
   // Фильтр группы
   String groupFilter = '';
   Future setGroupFilter(String value) async {
     groupFilter = value;
-    await _loadSFData();
+    isLoading = true;
     notifyListeners();
+    await _loadHoursData();
   }
-  
 
   // Инициализация страницы
   Future loadData() async {
-    await _loadUser();
-    await _loadSFData();
+    isLoading = true;
     notifyListeners();
+    user = await _userRepo.get();
+    chars = user?.chars;
+    await _loadHoursData();
   }
 
   // Перерасчет характеристик
   Future recalcStats() async {
+    isLoading = true;
+    notifyListeners();
     await calculator.recalcUserChars();
     await loadData();
   }
@@ -98,18 +107,13 @@ class ProfileDetailModel extends ChangeNotifier {
   // Переключить фильтр периода
   Future setPeriodFilter(PeriodFilterType period) async {
     periodFilter = period;
-    await _loadSFData();
+    isLoading = true;
     notifyListeners();
+    await _loadHoursData();
   }
 
-  // Загрузить данные пользователя
-  Future _loadUser() async {
-    user = await _userRepo.get();
-    chars = user?.chars;
-  }
-
-  // Загрузить статистику по фрагментам духа
-  Future _loadSFData() async {
+  // Загрузить статистику по часам
+  Future _loadHoursData() async {
     if (user == null) return;
 
     lastDay = DateTool.today();
@@ -120,7 +124,7 @@ class ProfileDetailModel extends ChangeNotifier {
     List<DtoActivity> daysData = await _analRepo.getDailyExpTime(
       startDate: DateTool.datetimeToDays(firstDay),
       endDate: DateTool.datetimeToDays(lastDay),
-      pattern: groupFilter
+      pattern: groupFilter,
     );
 
     activityData = {};
@@ -132,34 +136,31 @@ class ProfileDetailModel extends ChangeNotifier {
       Characteristic.durability: 0,
       Characteristic.potencial: 0,
     };
-    deltaSF = 0;
-    maxSF = 0;
+    deltaHours = 0;
+    maxHours = 0;
 
     // Activity & Chars & Stats
     for (var day in daysData) {
       if (day.dateTime == null) continue;
       activityData[day.dateTime!] = day;
-      for(var ch in Characteristic.values) {
+      for (var ch in Characteristic.values) {
         deltaChars![ch] = (deltaChars![ch] ?? 0) + day.getChar(ch);
       }
-      maxSF = max(maxSF, day.totalExperience);
-      deltaSF += day.totalExperience;
+      maxHours = max(maxHours, day.totalExperience);
+      deltaHours += day.totalExperience;
     }
 
     // Graph
-    var summaEff = user!.spiritFragments;
+    var summaEff = user!.hours;
     while (dayIndex >= firstDayIndex) {
       final dayDateTime = DateTool.joinDateTime(date: dayIndex);
-      graphData.add(
-        SnapSpot(
-          dayIndex.toDouble(),
-          summaEff.toDouble(),
-        ),
-      );
+      graphData.add(SnapSpot(dayIndex.toDouble(), summaEff.toDouble()));
       if (activityData.keys.contains(dayDateTime)) {
         summaEff -= activityData[dayDateTime]?.totalExperience ?? 0;
       }
       dayIndex--;
     }
+    isLoading = false;
+    notifyListeners();
   }
 }

@@ -13,13 +13,15 @@ class ProfileInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.select<ProfileDetailModel,Profile?>((m) => m.user);
+    final focusColor = Theme.of(context).focusColor;
 
     var avaterWidget = CustomImageIcon(user?.icon, 
       altIcon: Icons.person,
       borderWidth: 2,
       width: 80,
       height: 80,
-      borderColor: Theme.of(context).focusColor,
+      borderColor: focusColor,
+      boxShadow: BoxShadow(color: focusColor, blurRadius: 12, blurStyle: BlurStyle.outer),
       radius: const BorderRadius.all(Radius.circular(40)),
     );
 
@@ -32,6 +34,7 @@ class ProfileInfo extends StatelessWidget {
     );
 
     return CustomCardBlock(
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           // Аватар с обводкой

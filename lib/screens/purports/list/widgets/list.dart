@@ -6,6 +6,7 @@ import 'package:chaos_control/screens/purports/list/widgets/add_button.dart';
 import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -50,13 +51,16 @@ class PurportListList extends StatelessWidget {
     final currentAddress = context.select<PurportListModel, String>(
       (m) => m.listModel.currentAddress,
     );
+    final isLoading = context.select<PurportListModel,bool>((m) => m.isLoading);
     final isSelectionMode = context.select<PurportListModel,bool>((m) => m.isSelectionMode);
     final hasActiveFilters = context.select<PurportListModel,bool>((m) => m.hasActiveFilters);
     final selectedIds = context.select<PurportListModel, Set<String>>((m) => m.selectedIds);
 
-    return CustomTreeList<Purport>(
+    final loadingScreen = const CustomLoadingScreen();
+
+    return isLoading ? loadingScreen : CustomTreeList<Purport>(
         clearFilters: hasActiveFilters ? model.clearAllFilters : null,
-        emptyTitle: 'Смыслов нет!',
+        emptyTitle: 'Смыслы не найдены!',
         currentAddress: currentAddress,
         visualList: purports,
         tileIcon: Icons.local_fire_department_sharp,

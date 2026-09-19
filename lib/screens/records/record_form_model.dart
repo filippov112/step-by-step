@@ -4,12 +4,12 @@ import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/services/notifications/implementations/n_new_record.dart';
 import 'package:chaos_control/services/notifications/notification_service.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class RecordFormModel extends ChangeNotifier {
-  final SpiritCalculator calculator;
+  final HoursCalculator calculator;
   RecordFormModel(this.calculator) {
     _recRepo = RecordRepository(calculator);
   }
@@ -23,7 +23,7 @@ class RecordFormModel extends ChangeNotifier {
   DateTime date = DateTool.today();
   List<int> charTypes = [];
 
-  int sf = 0;
+  int hoursFact = 0;
   ChronicleRecord? record;
   bool isEditing = false;
 
@@ -41,7 +41,7 @@ class RecordFormModel extends ChangeNotifier {
     }
   
     record = rec ?? ChronicleRecord.create(date: date);
-    _recalcSF();
+    _recalcHoursFact();
 
     _initController.add(true);
     notifyListeners();
@@ -57,11 +57,11 @@ class RecordFormModel extends ChangeNotifier {
     charTypes = [];
     date = DateTool.today();
     record = null;
-    sf = 0;
+    hoursFact = 0;
   }
 
-  void _recalcSF() {
-    sf = target ? 0 : hours;
+  void _recalcHoursFact() {
+    hoursFact = target ? 0 : hours;
   }
 
   final StreamController<bool> _initController =
@@ -78,12 +78,12 @@ class RecordFormModel extends ChangeNotifier {
   }
   void setHours(int value) {
     hours = value;
-    _recalcSF();
+    _recalcHoursFact();
     notifyListeners();
   }
   void changeTargetStatus() {
     target = !target;
-    _recalcSF();
+    _recalcHoursFact();
     notifyListeners();
   }
   void changeFavoriteStatus() {
@@ -92,7 +92,7 @@ class RecordFormModel extends ChangeNotifier {
   }
   void setCharTypes(List<int> value) {
     charTypes = value;
-    _recalcSF();
+    _recalcHoursFact();
     notifyListeners();
   }
   void setDate(DateTime value) {
@@ -106,15 +106,15 @@ class RecordFormModel extends ChangeNotifier {
       Characteristic charType = Characteristic.values[type];
       switch (charType) {
         case Characteristic.happiness:
-          rec.happiness = sf;
+          rec.happiness = hoursFact;
         case Characteristic.diligence:
-          rec.diligence = sf;
+          rec.diligence = hoursFact;
         case Characteristic.intellection:
-          rec.intellection = sf;
+          rec.intellection = hoursFact;
         case Characteristic.durability:
-          rec.durability = sf;
+          rec.durability = hoursFact;
         case Characteristic.potencial:
-          rec.potencial = sf;
+          rec.potencial = hoursFact;
       }
     }
   }

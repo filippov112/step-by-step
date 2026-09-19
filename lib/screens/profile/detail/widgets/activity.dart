@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:chaos_control/models/enums/characteristics_ext.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/services/analytics/dto_activity.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/widgets/analysis/custom_activity_table.dart';
@@ -34,8 +35,8 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
         .select<ProfileDetailModel, Map<DateTime, DtoActivity>>(
           (model) => model.activityData,
         );
-    final maxEff = context.select<ProfileDetailModel, int>(
-      (model) => model.maxSF,
+    final maxHours = context.select<ProfileDetailModel, int>(
+      (model) => model.maxHours,
     );
     final firstDay = context.select<ProfileDetailModel, DateTime>(
       (model) => model.firstDay,
@@ -46,16 +47,21 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
     final periodType = context.select<ProfileDetailModel, PeriodFilterType>(
       (m) => m.periodFilter,
     );
+    final isLoading = context.select<ProfileDetailModel, bool>(
+      (m) => m.isLoading,
+    );
 
     final focusColor = Theme.of(context).focusColor;
     final disabledColor = Theme.of(context).disabledColor;
     final dividerColor = Theme.of(context).dividerColor;
 
+    final loadingScreen = const CustomLoadingScreen();
+
     final table = CustomActivityTable(
       activities: efforts.map(
         (k, v) => MapEntry(k, v.getChar(typeFilter.characteristic)),
       ),
-      maxValue: maxEff,
+      maxValue: maxHours,
       minColor: typeFilter.characteristic?.color.withAlpha(30),
       maxColor: typeFilter.characteristic?.color,
       startDate: periodType == PeriodFilterType.year
@@ -114,7 +120,13 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
                 ? type.characteristic?.color ?? focusColor
                 : disabledColor;
             return IconButton(
-              icon: Icon(type.icon, color: color),
+              icon: Icon(
+                type.icon,
+                color: color,
+                shadows: typeFilter != type
+                    ? null
+                    : [Shadow(color: color, blurRadius: 6)],
+              ),
               onPressed: () => setState(() {
                 typeFilter = type;
               }),
@@ -122,6 +134,14 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
           }).toList(),
         ),
       ),
+    );
+
+    final tableWidget = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: table),
+        ?pageButtons,
+      ],
     );
 
     return CustomCardBlock(
@@ -136,18 +156,11 @@ class _ProfileDetailActivityState extends State<ProfileDetailActivity> {
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  border: Border.all(color: dividerColor, width: 1)
+                  border: Border.all(color: dividerColor, width: 1),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(child: table),
-                    ?pageButtons,
-                  ],
-                ),
+                child: isLoading ? loadingScreen : tableWidget,
               ),
             ),
-
             charButtons,
           ],
         ),

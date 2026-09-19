@@ -33,11 +33,11 @@ class RecordTileFolder extends RecordTreeTile {
     }
   }
 
-  int getSumSF(List<TreeRecord<ChronicleRecord>>? records) {
+  int getSumHours(List<TreeRecord<ChronicleRecord>>? records) {
     int sum = 0;
     if (records == null) return sum;
     for (var r in records) {
-      sum += r.object?.spiritFragments ?? 0;
+      sum += r.object?.hoursFull ?? 0;
     }
     return sum;
   }
@@ -75,8 +75,8 @@ class RecordTileFolder extends RecordTreeTile {
       color: titleColor,
     );
 
-    // Суммарное число фрагментов духа по каталогу
-    final sfWidget = record.children == null ? null : Row(
+    // Суммарное число часов по каталогу
+    final hoursWidget = record.children == null ? null : Row(
       children: [
         Icon(
           Icons.timer,
@@ -84,7 +84,7 @@ class RecordTileFolder extends RecordTreeTile {
           shadows: [Shadow(color: focusColor, blurRadius: 12)],
         ),
         const SizedBox(width: 4),
-        CustomText('${NumericTool.toThousandString(getSumSF(record.children))} h.', color: focusColor, size: 11,),
+        CustomText('${NumericTool.toThousandString(getSumHours(record.children))} h.', color: focusColor, size: 11,),
       ],
     );
 
@@ -145,7 +145,7 @@ class RecordTileFolder extends RecordTreeTile {
                       ),
                       Padding(
                         padding: EdgeInsetsGeometry.only(left:12, right: 12),
-                        child: sfWidget,
+                        child: hoursWidget,
                       ),
                       const SizedBox(height: 12,)
                     ],

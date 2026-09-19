@@ -2,6 +2,7 @@ import 'package:chaos_control/models/pur_image.dart';
 import 'package:chaos_control/screens/purports/images/image_add_button.dart';
 import 'package:chaos_control/screens/purports/images/image_tile.dart';
 import 'package:chaos_control/screens/purports/images/purport_images_model.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class ImagesList extends StatelessWidget {
     final isSelectionMode = context.select<PurportImagesModel, bool>(
       (m) => m.isSelectionMode,
     );
+    final isLoading = context.select<PurportImagesModel, bool>((m) => m.isLoading);
 
     final listWidget = Container(
       padding: EdgeInsets.all(12),
@@ -35,6 +37,8 @@ class ImagesList extends StatelessWidget {
             child: ImageAddButton()
           );
 
-    return Expanded(child: Stack(children: [listWidget, ?addButton]));
+    final loadingScreen = const CustomLoadingScreen();
+
+    return Expanded(child: isLoading ? loadingScreen : Stack(children: [listWidget, ?addButton]));
   }
 }

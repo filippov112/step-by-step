@@ -6,6 +6,7 @@ class PurportSoundsModel extends ChangeNotifier {
   final _soundRepo = PurSoundRepository();
   Purport? purport;
   List<PurSound> sounds = [];
+  bool isLoading = false;
 
   bool isSelectionMode = false;
   Set<String> selectedIds = {};
@@ -14,42 +15,51 @@ class PurportSoundsModel extends ChangeNotifier {
   
   Future init(Purport pur) async {
     purport = pur;
+    isLoading = true;
+    notifyListeners();
     await _reload();
   }
+
   Future _reload() async {
     sounds = await _soundRepo.getByPurport(purport?.id);
+    isLoading = false;
+    notifyListeners();
   }
 
   // ----------- CRUD -------------
 
   Future add(String? title, String? path) async {
     if (path == null || purport == null) return;
+    isLoading = true;
+    notifyListeners();
     final newImage = PurSound.create(purportId: purport?.id ?? '', path: path, title: title ?? '');
     await _soundRepo.insert(newImage);
     _reload();
-    notifyListeners();
   }
 
   Future deleteAllSelected() async {
+    isSelectionMode = false;
+    isLoading = true;
+    notifyListeners();
     for (final id in selectedIds) {
       await _soundRepo.delete(id);
     }
     selectedIds = {};
-    isSelectionMode = false;
     await _reload();
-    notifyListeners();
   }
 
   Future update(PurSound image) async {
+    isLoading = true;
+    notifyListeners();
     await _soundRepo.update(image);
     await _reload();
-    notifyListeners();
   }
 
   Future delete(String id) async {
+    isLoading = true;
+    notifyListeners();
     await _soundRepo.delete(id);
     await _reload();
-    notifyListeners();
   }
 
   // ------------ Режим выделения --------------
@@ -62,11 +72,14 @@ class PurportSoundsModel extends ChangeNotifier {
     notifyListeners();
   }
   void toggleSelectAll() {
+    isLoading = true;
+    notifyListeners();
     if (selectedIds.length == sounds.length) {
       selectedIds = {};
     } else {
       selectedIds = sounds.map((i) => i.id).toSet();
     }
+    isLoading = false;
     notifyListeners();
   }
 

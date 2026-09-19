@@ -7,16 +7,16 @@ import 'package:chaos_control/services/notifications/notification_service.dart';
 import 'package:chaos_control/services/settings/settings_service.dart';
 import 'package:flutter/material.dart';
 
-class SpiritCalculator extends ChangeNotifier {
+class HoursCalculator extends ChangeNotifier {
   final SettingsService _service;
-  SpiritCalculator(this._service);
+  HoursCalculator(this._service);
 
   // Уровень
-  int getLevel(int sf) => _calc(sf).$1;
+  int getLevel(int hours) => _calc(hours).$1;
   // Требование для следующего уровня
-  int getLevelRequirements(int sf) => _calc(sf).$3;
+  int getLevelRequirements(int hours) => _calc(hours).$3;
   // Свободный опыт
-  int getLevelRemains(int sf) => _calc(sf).$2;
+  int getLevelRemains(int hours) => _calc(hours).$2;
 
   // Очки хар-к
   int getCharPoints(int char) => (char.toDouble() / _service.calcCharPointReq).toInt();
@@ -25,20 +25,20 @@ class SpiritCalculator extends ChangeNotifier {
   // Свободный опыт
   int getCharPointsRemains(int char) => char % _service.calcCharPointReq;
   // Очки в опыт
-  int getSFFromCP(int cp) => cp * _service.calcCharPointReq;
+  int getHoursFromCP(int cp) => cp * _service.calcCharPointReq;
 
-  (int, int, int) _calc(int sf) {
+  (int, int, int) _calc(int hours) {
     int sum = 0;
     int req = _service.calcReq1;
     double koef = _service.calcKoef;
     int level = 1;
-    while (sum + req <= sf) {
+    while (sum + req <= hours) {
       level++;
       sum += req;
       req = (req * koef).toInt();
     }
     // уровень, свободный опыт, требование
-    return (level, sf - sum, req);
+    return (level, hours - sum, req);
   }
 
   // Проверить получение уровня и очков характеристик
@@ -55,9 +55,9 @@ class SpiritCalculator extends ChangeNotifier {
     _recalcUserCharPoints(ns, oldChars, newChars);
   }
 
-  void _checkLevel(NotificationService ns, int oldSF, int newSF) async {
-    final newLevel = getLevel(newSF);
-    final oldLevel = getLevel(oldSF);
+  void _checkLevel(NotificationService ns, int oldHours, int newHours) async {
+    final newLevel = getLevel(newHours);
+    final oldLevel = getLevel(oldHours);
     if (oldLevel < newLevel) {
       for (var lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
         ns.showNotification(NNewLevel()..level = lvl);
@@ -90,12 +90,12 @@ class SpiritCalculator extends ChangeNotifier {
     final dto = await analRepo.getChars();
     final user = (await userRepo.get()) ?? Profile();
 
-    user.happiness = getSFFromCP(user.happinessBase) + (dto?.happiness ?? 0);
-    user.diligence = getSFFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
+    user.happiness = getHoursFromCP(user.happinessBase) + (dto?.happiness ?? 0);
+    user.diligence = getHoursFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
     user.intellection =
-        getSFFromCP(user.intellectionBase) + (dto?.intellection ?? 0);
-    user.durability = getSFFromCP(user.durabilityBase) + (dto?.durability ?? 0);
-    user.potencial = getSFFromCP(user.potencialBase) + (dto?.potencial ?? 0);
+        getHoursFromCP(user.intellectionBase) + (dto?.intellection ?? 0);
+    user.durability = getHoursFromCP(user.durabilityBase) + (dto?.durability ?? 0);
+    user.potencial = getHoursFromCP(user.potencialBase) + (dto?.potencial ?? 0);
 
     userRepo.update(user);
   }

@@ -36,12 +36,15 @@ class _RecordListScreenState extends State<RecordListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RecordListAppbar(searchController: _searchController),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
+      body: Stack(
         children: [
-          const Expanded(child: RecordList(),),
-         
-          RecordForm(),
+          RecordList(),
+          Column(
+            children: [
+              const Expanded(child: SizedBox()),
+              RecordForm(),
+            ],
+          ),
         ],
       ),
       endDrawer: const RecordListFilters(),

@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/record.dart';
 import 'package:chaos_control/services/datetool.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_list_model.dart';
 import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +41,7 @@ extension FavoriteFilterTypeExt on FavoriteFilterType {
 }
 
 class RecordListModel extends ChangeNotifier {
-  final SpiritCalculator calculator;
+  final HoursCalculator calculator;
   RecordListModel(this.calculator) {
     _recordRepo = RecordRepository(calculator);
   }
@@ -48,6 +50,7 @@ class RecordListModel extends ChangeNotifier {
   List<ChronicleRecord> _records = [];
   List<ChronicleRecord> _filtered = [];
   List<TreeRecord<ChronicleRecord>> records = [];
+  bool isLoading = false;
 
   // Открытие / закрытие формы
   bool visibilityForm = false;
@@ -99,23 +102,24 @@ class RecordListModel extends ChangeNotifier {
   // ---------- Загрузка данных ------------
 
   Future loadData() async {
+    isLoading = true;
+    notifyListeners();
     _records = await _recordRepo.getAllByDate(
       startDate: DateTool.datetimeToDays(dateBeginFilter),
       endDate: DateTool.datetimeToDays(dateEndFilter),
     );
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   void _reloadList() {
     records = listModel.openFolder(
-      list: transformRecords(),
+      list: _transformRecords(),
       folder: listModel.currentFolder,
       groupFilter: groupFilter,
     );
   }
 
-  List<TreeRecord<ChronicleRecord>> transformRecords() =>
+  List<TreeRecord<ChronicleRecord>> _transformRecords() =>
       _filtered.map(_buildTreeRecord).toList();
   TreeRecord<ChronicleRecord> _buildTreeRecord(ChronicleRecord record) {
     return TreeRecord<ChronicleRecord>(
@@ -126,15 +130,19 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future openFolder(TreeRecord<ChronicleRecord>? folder) async {
-    records = listModel.openFolder(list: transformRecords(), folder: folder);
+    isLoading = true;
+    notifyListeners();
+    records = listModel.openFolder(list: _transformRecords(), folder: folder);
+    isLoading = false;
     notifyListeners();
   }
 
   // Поиск
   Future setSearchQuery(String query) async {
+    isLoading = true;
     searchQuery = query;
-    await _applyFiltersAndSort();
     notifyListeners();
+    await _applyFiltersAndSort();
   }
 
   // ---------- Фильтры -------------
@@ -160,21 +168,24 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future setGroupFilter(bool value) async {
+    isLoading = true;
+    notifyListeners();
     groupFilter = value;
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   Future setTargetFilter(TargetFilterType value) async {
+    isLoading = true;
+    notifyListeners();
     targetFilter = value;
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   Future setFavoriteFilter(FavoriteFilterType value) async {
+    isLoading = true;
+    notifyListeners();
     favoriteFilter = value;
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   Future clearAllFilters() async {
@@ -190,6 +201,8 @@ class RecordListModel extends ChangeNotifier {
   // ------------- Сортировка -----------------
 
   Future setSorting(SortRecord field) async {
+    isLoading = true;
+    notifyListeners();
     if (sorting == field) {
       sortAscending = !sortAscending;
     } else {
@@ -197,7 +210,6 @@ class RecordListModel extends ChangeNotifier {
       sortAscending = true;
     }
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   // Основная логика фильтрации и сортировки
@@ -251,6 +263,8 @@ class RecordListModel extends ChangeNotifier {
     }
     _filtered = result;
     _reloadList();
+    isLoading = false;
+    notifyListeners();
   }
 
   static int dateAndTimeToInt(DateTime date, int time) {
@@ -259,32 +273,35 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future update(ChronicleRecord trg) async {
+    isLoading = true;
+    notifyListeners();
     await _recordRepo.update(trg);
     final index = _records.indexWhere((t) => t.id == trg.id);
     if (index != -1) {
       _records[index] = trg;
     }
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   Future delete(String id) async {
+    isLoading = true;
+    notifyListeners();
     await _recordRepo.delete(id);
     _records.removeWhere((t) => t.id == id);
     selectedIds.remove(id);
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   Future deleteAllSelected() async {
+    isLoading = true;
+    isSelectionMode = false;
+    notifyListeners();
     for (final id in selectedIds) {
       await _recordRepo.delete(id);
       _records.removeWhere((t) => t.id == id);
     }
     selectedIds.clear();
-    isSelectionMode = false;
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 
   // Режим выделения
@@ -297,6 +314,8 @@ class RecordListModel extends ChangeNotifier {
   }
 
   void toggleSelectAll() {
+    isLoading = true;
+    notifyListeners();
     final set = _filtered
         .where(
           (t) =>
@@ -311,6 +330,7 @@ class RecordListModel extends ChangeNotifier {
     } else {
       selectedIds = set;
     }
+    isLoading = false;
     notifyListeners();
   }
 
@@ -344,6 +364,8 @@ class RecordListModel extends ChangeNotifier {
   }
 
   Future moveAllTo(String newAddress, bool isSaveStructure) async {
+    isLoading = true;
+    notifyListeners();
     final listObjects = _filtered
         .where((el) => selectedIds.contains(el.id))
         .toList();
@@ -361,6 +383,5 @@ class RecordListModel extends ChangeNotifier {
     selectedIds.clear();
     isSelectionMode = false;
     await _applyFiltersAndSort();
-    notifyListeners();
   }
 }

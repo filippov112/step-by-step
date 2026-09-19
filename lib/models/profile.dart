@@ -61,7 +61,7 @@ class Profile {
   int durabilityBase = 0;
   int potencialBase = 0;
 
-  int get spiritFragments => happiness + diligence + intellection + durability + potencial;
+  int get hours => happiness + diligence + intellection + durability + potencial;
 
   Profile({
     this.name = "",

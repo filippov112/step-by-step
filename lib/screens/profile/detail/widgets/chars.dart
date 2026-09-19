@@ -1,9 +1,10 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/services/numerictool.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:chaos_control/widgets/analysis/custom_progress_bar.dart';
 import 'package:chaos_control/widgets/analysis/custom_radar_chart.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:chartify/chartify.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
@@ -24,7 +25,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
   @override
   Widget build(BuildContext context) {
     final deltaColor = Colors.amber;
-    final spiritCalc = context.read<SpiritCalculator>();
+    final calculator = context.read<HoursCalculator>();
 
     final Map<Characteristic, int>? chars = context
         .select<ProfileDetailModel, Map<Characteristic, int>?>(
@@ -35,6 +36,10 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
         .select<ProfileDetailModel, Map<Characteristic, int>?>(
           (model) => model.deltaChars,
         );
+    final isLoading = context.select<ProfileDetailModel, bool>(
+      (m) => m.isLoading,
+    );
+    final loadingScreen = const CustomLoadingScreen();
 
     final radarFull = CustomRadarChart(
       padding: EdgeInsets.all(8),
@@ -44,7 +49,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
           RadarSeries(
             name: 'Всего:',
             pointRadius: 2,
-            values: chars?.values.map((sf) => sf.toDouble()).toList() ?? [],
+            values: chars?.values.map((h) => h.toDouble()).toList() ?? [],
             color: Theme.of(context).focusColor,
           ),
         if (isDeltaTab)
@@ -52,7 +57,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
             name: 'За период:',
             pointRadius: 2,
             values:
-                deltaChars?.values.map((sf) => sf.toDouble()).toList() ?? [],
+                deltaChars?.values.map((h) => h.toDouble()).toList() ?? [],
             color: deltaColor,
           ),
       ],
@@ -96,10 +101,10 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           ...Characteristic.values.map((ch) {
-            final sf = isDeltaTab ? (deltaChars?[ch] ?? 0) : (chars?[ch] ?? 0);
-            final points = spiritCalc.getCharPoints(sf);
-            final remains = spiritCalc.getCharPointsRemains(sf);
-            final requirements = spiritCalc.getCharPointsRequirements(sf);
+            final h = isDeltaTab ? (deltaChars?[ch] ?? 0) : (chars?[ch] ?? 0);
+            final points = calculator.getCharPoints(h);
+            final remains = calculator.getCharPointsRemains(h);
+            final requirements = calculator.getCharPointsRequirements(h);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -114,7 +119,7 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
                       padding: const EdgeInsets.only(bottom: 3, left: 12),
                     ),
                     CustomText(
-                      '(${NumericTool.toThousandString(remains)} / ${NumericTool.toThousandString(requirements)} SF)',
+                      '(${NumericTool.toThousandString(remains)} / ${NumericTool.toThousandString(requirements)} h.)',
                       size: 9,
                       color: isDeltaTab ? deltaColor : null,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -146,15 +151,17 @@ class _ProfileDetailCharsState extends State<ProfileDetailChars> {
     return CustomCardBlock(
       title: 'Характеристики',
       icon: Icons.bar_chart,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          radarFull,
-          Divider(color: Theme.of(context).dividerColor),
-          modeButtons,
-          table,
-        ],
-      ),
+      child: isLoading
+          ? loadingScreen
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                radarFull,
+                Divider(color: Theme.of(context).dividerColor),
+                modeButtons,
+                table,
+              ],
+            ),
     );
   }
 }

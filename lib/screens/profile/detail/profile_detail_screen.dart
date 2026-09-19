@@ -1,9 +1,9 @@
 import 'package:chaos_control/screens/profile/detail/widgets/chars.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/filters.dart';
+import 'package:chaos_control/screens/profile/detail/widgets/level.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/spirit.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
 import 'package:chaos_control/screens/profile/detail/widgets/info.dart';
 import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
@@ -77,7 +77,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 const ProfileInfo(),
 
                 // Опыт
-                const ProfileDetailSpirit(),
+                const ProfileDetailLevel(),
                 
                 // Активность
                 const ProfileDetailActivity(),

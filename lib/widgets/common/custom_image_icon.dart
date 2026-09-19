@@ -13,6 +13,7 @@ class CustomImageIcon extends StatelessWidget {
   final IconData? altIcon;
   final Color? borderColor;
   final double? borderWidth;
+  final BoxShadow? boxShadow;
 
   const CustomImageIcon(this.imageData, {super.key, 
     this.altIcon,
@@ -21,7 +22,8 @@ class CustomImageIcon extends StatelessWidget {
     this.height = 48,
     this.color,
     this.borderColor,
-    this.borderWidth
+    this.borderWidth,
+    this.boxShadow
   });
 
   File? getFile() {
@@ -53,7 +55,8 @@ class CustomImageIcon extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: radius,
           color: backColor,
-          border: border
+          border: border,
+          boxShadow: [?boxShadow, ]
         ),
         child: Icon(imageData?.icon() ?? altIcon ?? Icons.image, color: color ?? imageData?.color, size: iconSize),
       ) :
@@ -66,7 +69,8 @@ class CustomImageIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: backColor,
           borderRadius: radius,
-          border: border
+          border: border,
+          boxShadow: [?boxShadow, ]
         ),
         child:  Icon(Icons.image_not_supported, color: color, size: iconSize),
       ) :
@@ -77,7 +81,8 @@ class CustomImageIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: backColor,
           borderRadius: radius,
-          border: border
+          border: border,
+          boxShadow: [?boxShadow, ]
         ),
         child: ClipRRect(
           borderRadius: radius,

@@ -2,6 +2,7 @@ import 'package:chaos_control/models/pur_sound.dart';
 import 'package:chaos_control/screens/purports/sounds/purport_sounds_model.dart';
 import 'package:chaos_control/screens/purports/sounds/sound_add_button.dart';
 import 'package:chaos_control/screens/purports/sounds/sound_tile.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ class SoundList extends StatelessWidget {
     final isSelectionMode = context.select<PurportSoundsModel, bool>(
       (m) => m.isSelectionMode,
     );
+    final isLoading = context.select<PurportSoundsModel, bool>((m) => m.isLoading);
 
     final listWidget = Container(
       padding: EdgeInsets.all(12),
@@ -32,7 +34,9 @@ class SoundList extends StatelessWidget {
             right: 20,
             child: SoundAddButton()
           );
+    
+    final loadingScreen = const CustomLoadingScreen();
 
-    return Expanded(child: Stack(children: [listWidget, ?addButton]));
+    return Expanded(child: isLoading ? loadingScreen : Stack(children: [listWidget, ?addButton]));
   }
 }

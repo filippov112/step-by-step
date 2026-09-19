@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:chaos_control/data/db.dart';
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
@@ -149,7 +149,7 @@ class ChronicleRecord {
     potencial = 0;
   }
 
-  int get spiritFragments =>
+  int get hoursFull =>
       happiness + diligence + intellection + durability + potencial;
 
   // ------------ Сериализация ------------
@@ -205,7 +205,7 @@ class ChronicleRecord {
 
 // Базовый репозиторий
 class RecordRepository {
-  final SpiritCalculator calculator;
+  final HoursCalculator calculator;
   RecordRepository(this.calculator);
   Database db = DB.db!;
   final userRepo = ProfileRepository();

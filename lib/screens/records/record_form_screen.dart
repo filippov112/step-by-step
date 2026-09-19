@@ -113,9 +113,9 @@ class RecordFormState extends State<RecordForm> {
       padding: const EdgeInsets.only(left: 4, right: 8, bottom: 1),
     );
 
-    // --------- SF ----------
+    // --------- Часы ----------
 
-    final spiritIcon = Padding(
+    final hoursFactIcon = Padding(
       padding: const EdgeInsetsGeometry.only(right: 4),
       child: Icon(
         Icons.local_fire_department,
@@ -255,7 +255,7 @@ class RecordFormState extends State<RecordForm> {
 
     final statisticsRow = Row(
       children: [
-        spiritIcon,
+        hoursFactIcon,
         hoursIcon,
         hoursValue,
         const Expanded(child: SizedBox()),
@@ -268,7 +268,7 @@ class RecordFormState extends State<RecordForm> {
     return Container(
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: focusColor, width: 1)),
-        color: cardColor.withAlpha(150),
+        color: cardColor.withAlpha(230),
       ),
       child: BottomModalForm(
         formKey: _formKey,

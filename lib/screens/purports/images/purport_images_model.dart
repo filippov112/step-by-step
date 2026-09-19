@@ -6,6 +6,7 @@ class PurportImagesModel extends ChangeNotifier {
   final _imageRepo = PurImageRepository();
   Purport? purport;
   List<PurImage> images = [];
+  bool isLoading = false;
 
   bool isSelectionMode = false;
   Set<String> selectedIds = {};
@@ -14,42 +15,50 @@ class PurportImagesModel extends ChangeNotifier {
   
   Future init(Purport pur) async {
     purport = pur;
+    isLoading = true;
+    notifyListeners();
     await _reload();
   }
   Future _reload() async {
     images = await _imageRepo.getByPurport(purport?.id);
+    isLoading = false;
+    notifyListeners();
   }
 
   // ----------- CRUD -------------
 
   Future add(String? path) async {
     if (path == null || purport == null) return;
+    isLoading = true;
+    notifyListeners();
     final newImage = PurImage.create(purportId: purport?.id ?? '', path: path, name: purport?.title ?? '');
     await _imageRepo.insert(newImage);
-    _reload();
-    notifyListeners();
+    await _reload();
   }
 
   Future deleteAllSelected() async {
+    isLoading = true;
+    isSelectionMode = false;
+    notifyListeners();
     for (final id in selectedIds) {
       await _imageRepo.delete(id);
     }
     selectedIds = {};
-    isSelectionMode = false;
     await _reload();
-    notifyListeners();
   }
 
   Future update(PurImage image) async {
+    isLoading = true;
+    notifyListeners();
     await _imageRepo.update(image);
     await _reload();
-    notifyListeners();
   }
 
   Future delete(String id) async {
+    isLoading = true;
+    notifyListeners();
     await _imageRepo.delete(id);
     await _reload();
-    notifyListeners();
   }
 
   // ------------ Режим выделения --------------
@@ -62,11 +71,14 @@ class PurportImagesModel extends ChangeNotifier {
     notifyListeners();
   }
   void toggleSelectAll() {
+    isLoading = true;
+    notifyListeners();
     if (selectedIds.length == images.length) {
       selectedIds = {};
     } else {
       selectedIds = images.map((i) => i.id).toSet();
     }
+    isLoading = false;
     notifyListeners();
   }
 

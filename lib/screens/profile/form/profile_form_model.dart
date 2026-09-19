@@ -1,11 +1,11 @@
 import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/spirit_calculator.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/models/other/image.dart';
 import 'package:chaos_control/models/profile.dart';
 
 class ProfileFormModel extends ChangeNotifier {
-  late final SpiritCalculator calculator;
+  late final HoursCalculator calculator;
   final ProfileRepository _userRepo = ProfileRepository();
   Profile? profile;
   bool _isEdit = false;

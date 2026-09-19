@@ -1,43 +1,27 @@
+import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
 import 'package:chaos_control/services/numerictool.dart';
+import 'package:chaos_control/services/hours_calculator.dart';
+import 'package:chaos_control/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:chaos_control/services/datetool.dart';
 import 'package:chaos_control/widgets/analysis/custom_progress_bar.dart';
 import 'package:chaos_control/widgets/analysis/custom_linear_chart.dart';
 import 'package:chaos_control/widgets/common/custom_card_block.dart';
 import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:provider/provider.dart';
 import 'package:snap_chart/snap_chart.dart';
 
-// Виджет отображения динамики аккумуляции опыта / времени
-class ProfileProgress extends StatefulWidget {
-  final int level;
-  final DateTime firstDay;
-  final DateTime lastDay;
-  final List<SnapSpot> data;
-
-  final int deltaValue;
-  final String title;
-  final int currentValue;
-  final int nextLevel;
-  final IconData icon;
-
-  const ProfileProgress({
+// Виджет отображения уровня
+class ProfileDetailLevel extends StatefulWidget {
+  const ProfileDetailLevel({
     super.key,
-    required this.level, // Уровень
-    required this.title, // Заголовок
-    required this.currentValue, // Текущее значение
-    required this.nextLevel, // Требование к следующему уровню
-    required this.icon, // Иконка
-    required this.deltaValue, // Прирост за текущий период
-    required this.data, // Значения
-    required this.firstDay, // Начало периода наблюдений
-    required this.lastDay, // Окончание периода наблюдений
   });
 
   @override
-  State<ProfileProgress> createState() => _ProfileProgressState();
+  State<ProfileDetailLevel> createState() => _ProfileDetailLevelState();
 }
 
-class _ProfileProgressState extends State<ProfileProgress> {
+class _ProfileDetailLevelState extends State<ProfileDetailLevel> {
   bool isExpanded = false;
 
   double getPercent(int val, int max) {
@@ -49,10 +33,29 @@ class _ProfileProgressState extends State<ProfileProgress> {
 
     final deltaColor = Colors.amber;
 
+    final calculator = context.read<HoursCalculator>();
+    final hours = context.select<ProfileDetailModel, int>((model) => model.user?.hours ?? 0);
+
+    final int deltaHours = context.select<ProfileDetailModel, int>(
+      (model) => model.deltaHours,
+    );
+    final DateTime firstDay = context.select<ProfileDetailModel, DateTime>(
+      (model) => model.firstDay,
+    );
+    final DateTime lastDay = context.select<ProfileDetailModel, DateTime>(
+      (model) => model.lastDay,
+    );
+    final List<SnapSpot> progressData = context
+        .select<ProfileDetailModel, List<SnapSpot>>(
+          (model) => model.graphData,
+        );
+    final isLoading = context.select<ProfileDetailModel, bool>((m) => m.isLoading);
+    final loadingScreen = const CustomLoadingScreen();
+
     return CustomCardBlock(
-      icon: widget.icon,
+      icon: Icons.local_fire_department,
       iconColor: deltaColor,
-      title: widget.title,
+      title: 'Уровень',
       trailing: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -69,7 +72,7 @@ class _ProfileProgressState extends State<ProfileProgress> {
           ),
 
           // Уровень
-          Container(
+          if(!isLoading) Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
@@ -78,7 +81,7 @@ class _ProfileProgressState extends State<ProfileProgress> {
               borderRadius: const BorderRadius.all(Radius.circular(8))
             ),
             child: CustomText(
-              NumericTool.toThousandString(widget.level),
+              NumericTool.toThousandString(calculator.getLevel(hours)),
               weight: FontWeight.bold,
               color: deltaColor,
               shadow: Shadow(color: deltaColor, blurRadius: 6),
@@ -86,7 +89,7 @@ class _ProfileProgressState extends State<ProfileProgress> {
           ),
         ],
       ),
-      child: Column(
+      child: isLoading ? loadingScreen : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Числовые значения
@@ -95,13 +98,13 @@ class _ProfileProgressState extends State<ProfileProgress> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomText(
-                '${NumericTool.toThousandString(widget.currentValue)} / ${NumericTool.toThousandString(widget.nextLevel)} SF',
+                '${NumericTool.toThousandString(calculator.getLevelRemains(hours))} / ${NumericTool.toThousandString(calculator.getLevelRequirements(hours))} h.',
                 size: 11,
                 align: TextAlign.center,
               ),
               const SizedBox(width: 8),
               CustomText(
-                '+${NumericTool.toThousandString(widget.deltaValue)} SF | ${(getPercent(widget.currentValue, widget.nextLevel) * 100).round()}%',
+                '+${NumericTool.toThousandString(deltaHours)} h. | ${(getPercent(calculator.getLevelRemains(hours), calculator.getLevelRequirements(hours)) * 100).round()}%',
                 size: 11,
                 align: TextAlign.center,
               ),
@@ -111,9 +114,9 @@ class _ProfileProgressState extends State<ProfileProgress> {
           // Прогресс-бар
           const SizedBox(height: 8),
           CustomProgressBar(
-            value: widget.currentValue.toDouble(),
-            maxValue: widget.nextLevel.toDouble(),
-            deltaValue: widget.deltaValue.toDouble(),
+            value: calculator.getLevelRemains(hours).toDouble(),
+            maxValue: calculator.getLevelRequirements(hours).toDouble(),
+            deltaValue: deltaHours.toDouble(),
           ),
 
           // График роста
@@ -129,9 +132,9 @@ class _ProfileProgressState extends State<ProfileProgress> {
                 ),
               ),
               child: CustomLinearChart(
-                sortedData: [widget.data],
-                minV: (DateTool.datetimeToDays(widget.firstDay) ?? 0).toDouble(),
-                maxV: (DateTool.datetimeToDays(widget.lastDay) ?? 0).toDouble(),
+                sortedData: [progressData],
+                minV: (DateTool.datetimeToDays(firstDay) ?? 0).toDouble(),
+                maxV: (DateTool.datetimeToDays(lastDay) ?? 0).toDouble(),
                 colors: [Theme.of(context).focusColor],
               ),
             ),

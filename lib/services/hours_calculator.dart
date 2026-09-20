@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chaos_control/models/enums/characteristics.dart';
 import 'package:chaos_control/models/profile.dart';
 import 'package:chaos_control/services/analytics/analytics_repository.dart';
@@ -30,15 +32,16 @@ class HoursCalculator extends ChangeNotifier {
   (int, int, int) _calc(int hours) {
     int sum = 0;
     int req = _service.calcReq1;
-    double koef = _service.calcKoef;
+    int currentReq = req;
+    double koef = max(1, _service.calcKoef);
     int level = 1;
-    while (sum + req <= hours) {
+    while (sum + currentReq <= hours) {
       level++;
-      sum += req;
-      req = (req * koef).toInt();
+      sum += currentReq;
+      currentReq = (req * pow(koef, level-1)).round() ;
     }
     // уровень, свободный опыт, требование
-    return (level, hours - sum, req);
+    return (level, hours - sum, currentReq);
   }
 
   // Проверить получение уровня и очков характеристик

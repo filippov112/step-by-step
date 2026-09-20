@@ -57,7 +57,7 @@ class RecordList extends StatelessWidget {
         : CustomTreeList<ChronicleRecord>(
             clearFilters: hasActiveFilters ? model.clearAllFilters : null,
             currentAddress: currentAddress,
-            emptyTitle: 'Смыслы не найдены!',
+            emptyTitle: 'Хроники не найдены!',
             visualList: records,
             tileIcon: Icons.auto_stories,
             openRecordCallback: (b) {

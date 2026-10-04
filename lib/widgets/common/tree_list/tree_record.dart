@@ -1,7 +1,7 @@
 // Древовидная модель
 import 'dart:ui';
 
-import 'package:chaos_control/models/other/image.dart';
+import 'package:step_by_step/models/other/image.dart';
 
 class TreeRecord<T> {
 

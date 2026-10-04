@@ -1,4 +1,4 @@
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class CustomLoadingScreen extends StatelessWidget {

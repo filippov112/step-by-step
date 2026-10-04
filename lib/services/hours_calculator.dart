@@ -1,12 +1,12 @@
 import 'dart:math';
 
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/services/analytics/analytics_repository.dart';
-import 'package:chaos_control/services/notifications/implementations/n_char_points.dart';
-import 'package:chaos_control/services/notifications/implementations/n_new_level.dart';
-import 'package:chaos_control/services/notifications/notification_service.dart';
-import 'package:chaos_control/services/settings/settings_service.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/services/analytics/analytics_repository.dart';
+import 'package:step_by_step/services/notifications/implementations/n_char_points.dart';
+import 'package:step_by_step/services/notifications/implementations/n_new_level.dart';
+import 'package:step_by_step/services/notifications/notification_service.dart';
+import 'package:step_by_step/services/settings/settings_service.dart';
 import 'package:flutter/material.dart';
 
 class HoursCalculator extends ChangeNotifier {
@@ -91,15 +91,15 @@ class HoursCalculator extends ChangeNotifier {
     final userRepo = ProfileRepository();
 
     final dto = await analRepo.getChars();
-    final user = (await userRepo.get()) ?? Profile();
+    final user = (await userRepo.get()) ?? Profile(chars: CharValues(), baseChars: CharValues());
 
-    user.happiness = getHoursFromCP(user.happinessBase) + (dto?.happiness ?? 0);
-    user.diligence = getHoursFromCP(user.diligenceBase) + (dto?.diligence ?? 0);
-    user.intellection =
-        getHoursFromCP(user.intellectionBase) + (dto?.intellection ?? 0);
-    user.durability = getHoursFromCP(user.durabilityBase) + (dto?.durability ?? 0);
-    user.potencial = getHoursFromCP(user.potencialBase) + (dto?.potencial ?? 0);
-
+    final dtoMap = dto?.chars.map;
+    final userBaseCharsMap = user.baseChars.map;
+    final userCharsMap = CharValues().map;
+    for (var charType in Characteristic.values) {
+      userCharsMap[charType] = getHoursFromCP(userBaseCharsMap[charType] ?? 0) + (dtoMap?[charType] ?? 0);
+    }
+    user.chars.setChars(userCharsMap);
     userRepo.update(user);
   }
 }

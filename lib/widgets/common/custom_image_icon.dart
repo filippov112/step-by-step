@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/other/image.dart';
+import 'package:step_by_step/models/other/image.dart';
 
 class CustomImageIcon extends StatelessWidget {
   final CustomImageData? imageData;

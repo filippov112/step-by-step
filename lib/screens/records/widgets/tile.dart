@@ -1,8 +1,8 @@
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/screens/records/widgets/tile_folder.dart';
-import 'package:chaos_control/screens/records/widgets/tile_record.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/screens/records/widgets/tile_folder.dart';
+import 'package:step_by_step/screens/records/widgets/tile_record.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_record.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_tile.dart';
 import 'package:flutter/material.dart';
 
 class RecordTreeFabric implements TreeTileFabric<ChronicleRecord, RecordTreeTile> {

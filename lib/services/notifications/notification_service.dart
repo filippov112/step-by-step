@@ -1,6 +1,6 @@
 import 'dart:collection';
-import 'package:chaos_control/services/notifications/notification_item.dart';
-import 'package:chaos_control/services/notifications/notification_widget.dart';
+import 'package:step_by_step/services/notifications/notification_item.dart';
+import 'package:step_by_step/services/notifications/notification_widget.dart';
 import 'package:flutter/material.dart';
 
 class NotificationService extends ChangeNotifier {

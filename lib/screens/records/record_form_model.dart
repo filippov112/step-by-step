@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/services/datetool.dart';
-import 'package:chaos_control/services/notifications/implementations/n_new_record.dart';
-import 'package:chaos_control/services/notifications/notification_service.dart';
-import 'package:chaos_control/services/hours_calculator.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/services/datetool.dart';
+import 'package:step_by_step/services/notifications/implementations/n_new_record.dart';
+import 'package:step_by_step/services/notifications/notification_service.dart';
+import 'package:step_by_step/services/hours_calculator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -101,22 +101,13 @@ class RecordFormModel extends ChangeNotifier {
   }
 
   void _recalcChars(ChronicleRecord rec) {
-    rec.clearChars();
+    rec.chars = CharValues();
+    final map = rec.chars.map;
     for (var type in charTypes) {
       Characteristic charType = Characteristic.values[type];
-      switch (charType) {
-        case Characteristic.happiness:
-          rec.happiness = hoursFact;
-        case Characteristic.diligence:
-          rec.diligence = hoursFact;
-        case Characteristic.intellection:
-          rec.intellection = hoursFact;
-        case Characteristic.durability:
-          rec.durability = hoursFact;
-        case Characteristic.potencial:
-          rec.potencial = hoursFact;
-      }
+      map[charType] = hoursFact;
     }
+    rec.chars.setChars(map);
   }
 
   // Изменить / Создать запись

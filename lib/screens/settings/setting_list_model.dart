@@ -1,4 +1,4 @@
-import 'package:chaos_control/services/settings/settings_service.dart';
+import 'package:step_by_step/services/settings/settings_service.dart';
 import 'package:flutter/material.dart';
 
 class SettingListModel extends ChangeNotifier {

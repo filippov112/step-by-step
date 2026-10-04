@@ -1,13 +1,13 @@
-import 'package:chaos_control/models/enums/characteristics_ext.dart';
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/screens/records/record_list_model.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/filters/sort_button.dart';
-import 'package:chaos_control/widgets/form/checkbox.dart';
-import 'package:chaos_control/widgets/form/datetime_picker.dart';
+import 'package:step_by_step/models/enums/characteristics_ext.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/screens/records/record_list_model.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/filters/sort_button.dart';
+import 'package:step_by_step/widgets/form/checkbox.dart';
+import 'package:step_by_step/widgets/form/datetime_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/filters/filter_section.dart';
-import 'package:chaos_control/widgets/filters/filters_drawer.dart';
+import 'package:step_by_step/widgets/filters/filter_section.dart';
+import 'package:step_by_step/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
 class RecordListFilters extends StatefulWidget {

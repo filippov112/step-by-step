@@ -6,18 +6,18 @@
     "configurations": [
     
         {
-            "name": "chaos_control",
+            "name": "step_by_step",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "chaos_control (profile mode)",
+            "name": "step_by_step (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "chaos_control (release mode)",
+            "name": "step_by_step (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

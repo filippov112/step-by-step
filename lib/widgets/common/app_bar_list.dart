@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/dialogs/confirm_dialog.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 
 // AppBar для экранов-списков
 class ListAppBar extends StatelessWidget implements PreferredSizeWidget {

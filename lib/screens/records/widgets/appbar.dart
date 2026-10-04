@@ -1,7 +1,7 @@
-import 'package:chaos_control/screens/records/record_list_model.dart';
-import 'package:chaos_control/widgets/common/app_bar_list.dart';
-import 'package:chaos_control/widgets/common/search_string.dart';
-import 'package:chaos_control/widgets/common/tree_list/move_dialog.dart';
+import 'package:step_by_step/screens/records/record_list_model.dart';
+import 'package:step_by_step/widgets/common/app_bar_list.dart';
+import 'package:step_by_step/widgets/common/search_string.dart';
+import 'package:step_by_step/widgets/common/tree_list/move_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

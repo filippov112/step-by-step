@@ -1,8 +1,8 @@
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/common/empty_list_screen.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_tile.dart';
-import 'package:chaos_control/widgets/dialogs/confirm_dialog.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/empty_list_screen.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_record.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_tile.dart';
+import 'package:step_by_step/widgets/dialogs/confirm_dialog.dart';
 import 'package:flutter/material.dart';
 
 class CustomTreeList<T> extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:chaos_control/widgets/form/checkbox.dart';
-import 'package:chaos_control/widgets/form/text_input.dart';
+import 'package:step_by_step/widgets/form/checkbox.dart';
+import 'package:step_by_step/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 
 // Диалог подтверждения действий
 Future<(String, bool)?> showMoveDialog(

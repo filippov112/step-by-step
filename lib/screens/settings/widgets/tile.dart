@@ -1,5 +1,5 @@
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/common/custom_tile.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/custom_tile.dart';
 import 'package:flutter/material.dart';
 
 class SettingsTile extends StatelessWidget {

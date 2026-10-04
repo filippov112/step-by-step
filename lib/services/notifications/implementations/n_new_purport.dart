@@ -1,7 +1,7 @@
-import 'package:chaos_control/screens/home/modules.dart';
-import 'package:chaos_control/services/notifications/notification_item.dart';
-import 'package:chaos_control/services/sound_service.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/screens/home/modules.dart';
+import 'package:step_by_step/services/notifications/notification_item.dart';
+import 'package:step_by_step/services/sound_service.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

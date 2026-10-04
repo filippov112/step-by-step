@@ -1,9 +1,9 @@
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/screens/records/widgets/tile.dart';
-import 'package:chaos_control/services/numerictool.dart';
-import 'package:chaos_control/widgets/common/custom_image_icon.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/screens/records/widgets/tile.dart';
+import 'package:step_by_step/services/numerictool.dart';
+import 'package:step_by_step/widgets/common/custom_image_icon.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
 class RecordTileFolder extends RecordTreeTile {
@@ -37,7 +37,7 @@ class RecordTileFolder extends RecordTreeTile {
     int sum = 0;
     if (records == null) return sum;
     for (var r in records) {
-      sum += r.object?.hoursFull ?? 0;
+      sum += r.object?.chars.hours ?? 0;
     }
     return sum;
   }
@@ -144,7 +144,7 @@ class RecordTileFolder extends RecordTreeTile {
                         child: titleWidget
                       ),
                       Padding(
-                        padding: EdgeInsetsGeometry.only(left:12, right: 12),
+                        padding: EdgeInsetsGeometry.only(left:12, right: 12, top:2),
                         child: hoursWidget,
                       ),
                       const SizedBox(height: 12,)

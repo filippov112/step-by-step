@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:chaos_control/widgets/common/custom_tile.dart';
+import 'package:step_by_step/widgets/common/custom_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/other/image.dart';
-import 'package:chaos_control/services/file_storage_service.dart';
-import 'package:chaos_control/widgets/dialogs/icons/icons_finder_dialog.dart';
+import 'package:step_by_step/models/other/image.dart';
+import 'package:step_by_step/services/file_storage_service.dart';
+import 'package:step_by_step/widgets/dialogs/icons/icons_finder_dialog.dart';
 
 class CustomIconPicker extends StatelessWidget {
   final iconService = IconsFinderService();

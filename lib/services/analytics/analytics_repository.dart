@@ -1,7 +1,8 @@
-import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/services/analytics/dto_activity.dart';
-import 'package:chaos_control/services/analytics/dto_stats.dart';
+import 'package:step_by_step/data/db.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/services/analytics/dto_activity.dart';
+import 'package:step_by_step/services/analytics/dto_stats.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Репозиторий для аналитических запросов
@@ -42,11 +43,12 @@ class AnalyticsRepository {
         '''
       SELECT 
         ${ChronicleRecord.cDate},
-        COALESCE(SUM( ${ChronicleRecord.cHappiness} ), 0) AS ${DtoActivity.cHappiness},
-        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoActivity.cDiligence},
-        COALESCE(SUM( ${ChronicleRecord.cIntellection} ), 0) AS ${DtoActivity.cIntellection},
-        COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoActivity.cDurability},
-        COALESCE(SUM( ${ChronicleRecord.cPotencial} ), 0) AS ${DtoActivity.cPotencial}
+        COALESCE(SUM( ${CharValues.cP1} ), 0) AS ${DtoActivity.cP1},
+        COALESCE(SUM( ${CharValues.cP2} ), 0) AS ${DtoActivity.cP2},
+        COALESCE(SUM( ${CharValues.cP3} ), 0) AS ${DtoActivity.cP3},
+        COALESCE(SUM( ${CharValues.cP4} ), 0) AS ${DtoActivity.cP4},
+        COALESCE(SUM( ${CharValues.cP5} ), 0) AS ${DtoActivity.cP5},
+        COALESCE(SUM( ${CharValues.cP6} ), 0) AS ${DtoActivity.cP6}
       FROM ${ChronicleRecord.tn}
       $whereClause
       GROUP BY ${ChronicleRecord.cDate}
@@ -62,11 +64,12 @@ class AnalyticsRepository {
     final query =
         '''
       SELECT
-        COALESCE(SUM( ${ChronicleRecord.cHappiness} ), 0) AS ${DtoStats.cHappiness},
-        COALESCE(SUM( ${ChronicleRecord.cDiligence} ), 0) AS ${DtoStats.cDiligence},
-        COALESCE(SUM( ${ChronicleRecord.cIntellection} ), 0) AS ${DtoStats.cIntellection},
-        COALESCE(SUM( ${ChronicleRecord.cDurability} ), 0) AS ${DtoStats.cDurability},
-        COALESCE(SUM( ${ChronicleRecord.cPotencial} ), 0) AS ${DtoStats.cPotencial}
+        COALESCE(SUM( ${CharValues.cP1} ), 0) AS ${DtoStats.cP1},
+        COALESCE(SUM( ${CharValues.cP2} ), 0) AS ${DtoStats.cP2},
+        COALESCE(SUM( ${CharValues.cP3} ), 0) AS ${DtoStats.cP3},
+        COALESCE(SUM( ${CharValues.cP4} ), 0) AS ${DtoStats.cP4},
+        COALESCE(SUM( ${CharValues.cP5} ), 0) AS ${DtoStats.cP5},
+        COALESCE(SUM( ${CharValues.cP6} ), 0) AS ${DtoStats.cP6}
       FROM ${ChronicleRecord.tn}
     ''';
 

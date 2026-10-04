@@ -1,11 +1,11 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/other/image.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/widgets/form/text_input.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/other/image.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/home/home_model.dart';
-import 'package:chaos_control/widgets/form/custom_icon_picker.dart';
-import 'package:chaos_control/widgets/screens/entity_screen.dart';
+import 'package:step_by_step/screens/home/home_model.dart';
+import 'package:step_by_step/widgets/form/custom_icon_picker.dart';
+import 'package:step_by_step/widgets/screens/entity_screen.dart';
 import 'package:provider/provider.dart';
 import 'profile_form_model.dart';
 
@@ -76,18 +76,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
     );
 
     int getChar(Characteristic ch) {
-      switch (ch) {
-        case Characteristic.happiness:
-          return profile?.happinessBase ?? 0;
-        case Characteristic.diligence:
-          return profile?.diligenceBase ?? 0;
-        case Characteristic.intellection:
-          return profile?.intellectionBase ?? 0;
-        case Characteristic.durability:
-          return profile?.durabilityBase ?? 0;
-        case Characteristic.potencial:
-          return profile?.potencialBase ?? 0;
-      }
+      return profile?.baseChars.map[ch] ?? 0;
     }
 
     final charFields = Characteristic.values
@@ -95,7 +84,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
           (ch) => CustomTextInput(
             header: ch.displayName,
             initialValue: getChar(ch).toString(),
-            setText: (v) => model.setChar(ch, int.tryParse(v ?? '0') ?? 0),
+            setText: (v) => model.setBaseChar(ch, int.tryParse(v ?? '0') ?? 0),
             icon: ch.icon,
             type: TextInputType.number
           ),
@@ -129,9 +118,9 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
         Padding(
           padding: const EdgeInsetsGeometry.only(top: 12),
           child: Row(children: [
-          Expanded(child: SizedBox(),),
-          Expanded(flex: 2, child: charFields[4],),
-          Expanded(child: SizedBox(),),
+          Expanded(child: charFields[4],),
+          const SizedBox(width: 12,),
+          Expanded(child: charFields[5],),
         ],),),
       ],
     );

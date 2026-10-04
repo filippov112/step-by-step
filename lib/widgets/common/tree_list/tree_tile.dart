@@ -1,6 +1,6 @@
-import 'package:chaos_control/widgets/common/custom_image_icon.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
+import 'package:step_by_step/widgets/common/custom_image_icon.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_record.dart';
 import 'package:flutter/material.dart';
 
 abstract class TreeTileFabric<T, X> {

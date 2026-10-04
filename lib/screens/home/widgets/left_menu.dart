@@ -1,7 +1,6 @@
-import 'package:chaos_control/screens/purports/sounds/sound_player.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/home/home_model.dart';
-import 'package:chaos_control/screens/home/modules.dart';
+import 'package:step_by_step/screens/home/home_model.dart';
+import 'package:step_by_step/screens/home/modules.dart';
 import 'package:provider/provider.dart';
 
 // Боковое меню для главных экранов модулей приложения
@@ -34,7 +33,6 @@ class MainMenuDrawer extends StatelessWidget {
                   .toList(),
             ),
           ),
-          const SoundPlayer()
         ],
       ),
     );

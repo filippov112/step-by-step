@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:chaos_control/themes/solo_leveling_theme.dart';
+import 'package:step_by_step/themes/solo_leveling_theme.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_cropper/image_cropper.dart';

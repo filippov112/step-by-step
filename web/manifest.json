@@ -1,6 +1,6 @@
 {
-    "name": "chaos_control",
-    "short_name": "chaos_control",
+    "name": "step_by_step",
+    "short_name": "step_by_step",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#hexcode",

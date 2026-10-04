@@ -1,4 +1,4 @@
-name: chaos_control
+name: step_by_step
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -45,17 +45,12 @@ dependencies:
   snap_chart: ^1.1.1
   chartify: ^1.0.2
   flutter_launcher_icons: ^0.14.4
-  just_audio: ^0.10.6
   file_picker: ^12.3.0
   permission_handler: ^12.0.3
-  just_audio_media_kit: ^2.1.0
   device_info_plus: ^13.2.0
   image_cropper: ^12.2.1
   flutter_soloud: ^4.1.7
-media_kit_video:
-    git:
-      url: https://github.com/kaankoken/media-kit.git 
-      path: media_kit_video
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

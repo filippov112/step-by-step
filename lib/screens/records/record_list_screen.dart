@@ -1,11 +1,11 @@
-import 'package:chaos_control/screens/records/record_form_screen.dart';
-import 'package:chaos_control/screens/records/widgets/appbar.dart';
-import 'package:chaos_control/screens/records/widgets/filters.dart';
-import 'package:chaos_control/screens/records/widgets/list.dart';
+import 'package:step_by_step/screens/records/record_form_screen.dart';
+import 'package:step_by_step/screens/records/widgets/appbar.dart';
+import 'package:step_by_step/screens/records/widgets/filters.dart';
+import 'package:step_by_step/screens/records/widgets/list.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/records/record_list_model.dart';
-import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
-import 'package:chaos_control/screens/home/widgets/left_menu.dart';
+import 'package:step_by_step/screens/records/record_list_model.dart';
+import 'package:step_by_step/screens/home/widgets/bottom_menu.dart';
+import 'package:step_by_step/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 class RecordListScreen extends StatefulWidget {

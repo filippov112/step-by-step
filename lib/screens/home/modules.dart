@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/purports/list/purport_list_screen.dart';
-import 'package:chaos_control/screens/settings/setting_list_screen.dart';
-import 'package:chaos_control/screens/records/record_list_screen.dart';
-import 'package:chaos_control/screens/profile/detail/profile_detail_screen.dart';
+import 'package:step_by_step/screens/settings/setting_list_screen.dart';
+import 'package:step_by_step/screens/records/record_list_screen.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_screen.dart';
 
 enum AppModule {
   profile,
   chronicle,
-  purports,
   settings,
 }
 
 List<AppModule> bottomMenuList = [
   AppModule.profile,
   AppModule.chronicle,
-  AppModule.purports,
 ];
 
 extension AppModuleExt on AppModule {
@@ -29,8 +26,6 @@ extension AppModuleExt on AppModule {
         return ProfileDetailScreen();
       case AppModule.chronicle:
         return RecordListScreen();
-      case AppModule.purports:
-        return PurportListScreen();
       case AppModule.settings:
         return SettingListScreen();
     }
@@ -42,8 +37,6 @@ extension AppModuleExt on AppModule {
         return 'Игрок';
       case AppModule.chronicle:
         return 'Хроники';
-      case AppModule.purports:
-        return 'Смыслы';
       case AppModule.settings:
         return 'Настройки';
     }
@@ -55,8 +48,6 @@ extension AppModuleExt on AppModule {
         return Icons.person;
       case AppModule.chronicle:
         return Icons.auto_stories;
-      case AppModule.purports:
-        return Icons.local_fire_department;
       case AppModule.settings:
         return Icons.settings;
     }

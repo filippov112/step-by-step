@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:chaos_control/models/enums/characteristics_ext.dart';
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/analytics/dto_activity.dart';
-import 'package:chaos_control/widgets/screens/loading_screen.dart';
+import 'package:step_by_step/models/enums/characteristics_ext.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/services/analytics/dto_activity.dart';
+import 'package:step_by_step/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/widgets/analysis/custom_activity_table.dart';
-import 'package:chaos_control/widgets/common/custom_card_block.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_model.dart';
+import 'package:step_by_step/widgets/analysis/custom_activity_table.dart';
+import 'package:step_by_step/widgets/common/custom_card_block.dart';
 import 'package:provider/provider.dart';
 
 // Виджет отображения активности пользователя

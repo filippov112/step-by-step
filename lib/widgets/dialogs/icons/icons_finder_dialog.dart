@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/dialogs/icons/icons_finder_service.dart';
+import 'package:step_by_step/widgets/dialogs/icons/icons_finder_service.dart';
 
 class IconsFinderService {
   Future<IconData?> select(BuildContext context) async {

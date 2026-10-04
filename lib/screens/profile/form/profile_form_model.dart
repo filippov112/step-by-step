@@ -1,8 +1,8 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/hours_calculator.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/services/hours_calculator.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/other/image.dart';
-import 'package:chaos_control/models/profile.dart';
+import 'package:step_by_step/models/other/image.dart';
+import 'package:step_by_step/models/profile.dart';
 
 class ProfileFormModel extends ChangeNotifier {
   late final HoursCalculator calculator;
@@ -13,7 +13,7 @@ class ProfileFormModel extends ChangeNotifier {
   ProfileFormModel(this.calculator);
 
   void loadData(Profile? p) {
-    profile = p ?? Profile();
+    profile = p ?? Profile(chars: CharValues(), baseChars: CharValues());
     _isEdit = p != null;
   }
 
@@ -41,19 +41,11 @@ class ProfileFormModel extends ChangeNotifier {
     profile?.name = name ?? '';
     notifyListeners();
   }
-  void setChar(Characteristic char, int value) {
-    switch (char) {
-      case Characteristic.happiness:
-        profile?.happinessBase = value;
-      case Characteristic.diligence:
-        profile?.diligenceBase = value;
-      case Characteristic.intellection:
-        profile?.intellectionBase = value;
-      case Characteristic.durability:
-        profile?.durabilityBase = value;
-      case Characteristic.potencial:
-        profile?.potencialBase = value;
-    }
+  void setBaseChar(Characteristic char, int value) {
+    if (profile == null) return;
+    final baseChars = profile!.baseChars.map;
+    baseChars[char] = value;
+    profile!.baseChars.setChars(baseChars);
     notifyListeners();
   }
 }

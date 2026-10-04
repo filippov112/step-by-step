@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/hours_calculator.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/services/hours_calculator.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/services/analytics/analytics_repository.dart';
-import 'package:chaos_control/services/analytics/dto_activity.dart';
-import 'package:chaos_control/services/datetool.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/services/analytics/analytics_repository.dart';
+import 'package:step_by_step/services/analytics/dto_activity.dart';
+import 'package:step_by_step/services/datetool.dart';
 import 'package:snap_chart/snap_chart.dart';
 
 enum PeriodFilterType { year, threeMonth, oneMonth, oneWeek, oneDay }
@@ -92,7 +92,7 @@ class ProfileDetailModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     user = await _userRepo.get();
-    chars = user?.chars;
+    chars = user?.chars.map;
     await _loadHoursData();
   }
 
@@ -129,13 +129,7 @@ class ProfileDetailModel extends ChangeNotifier {
 
     activityData = {};
     graphData = [];
-    deltaChars = {
-      Characteristic.happiness: 0,
-      Characteristic.diligence: 0,
-      Characteristic.intellection: 0,
-      Characteristic.durability: 0,
-      Characteristic.potencial: 0,
-    };
+    deltaChars = CharValues().map;
     deltaHours = 0;
     maxHours = 0;
 
@@ -146,17 +140,17 @@ class ProfileDetailModel extends ChangeNotifier {
       for (var ch in Characteristic.values) {
         deltaChars![ch] = (deltaChars![ch] ?? 0) + day.getChar(ch);
       }
-      maxHours = max(maxHours, day.totalExperience);
-      deltaHours += day.totalExperience;
+      maxHours = max(maxHours, day.chars.hours);
+      deltaHours += day.chars.hours;
     }
 
     // Graph
-    var summaEff = user!.hours;
+    var summaEff = user!.chars.hours;
     while (dayIndex >= firstDayIndex) {
       final dayDateTime = DateTool.joinDateTime(date: dayIndex);
       graphData.add(SnapSpot(dayIndex.toDouble(), summaEff.toDouble()));
       if (activityData.keys.contains(dayDateTime)) {
-        summaEff -= activityData[dayDateTime]?.totalExperience ?? 0;
+        summaEff -= activityData[dayDateTime]?.chars.hours ?? 0;
       }
       dayIndex--;
     }

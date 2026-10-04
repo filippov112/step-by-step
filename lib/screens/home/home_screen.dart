@@ -1,9 +1,9 @@
-import 'package:chaos_control/services/notifications/notification_service.dart';
+import 'package:step_by_step/services/notifications/notification_service.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/screens/home/home_model.dart';
-import 'package:chaos_control/screens/profile/form/profile_form_screen.dart';
-import 'package:chaos_control/screens/home/modules.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/screens/home/home_model.dart';
+import 'package:step_by_step/screens/profile/form/profile_form_screen.dart';
+import 'package:step_by_step/screens/home/modules.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {

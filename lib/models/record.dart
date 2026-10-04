@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:chaos_control/data/db.dart';
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/services/hours_calculator.dart';
-import 'package:chaos_control/services/datetool.dart';
+import 'package:step_by_step/data/db.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/services/hours_calculator.dart';
+import 'package:step_by_step/services/datetool.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -22,14 +22,8 @@ class ChronicleRecord {
   static const cDate = "_date";
   static const cTime = "_time";
   
-  static const cCharTypes = "_chars";
+  static const cCharTypes = "_charTypes";
   static const cHours = "_hours";
-
-  static const cHappiness = "_c1";
-  static const cDiligence = "_c2";
-  static const cIntellection = "_c3";
-  static const cDurability = "_c4";
-  static const cPotencial = "_c5";
 
   static const init =
       '''CREATE TABLE $tn (
@@ -43,11 +37,12 @@ class ChronicleRecord {
           $cTarget INTEGER,
           $cFavorite INTEGER,
 
-          $cHappiness INTEGER,
-          $cDiligence INTEGER,
-          $cIntellection INTEGER,
-          $cDurability INTEGER,
-          $cPotencial INTEGER
+          ${CharValues.cP1} INTEGER,
+          ${CharValues.cP2} INTEGER,
+          ${CharValues.cP3} INTEGER,
+          ${CharValues.cP4} INTEGER,
+          ${CharValues.cP5} INTEGER,
+          ${CharValues.cP6} INTEGER
         );
         ''';
 
@@ -63,15 +58,9 @@ class ChronicleRecord {
   DateTime date = DateTool.today(); // Дата
   int time = 0; // Время (только для сортировки)
 
-  List<int> charTypes = []; // Характеристики
+  List<int> charTypes = []; // Типы хар-к
   int hours = 0; // Продолжительность
-
-  // Хар-ки
-  int happiness = 0;
-  int diligence = 0;
-  int intellection = 0;
-  int durability = 0;
-  int potencial = 0;
+  CharValues chars = CharValues(); // Хар-ки
 
   // ------------ Конструкторы ------------
 
@@ -86,12 +75,7 @@ class ChronicleRecord {
     required this.time,
     required this.target,
     required this.favorite,
-
-    required this.happiness,
-    required this.diligence,
-    required this.intellection,
-    required this.durability,
-    required this.potencial,
+    required this.chars,
   });
 
   factory ChronicleRecord.create({
@@ -103,12 +87,7 @@ class ChronicleRecord {
     int time = 0,
     bool target = false,
     bool favorite = false,
-
-    int happiness = 0,
-    int diligence = 0,
-    int intellection = 0,
-    int durability = 0,
-    int potencial = 0,
+    CharValues? chars,
   }) {
     final guid = const Uuid().v4();
     return ChronicleRecord(
@@ -122,35 +101,9 @@ class ChronicleRecord {
       time: time,
       target: target,
       favorite: favorite,
-
-      happiness: happiness,
-      diligence: diligence,
-      intellection: intellection,
-      durability: durability,
-      potencial: potencial,
+      chars: chars ?? CharValues(),
     );
   }
-
-  // ------- Методы ------------
-
-  Map<Characteristic, int> get chars => <Characteristic, int>{
-    Characteristic.happiness: happiness,
-    Characteristic.diligence: diligence,
-    Characteristic.intellection: intellection,
-    Characteristic.durability: durability,
-    Characteristic.potencial: potencial,
-  };
-
-  void clearChars() {
-    happiness = 0;
-    diligence = 0;
-    intellection = 0;
-    durability = 0;
-    potencial = 0;
-  }
-
-  int get hoursFull =>
-      happiness + diligence + intellection + durability + potencial;
 
   // ------------ Сериализация ------------
   Map<String, Object?> toMap() {
@@ -166,11 +119,12 @@ class ChronicleRecord {
       cTarget: target ? 1 : 0,
       cFavorite: favorite ? 1 : 0,
 
-      cHappiness: happiness,
-      cDiligence: diligence,
-      cIntellection: intellection,
-      cDurability: durability,
-      cPotencial: potencial,
+      CharValues.cP1: chars.p1,
+      CharValues.cP2: chars.p2,
+      CharValues.cP3: chars.p3,
+      CharValues.cP4: chars.p4,
+      CharValues.cP5: chars.p5,
+      CharValues.cP6: chars.p6,
     };
   }
 
@@ -186,11 +140,14 @@ class ChronicleRecord {
     target = map[cTarget] == 1;
     favorite = map[cFavorite] == 1;
 
-    happiness = map[cHappiness];
-    diligence = map[cDiligence];
-    intellection = map[cIntellection];
-    durability = map[cDurability];
-    potencial = map[cPotencial];
+    chars = CharValues(values: [
+      map[CharValues.cP1] as int? ?? 0, 
+      map[CharValues.cP2] as int? ?? 0, 
+      map[CharValues.cP3] as int? ?? 0, 
+      map[CharValues.cP4] as int? ?? 0, 
+      map[CharValues.cP5] as int? ?? 0, 
+      map[CharValues.cP6] as int? ?? 0,
+    ]);
   }
 
   // ------- Другое ---------
@@ -311,15 +268,15 @@ class RecordRepository {
       switch (type) {
         case TransactionType.update:
           {
-            result = (chars[ch] ?? 0) - (oldChars?[ch] ?? 0);
+            result = (chars.map[ch] ?? 0) - (oldChars?.map[ch] ?? 0);
           }
         case TransactionType.add:
           {
-            result = chars[ch] ?? 0;
+            result = chars.map[ch] ?? 0;
           }
         case TransactionType.remove:
           {
-            result = -(chars[ch] ?? 0);
+            result = -(chars.map[ch] ?? 0);
           }
       }
       deltaChars[ch] = result;
@@ -337,10 +294,10 @@ class RecordRepository {
 
     final newUserChars = <Characteristic, int>{};
     for (var ch in Characteristic.values) {
-      newUserChars[ch] = (userChars[ch] ?? 0) + (deltaChars[ch] ?? 0);
+      newUserChars[ch] = (userChars.map[ch] ?? 0) + (deltaChars[ch] ?? 0);
     }
-    calculator.checkNotifications(userChars, newUserChars);
-    user.setChars(newUserChars);
+    calculator.checkNotifications(userChars.map, newUserChars);
+    user.chars.setChars(newUserChars);
     await userRepo.update(user);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:chaos_control/services/settings/settings_fields.dart';
+import 'package:step_by_step/services/settings/settings_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {

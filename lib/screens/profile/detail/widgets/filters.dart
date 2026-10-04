@@ -1,9 +1,9 @@
-import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/common/search_string.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_model.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/search_string.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/filters/filter_section.dart';
-import 'package:chaos_control/widgets/filters/filters_drawer.dart';
+import 'package:step_by_step/widgets/filters/filter_section.dart';
+import 'package:step_by_step/widgets/filters/filters_drawer.dart';
 import 'package:provider/provider.dart';
 
 class ProfileDetailFilters extends StatefulWidget {

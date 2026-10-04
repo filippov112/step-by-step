@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 
 // Стандартизированный информационный блок
 class CustomCardBlock extends StatelessWidget {

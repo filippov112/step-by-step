@@ -1,17 +1,25 @@
-# chaos_control
+# Step By Step
 
-A new Flutter project.
+*Step By Step* - это мобильное приложение для фиксации своего прогресса в обучении.
+Благодаря ему, вы можете отслеживать суточное распределение времени на длительных временных промежутках.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+Приложение сделано с упором в геймификацию: 
 
-A few resources to get you started if this is your first Flutter project:
+- отмечая свою деятельность в течение дня, вы можете указывать прокачиваемые характеристики.
+- на основе общих трудозатрат расчитывается уровень игрока.
+- в настройках можно скорректировать параметры расчета уровней под свои предпочтения.
+- также можно помечать хроники как цели, используя приложение в качестве планировщика задач.
+- учет ведется по таким характеристикам как: **Знания**, **Умения**, **Способности**, **Креативность**, **Языки**, **Здоровье**.
+- множество различных фильтров, а также возможность группировать хроники позволяют вести гибкую аналитику своего рабочего времени.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Уровень и активность | Характеристики | Настройки |
+|---------------------|-------------------|-------------------|
+| ![Original](/assets/screens/s1.png) | ![Result](/assets/screens/s2.png) | ![Result](/assets/screens/s3.png) |
+
+| Форма создания/изменения хроник | Фильтры |
+|---------------------|-------------------|
+| ![Original](/assets/screens/s4.png) | ![Result](/assets/screens/s5.png) |

@@ -1,9 +1,9 @@
-import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
-import 'package:chaos_control/screens/home/widgets/left_menu.dart';
-import 'package:chaos_control/screens/settings/categories/calc_constants.dart';
-import 'package:chaos_control/screens/settings/setting_list_model.dart';
-import 'package:chaos_control/screens/settings/widgets/scaffold.dart';
-import 'package:chaos_control/screens/settings/widgets/tile.dart';
+import 'package:step_by_step/screens/home/widgets/bottom_menu.dart';
+import 'package:step_by_step/screens/home/widgets/left_menu.dart';
+import 'package:step_by_step/screens/settings/categories/calc_constants.dart';
+import 'package:step_by_step/screens/settings/setting_list_model.dart';
+import 'package:step_by_step/screens/settings/widgets/scaffold.dart';
+import 'package:step_by_step/screens/settings/widgets/tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

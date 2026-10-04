@@ -1,14 +1,14 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/numerictool.dart';
-import 'package:chaos_control/services/hours_calculator.dart';
-import 'package:chaos_control/widgets/analysis/custom_progress_bar.dart';
-import 'package:chaos_control/widgets/analysis/custom_radar_chart.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
-import 'package:chaos_control/widgets/screens/loading_screen.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/services/numerictool.dart';
+import 'package:step_by_step/services/hours_calculator.dart';
+import 'package:step_by_step/widgets/analysis/custom_progress_bar.dart';
+import 'package:step_by_step/widgets/analysis/custom_radar_chart.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
+import 'package:step_by_step/widgets/screens/loading_screen.dart';
 import 'package:chartify/chartify.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/widgets/common/custom_card_block.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_model.dart';
+import 'package:step_by_step/widgets/common/custom_card_block.dart';
 import 'package:provider/provider.dart';
 
 // Характеристики игрока

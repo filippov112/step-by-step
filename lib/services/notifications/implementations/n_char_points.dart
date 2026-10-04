@@ -1,7 +1,7 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/services/notifications/notification_item.dart';
-import 'package:chaos_control/services/sound_service.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/services/notifications/notification_item.dart';
+import 'package:step_by_step/services/sound_service.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class NCharPoints extends NotificationItem {
@@ -24,7 +24,7 @@ class NCharPoints extends NotificationItem {
     ],);
   }
 
-  Characteristic char = Characteristic.happiness;
+  Characteristic char = Characteristic.knowledge;
   int value = 0;
 
 }

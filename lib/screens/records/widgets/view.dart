@@ -1,7 +1,7 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/services/datetool.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/services/datetool.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class RecordView extends StatelessWidget {

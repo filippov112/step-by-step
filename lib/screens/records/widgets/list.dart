@@ -1,11 +1,11 @@
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/screens/records/record_form_model.dart';
-import 'package:chaos_control/screens/records/record_list_model.dart';
-import 'package:chaos_control/screens/records/widgets/open_button.dart';
-import 'package:chaos_control/screens/records/widgets/tile.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_list.dart';
-import 'package:chaos_control/widgets/common/tree_list/tree_record.dart';
-import 'package:chaos_control/widgets/screens/loading_screen.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/screens/records/record_form_model.dart';
+import 'package:step_by_step/screens/records/record_list_model.dart';
+import 'package:step_by_step/screens/records/widgets/open_button.dart';
+import 'package:step_by_step/screens/records/widgets/tile.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_list.dart';
+import 'package:step_by_step/widgets/common/tree_list/tree_record.dart';
+import 'package:step_by_step/widgets/screens/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

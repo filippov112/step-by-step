@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/screens/home/modules.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/screens/home/modules.dart';
 
 class HomeModel extends ChangeNotifier {
   Profile? profile;

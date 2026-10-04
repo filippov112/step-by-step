@@ -1,28 +1,31 @@
-import 'package:chaos_control/models/enums/characteristics.dart';
+import 'package:step_by_step/models/enums/characteristics.dart';
 import 'package:flutter/material.dart';
 
 enum CharacteristicExt {
   all,
-  happiness,
-  diligence,
-  intellection,
-  durability,
-  potencial,
+  knowledge,
+  skills,
+  abilities,
+  creativity,
+  languages,
+  health
 }
 
 extension ActivityTypeExt on CharacteristicExt {
   Characteristic? get characteristic {
     switch (this) {
-      case CharacteristicExt.happiness:
-        return Characteristic.happiness;
-      case CharacteristicExt.diligence:
-        return Characteristic.diligence;
-      case CharacteristicExt.intellection:
-        return Characteristic.intellection;
-      case CharacteristicExt.durability:
-        return Characteristic.durability;
-      case CharacteristicExt.potencial:
-        return Characteristic.potencial;
+      case CharacteristicExt.knowledge:
+        return Characteristic.knowledge;
+      case CharacteristicExt.skills:
+        return Characteristic.skills;
+      case CharacteristicExt.abilities:
+        return Characteristic.abilities;
+      case CharacteristicExt.creativity:
+        return Characteristic.creativity;
+      case CharacteristicExt.languages:
+        return Characteristic.languages;
+      case CharacteristicExt.health:
+        return Characteristic.health;
       default:
         return null;
     }

@@ -1,6 +1,6 @@
-import 'package:chaos_control/screens/settings/setting_list_model.dart';
-import 'package:chaos_control/screens/settings/widgets/scaffold.dart';
-import 'package:chaos_control/widgets/form/text_input.dart';
+import 'package:step_by_step/screens/settings/setting_list_model.dart';
+import 'package:step_by_step/screens/settings/widgets/scaffold.dart';
+import 'package:step_by_step/widgets/form/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

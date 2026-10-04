@@ -1,9 +1,6 @@
 import 'dart:io';
-import 'package:chaos_control/models/pur_image.dart';
-import 'package:chaos_control/models/pur_sound.dart';
-import 'package:chaos_control/models/purport.dart';
-import 'package:chaos_control/models/record.dart';
-import 'package:chaos_control/models/profile.dart';
+import 'package:step_by_step/models/record.dart';
+import 'package:step_by_step/models/profile.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
@@ -32,10 +29,7 @@ class DB {
 
       await db.execute('PRAGMA foreign_keys = ON;');
       await db.execute(Profile.init);
-      await db.execute(Purport.init);
       await db.execute(ChronicleRecord.init);
-      await db.execute(PurImage.init);
-      await db.execute(PurSound.init);
     });
   }
 

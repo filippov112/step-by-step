@@ -1,16 +1,16 @@
-import 'package:chaos_control/screens/profile/detail/widgets/chars.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/filters.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/level.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/screens/profile/detail/widgets/chars.dart';
+import 'package:step_by_step/screens/profile/detail/widgets/filters.dart';
+import 'package:step_by_step/screens/profile/detail/widgets/level.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/activity.dart';
-import 'package:chaos_control/screens/profile/detail/widgets/info.dart';
-import 'package:chaos_control/screens/profile/form/profile_form_model.dart';
-import 'package:chaos_control/screens/profile/form/profile_form_screen.dart';
-import 'package:chaos_control/widgets/common/app_bar_list.dart';
-import 'package:chaos_control/screens/home/widgets/bottom_menu.dart';
-import 'package:chaos_control/screens/home/widgets/left_menu.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_model.dart';
+import 'package:step_by_step/screens/profile/detail/widgets/activity.dart';
+import 'package:step_by_step/screens/profile/detail/widgets/info.dart';
+import 'package:step_by_step/screens/profile/form/profile_form_model.dart';
+import 'package:step_by_step/screens/profile/form/profile_form_screen.dart';
+import 'package:step_by_step/widgets/common/app_bar_list.dart';
+import 'package:step_by_step/screens/home/widgets/bottom_menu.dart';
+import 'package:step_by_step/screens/home/widgets/left_menu.dart';
 import 'package:provider/provider.dart';
 
 class ProfileDetailScreen extends StatefulWidget {

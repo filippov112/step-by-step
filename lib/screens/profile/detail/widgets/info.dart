@@ -1,9 +1,9 @@
-import 'package:chaos_control/screens/profile/detail/profile_detail_model.dart';
+import 'package:step_by_step/screens/profile/detail/profile_detail_model.dart';
 import 'package:flutter/material.dart';
-import 'package:chaos_control/models/profile.dart';
-import 'package:chaos_control/widgets/common/custom_card_block.dart';
-import 'package:chaos_control/widgets/common/custom_image_icon.dart';
-import 'package:chaos_control/widgets/common/custom_text.dart';
+import 'package:step_by_step/models/profile.dart';
+import 'package:step_by_step/widgets/common/custom_card_block.dart';
+import 'package:step_by_step/widgets/common/custom_image_icon.dart';
+import 'package:step_by_step/widgets/common/custom_text.dart';
 import 'package:provider/provider.dart';
 
 // Шапка: аватар, имя, возраст

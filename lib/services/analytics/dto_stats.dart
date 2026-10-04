@@ -1,28 +1,30 @@
+import 'package:step_by_step/models/enums/characteristics.dart';
+
 /// Модель для характеристик
 class DtoStats {
-  static const cHappiness = 'total_1';
-  static const cDiligence = 'total_2';
-  static const cIntellection = 'total_3';
-  static const cDurability = 'total_4';
-  static const cPotencial = 'total_5';
+  static const cP1 = 'total_1';
+  static const cP2 = 'total_2';
+  static const cP3 = 'total_3';
+  static const cP4 = 'total_4';
+  static const cP5 = 'total_5';
+  static const cP6 = 'total_6';
 
-  final int happiness, diligence, intellection, durability, potencial;
+  final CharValues chars;
 
   DtoStats({
-    required this.happiness,
-    required this.diligence,
-    required this.intellection,
-    required this.durability,
-    required this.potencial,
+    required this.chars
   });
 
   factory DtoStats.fromMap(Map<String, dynamic> map) {
     return DtoStats(
-      happiness: map[cHappiness] as int? ?? 0,
-      diligence: map[cDiligence] as int? ?? 0,
-      intellection: map[cIntellection] as int? ?? 0,
-      durability: map[cDurability] as int? ?? 0,
-      potencial: map[cPotencial] as int? ?? 0,
+      chars: CharValues(values: [
+        map[cP1] as int? ?? 0,
+        map[cP2] as int? ?? 0,
+        map[cP3] as int? ?? 0,
+        map[cP4] as int? ?? 0,
+        map[cP5] as int? ?? 0,
+        map[cP6] as int? ?? 0,
+      ]),
     );
   }
 }
